@@ -142,7 +142,7 @@ export default function PatrimoinePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: 'Prix d\'acquisition', value: formatCurrency(totalAchat, true), color: 'text-white', sub: `${properties.length} biens` },
-              { label: 'Valeur marché estimée', value: formatCurrency(totalEstime, true), color: 'text-blue-400', sub: 'T1 2026' },
+              { label: 'Valeur marché estimée', value: formatCurrency(totalEstime, true), color: 'text-blue-400', sub: new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) },
               {
                 label: 'Plus-value latente', color: plusValueLatente && plusValueLatente > 0 ? 'text-green-400' : 'text-red-400',
                 value: plusValueLatente ? formatCurrency(plusValueLatente, true) : '—',
@@ -318,7 +318,7 @@ export default function PatrimoinePage() {
 
       <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
         <p className="text-xs text-slate-500">
-          Estimations basées sur le baromètre FNAIM · Notaires de France · MeilleursAgents — T1 2026.
+          Estimations basées sur le baromètre FNAIM · Notaires de France · MeilleursAgents — données {new Date().getFullYear()}.
           Ces valeurs sont indicatives (±15%) et ne remplacent pas une expertise professionnelle.
         </p>
       </div>

@@ -84,7 +84,7 @@ ${typeContext}` : ''
 
   return `Tu es Propilot, un copilote IA expert en immobilier et fiscalité française.
 Tu aides les propriétaires à optimiser leur patrimoine immobilier.
-Nous sommes en 2026.
+Nous sommes en ${new Date().getFullYear()}. La date du jour est le ${new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}.
 
 ## Contexte du portefeuille
 Patrimoine total: ${ctx.totalPatrimoine.toLocaleString('fr-FR')}€

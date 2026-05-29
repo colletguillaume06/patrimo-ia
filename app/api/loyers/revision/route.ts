@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { resend, getRelanceTemplate } from '@/lib/resend/templates'
-import { calculateRevisionIRL, calculateRevisionILC, calculateRevisionILAT } from '@/lib/fiscal/indices'
+import { calculateRevisionIRL, calculateRevisionILC, calculateRevisionILAT, IRL_CURRENT, ILC_CURRENT, ILAT_CURRENT, getQuarterLabel } from '@/lib/fiscal/indices'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #ddd;">Nouvel indice ${indice.toUpperCase()}</td>
-              <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${indice === 'irl' ? '141.36' : indice === 'ilc' ? '131.14' : '138.17'}</td>
+              <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${indice === 'irl' ? IRL_CURRENT : indice === 'ilc' ? ILC_CURRENT : ILAT_CURRENT} (${getQuarterLabel()})</td>
             </tr>
             <tr style="background: #e8f4e8; font-weight: bold;">
               <td style="padding: 10px; border: 1px solid #ddd;">Nouveau loyer</td>

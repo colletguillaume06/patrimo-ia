@@ -168,7 +168,7 @@ export default function LandingPage() {
           </div>
           <span className="font-display font-bold text-white">Propilot <span className="text-blue-400">AI</span></span>
         </div>
-        <p className="text-xs text-slate-600">© 2025 Propilot AI. Tous droits réservés.</p>
+        <p className="text-xs text-slate-600">© {new Date().getFullYear()} Propilot AI. Tous droits réservés.</p>
       </footer>
     </div>
   )

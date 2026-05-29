@@ -135,16 +135,20 @@ export async function POST(req: NextRequest) {
   }
   await service.from('payments').insert(paymentsToInsert)
 
+  const y = today.getFullYear()
+  const yPrev = y - 1
+  const m2 = String(today.getMonth() + 1).padStart(2, '0')
+
   // Dépenses
   await service.from('expenses').insert([
-    { property_id: prop1.id, amount: 850, category: 'taxe', fiscal_deductible: true, description: 'Taxe foncière 2025', date: '2025-10-15' },
-    { property_id: prop1.id, amount: 380, category: 'assurance', fiscal_deductible: true, description: 'Assurance PNO', date: '2026-01-10' },
-    { property_id: prop1.id, amount: 1200, category: 'travaux', fiscal_deductible: true, description: 'Remplacement chauffe-eau', date: '2026-03-22' },
-    { property_id: prop2.id, amount: 1650, category: 'taxe', fiscal_deductible: true, description: 'Taxe foncière 2025', date: '2025-10-15' },
-    { property_id: prop2.id, amount: 580, category: 'assurance', fiscal_deductible: true, description: 'Assurance PNO', date: '2026-01-08' },
-    { property_id: prop2.id, amount: 450, category: 'gestion', fiscal_deductible: true, description: 'Frais agence Q1 2026', date: '2026-04-01' },
-    { property_id: prop3.id, amount: 920, category: 'taxe', fiscal_deductible: true, description: 'Taxe foncière 2025', date: '2025-10-15' },
-    { property_id: prop3.id, amount: 320, category: 'gestion', fiscal_deductible: false, description: 'Ménage entre locataires', date: '2026-05-01' },
+    { property_id: prop1.id, amount: 850, category: 'taxe', fiscal_deductible: true, description: `Taxe foncière ${yPrev}`, date: `${yPrev}-10-15` },
+    { property_id: prop1.id, amount: 380, category: 'assurance', fiscal_deductible: true, description: 'Assurance PNO', date: `${y}-01-10` },
+    { property_id: prop1.id, amount: 1200, category: 'travaux', fiscal_deductible: true, description: 'Remplacement chauffe-eau', date: `${y}-03-22` },
+    { property_id: prop2.id, amount: 1650, category: 'taxe', fiscal_deductible: true, description: `Taxe foncière ${yPrev}`, date: `${yPrev}-10-15` },
+    { property_id: prop2.id, amount: 580, category: 'assurance', fiscal_deductible: true, description: 'Assurance PNO', date: `${y}-01-08` },
+    { property_id: prop2.id, amount: 450, category: 'gestion', fiscal_deductible: true, description: `Frais agence ${y}`, date: `${y}-04-01` },
+    { property_id: prop3.id, amount: 920, category: 'taxe', fiscal_deductible: true, description: `Taxe foncière ${yPrev}`, date: `${yPrev}-10-15` },
+    { property_id: prop3.id, amount: 320, category: 'gestion', fiscal_deductible: false, description: 'Ménage entre locataires', date: `${y}-${m2}-01` },
   ])
 
   // Plan amortissement LMNP
@@ -155,28 +159,30 @@ export async function POST(req: NextRequest) {
     { property_id: prop1.id, component: 'mobilier', value: 8500, duration_years: 10, start_date: '2020-06-01' },
   ])
 
-  // Réservations Airbnb (cette année)
+  // Réservations Airbnb — les N derniers mois révolus de l'année courante
   const bookings = []
-  const months = [1, 2, 3, 4, 5]
-  for (const m of months) {
+  const currentMonth = today.getMonth() + 1 // 1-12
+  const monthsDone = Math.min(currentMonth - 1, 5) // max 5 mois de démo
+  for (let i = 1; i <= monthsDone; i++) {
+    const mm = String(i).padStart(2, '0')
     bookings.push({
       property_id: prop3.id,
-      check_in: `2026-0${m}-05`,
-      check_out: `2026-0${m}-12`,
+      check_in: `${y}-${mm}-05`,
+      check_out: `${y}-${mm}-12`,
       nightly_rate: 95,
       platform_fee_pct: 3,
       total_revenue: 95 * 7 * 0.97,
-      guest_name: ['Emma L.', 'Thomas B.', 'Claire M.', 'Pierre D.', 'Anna K.'][m - 1],
+      guest_name: ['Emma L.', 'Thomas B.', 'Claire M.', 'Pierre D.', 'Anna K.'][(i - 1) % 5],
     })
-    if (m <= 4) {
+    if (i <= monthsDone - 1) {
       bookings.push({
         property_id: prop3.id,
-        check_in: `2026-0${m}-18`,
-        check_out: `2026-0${m}-23`,
+        check_in: `${y}-${mm}-18`,
+        check_out: `${y}-${mm}-23`,
         nightly_rate: 110,
         platform_fee_pct: 3,
         total_revenue: 110 * 5 * 0.97,
-        guest_name: ['Lucas R.', 'Marie P.', 'David C.', 'Sophie N.'][m - 1],
+        guest_name: ['Lucas R.', 'Marie P.', 'David C.', 'Sophie N.'][(i - 1) % 4],
       })
     }
   }

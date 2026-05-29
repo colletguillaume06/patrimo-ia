@@ -10,7 +10,7 @@ import { formatCurrency } from '@/lib/utils'
 import { calculateLmnpSimulation, calculateDepreciation } from '@/lib/fiscal/lmnp'
 import { calculateFoncierSimulation } from '@/lib/fiscal/foncier'
 import { calculateSciSimulation } from '@/lib/fiscal/sci'
-import { IRL_T1_2025, ILC_T1_2025 } from '@/lib/fiscal/indices'
+import { IRL_CURRENT, ILC_CURRENT, ILAT_CURRENT, getQuarterLabel } from '@/lib/fiscal/indices'
 
 export default function FiscalitePage() {
   const [properties, setProperties] = useState<any[]>([])
@@ -55,17 +55,19 @@ export default function FiscalitePage() {
 
       {/* Indices */}
       <GlassCard>
-        <h2 className="font-display font-semibold text-white mb-4">Indices de référence (T1 2025)</h2>
+        <h2 className="font-display font-semibold text-white mb-4">
+          Indices de référence ({getQuarterLabel()})
+        </h2>
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: 'IRL (Loyers habitation)', value: IRL_T1_2025, color: 'text-blue-400' },
-            { label: 'ILC (Loyers commerciaux)', value: ILC_T1_2025, color: 'text-cyan-400' },
-            { label: 'ILAT (Activités tertiaires)', value: 138.17, color: 'text-green-400' },
+            { label: 'IRL (Loyers habitation)', value: IRL_CURRENT, color: 'text-blue-400' },
+            { label: 'ILC (Loyers commerciaux)', value: ILC_CURRENT, color: 'text-cyan-400' },
+            { label: 'ILAT (Activités tertiaires)', value: ILAT_CURRENT, color: 'text-green-400' },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-white/[0.03] rounded-xl p-4">
               <p className="text-xs text-slate-500 mb-1">{label}</p>
               <p className={`text-2xl font-bold font-mono ${color}`}>{value}</p>
-              <p className="text-xs text-slate-600 mt-1">Référence T1 2025</p>
+              <p className="text-xs text-slate-600 mt-1">Référence {getQuarterLabel()}</p>
             </div>
           ))}
         </div>

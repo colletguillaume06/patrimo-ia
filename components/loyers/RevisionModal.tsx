@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { X, TrendingUp, Send } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
-import { IRL_T1_2025, ILC_T1_2025, ILAT_T1_2025 } from '@/lib/fiscal/indices'
+import { IRL_CURRENT, ILC_CURRENT, ILAT_CURRENT, getQuarterLabel } from '@/lib/fiscal/indices'
 
 interface RevisionModalProps {
   lease: any
@@ -14,7 +14,7 @@ interface RevisionModalProps {
 
 export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps) {
   const indice = lease.property?.indice_revision ?? 'irl'
-  const nouvelIndice = indice === 'ilc' ? ILC_T1_2025 : indice === 'ilat' ? ILAT_T1_2025 : IRL_T1_2025
+  const nouvelIndice = indice === 'ilc' ? ILC_CURRENT : indice === 'ilat' ? ILAT_CURRENT : IRL_CURRENT
   const [ancienIndice, setAncienIndice] = useState('')
   const [notify, setNotify] = useState(!!lease.tenant_email)
   const [loading, setLoading] = useState(false)
@@ -66,7 +66,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
         <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] mb-5">
           <p className="text-xs text-slate-500">{lease.tenant_name} · {lease.property?.name}</p>
           <p className="text-lg font-bold text-white mt-0.5">{formatCurrency(lease.monthly_rent)}/mois</p>
-          <p className="text-xs text-blue-400 mt-0.5">Indice : {indice.toUpperCase()} — Nouvel indice T1 2026 : {nouvelIndice}</p>
+          <p className="text-xs text-blue-400 mt-0.5">Indice : {indice.toUpperCase()} — Dernier indice ({getQuarterLabel()}) : {nouvelIndice}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

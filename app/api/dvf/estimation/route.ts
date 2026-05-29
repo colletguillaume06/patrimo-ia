@@ -99,8 +99,8 @@ export async function POST(req: NextRequest) {
 
     // Méta
     nb_transactions: 0,
-    source: 'Baromètre Marché 2026 (FNAIM · Notaires · MeilleursAgents)',
-    date_reference: 'T1 2026',
+    source: `Baromètre Marché ${new Date().getFullYear()} (FNAIM · Notaires · MeilleursAgents)`,
+    date_reference: new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }),
     city,
     postal_code,
     surface_m2,
