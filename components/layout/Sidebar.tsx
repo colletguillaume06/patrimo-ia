@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, Building2, Banknote, FileText,
-  Calculator, Wrench, Bot, Download, ChevronRight, Sparkles
+  Calculator, Wrench, Bot, Download, ChevronRight, Sparkles,
+  TrendingUp, BarChart3
 } from 'lucide-react'
 import { cn, getInitials } from '@/lib/utils'
 import type { Profile } from '@/types'
@@ -17,11 +18,13 @@ interface SidebarProps {
 const nav = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/biens', label: 'Mes biens', icon: Building2 },
+  { href: '/patrimoine', label: 'Patrimoine', icon: TrendingUp },
   { href: '/loyers', label: 'Loyers', icon: Banknote },
   { href: '/baux', label: 'Baux', icon: FileText },
   { href: '/fiscalite', label: 'Fiscalité', icon: Calculator },
   { href: '/travaux', label: 'Travaux', icon: Wrench },
   { href: '/copilot', label: 'Copilot IA', icon: Bot },
+  { href: '/fiscal', label: 'Déclaration', icon: BarChart3 },
 ]
 
 const planColors = {
