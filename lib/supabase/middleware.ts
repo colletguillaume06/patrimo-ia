@@ -34,19 +34,40 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith('/loyers') ||
     pathname.startsWith('/baux') ||
     pathname.startsWith('/fiscalite') ||
+    pathname.startsWith('/fiscal') ||
     pathname.startsWith('/travaux') ||
-    pathname.startsWith('/copilot')
+    pathname.startsWith('/copilot') ||
+    pathname.startsWith('/exports') ||
+    pathname.startsWith('/patrimoine') ||
+    pathname.startsWith('/onboarding')
 
+  // Routes protégées : redirect vers login si non connecté
   if (isDashboard && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
+  // Redirect vers dashboard si connecté et sur /
   if (pathname === '/' && user) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)
+  }
+
+  // Onboarding : redirect si onboarding_done === false, sauf si déjà sur /onboarding
+  if (user && isDashboard && !pathname.startsWith('/onboarding')) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('onboarding_done')
+      .eq('id', user.id)
+      .single()
+
+    if (profile && !profile.onboarding_done) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/onboarding'
+      return NextResponse.redirect(url)
+    }
   }
 
   return supabaseResponse

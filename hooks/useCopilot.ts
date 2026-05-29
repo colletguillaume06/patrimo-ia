@@ -6,8 +6,11 @@ import type { AiMessage } from '@/types'
 export function useCopilot(initialMessages: AiMessage[] = []) {
   const [messages, setMessages] = useState<AiMessage[]>(initialMessages)
   const [isLoading, setIsLoading] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
 
   const sendMessage = useCallback(async (content: string, property_id?: string) => {
+    setApiError(null)
+
     const userMsg: AiMessage = {
       id: crypto.randomUUID(),
       user_id: '',
@@ -20,8 +23,9 @@ export function useCopilot(initialMessages: AiMessage[] = []) {
     setMessages(prev => [...prev, userMsg])
     setIsLoading(true)
 
+    const assistantId = crypto.randomUUID()
     const assistantMsg: AiMessage = {
-      id: crypto.randomUUID(),
+      id: assistantId,
       user_id: '',
       role: 'assistant',
       content: '',
@@ -37,13 +41,20 @@ export function useCopilot(initialMessages: AiMessage[] = []) {
         body: JSON.stringify({
           message: content,
           property_id: property_id ?? null,
-          history: messages.slice(-10),
+          history: messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
         }),
       })
 
-      if (!res.ok || !res.body) {
-        throw new Error('Erreur de connexion au copilot')
+      // Erreur non-stream (503 clé manquante, 401, etc.)
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        const errMsg = errData.error ?? `Erreur ${res.status}`
+        setApiError(errMsg)
+        setMessages(prev => prev.filter(m => m.id !== assistantId))
+        return
       }
+
+      if (!res.body) throw new Error('Pas de stream')
 
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
@@ -53,24 +64,25 @@ export function useCopilot(initialMessages: AiMessage[] = []) {
         const { done, value } = await reader.read()
         if (done) break
         const chunk = decoder.decode(value)
-        const lines = chunk.split('\n').filter(l => l.startsWith('data: '))
-        for (const line of lines) {
+        for (const line of chunk.split('\n')) {
+          if (!line.startsWith('data: ')) continue
           const data = line.slice(6)
           if (data === '[DONE]') break
           try {
             const parsed = JSON.parse(data)
+            if (parsed.error) { setApiError(parsed.error); break }
             const delta = parsed.choices?.[0]?.delta?.content ?? ''
             fullContent += delta
             setMessages(prev => prev.map(m =>
-              m.id === assistantMsg.id ? { ...m, content: fullContent } : m
+              m.id === assistantId ? { ...m, content: fullContent } : m
             ))
           } catch {}
         }
       }
-    } catch (err) {
+    } catch {
       setMessages(prev => prev.map(m =>
-        m.id === assistantMsg.id
-          ? { ...m, content: 'Désolé, une erreur est survenue. Veuillez réessayer.' }
+        m.id === assistantId
+          ? { ...m, content: 'Erreur de connexion. Vérifiez votre réseau et réessayez.' }
           : m
       ))
     } finally {
@@ -78,5 +90,5 @@ export function useCopilot(initialMessages: AiMessage[] = []) {
     }
   }, [messages])
 
-  return { messages, isLoading, sendMessage }
+  return { messages, isLoading, apiError, sendMessage }
 }

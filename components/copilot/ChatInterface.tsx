@@ -4,8 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useCopilot } from '@/hooks/useCopilot'
 import { MessageBubble } from './MessageBubble'
 import { SuggestedQuestions } from './SuggestedQuestions'
-import { GlassCard } from '@/components/ui/GlassCard'
-import { Send, Sparkles } from 'lucide-react'
+import { Send, Sparkles, AlertTriangle } from 'lucide-react'
 import type { AiMessage } from '@/types'
 
 interface ChatInterfaceProps {
@@ -15,7 +14,7 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ initialMessages = [], propertyId, initialQuestion }: ChatInterfaceProps) {
-  const { messages, isLoading, sendMessage } = useCopilot(initialMessages)
+  const { messages, isLoading, apiError, sendMessage } = useCopilot(initialMessages)
   const [input, setInput] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
   const hasInitialized = useRef(false)
@@ -59,10 +58,23 @@ export function ChatInterface({ initialMessages = [], propertyId, initialQuestio
           <p className="text-xs text-slate-500">Expert en immobilier et fiscalité française</p>
         </div>
         <div className="ml-auto flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-xs text-green-400">En ligne</span>
+          <span className={`h-2 w-2 rounded-full ${apiError ? 'bg-red-400' : 'bg-green-400 animate-pulse'}`} />
+          <span className={`text-xs ${apiError ? 'text-red-400' : 'text-green-400'}`}>
+            {apiError ? 'Hors ligne' : 'En ligne'}
+          </span>
         </div>
       </div>
+
+      {/* Bannière erreur API */}
+      {apiError && (
+        <div className="mx-4 mt-3 flex items-start gap-2.5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20">
+          <AlertTriangle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-red-400">Copilot indisponible</p>
+            <p className="text-xs text-red-300/70 mt-0.5">{apiError}</p>
+          </div>
+        </div>
+      )}
 
       {/* Suggestions */}
       {messages.length === 0 && (
