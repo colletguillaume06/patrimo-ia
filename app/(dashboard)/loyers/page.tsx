@@ -4,17 +4,19 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StatusBadge } from '@/components/loyers/StatusBadge'
 import { RelanceModal } from '@/components/loyers/RelanceModal'
+import { RevisionModal } from '@/components/loyers/RevisionModal'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { formatCurrency } from '@/lib/utils'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { toast } from 'sonner'
-import { Send, CheckCircle } from 'lucide-react'
+import { Send, CheckCircle, TrendingUp } from 'lucide-react'
 
 export default function LoyersPage() {
   const [payments, setPayments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [relancePayment, setRelancePayment] = useState<any | null>(null)
+  const [revisionLease, setRevisionLease] = useState<any | null>(null)
   const supabase = createClient()
 
   const loadPayments = async () => {
@@ -23,8 +25,9 @@ export default function LoyersPage() {
       .select(`
         *,
         lease:leases(
-          tenant_name, tenant_email, monthly_rent,
-          property:properties(name, city)
+          id, tenant_name, tenant_email, monthly_rent,
+          is_active, indexation_index, last_revision_date,
+          property:properties(name, city, indice_revision)
         )
       `)
       .order('due_date', { ascending: false })
@@ -122,6 +125,14 @@ export default function LoyersPage() {
                       <Send className="h-3.5 w-3.5" /> Relance
                     </button>
                   )}
+                  {pay.lease?.is_active && (
+                    <button
+                      onClick={() => setRevisionLease(pay.lease)}
+                      className="h-8 px-3 rounded-lg bg-green-400/10 hover:bg-green-400/20 border border-green-400/20 text-green-400 text-xs font-medium transition-all flex items-center gap-1"
+                    >
+                      <TrendingUp className="h-3.5 w-3.5" /> Réviser IRL
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -133,6 +144,14 @@ export default function LoyersPage() {
         <RelanceModal
           payment={relancePayment}
           onClose={() => setRelancePayment(null)}
+          onSuccess={loadPayments}
+        />
+      )}
+
+      {revisionLease && (
+        <RevisionModal
+          lease={revisionLease}
+          onClose={() => setRevisionLease(null)}
           onSuccess={loadPayments}
         />
       )}
