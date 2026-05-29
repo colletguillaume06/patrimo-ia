@@ -1,0 +1,34 @@
+-- Données de démo (à exécuter manuellement avec un user_id réel)
+-- Remplacer 'YOUR_USER_ID' par l'UUID de votre compte
+
+-- do $$
+-- declare
+--   uid uuid := 'YOUR_USER_ID';
+--   prop1 uuid := uuid_generate_v4();
+--   prop2 uuid := uuid_generate_v4();
+--   prop3 uuid := uuid_generate_v4();
+--   lease1 uuid := uuid_generate_v4();
+--   lease2 uuid := uuid_generate_v4();
+-- begin
+--
+--   insert into public.properties (id, user_id, name, type, address, city, postal_code, surface_m2, purchase_price, purchase_year, monthly_charges, property_tax, insurance_annual, loan_monthly, lmnp_regime)
+--   values
+--     (prop1, uid, 'Studio Montmartre', 'lmnp', '18 rue Lepic', 'Paris', '75018', 28, 185000, 2019, 120, 800, 350, 650, 'reel'),
+--     (prop2, uid, 'Appartement T3 Lyon', 'nu', '5 rue de la République', 'Lyon', '69002', 72, 320000, 2021, 280, 1800, 650, 1200, null),
+--     (prop3, uid, 'Studio Airbnb Nice', 'airbnb', '10 Promenade des Anglais', 'Nice', '06000', 30, 210000, 2022, 150, 900, 400, 750, null);
+--
+--   insert into public.leases (id, property_id, tenant_name, tenant_email, monthly_rent, charges, deposit, start_date, is_active)
+--   values
+--     (lease1, prop1, 'Marie Dupont', 'marie.dupont@email.fr', 850, 80, 1700, '2022-09-01', true),
+--     (lease2, prop2, 'Jean Martin', 'jean.martin@email.fr', 1350, 150, 2700, '2021-03-15', true);
+--
+--   insert into public.payments (lease_id, amount, due_date, paid_date, status)
+--   values
+--     (lease1, 930, '2025-01-05', '2025-01-03', 'paid'),
+--     (lease1, 930, '2025-02-05', '2025-02-04', 'paid'),
+--     (lease1, 930, '2025-03-05', null, 'late'),
+--     (lease2, 1500, '2025-01-05', '2025-01-05', 'paid'),
+--     (lease2, 1500, '2025-02-05', '2025-02-06', 'paid'),
+--     (lease2, 1500, '2025-03-05', null, 'pending');
+--
+-- end $$;
