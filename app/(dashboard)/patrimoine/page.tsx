@@ -54,7 +54,7 @@ function CompareBar({ label, actual, market, unite = '€' }: {
         {/* Barre marché */}
         <div className="absolute inset-y-0 left-0 right-0 flex items-center px-2 justify-between">
           <span className="text-xs text-slate-600 z-10">{market.toLocaleString('fr-FR')} {unite} marché</span>
-          <span className="text-xs font-semibold text-white z-10">{actual.toLocaleString('fr-FR')} {unite} actuel</span>
+          <span className="text-xs font-semibold text-[#0A0908] z-10">{actual.toLocaleString('fr-FR')} {unite} actuel</span>
         </div>
         {/* Indicateur position */}
         <div
@@ -124,7 +124,7 @@ export default function PatrimoinePage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-white">Valorisation patrimoine</h1>
+          <h1 className="font-display font-bold text-2xl text-[#0A0908]">Valorisation patrimoine</h1>
           <p className="text-slate-400 text-sm mt-1">Prix marché récents · Loyers de référence · Plus-value latente</p>
         </div>
         <button
@@ -138,10 +138,10 @@ export default function PatrimoinePage() {
       {/* Synthèse globale */}
       {totalEstime > 0 && (
         <GlassCard glow={plusValueLatente && plusValueLatente > 0 ? 'green' : 'red'}>
-          <h2 className="font-display font-semibold text-white mb-4">Synthèse portefeuille</h2>
+          <h2 className="font-display font-semibold text-[#0A0908] mb-4">Synthèse portefeuille</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Prix d\'acquisition', value: formatCurrency(totalAchat, true), color: 'text-white', sub: `${properties.length} biens` },
+              { label: 'Prix d\'acquisition', value: formatCurrency(totalAchat, true), color: 'text-[#0A0908]', sub: `${properties.length} biens` },
               { label: 'Valeur marché estimée', value: formatCurrency(totalEstime, true), color: 'text-blue-400', sub: new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) },
               {
                 label: 'Plus-value latente', color: plusValueLatente && plusValueLatente > 0 ? 'text-green-400' : 'text-red-400',
@@ -186,7 +186,7 @@ export default function PatrimoinePage() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <ProfileBadge type={prop.type} size="sm" />
-                    <h3 className="font-display font-semibold text-white">{prop.name}</h3>
+                    <h3 className="font-display font-semibold text-[#0A0908]">{prop.name}</h3>
                   </div>
                   <p className="flex items-center gap-1.5 text-xs text-slate-500">
                     <MapPin className="h-3 w-3" />
@@ -209,7 +209,7 @@ export default function PatrimoinePage() {
                 {/* Valeur achat */}
                 <div className="bg-white/[0.03] rounded-xl p-3">
                   <p className="text-xs text-slate-500 mb-1">Prix d'achat</p>
-                  <p className="text-base font-bold text-white">{prop.purchase_price ? formatCurrency(prop.purchase_price) : '—'}</p>
+                  <p className="text-base font-bold text-[#0A0908]">{prop.purchase_price ? formatCurrency(prop.purchase_price) : '—'}</p>
                   {prixM2Actuel && <p className="text-xs text-slate-600 mt-0.5">{prixM2Actuel.toLocaleString('fr-FR')} €/m²</p>}
                 </div>
 

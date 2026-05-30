@@ -19,7 +19,7 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
     const optimal = simulation.regime
     return (
       <GlassCard>
-        <h3 className="font-display font-semibold text-white mb-4">Simulation fiscale LMNP</h3>
+        <h3 className="font-display font-semibold text-[#0A0908] mb-4">Simulation fiscale LMNP</h3>
         <div className="grid grid-cols-2 gap-3">
           {[
             { label: 'Micro-BIC (50%)', regime: 'micro' as const, impot: simulation.micro_bic_impot, base: simulation.micro_bic_base },
@@ -41,7 +41,7 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
                 </div>
               )}
               <p className="text-xs text-slate-400 mb-2">{label}</p>
-              <p className="text-lg font-bold text-white">{formatCurrency(impot)}</p>
+              <p className="text-lg font-bold text-[#0A0908]">{formatCurrency(impot)}</p>
               <p className="text-xs text-slate-500 mt-0.5">Base : {formatCurrency(base)}</p>
             </div>
           ))}
@@ -62,7 +62,7 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
 
   return (
     <GlassCard>
-      <h3 className="font-display font-semibold text-white mb-4">Simulation fiscale Foncier</h3>
+      <h3 className="font-display font-semibold text-[#0A0908] mb-4">Simulation fiscale Foncier</h3>
       <div className="grid grid-cols-2 gap-3">
         {[
           { label: 'Micro-foncier (30%)', regime: 'micro' as const, impot: s.micro_impot },
@@ -84,7 +84,7 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
               </div>
             )}
             <p className="text-xs text-slate-400 mb-2">{label}</p>
-            <p className="text-lg font-bold text-white">{formatCurrency(impot)}</p>
+            <p className="text-lg font-bold text-[#0A0908]">{formatCurrency(impot)}</p>
           </div>
         ))}
       </div>

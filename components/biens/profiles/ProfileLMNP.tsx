@@ -38,7 +38,7 @@ export function ProfileLMNP({ property: p }: ProfileLMNPProps) {
         <div className="flex items-start justify-between mb-6">
           <div>
             <ProfileBadge type="lmnp" />
-            <h2 className="font-display font-bold text-2xl text-white mt-2">{p.name}</h2>
+            <h2 className="font-display font-bold text-2xl text-[#0A0908] mt-2">{p.name}</h2>
             <p className="text-slate-400 text-sm">{p.address}, {p.city}</p>
             <div className="mt-2">
               <NumeroFiscalBadge numero_fiscal={p.numero_fiscal ?? null} property_id={p.id} />
@@ -52,7 +52,7 @@ export function ProfileLMNP({ property: p }: ProfileLMNPProps) {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'Loyer mensuel', value: p.active_lease ? formatCurrency(p.active_lease.monthly_rent) : '—', color: 'text-white' },
+            { label: 'Loyer mensuel', value: p.active_lease ? formatCurrency(p.active_lease.monthly_rent) : '—', color: 'text-[#0A0908]' },
             { label: 'Rendement brut', value: p.gross_yield ? formatPct(p.gross_yield) : '—', color: 'text-green-400' },
             { label: 'Cashflow net', value: p.monthly_cashflow !== null ? formatCurrency(p.monthly_cashflow) : '—', color: (p.monthly_cashflow ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' },
             { label: 'Résultat BIC', value: formatCurrency(resultat), color: resultat <= 0 ? 'text-blue-400' : 'text-amber-400' },
@@ -67,7 +67,7 @@ export function ProfileLMNP({ property: p }: ProfileLMNPProps) {
 
       {/* Résultat BIC détaillé */}
       <GlassCard>
-        <h3 className="font-display font-semibold text-white mb-4">Résultat BIC {new Date().getFullYear()}</h3>
+        <h3 className="font-display font-semibold text-[#0A0908] mb-4">Résultat BIC {new Date().getFullYear()}</h3>
         <div className="space-y-3">
           {[
             { label: 'Recettes locatives', value: recettes, color: 'text-green-400' },
@@ -82,7 +82,7 @@ export function ProfileLMNP({ property: p }: ProfileLMNPProps) {
             </div>
           ))}
           <div className="flex items-center justify-between py-2">
-            <span className="text-sm font-semibold text-white">Résultat BIC</span>
+            <span className="text-sm font-semibold text-[#0A0908]">Résultat BIC</span>
             <span className={`text-base font-bold ${resultat <= 0 ? 'text-blue-400' : 'text-amber-400'}`}>
               {formatCurrency(resultat)}
             </span>

@@ -60,7 +60,7 @@ export default function CourriersPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <div>
-        <h1 className="font-display font-bold text-2xl text-white">Bibliothèque de courriers</h1>
+        <h1 className="font-display font-bold text-2xl text-[#0A0908]">Bibliothèque de courriers</h1>
         <p className="text-slate-400 text-sm mt-1">Modèles juridiques pré-remplis avec vos données</p>
       </div>
 
@@ -70,7 +70,7 @@ export default function CourriersPage() {
           {COURRIERS_TEMPLATES.map(tpl => (
             <button key={tpl.id} onClick={() => setSelected(tpl)}
               className={`w-full text-left p-4 rounded-xl border transition-all ${selected?.id === tpl.id ? 'border-blue-500/50 bg-blue-500/10' : 'border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.05]'}`}>
-              <p className="text-sm font-medium text-white">{tpl.titre}</p>
+              <p className="text-sm font-medium text-[#0A0908]">{tpl.titre}</p>
               <p className="text-xs text-slate-500 mt-0.5">{tpl.description}</p>
               <div className="flex items-center gap-2 mt-2">
                 {tpl.lrar && <span className="text-xs px-1.5 py-0.5 rounded bg-amber-400/10 border border-amber-400/20 text-amber-400">LRAR</span>}
@@ -85,12 +85,12 @@ export default function CourriersPage() {
           {selected ? (
             <>
               <GlassCard>
-                <h3 className="font-display font-semibold text-white mb-4">{selected.titre}</h3>
+                <h3 className="font-display font-semibold text-[#0A0908] mb-4">{selected.titre}</h3>
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <div>
                     <label className="block text-xs text-slate-400 mb-1">Bien</label>
                     <select value={selectedProp} onChange={e => setSelectedProp(e.target.value)}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none">
+                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
                       <option value="" className="bg-[#111E35]">— Sélectionner</option>
                       {properties.map(p => <option key={p.id} value={p.id} className="bg-[#111E35]">{p.name}</option>)}
                     </select>
@@ -98,7 +98,7 @@ export default function CourriersPage() {
                   <div>
                     <label className="block text-xs text-slate-400 mb-1">Bail / Locataire</label>
                     <select value={selectedLease} onChange={e => setSelectedLease(e.target.value)}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none">
+                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
                       <option value="" className="bg-[#111E35]">— Sélectionner</option>
                       {leases.map(l => <option key={l.id} value={l.id} className="bg-[#111E35]">{l.tenant_name}</option>)}
                     </select>
@@ -106,7 +106,7 @@ export default function CourriersPage() {
                   <div>
                     <label className="block text-xs text-slate-400 mb-1">Votre nom (bailleur)</label>
                     <input type="text" value={data.bailleur_nom ?? ''} onChange={e => setData(d => ({ ...d, bailleur_nom: e.target.value }))}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" />
+                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
                   </div>
                 </div>
 

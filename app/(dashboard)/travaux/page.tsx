@@ -246,7 +246,7 @@ export default function TravauxPage() {
       {/* En-tête */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-white">Travaux & Incidents</h1>
+          <h1 className="font-display font-bold text-2xl text-[#0A0908]">Travaux & Incidents</h1>
           <p className="text-slate-400 text-sm mt-1">
             {incidents.filter(i => i.status !== 'resolved').length} en cours · {incidents.length} au total
           </p>
@@ -310,7 +310,7 @@ export default function TravauxPage() {
         <div className="space-y-6">
           {Object.entries(byProperty).map(([pid, { name, items }]) => (
             <GlassCard key={pid}>
-              <h2 className="font-display font-semibold text-white mb-4 flex items-center gap-2">
+              <h2 className="font-display font-semibold text-[#0A0908] mb-4 flex items-center gap-2">
                 {name}
                 <span className="text-xs text-slate-500 font-normal">{items.length} ticket{items.length > 1 ? 's' : ''}</span>
               </h2>
@@ -336,7 +336,7 @@ export default function TravauxPage() {
                             {inc.nom_entreprise || <span className="text-slate-600">—</span>}
                           </td>
                           <td className="py-3 px-3">
-                            <p className="text-white font-medium">{inc.title}</p>
+                            <p className="text-[#0A0908] font-medium">{inc.title}</p>
                             {inc.description && (
                               <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{inc.description}</p>
                             )}
@@ -418,7 +418,7 @@ export default function TravauxPage() {
             <div className="sticky top-0 flex items-center justify-between px-6 py-4 bg-[#111E35] border-b border-white/[0.06] z-10">
               <div className="flex items-center gap-2">
                 <Wrench className="h-4 w-4 text-blue-400" />
-                <h2 className="font-display font-semibold text-white">Nouveau ticket travaux</h2>
+                <h2 className="font-display font-semibold text-[#0A0908]">Nouveau ticket travaux</h2>
               </div>
               <button onClick={() => { setShowAdd(false); setForm(FORM_INITIAL); setPendingFile(null) }}
                 className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10]">
@@ -433,7 +433,7 @@ export default function TravauxPage() {
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Bien concerné *</label>
                   <select value={form.property_id} onChange={e => set('property_id', e.target.value)} required
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none focus:border-blue-500/50">
+                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none focus:border-blue-500/50">
                     <option value="" className="bg-[#111E35]">Sélectionner un bien</option>
                     {properties.map(p => <option key={p.id} value={p.id} className="bg-[#111E35]">{p.name}</option>)}
                   </select>
@@ -441,7 +441,7 @@ export default function TravauxPage() {
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Statut</label>
                   <select value={form.status} onChange={e => set('status', e.target.value)}
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none">
+                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
                     <option value="open" className="bg-[#111E35]">Planifié</option>
                     <option value="in_progress" className="bg-[#111E35]">En cours</option>
                     <option value="resolved" className="bg-[#111E35]">Terminé</option>
@@ -454,17 +454,17 @@ export default function TravauxPage() {
                 <div className="col-span-2">
                   <label className="block text-xs text-slate-400 mb-1">Titre des travaux *</label>
                   <input type="text" value={form.title} onChange={e => set('title', e.target.value)} required
-                    placeholder="Ex : Remplacement chaudière" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="Ex : Remplacement chaudière" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Date des travaux</label>
                   <input type="date" value={form.date_travaux} onChange={e => set('date_travaux', e.target.value)}
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none focus:border-blue-500/50" />
+                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Entreprise / Artisan</label>
                   <input type="text" value={form.nom_entreprise} onChange={e => set('nom_entreprise', e.target.value)}
-                    placeholder="Ex : Plomberie Dupont" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="Ex : Plomberie Dupont" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
               </div>
 
@@ -472,7 +472,7 @@ export default function TravauxPage() {
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Description</label>
                 <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2}
-                  placeholder="Détails des travaux, problème constaté..." className="w-full px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none resize-none focus:border-blue-500/50" />
+                  placeholder="Détails des travaux, problème constaté..." className="w-full px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none resize-none focus:border-blue-500/50" />
               </div>
 
               {/* Montants */}
@@ -480,17 +480,17 @@ export default function TravauxPage() {
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Coût estimé (€)</label>
                   <input type="number" step="0.01" value={form.cout_estime} onChange={e => set('cout_estime', e.target.value)}
-                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Coût payé (€)</label>
                   <input type="number" step="0.01" value={form.cout_paye} onChange={e => set('cout_paye', e.target.value)}
-                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">N° facture</label>
                   <input type="text" value={form.numero_facture} onChange={e => set('numero_facture', e.target.value)}
-                    placeholder="FAC-2026-001" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="FAC-2026-001" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
               </div>
 
@@ -572,7 +572,7 @@ export default function TravauxPage() {
               {/* Actions */}
               <div className="flex gap-3 pt-2 border-t border-white/[0.06]">
                 <button type="button" onClick={() => { setShowAdd(false); setForm(FORM_INITIAL); setPendingFile(null) }}
-                  className="flex-1 h-10 rounded-lg border border-white/[0.10] text-slate-400 hover:text-white text-sm transition-all">
+                  className="flex-1 h-10 rounded-lg border border-white/[0.10] text-slate-400 hover:text-[#0A0908] text-sm transition-all">
                   Annuler
                 </button>
                 <button type="submit" disabled={saving}

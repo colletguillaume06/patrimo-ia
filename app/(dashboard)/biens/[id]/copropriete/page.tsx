@@ -75,15 +75,15 @@ export default function CopropriétéPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <Link href={`/biens/${id}`} className="text-slate-400 hover:text-white text-sm flex items-center gap-1"><ChevronLeft className="h-4 w-4" /> {property?.name}</Link>
+        <Link href={`/biens/${id}`} className="text-slate-400 hover:text-[#0A0908] text-sm flex items-center gap-1"><ChevronLeft className="h-4 w-4" /> {property?.name}</Link>
         <span className="text-slate-600">/</span>
-        <h1 className="font-display font-bold text-xl text-white">Copropriété</h1>
+        <h1 className="font-display font-bold text-xl text-[#0A0908]">Copropriété</h1>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: `Charges ${now.getFullYear()}`, value: formatCurrency(totalAnnee), color: 'text-white' },
+          { label: `Charges ${now.getFullYear()}`, value: formatCurrency(totalAnnee), color: 'text-[#0A0908]' },
           { label: 'Non payé', value: formatCurrency(nonPaye), color: 'text-amber-400' },
           { label: 'Charges trimestrielles', value: property?.copro_charges_trimestrielles ? formatCurrency(property.copro_charges_trimestrielles) : '—', color: 'text-blue-400' },
         ].map(({ label, value, color }) => (
@@ -96,7 +96,7 @@ export default function CopropriétéPage() {
 
       {/* Syndic */}
       <GlassCard>
-        <h2 className="font-display font-semibold text-white mb-4">Informations syndic</h2>
+        <h2 className="font-display font-semibold text-[#0A0908] mb-4">Informations syndic</h2>
         <form onSubmit={saveSyndic} className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             {[
@@ -111,7 +111,7 @@ export default function CopropriétéPage() {
                 <label className="block text-xs text-slate-400 mb-1">{label}</label>
                 <input type={type} placeholder={placeholder} value={(syndicForm as any)[key]}
                   onChange={e => setSyndicForm(f => ({ ...f, [key]: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none" />
               </div>
             ))}
           </div>
@@ -122,7 +122,7 @@ export default function CopropriétéPage() {
       {/* Appels de fonds */}
       <GlassCard>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display font-semibold text-white">Appels de fonds</h2>
+          <h2 className="font-display font-semibold text-[#0A0908]">Appels de fonds</h2>
           <button onClick={() => setShowAdd(true)} className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-medium">
             <Plus className="h-3.5 w-3.5" /> Ajouter
           </button>
@@ -132,10 +132,10 @@ export default function CopropriétéPage() {
             {appels.map(a => (
               <div key={a.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.02] transition-colors">
                 <button onClick={() => togglePaye(a)} className={`h-5 w-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${a.paye ? 'bg-green-400 border-green-400' : 'border-slate-600'}`}>
-                  {a.paye && <CheckCircle2 className="h-3 w-3 text-white" />}
+                  {a.paye && <CheckCircle2 className="h-3 w-3 text-[#0A0908]" />}
                 </button>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white">{a.description || a.type.replace('_', ' ')}</p>
+                  <p className="text-sm text-[#0A0908]">{a.description || a.type.replace('_', ' ')}</p>
                   <p className="text-xs text-slate-500">{format(new Date(a.date_appel), 'dd/MM/yyyy')} · {a.type === 'charges_courantes' ? 'Charges courantes' : a.type === 'travaux_votes' ? 'Travaux votés' : 'Fonds travaux'}</p>
                 </div>
                 <p className={`text-sm font-semibold ${a.paye ? 'text-green-400' : 'text-amber-400'}`}>{formatCurrency(a.montant)}</p>
@@ -150,22 +150,22 @@ export default function CopropriétéPage() {
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAdd(false)} />
           <div className="relative w-full max-w-md bg-[#111E35] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-display font-semibold text-white">Appel de fonds</h2>
+              <h2 className="font-display font-semibold text-[#0A0908]">Appel de fonds</h2>
               <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center"><X className="h-4 w-4 text-slate-400" /></button>
             </div>
             <form onSubmit={addAppel} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-xs text-slate-400 mb-1">Date *</label><input type="date" value={appelForm.date_appel} onChange={e => setAppelForm(f => ({ ...f, date_appel: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" /></div>
-                <div><label className="block text-xs text-slate-400 mb-1">Montant (€) *</label><input type="number" value={appelForm.montant} onChange={e => setAppelForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" /></div>
+                <div><label className="block text-xs text-slate-400 mb-1">Date *</label><input type="date" value={appelForm.date_appel} onChange={e => setAppelForm(f => ({ ...f, date_appel: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" /></div>
+                <div><label className="block text-xs text-slate-400 mb-1">Montant (€) *</label><input type="number" value={appelForm.montant} onChange={e => setAppelForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" /></div>
               </div>
               <div><label className="block text-xs text-slate-400 mb-1">Type</label>
-                <select value={appelForm.type} onChange={e => setAppelForm(f => ({ ...f, type: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none">
+                <select value={appelForm.type} onChange={e => setAppelForm(f => ({ ...f, type: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
                   <option value="charges_courantes" className="bg-[#111E35]">Charges courantes</option>
                   <option value="travaux_votes" className="bg-[#111E35]">Travaux votés</option>
                   <option value="fonds_travaux" className="bg-[#111E35]">Fonds travaux</option>
                 </select>
               </div>
-              <div><label className="block text-xs text-slate-400 mb-1">Description</label><input type="text" value={appelForm.description} onChange={e => setAppelForm(f => ({ ...f, description: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" /></div>
+              <div><label className="block text-xs text-slate-400 mb-1">Description</label><input type="text" value={appelForm.description} onChange={e => setAppelForm(f => ({ ...f, description: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" /></div>
               <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50">Ajouter</button>
             </form>
           </div>

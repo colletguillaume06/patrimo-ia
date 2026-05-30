@@ -68,19 +68,19 @@ export default function FiscalPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-white">Tableau fiscal {year}</h1>
+          <h1 className="font-display font-bold text-2xl text-[#0A0908]">Tableau fiscal {year}</h1>
           <p className="text-slate-400 text-sm mt-1">Récapitulatif déclaratif par régime</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <label className="text-xs text-slate-400">TMI :</label>
             <select value={tmi} onChange={e => setTmi(Number(e.target.value))}
-              className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none">
+              className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
               {[11, 30, 41, 45].map(r => <option key={r} value={r} className="bg-[#111E35]">{r}%</option>)}
             </select>
           </div>
           <button onClick={handleExport}
-            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-white/[0.06] border border-white/[0.08] text-slate-300 hover:text-white text-sm transition-all">
+            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-white/[0.06] border border-white/[0.08] text-slate-300 hover:text-[#0A0908] text-sm transition-all">
             <Download className="h-4 w-4" /> Export CSV
           </button>
         </div>
@@ -88,7 +88,7 @@ export default function FiscalPage() {
 
       {/* Synthèse globale */}
       <GlassCard glow="blue">
-        <h2 className="font-display font-semibold text-white mb-4">Synthèse {year}</h2>
+        <h2 className="font-display font-semibold text-[#0A0908] mb-4">Synthèse {year}</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: 'Revenus bruts', value: formatCurrency(totalRevenusBruts), color: 'text-green-400' },
@@ -113,7 +113,7 @@ export default function FiscalPage() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <ProfileBadge type="lmnp" />
-                  <h3 className="font-display font-semibold text-white">LMNP — Formulaire 2042-C-PRO</h3>
+                  <h3 className="font-display font-semibold text-[#0A0908]">LMNP — Formulaire 2042-C-PRO</h3>
                 </div>
                 <FileText className="h-4 w-4 text-slate-500" />
               </div>
@@ -128,7 +128,7 @@ export default function FiscalPage() {
                   return (
                     <div key={prop.id} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                       <div className="flex items-center gap-3 mb-3">
-                        <p className="text-sm font-medium text-white">{prop.name}</p>
+                        <p className="text-sm font-medium text-[#0A0908]">{prop.name}</p>
                         {prop.numero_fiscal && (
                           <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-xs font-mono text-slate-400">
                             # {prop.numero_fiscal}
@@ -148,7 +148,7 @@ export default function FiscalPage() {
                         </div>
                         <div>
                           <p className="text-xs text-slate-500">Régime optimal</p>
-                          <p className="text-sm font-semibold text-white uppercase">{sim.regime}</p>
+                          <p className="text-sm font-semibold text-[#0A0908] uppercase">{sim.regime}</p>
                         </div>
                         <div>
                           <p className="text-xs text-slate-500">Impôt estimé</p>
@@ -177,7 +177,7 @@ export default function FiscalPage() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <ProfileBadge type="nu" />
-                  <h3 className="font-display font-semibold text-white">Foncier nu — Formulaire 2044</h3>
+                  <h3 className="font-display font-semibold text-[#0A0908]">Foncier nu — Formulaire 2044</h3>
                 </div>
               </div>
               <div className="space-y-3">
@@ -190,7 +190,7 @@ export default function FiscalPage() {
                   return (
                     <div key={prop.id} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                       <div className="flex items-center gap-3 mb-3">
-                        <p className="text-sm font-medium text-white">{prop.name}</p>
+                        <p className="text-sm font-medium text-[#0A0908]">{prop.name}</p>
                         {prop.numero_fiscal && (
                           <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-xs font-mono text-slate-400">
                             # {prop.numero_fiscal}
@@ -214,7 +214,7 @@ export default function FiscalPage() {
                         </div>
                         <div>
                           <p className="text-xs text-slate-500">Régime optimal</p>
-                          <p className="text-sm font-semibold text-white uppercase">{sim.regime_optimal}</p>
+                          <p className="text-sm font-semibold text-[#0A0908] uppercase">{sim.regime_optimal}</p>
                         </div>
                       </div>
                       {sim.deficit_foncier && (
@@ -241,7 +241,7 @@ export default function FiscalPage() {
             <GlassCard>
               <div className="flex items-center gap-2 mb-4">
                 <ProfileBadge type="sci" />
-                <h3 className="font-display font-semibold text-white">SCI — Formulaire 2072</h3>
+                <h3 className="font-display font-semibold text-[#0A0908]">SCI — Formulaire 2072</h3>
               </div>
               {propData.filter(p => p.type === 'sci').map(prop => {
                 const sim = calculateSciSimulation({
@@ -252,7 +252,7 @@ export default function FiscalPage() {
                 return (
                   <div key={prop.id} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                     <div className="flex items-center gap-3 mb-3">
-                      <p className="text-sm font-medium text-white">{prop.sci_name ?? prop.name}</p>
+                      <p className="text-sm font-medium text-[#0A0908]">{prop.sci_name ?? prop.name}</p>
                       {prop.numero_fiscal && (
                         <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-xs font-mono text-slate-400">
                           # {prop.numero_fiscal}
@@ -262,7 +262,7 @@ export default function FiscalPage() {
                     <div className="grid grid-cols-3 gap-3">
                       <div>
                         <p className="text-xs text-slate-500">Résultat comptable</p>
-                        <p className="text-sm font-semibold text-white">{formatCurrency(sim.resultat_comptable)}</p>
+                        <p className="text-sm font-semibold text-[#0A0908]">{formatCurrency(sim.resultat_comptable)}</p>
                       </div>
                       <div>
                         <p className="text-xs text-slate-500">{prop.sci_regime === 'is' ? 'IS dû' : 'Quote-part IR'}</p>

@@ -65,9 +65,9 @@ export default function DevisPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <Link href="/travaux" className="text-slate-400 hover:text-white text-sm flex items-center gap-1"><ChevronLeft className="h-4 w-4" /> Travaux</Link>
+        <Link href="/travaux" className="text-slate-400 hover:text-[#0A0908] text-sm flex items-center gap-1"><ChevronLeft className="h-4 w-4" /> Travaux</Link>
         <span className="text-slate-600">/</span>
-        <h1 className="font-display font-bold text-xl text-white">Comparateur de devis</h1>
+        <h1 className="font-display font-bold text-xl text-[#0A0908]">Comparateur de devis</h1>
       </div>
 
       {loading ? (
@@ -85,7 +85,7 @@ export default function DevisPage() {
           <GlassCard key={inc.id}>
             <div className="flex items-start justify-between mb-4">
               <div>
-                <p className="text-sm font-semibold text-white">{inc.title}</p>
+                <p className="text-sm font-semibold text-[#0A0908]">{inc.title}</p>
                 <p className="text-xs text-slate-500">{inc.property?.name} · {incDevis.length} devis</p>
               </div>
               <button onClick={() => setShowAdd(inc.id)}
@@ -119,7 +119,7 @@ export default function DevisPage() {
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium text-white">{d.entreprise}</p>
+                          <p className="text-sm font-medium text-[#0A0908]">{d.entreprise}</p>
                           {isRetenu && <span className="text-xs text-green-400 bg-green-400/10 border border-green-400/20 px-1.5 py-0.5 rounded-full">Retenu</span>}
                           {isExpire && !isRetenu && <span className="text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full">Expiré</span>}
                         </div>
@@ -130,7 +130,7 @@ export default function DevisPage() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-base font-bold text-white">{formatCurrency(d.montant)}</p>
+                        <p className="text-base font-bold text-[#0A0908]">{formatCurrency(d.montant)}</p>
                         {diff > 0 && !isRefuse && (
                           <p className="text-xs text-red-400">+{diff.toFixed(1)}% vs le moins cher</p>
                         )}
@@ -148,7 +148,7 @@ export default function DevisPage() {
                 {incDevis.length >= 2 && (
                   <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.06]">
                     <p className="text-xs text-slate-400">
-                      Écart entre devis : <span className="text-white font-semibold">{formatCurrency(incDevis[incDevis.length - 1].montant - incDevis[0].montant)}</span>
+                      Écart entre devis : <span className="text-[#0A0908] font-semibold">{formatCurrency(incDevis[incDevis.length - 1].montant - incDevis[0].montant)}</span>
                       {' '}({((incDevis[incDevis.length - 1].montant - incDevis[0].montant) / incDevis[0].montant * 100).toFixed(1)}%)
                     </p>
                   </div>
@@ -160,10 +160,10 @@ export default function DevisPage() {
               <div className="mt-4 pt-4 border-t border-white/[0.06]">
                 <form onSubmit={e => handleAdd(e, inc.id)} className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
-                    <div><label className="block text-xs text-slate-400 mb-1">Entreprise *</label><input type="text" value={form.entreprise} onChange={e => setForm(f => ({ ...f, entreprise: e.target.value }))} required className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" /></div>
-                    <div><label className="block text-xs text-slate-400 mb-1">Montant (€) *</label><input type="number" value={form.montant} onChange={e => setForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" /></div>
-                    <div><label className="block text-xs text-slate-400 mb-1">Date réception</label><input type="date" value={form.date_reception} onChange={e => setForm(f => ({ ...f, date_reception: e.target.value }))} className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" /></div>
-                    <div><label className="block text-xs text-slate-400 mb-1">Délai exécution (jours)</label><input type="number" value={form.delai_execution_jours} onChange={e => setForm(f => ({ ...f, delai_execution_jours: e.target.value }))} className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" /></div>
+                    <div><label className="block text-xs text-slate-400 mb-1">Entreprise *</label><input type="text" value={form.entreprise} onChange={e => setForm(f => ({ ...f, entreprise: e.target.value }))} required className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" /></div>
+                    <div><label className="block text-xs text-slate-400 mb-1">Montant (€) *</label><input type="number" value={form.montant} onChange={e => setForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" /></div>
+                    <div><label className="block text-xs text-slate-400 mb-1">Date réception</label><input type="date" value={form.date_reception} onChange={e => setForm(f => ({ ...f, date_reception: e.target.value }))} className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" /></div>
+                    <div><label className="block text-xs text-slate-400 mb-1">Délai exécution (jours)</label><input type="number" value={form.delai_execution_jours} onChange={e => setForm(f => ({ ...f, delai_execution_jours: e.target.value }))} className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" /></div>
                   </div>
                   <div className="flex gap-2">
                     <button type="button" onClick={() => setShowAdd(null)} className="flex-1 h-8 rounded-lg border border-white/[0.10] text-slate-400 text-xs">Annuler</button>

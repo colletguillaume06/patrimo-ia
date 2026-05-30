@@ -28,7 +28,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       </div>
       <div className="max-w-[85%] px-4 py-3 rounded-2xl rounded-tl-sm bg-white/[0.06] border border-white/[0.08] text-sm text-slate-200">
         {message.content ? (
-          <div className="prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:text-white prose-strong:text-white">
+          <div className="prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:text-[#0A0908] prose-strong:text-[#0A0908]">
             {message.content.split('\n').map((line, i) => (
               <span key={i}>
                 {line}

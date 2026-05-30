@@ -43,7 +43,7 @@ export function RelanceModal({ payment, onClose, onSuccess }: RelanceModalProps)
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full max-w-md bg-[#111E35] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-display font-semibold text-white">Envoyer une relance</h2>
+          <h2 className="font-display font-semibold text-[#0A0908]">Envoyer une relance</h2>
           <button onClick={onClose} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10]">
             <X className="h-4 w-4 text-slate-400" />
           </button>
@@ -52,12 +52,12 @@ export function RelanceModal({ payment, onClose, onSuccess }: RelanceModalProps)
         <div className="space-y-4 mb-6">
           <div className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
             <p className="text-xs text-slate-500 mb-1">Locataire</p>
-            <p className="text-sm font-medium text-white">{payment.lease?.tenant_name ?? 'N/A'}</p>
+            <p className="text-sm font-medium text-[#0A0908]">{payment.lease?.tenant_name ?? 'N/A'}</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
               <p className="text-xs text-slate-500 mb-0.5">Montant dû</p>
-              <p className="text-sm font-semibold text-white">{formatCurrency(payment.amount)}</p>
+              <p className="text-sm font-semibold text-[#0A0908]">{formatCurrency(payment.amount)}</p>
             </div>
             <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
               <p className="text-xs text-slate-500 mb-0.5">Relance n°</p>
@@ -74,7 +74,7 @@ export function RelanceModal({ payment, onClose, onSuccess }: RelanceModalProps)
         </div>
 
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 h-10 rounded-lg border border-white/[0.10] text-slate-400 hover:text-white text-sm transition-all">
+          <button onClick={onClose} className="flex-1 h-10 rounded-lg border border-white/[0.10] text-slate-400 hover:text-[#0A0908] text-sm transition-all">
             Annuler
           </button>
           <button

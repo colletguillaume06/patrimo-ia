@@ -115,7 +115,7 @@ export default function ExportsPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="font-display font-bold text-2xl text-white">Exports comptables</h1>
+        <h1 className="font-display font-bold text-2xl text-[#0A0908]">Exports comptables</h1>
         <p className="text-slate-400 text-sm mt-1">Données prêtes pour votre expert-comptable, encodage UTF-8</p>
       </div>
 
@@ -123,7 +123,7 @@ export default function ExportsPage() {
       <GlassCard className="p-5">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-white mb-1">Année fiscale</p>
+            <p className="text-sm font-medium text-[#0A0908] mb-1">Année fiscale</p>
             <div className="flex gap-2">
               {YEARS.map(y => (
                 <button
@@ -132,7 +132,7 @@ export default function ExportsPage() {
                   className={`h-9 px-4 rounded-lg text-sm font-medium transition-all ${
                     year === y
                       ? 'bg-blue-500 text-white'
-                      : 'bg-white/[0.05] border border-white/[0.08] text-slate-400 hover:text-white hover:bg-white/[0.08]'
+                      : 'bg-white/[0.05] border border-white/[0.08] text-slate-400 hover:text-[#0A0908] hover:bg-white/[0.08]'
                   }`}
                 >
                   {y}
@@ -144,7 +144,7 @@ export default function ExportsPage() {
           <button
             onClick={downloadAll}
             disabled={loadingZip}
-            className="flex items-center gap-2 h-11 px-6 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white text-sm font-semibold transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20 flex-shrink-0"
+            className="flex items-center gap-2 h-11 px-6 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-[#0A0908] text-sm font-semibold transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20 flex-shrink-0"
           >
             {loadingZip
               ? <><Loader2 className="h-4 w-4 animate-spin" /> Génération ZIP...</>
@@ -165,7 +165,7 @@ export default function ExportsPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-4 mb-1">
                   <div>
-                    <p className="text-sm font-semibold text-white">{exp.label}</p>
+                    <p className="text-sm font-semibold text-[#0A0908]">{exp.label}</p>
                     <p className="text-xs text-slate-400 mt-0.5">{exp.description}</p>
                   </div>
                   <button
@@ -204,7 +204,7 @@ export default function ExportsPage() {
             <Sparkles className="h-5 w-5 text-blue-400" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">Données de démonstration</p>
+            <p className="text-sm font-semibold text-[#0A0908]">Données de démonstration</p>
             <p className="text-xs text-slate-400 mt-0.5">3 biens fictifs avec loyers, travaux et dépenses pour explorer l'app</p>
           </div>
         </div>

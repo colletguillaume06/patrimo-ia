@@ -82,7 +82,7 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full max-w-lg bg-[#111E35] border border-white/[0.08] rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-display font-semibold text-white text-lg">
+          <h2 className="font-display font-semibold text-[#0A0908] text-lg">
             {step === 'type' ? 'Type de bien' : 'Informations'}
           </h2>
           <button onClick={onClose} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10] transition-colors">
@@ -100,7 +100,7 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
               >
                 <ProfileBadge type={value} />
                 <div>
-                  <p className="text-sm font-medium text-white">{label}</p>
+                  <p className="text-sm font-medium text-[#0A0908]">{label}</p>
                   <p className="text-xs text-slate-500">{desc}</p>
                 </div>
               </button>
@@ -136,7 +136,7 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
                   value={(form as any)[key]}
                   onChange={e => set(key, e.target.value)}
                   required={required}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 transition-all"
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 transition-all"
                 />
               </div>
             ))}
@@ -157,7 +157,7 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
                 placeholder="Ex : 0012345678901"
                 value={form.numero_fiscal}
                 onChange={e => set('numero_fiscal', e.target.value)}
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 transition-all font-mono"
+                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 transition-all font-mono"
               />
             </div>
 
@@ -165,7 +165,7 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
               <button
                 type="button"
                 onClick={() => setStep('type')}
-                className="flex-1 h-10 rounded-lg border border-white/[0.10] text-slate-400 hover:text-white text-sm transition-all"
+                className="flex-1 h-10 rounded-lg border border-white/[0.10] text-slate-400 hover:text-[#0A0908] text-sm transition-all"
               >
                 Retour
               </button>

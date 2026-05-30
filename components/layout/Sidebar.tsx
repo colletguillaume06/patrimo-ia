@@ -48,7 +48,7 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
       <div className="px-5 py-5 border-b border-[#EEECE8]">
         <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[#1B4FD8] to-[#0891B2] flex items-center justify-center shadow-sm">
-            <Sparkles className="h-4 w-4 text-white" />
+            <Sparkles className="h-4 w-4 text-[#0A0908]" />
           </div>
           <span className="font-display font-bold text-[16px] text-[#0A0908] tracking-tight">
             Propilot<span className="text-[#1B4FD8]"> AI</span>
@@ -101,7 +101,7 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
           className={cn(
             'flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-semibold transition-all duration-200',
             isActive('/copilot')
-              ? 'bg-[#1B4FD8] text-white'
+              ? 'bg-[#1B4FD8] text-[#0A0908]'
               : 'bg-gradient-to-r from-[#1B4FD8] to-[#0891B2] text-white shadow-md shadow-blue-200 hover:shadow-lg hover:shadow-blue-300 hover:-translate-y-0.5'
           )}>
           <Sparkles className="h-[18px] w-[18px]" />

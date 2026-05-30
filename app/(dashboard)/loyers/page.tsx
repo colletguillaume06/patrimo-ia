@@ -62,7 +62,7 @@ export default function LoyersPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="font-display font-bold text-2xl text-white">Suivi des loyers</h1>
+        <h1 className="font-display font-bold text-2xl text-[#0A0908]">Suivi des loyers</h1>
         <p className="text-slate-400 text-sm mt-1">Historique et gestion des paiements</p>
       </div>
 
@@ -81,7 +81,7 @@ export default function LoyersPage() {
       </div>
 
       <GlassCard>
-        <h2 className="font-display font-semibold text-white mb-4">Paiements</h2>
+        <h2 className="font-display font-semibold text-[#0A0908] mb-4">Paiements</h2>
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => <div key={i} className="h-14 rounded-lg bg-white/[0.03] animate-pulse" />)}
@@ -97,7 +97,7 @@ export default function LoyersPage() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-medium text-white">{pay.lease?.tenant_name ?? 'N/A'}</span>
+                    <span className="text-sm font-medium text-[#0A0908]">{pay.lease?.tenant_name ?? 'N/A'}</span>
                     <span className="text-xs text-slate-600">·</span>
                     <span className="text-xs text-slate-500">{pay.lease?.property?.name ?? 'Bien supprimé'}</span>
                   </div>
@@ -106,7 +106,7 @@ export default function LoyersPage() {
                     {pay.paid_date && ` · Payé le ${format(new Date(pay.paid_date), 'dd MMM', { locale: fr })}`}
                   </p>
                 </div>
-                <p className="text-sm font-semibold text-white w-24 text-right">{formatCurrency(pay.amount)}</p>
+                <p className="text-sm font-semibold text-[#0A0908] w-24 text-right">{formatCurrency(pay.amount)}</p>
                 <StatusBadge status={pay.status} />
                 <div className="flex items-center gap-2">
                   {pay.status !== 'paid' && (

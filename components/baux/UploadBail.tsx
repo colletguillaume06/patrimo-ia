@@ -66,7 +66,7 @@ export function UploadBail({ propertyId, onSuccess }: UploadBailProps) {
           <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-3">
             <FileText className="h-6 w-6 text-blue-400" />
           </div>
-          <p className="text-sm font-medium text-white mb-1">Déposez votre bail PDF</p>
+          <p className="text-sm font-medium text-[#0A0908] mb-1">Déposez votre bail PDF</p>
           <p className="text-xs text-slate-500 mb-4">L'IA extraira automatiquement loyer, charges, durée, index...</p>
           <label className="cursor-pointer flex items-center gap-2 h-9 px-4 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-400 text-sm font-medium transition-all">
             <Upload className="h-4 w-4" />

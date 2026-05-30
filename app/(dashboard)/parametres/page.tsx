@@ -33,19 +33,19 @@ export default function ParametresPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
-        <h1 className="font-display font-bold text-2xl text-white">Paramètres</h1>
+        <h1 className="font-display font-bold text-2xl text-[#0A0908]">Paramètres</h1>
         <p className="text-slate-400 text-sm mt-1">Vos informations personnelles et coordonnées bancaires</p>
       </div>
 
       <GlassCard>
-        <h2 className="font-display font-semibold text-white mb-4 flex items-center gap-2">
+        <h2 className="font-display font-semibold text-[#0A0908] mb-4 flex items-center gap-2">
           <Settings className="h-4 w-4 text-slate-400" /> Profil
         </h2>
         <form onSubmit={handleSave} className="space-y-3">
           <div>
             <label className="block text-xs text-slate-400 mb-1">Nom complet</label>
             <input type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))}
-              className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" />
+              className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
           </div>
 
           <div className="pt-3 border-t border-white/[0.06]">
@@ -59,7 +59,7 @@ export default function ParametresPage() {
                 <label className="block text-xs text-slate-400 mb-1">{label}</label>
                 <input type="text" placeholder={placeholder} value={(form as any)[key]}
                   onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none font-mono" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none font-mono" />
               </div>
             ))}
           </div>

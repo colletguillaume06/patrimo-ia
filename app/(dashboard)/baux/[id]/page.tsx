@@ -156,7 +156,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <Link href="/baux" className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors">
+      <Link href="/baux" className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-[#0A0908] transition-colors">
         <ChevronLeft className="h-4 w-4" /> Retour aux baux
       </Link>
 
@@ -164,9 +164,9 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
       <GlassCard className="p-5">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="font-display font-bold text-xl text-white">{lease.tenant_name}</h1>
+            <h1 className="font-display font-bold text-xl text-[#0A0908]">{lease.tenant_name}</h1>
             <p className="text-slate-400 text-sm">{lease.property?.name} · {lease.property?.city}</p>
-            <p className="text-white font-semibold mt-1">{formatCurrency(lease.monthly_rent)}/mois</p>
+            <p className="text-[#0A0908] font-semibold mt-1">{formatCurrency(lease.monthly_rent)}/mois</p>
           </div>
           <div className="text-right text-sm text-slate-400">
             <p>Début : {format(new Date(lease.start_date), 'dd/MM/yyyy')}</p>
@@ -190,7 +190,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
       {/* Dépôt de garantie */}
       <GlassCard>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display font-semibold text-white flex items-center gap-2">
+          <h2 className="font-display font-semibold text-[#0A0908] flex items-center gap-2">
             <Euro className="h-4 w-4 text-blue-400" /> Dépôt de garantie
           </h2>
           <button onClick={() => setShowDGForm(v => !v)} className="text-xs text-blue-400 hover:text-blue-300">
@@ -200,7 +200,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
           {[
-            { label: 'Montant DG', value: formatCurrency(lease.deposit || 0), color: 'text-white' },
+            { label: 'Montant DG', value: formatCurrency(lease.deposit || 0), color: 'text-[#0A0908]' },
             { label: 'Montant retenu', value: lease.depot_garantie_montant_retenu > 0 ? formatCurrency(lease.depot_garantie_montant_retenu) : '—', color: 'text-red-400' },
             { label: 'Restitué', value: lease.depot_garantie_montant_retenu > 0 ? formatCurrency((lease.deposit || 0) - (lease.depot_garantie_montant_retenu || 0)) : '—', color: 'text-green-400' },
             { label: 'Statut', value: dgStatut.message, color: dgStatut.statut === 'restitue' ? 'text-green-400' : dgStatut.statut === 'urgent' || dgStatut.statut === 'depasse' ? 'text-red-400' : 'text-amber-400' },
@@ -225,13 +225,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                 <label className="block text-xs text-slate-400 mb-1">Date état des lieux de sortie</label>
                 <input type="date" value={dgForm.etat_lieux_sortie_date}
                   onChange={e => setDgForm(f => ({ ...f, etat_lieux_sortie_date: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Date restitution effective</label>
                 <input type="date" value={dgForm.depot_garantie_restitue_le}
                   onChange={e => setDgForm(f => ({ ...f, depot_garantie_restitue_le: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
               </div>
             </div>
             <label className="flex items-center gap-2 cursor-pointer">
@@ -250,13 +250,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                 <label className="block text-xs text-slate-400 mb-1">Montant retenu (€)</label>
                 <input type="number" value={dgForm.depot_garantie_montant_retenu}
                   onChange={e => setDgForm(f => ({ ...f, depot_garantie_montant_retenu: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Motif de la retenue</label>
                 <input type="text" placeholder="Ex: Dégradation peinture" value={dgForm.depot_garantie_motif_retenu}
                   onChange={e => setDgForm(f => ({ ...f, depot_garantie_motif_retenu: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none" />
               </div>
             </div>
             <div className="flex gap-3">
@@ -270,7 +270,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                 toast.success('Courrier de restitution copié !')
                 setShowCourrier(true)
               }}
-                className="flex-1 h-9 rounded-lg bg-white/[0.06] border border-white/[0.10] text-slate-300 text-sm hover:text-white transition-all flex items-center justify-center gap-2">
+                className="flex-1 h-9 rounded-lg bg-white/[0.06] border border-white/[0.10] text-slate-300 text-sm hover:text-[#0A0908] transition-all flex items-center justify-center gap-2">
                 <Copy className="h-3.5 w-3.5" /> Générer courrier restitution
               </button>
             </div>
@@ -281,7 +281,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
       {/* Garant */}
       <GlassCard>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display font-semibold text-white flex items-center gap-2">
+          <h2 className="font-display font-semibold text-[#0A0908] flex items-center gap-2">
             <Shield className="h-4 w-4 text-cyan-400" /> Garant / Caution
           </h2>
           <button onClick={() => setShowGarantForm(v => !v)} className="text-xs text-blue-400 hover:text-blue-300">
@@ -293,7 +293,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-white/[0.03] rounded-xl p-3">
               <p className="text-xs text-slate-500 mb-1">Garant</p>
-              <p className="text-sm font-medium text-white">{lease.garant_prenom} {lease.garant_nom}</p>
+              <p className="text-sm font-medium text-[#0A0908]">{lease.garant_prenom} {lease.garant_nom}</p>
               <p className="text-xs text-slate-500 mt-0.5">{lease.garant_lien}</p>
             </div>
             <div className="bg-white/[0.03] rounded-xl p-3">
@@ -328,13 +328,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                   <label className="block text-xs text-slate-400 mb-1">{label}</label>
                   <input type={type} placeholder={placeholder} value={(garantForm as any)[key]}
                     onChange={e => setGarantForm(f => ({ ...f, [key]: e.target.value }))}
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none" />
+                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none" />
                 </div>
               ))}
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Type de caution</label>
                 <select value={garantForm.caution_type} onChange={e => setGarantForm(f => ({ ...f, caution_type: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none">
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
                   <option value="solidaire" className="bg-[#111E35]">Solidaire</option>
                   <option value="simple" className="bg-[#111E35]">Simple</option>
                   <option value="bancaire" className="bg-[#111E35]">Bancaire</option>
@@ -346,7 +346,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
               <label className="block text-xs text-slate-400 mb-1">Adresse complète</label>
               <input type="text" placeholder="12 rue de la Paix, 75001 Paris" value={garantForm.garant_adresse}
                 onChange={e => setGarantForm(f => ({ ...f, garant_adresse: e.target.value }))}
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none" />
+                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none" />
             </div>
             <button onClick={saveGarant} disabled={saving}
               className="w-full h-9 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all disabled:opacity-50">
@@ -359,7 +359,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
       {/* Assurance locataire */}
       <GlassCard>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display font-semibold text-white">Assurance locataire</h2>
+          <h2 className="font-display font-semibold text-[#0A0908]">Assurance locataire</h2>
           <div className="flex items-center gap-3">
             <span className={`text-xs px-2 py-0.5 rounded-full border ${assuranceCfg.color} ${assuranceCfg.bg} ${assuranceCfg.border}`}>
               {assuranceCfg.label}
@@ -373,11 +373,11 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white/[0.03] rounded-xl p-3">
             <p className="text-xs text-slate-500 mb-1">Compagnie</p>
-            <p className="text-sm text-white">{lease.assurance_locataire_compagnie || '—'}</p>
+            <p className="text-sm text-[#0A0908]">{lease.assurance_locataire_compagnie || '—'}</p>
           </div>
           <div className="bg-white/[0.03] rounded-xl p-3">
             <p className="text-xs text-slate-500 mb-1">Expiration</p>
-            <p className="text-sm text-white">
+            <p className="text-sm text-[#0A0908]">
               {lease.assurance_locataire_expiration ? format(new Date(lease.assurance_locataire_expiration), 'dd/MM/yyyy') : '—'}
             </p>
           </div>
@@ -396,13 +396,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                 <label className="block text-xs text-slate-400 mb-1">Compagnie</label>
                 <input type="text" placeholder="MAIF, Groupama..." value={assuranceForm.assurance_locataire_compagnie}
                   onChange={e => setAssuranceForm(f => ({ ...f, assurance_locataire_compagnie: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none" />
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Date d'expiration</label>
                 <input type="date" value={assuranceForm.assurance_locataire_expiration}
                   onChange={e => setAssuranceForm(f => ({ ...f, assurance_locataire_expiration: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
               </div>
             </div>
             <button onClick={saveAssurance} disabled={saving}
