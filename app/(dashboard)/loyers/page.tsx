@@ -10,7 +10,8 @@ import { formatCurrency } from '@/lib/utils'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { toast } from 'sonner'
-import { Send, CheckCircle, TrendingUp } from 'lucide-react'
+import { Send, CheckCircle, TrendingUp, ArrowUpDown } from 'lucide-react'
+import Link from 'next/link'
 
 export default function LoyersPage() {
   const [payments, setPayments] = useState<any[]>([])
@@ -61,9 +62,16 @@ export default function LoyersPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      <div>
-        <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Suivi des loyers</h1>
-        <p className="text-slate-400 text-sm mt-1">Historique et gestion des paiements</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>Suivi des loyers</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Historique et gestion des paiements</p>
+        </div>
+        <Link href="/loyers/rapprochement"
+          className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-medium transition-all"
+          style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
+          <ArrowUpDown className="h-4 w-4" /> Rapprochement bancaire
+        </Link>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

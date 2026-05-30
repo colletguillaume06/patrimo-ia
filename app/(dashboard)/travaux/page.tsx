@@ -7,8 +7,9 @@ import { formatCurrency } from '@/lib/utils'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { toast } from 'sonner'
+import Link from 'next/link'
 import {
-  Wrench, Plus, X, Paperclip, CheckCircle2, Clock, AlertCircle,
+  Wrench, Plus, X, Paperclip, CheckCircle2, Clock, AlertCircle, BarChart2,
   Info, Upload, Loader2, Euro, FileText, AlertTriangle, ToggleLeft, ToggleRight
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -246,17 +247,23 @@ export default function TravauxPage() {
       {/* En-tête */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Travaux & Incidents</h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>Travaux & Incidents</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
             {incidents.filter(i => i.status !== 'resolved').length} en cours · {incidents.length} au total
           </p>
         </div>
-        <button
-          onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 h-10 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all"
-        >
-          <Plus className="h-4 w-4" /> Nouveau ticket
-        </button>
+        <div className="flex items-center gap-2">
+          <Link href="/travaux/devis"
+            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-all"
+            style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
+            <BarChart2 className="h-4 w-4" /> Comparer devis
+          </Link>
+          <button onClick={() => setShowAdd(true)}
+            className="flex items-center gap-2 h-10 px-4 rounded-xl text-white text-sm font-semibold transition-all"
+            style={{ background: 'var(--accent)' }}>
+            <Plus className="h-4 w-4" /> Nouveau ticket
+          </button>
+        </div>
       </div>
 
       {/* ── SECTION 3 — Résumé fiscal ── */}

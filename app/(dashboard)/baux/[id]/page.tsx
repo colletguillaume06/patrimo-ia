@@ -10,7 +10,8 @@ import { fr } from 'date-fns/locale'
 import { toast } from 'sonner'
 import {
   Shield, AlertTriangle, CheckCircle2, X, Copy, ChevronLeft,
-  Upload, FileText, Phone, Mail, User, Calendar, Euro
+  Upload, FileText, Phone, Mail, User, Calendar, Euro,
+  ReceiptText, RefreshCw, BarChart2
 } from 'lucide-react'
 import {
   getStatutDepotGarantie, getStatutAssurance, getStatutReconduction
@@ -156,9 +157,27 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <Link href="/baux" className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-[var(--text-primary)] transition-colors">
+      <Link href="/baux" className="inline-flex items-center gap-1.5 text-sm transition-colors"
+        style={{ color: 'var(--text-tertiary)' }}>
         <ChevronLeft className="h-4 w-4" /> Retour aux baux
       </Link>
+
+      {/* Onglets bail */}
+      <div className="flex gap-1 p-1 rounded-xl overflow-x-auto"
+        style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+        {[
+          { href: `/baux/${id}`, label: 'Bail & garanties', icon: Shield },
+          { href: `/baux/${id}/compte-locataire`, label: 'Relevé de compte', icon: BarChart2 },
+          { href: `/baux/${id}/regularisation`, label: 'Régularisation charges', icon: RefreshCw },
+        ].map(tab => (
+          <Link key={tab.href} href={tab.href}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all"
+            style={{ color: 'var(--text-secondary)' }}>
+            <tab.icon className="h-3.5 w-3.5 flex-shrink-0" />
+            {tab.label}
+          </Link>
+        ))}
+      </div>
 
       {/* Header */}
       <GlassCard className="p-5">
