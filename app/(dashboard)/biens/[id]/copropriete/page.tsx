@@ -88,7 +88,7 @@ export default function CopropriétéPage() {
           { label: 'Charges trimestrielles', value: property?.copro_charges_trimestrielles ? formatCurrency(property.copro_charges_trimestrielles) : '—', color: 'text-blue-400' },
         ].map(({ label, value, color }) => (
           <GlassCard key={label} className="p-4">
-            <p className="text-xs text-slate-400 mb-1">{label}</p>
+            <p className="text-sm font-medium text-[#0F172A] mb-1.5">{label}</p>
             <p className={`text-xl font-bold font-mono ${color}`}>{value}</p>
           </GlassCard>
         ))}
@@ -108,7 +108,7 @@ export default function CopropriétéPage() {
               { key: 'copro_prochaine_ag', label: 'Prochaine AG', type: 'date' },
             ].map(({ key, label, placeholder, type = 'text' }: any) => (
               <div key={key}>
-                <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">{label}</label>
                 <input type={type} placeholder={placeholder} value={(syndicForm as any)[key]}
                   onChange={e => setSyndicForm(f => ({ ...f, [key]: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
@@ -155,17 +155,17 @@ export default function CopropriétéPage() {
             </div>
             <form onSubmit={addAppel} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-xs text-slate-400 mb-1">Date *</label><input type="date" value={appelForm.date_appel} onChange={e => setAppelForm(f => ({ ...f, date_appel: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" /></div>
-                <div><label className="block text-xs text-slate-400 mb-1">Montant (€) *</label><input type="number" value={appelForm.montant} onChange={e => setAppelForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" /></div>
+                <div><label className="block text-sm font-medium text-[#0F172A] mb-1.5">Date *</label><input type="date" value={appelForm.date_appel} onChange={e => setAppelForm(f => ({ ...f, date_appel: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" /></div>
+                <div><label className="block text-sm font-medium text-[#0F172A] mb-1.5">Montant (€) *</label><input type="number" value={appelForm.montant} onChange={e => setAppelForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" /></div>
               </div>
-              <div><label className="block text-xs text-slate-400 mb-1">Type</label>
+              <div><label className="block text-sm font-medium text-[#0F172A] mb-1.5">Type</label>
                 <select value={appelForm.type} onChange={e => setAppelForm(f => ({ ...f, type: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                   <option value="charges_courantes" className="bg-[var(--surface)]">Charges courantes</option>
                   <option value="travaux_votes" className="bg-[var(--surface)]">Travaux votés</option>
                   <option value="fonds_travaux" className="bg-[var(--surface)]">Fonds travaux</option>
                 </select>
               </div>
-              <div><label className="block text-xs text-slate-400 mb-1">Description</label><input type="text" value={appelForm.description} onChange={e => setAppelForm(f => ({ ...f, description: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" /></div>
+              <div><label className="block text-sm font-medium text-[#0F172A] mb-1.5">Description</label><input type="text" value={appelForm.description} onChange={e => setAppelForm(f => ({ ...f, description: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" /></div>
               <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50">Ajouter</button>
             </form>
           </div>

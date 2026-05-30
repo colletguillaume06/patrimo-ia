@@ -176,7 +176,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Indice de référence */}
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5">
+              <label className="block text-sm font-medium text-[#0F172A] mb-1.5.5">
                 Indice {indice.toUpperCase()} à la signature du bail (ou dernière révision)
               </label>
               <input

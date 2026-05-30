@@ -113,7 +113,7 @@ export default function FinancementPage() {
               { key: 'pret_assurance_mensuelle', label: 'Assurance mensuelle (€)', placeholder: '50', type: 'number' },
             ].map(({ key, label, placeholder, type = 'text', required, step }: any) => (
               <div key={key}>
-                <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">{label}</label>
                 <input type={type} step={step} placeholder={placeholder} value={(form as any)[key]} required={required}
                   onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
@@ -137,7 +137,7 @@ export default function FinancementPage() {
               { label: `Intérêts déductibles ${new Date().getFullYear()}`, value: formatCurrency(interetsAnnee), sub: 'à reporter en charges', color: 'text-[var(--success)]' },
             ].map(({ label, value, sub, color }) => (
               <GlassCard key={label} className="p-4">
-                <p className="text-xs text-slate-400 mb-1">{label}</p>
+                <p className="text-sm font-medium text-[#0F172A] mb-1.5">{label}</p>
                 <p className={`text-lg font-bold font-mono ${color}`}>{value}</p>
                 <p className="text-xs text-slate-600 mt-0.5">{sub}</p>
               </GlassCard>

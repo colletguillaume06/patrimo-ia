@@ -161,14 +161,14 @@ export default function DiagnosticsPage() {
             </div>
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Type *</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Type *</label>
                 <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value as DiagType }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                   {TYPES.map(t => <option key={t} value={t} className="bg-[var(--surface)]">{DIAG_LABELS[t]}</option>)}
                 </select>
               </div>
               {form.type === 'dpe' && (
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Classe énergétique</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Classe énergétique</label>
                   <select value={form.valeur_dpe} onChange={e => setForm(f => ({ ...f, valeur_dpe: e.target.value as DPELettre }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                     <option value="" className="bg-[var(--surface)]">—</option>
                     {(['A','B','C','D','E','F','G'] as DPELettre[]).map(l => <option key={l} value={l} className="bg-[var(--surface)]">{l}</option>)}
@@ -177,16 +177,16 @@ export default function DiagnosticsPage() {
               )}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Date réalisation *</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Date réalisation *</label>
                   <input type="date" value={form.date_realisation} onChange={e => setForm(f => ({ ...f, date_realisation: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Cabinet</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Cabinet</label>
                   <input type="text" placeholder="Nom du cabinet" value={form.cabinet} onChange={e => setForm(f => ({ ...f, cabinet: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Résultat</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Résultat</label>
                 <input type="text" placeholder="Ex: négatif, classe C, 45 kWh/m²..." value={form.resultat} onChange={e => setForm(f => ({ ...f, resultat: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
                 {form.date_realisation && (
                   <p className="text-xs text-blue-400 mt-1">

@@ -176,7 +176,7 @@ export default function DocumentsPage() {
             </div>
             <form onSubmit={handleUpload} className="space-y-3">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Fichier *</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Fichier *</label>
                 <div onClick={() => fileRef.current?.click()} className={`flex items-center gap-3 p-3 rounded-xl border border-dashed cursor-pointer transition-all ${file ? 'border-green-400/30 bg-green-400/5' : 'border-border hover:border-blue-400/30'}`}>
                   {file ? (
                     <><FileText className="h-5 w-5 text-[var(--success)] flex-shrink-0" /><p className="text-sm text-[var(--success)] truncate">{file.name}</p></>
@@ -186,20 +186,20 @@ export default function DocumentsPage() {
                   <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.csv" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) setFile(f) }} />
                 </div>
               </div>
-              <div><label className="block text-xs text-slate-400 mb-1">Nom du document</label><input type="text" placeholder={file?.name ?? 'Titre du document'} value={form.nom} onChange={e => setForm(f => ({ ...f, nom: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" /></div>
-              <div><label className="block text-xs text-slate-400 mb-1">Catégorie *</label>
+              <div><label className="block text-sm font-medium text-[#0F172A] mb-1.5">Nom du document</label><input type="text" placeholder={file?.name ?? 'Titre du document'} value={form.nom} onChange={e => setForm(f => ({ ...f, nom: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" /></div>
+              <div><label className="block text-sm font-medium text-[#0F172A] mb-1.5">Catégorie *</label>
                 <select value={form.categorie} onChange={e => setForm(f => ({ ...f, categorie: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                   {Object.entries(CATEGORIES).map(([k, v]) => <option key={k} value={k} className="bg-[var(--surface)]">{v.icon} {v.label}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-xs text-slate-400 mb-1">Bien</label>
+                <div><label className="block text-sm font-medium text-[#0F172A] mb-1.5">Bien</label>
                   <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                     <option value="" className="bg-[var(--surface)]">Global</option>
                     {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-xs text-slate-400 mb-1">Année fiscale</label>
+                <div><label className="block text-sm font-medium text-[#0F172A] mb-1.5">Année fiscale</label>
                   <input type="number" placeholder="2026" value={form.annee_fiscale} onChange={e => setForm(f => ({ ...f, annee_fiscale: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
               </div>

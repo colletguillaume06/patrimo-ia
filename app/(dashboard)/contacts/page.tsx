@@ -132,7 +132,7 @@ export default function ContactsPage() {
             </div>
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Bien associé</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Bien associé</label>
                 <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                   <option value="" className="bg-[var(--surface)]">Tous les biens</option>
@@ -140,7 +140,7 @@ export default function ContactsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Rôle *</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Rôle *</label>
                 <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))} required
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                   {Object.entries(ROLES).map(([k, v]) => <option key={k} value={k} className="bg-[var(--surface)]">{v.icon} {v.label}</option>)}
@@ -154,13 +154,13 @@ export default function ContactsPage() {
                 { key: 'email', label: 'Email', type: 'email' },
               ].map(({ key, label, required, type = 'text' }) => (
                 <div key={key}>
-                  <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">{label}</label>
                   <input type={type} value={(form as any)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} required={required}
                     className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
                 </div>
               ))}
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Notes</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Notes</label>
                 <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} rows={2}
                   className="w-full px-3 py-2 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none resize-none" />
               </div>

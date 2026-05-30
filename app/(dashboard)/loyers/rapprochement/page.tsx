@@ -79,7 +79,7 @@ export default function RapprochementPage() {
           { label: 'En attente', value: `${en_attente} loyer${en_attente > 1 ? 's' : ''}`, color: en_attente === 0 ? 'text-[var(--success)]' : 'text-amber-400' },
         ].map(({ label, value, color }) => (
           <GlassCard key={label} className="p-4">
-            <p className="text-xs text-slate-400 mb-1">{label}</p>
+            <p className="text-sm font-medium text-[#0F172A] mb-1.5">{label}</p>
             <p className={`text-lg font-bold font-mono ${color}`}>{value}</p>
           </GlassCard>
         ))}

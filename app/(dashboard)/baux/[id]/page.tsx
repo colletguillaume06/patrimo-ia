@@ -231,13 +231,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
           <div className="space-y-3 pt-4 border-t border-white/[0.06]">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Date état des lieux de sortie</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Date état des lieux de sortie</label>
                 <input type="date" value={dgForm.etat_lieux_sortie_date}
                   onChange={e => setDgForm(f => ({ ...f, etat_lieux_sortie_date: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Date restitution effective</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Date restitution effective</label>
                 <input type="date" value={dgForm.depot_garantie_restitue_le}
                   onChange={e => setDgForm(f => ({ ...f, depot_garantie_restitue_le: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
@@ -256,13 +256,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
             )}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Montant retenu (€)</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Montant retenu (€)</label>
                 <input type="number" value={dgForm.depot_garantie_montant_retenu}
                   onChange={e => setDgForm(f => ({ ...f, depot_garantie_montant_retenu: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Motif de la retenue</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Motif de la retenue</label>
                 <input type="text" placeholder="Ex: Dégradation peinture" value={dgForm.depot_garantie_motif_retenu}
                   onChange={e => setDgForm(f => ({ ...f, depot_garantie_motif_retenu: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
@@ -334,14 +334,14 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                 { key: 'garant_lien', label: 'Lien avec le locataire', placeholder: 'Parent, employeur...' },
               ].map(({ key, label, placeholder, type = 'text' }) => (
                 <div key={key}>
-                  <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">{label}</label>
                   <input type={type} placeholder={placeholder} value={(garantForm as any)[key]}
                     onChange={e => setGarantForm(f => ({ ...f, [key]: e.target.value }))}
                     className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
                 </div>
               ))}
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Type de caution</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Type de caution</label>
                 <select value={garantForm.caution_type} onChange={e => setGarantForm(f => ({ ...f, caution_type: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                   <option value="solidaire" className="bg-[var(--surface)]">Solidaire</option>
@@ -352,7 +352,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
               </div>
             </div>
             <div>
-              <label className="block text-xs text-slate-400 mb-1">Adresse complète</label>
+              <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Adresse complète</label>
               <input type="text" placeholder="12 rue de la Paix, 75001 Paris" value={garantForm.garant_adresse}
                 onChange={e => setGarantForm(f => ({ ...f, garant_adresse: e.target.value }))}
                 className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
@@ -402,13 +402,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
           <div className="mt-4 pt-4 border-t border-white/[0.06] space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Compagnie</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Compagnie</label>
                 <input type="text" placeholder="MAIF, Groupama..." value={assuranceForm.assurance_locataire_compagnie}
                   onChange={e => setAssuranceForm(f => ({ ...f, assurance_locataire_compagnie: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Date d'expiration</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Date d'expiration</label>
                 <input type="date" value={assuranceForm.assurance_locataire_expiration}
                   onChange={e => setAssuranceForm(f => ({ ...f, assurance_locataire_expiration: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />

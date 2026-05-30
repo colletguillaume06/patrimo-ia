@@ -82,7 +82,7 @@ export default function LoyersPage() {
           { label: 'Nb loyers en retard', value: `${payments.filter(p => p.status === 'late').length}`, color: 'text-red-400', glow: 'red' as const },
         ].map(({ label, value, color, glow }) => (
           <GlassCard key={label} glow={glow} className="p-4">
-            <p className="text-xs text-slate-400 mb-1">{label}</p>
+            <p className="text-sm font-medium text-[#0F172A] mb-1.5">{label}</p>
             <p className={`text-xl font-bold font-mono ${color}`}>{value}</p>
           </GlassCard>
         ))}

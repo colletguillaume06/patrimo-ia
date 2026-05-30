@@ -79,7 +79,7 @@ export default function PlusValuePage() {
         <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Données du bien</h2>
         <div className="space-y-3">
           <div>
-            <label className="block text-xs text-slate-400 mb-1">Bien (optionnel — pré-remplit les champs)</label>
+            <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Bien (optionnel — pré-remplit les champs)</label>
             <select value={selectedId} onChange={e => setSelectedId(e.target.value)}
               className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
               <option value="" className="bg-[var(--surface)]">Saisie manuelle</option>
@@ -94,7 +94,7 @@ export default function PlusValuePage() {
               { key: 'date_vente', label: 'Date de vente estimée', type: 'date' },
             ].map(({ key, label, type, placeholder }) => (
               <div key={key}>
-                <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">{label}</label>
                 <input type={type} placeholder={placeholder} value={(form as any)[key]}
                   onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
@@ -103,7 +103,7 @@ export default function PlusValuePage() {
           </div>
 
           <div>
-            <label className="block text-xs text-slate-400 mb-2">Frais d'acquisition</label>
+            <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Frais d'acquisition</label>
             <div className="flex gap-3 mb-2">
               <button onClick={() => setForm(f => ({ ...f, use_forfait: true }))}
                 className={`flex-1 h-9 rounded-lg text-sm transition-all ${form.use_forfait ? 'bg-[#1D4ED8] text-white' : 'bg-white/[0.05] border border-white/[0.08] text-slate-400'}`}>
@@ -125,7 +125,7 @@ export default function PlusValuePage() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-slate-400 mb-1">Travaux non déductibles (€) — saisis manuellement</label>
+              <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Travaux non déductibles (€) — saisis manuellement</label>
               <input type="number" placeholder="0" value={form.travaux_non_deductibles}
                 onChange={e => setForm(f => ({ ...f, travaux_non_deductibles: e.target.value }))}
                 className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
@@ -133,7 +133,7 @@ export default function PlusValuePage() {
             </div>
             {prop?.type === 'lmnp' && (
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Amortissements cumulés pris (€)</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Amortissements cumulés pris (€)</label>
                 <input type="number" placeholder="0" value={form.amortissements_pris}
                   onChange={e => setForm(f => ({ ...f, amortissements_pris: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />

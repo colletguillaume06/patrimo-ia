@@ -40,7 +40,7 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
                   </span>
                 </div>
               )}
-              <p className="text-xs text-slate-400 mb-2">{label}</p>
+              <p className="text-sm font-medium text-[#0F172A] mb-1.5">{label}</p>
               <p className="text-lg font-bold text-[var(--text-primary)]">{formatCurrency(impot)}</p>
               <p className="text-xs text-slate-500 mt-0.5">Base : {formatCurrency(base)}</p>
             </div>
@@ -83,7 +83,7 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
                 </span>
               </div>
             )}
-            <p className="text-xs text-slate-400 mb-2">{label}</p>
+            <p className="text-sm font-medium text-[#0F172A] mb-1.5">{label}</p>
             <p className="text-lg font-bold text-[var(--text-primary)]">{formatCurrency(impot)}</p>
           </div>
         ))}

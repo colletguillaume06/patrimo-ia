@@ -221,7 +221,7 @@ export default function BauxPage() {
 
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Bien *</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Bien *</label>
                 <select
                   value={selectedProp}
                   onChange={e => setSelectedProp(e.target.value)}
@@ -245,7 +245,7 @@ export default function BauxPage() {
                 { key: 'end_date', label: 'Date fin (optionnel)', type: 'date' },
               ].map(({ key, label, type = 'text', required }) => (
                 <div key={key}>
-                  <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">{label}</label>
                   <input
                     type={type}
                     value={(form as any)[key]}
@@ -268,7 +268,7 @@ export default function BauxPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Indice utilisé</label>
+                    <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Indice utilisé</label>
                     <select
                       value={form.irl_reference_indice}
                       onChange={e => setForm(f => ({ ...f, irl_reference_indice: e.target.value }))}
@@ -280,7 +280,7 @@ export default function BauxPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Valeur de l'indice</label>
+                    <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Valeur de l'indice</label>
                     <input
                       type="number"
                       step="0.01"
@@ -291,7 +291,7 @@ export default function BauxPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Trimestre de référence</label>
+                    <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Trimestre de référence</label>
                     <select
                       value={form.irl_reference_trimestre}
                       onChange={e => setForm(f => ({ ...f, irl_reference_trimestre: e.target.value }))}
@@ -305,7 +305,7 @@ export default function BauxPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Année de référence</label>
+                    <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Année de référence</label>
                     <input
                       type="number"
                       placeholder="Ex : 2024"

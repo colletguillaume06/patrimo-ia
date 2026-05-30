@@ -82,19 +82,19 @@ export default function DeficitsPage() {
       {/* KPIs */}
       <div className="grid grid-cols-3 gap-4">
         <GlassCard glow="blue" className="p-4">
-          <p className="text-xs text-slate-400 mb-1">Stock disponible</p>
+          <p className="text-sm font-medium text-[#0F172A] mb-1.5">Stock disponible</p>
           <p className="text-xl font-bold font-mono text-blue-400">{formatCurrency(totalDisponible)}</p>
           <p className="text-xs text-slate-600 mt-0.5">Imputables sur revenus fonciers</p>
         </GlassCard>
         <GlassCard glow={expirantCetteAnnee.length > 0 ? 'red' : 'green'} className="p-4">
-          <p className="text-xs text-slate-400 mb-1">Expirant cette année</p>
+          <p className="text-sm font-medium text-[#0F172A] mb-1.5">Expirant cette année</p>
           <p className={`text-xl font-bold font-mono ${expirantCetteAnnee.length > 0 ? 'text-red-400' : 'text-[var(--success)]'}`}>
             {expirantCetteAnnee.length > 0 ? formatCurrency(expirantCetteAnnee.reduce((s, d) => s + d.montant_restant, 0)) : '0 €'}
           </p>
           <p className="text-xs text-slate-600 mt-0.5">À imputer avant fin {now.getFullYear()}</p>
         </GlassCard>
         <GlassCard className="p-4">
-          <p className="text-xs text-slate-400 mb-1">Économie potentielle (TMI 30%)</p>
+          <p className="text-sm font-medium text-[#0F172A] mb-1.5">Économie potentielle (TMI 30%)</p>
           <p className="text-xl font-bold font-mono text-[var(--success)]">{formatCurrency(totalDisponible * 0.30)}</p>
           <p className="text-xs text-slate-600 mt-0.5">Si tout imputé à 30%</p>
         </GlassCard>
@@ -191,23 +191,23 @@ export default function DeficitsPage() {
             <form onSubmit={handleAdd} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Année *</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Année *</label>
                   <input type="number" value={form.annee} onChange={e => setForm(f => ({ ...f, annee: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Montant (€) *</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Montant (€) *</label>
                   <input type="number" value={form.montant_initial} onChange={e => setForm(f => ({ ...f, montant_initial: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Bien (optionnel)</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Bien (optionnel)</label>
                 <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                   <option value="" className="bg-[var(--surface)]">Tous biens (global)</option>
                   {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Notes</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Notes</label>
                 <input type="text" placeholder="Ex: Déficit 2044 ligne 420" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
               </div>
               <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50">Ajouter</button>

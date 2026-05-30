@@ -93,7 +93,7 @@ export default function SciCcaPage() {
 
       {totalCCA > 0 && (
         <GlassCard glow="amber" className="p-4">
-          <p className="text-xs text-slate-400 mb-1">Total CCA de la SCI</p>
+          <p className="text-sm font-medium text-[#0F172A] mb-1.5">Total CCA de la SCI</p>
           <p className="text-xl font-bold text-amber-400">{formatCurrency(totalCCA)}</p>
           <p className="text-xs text-slate-600 mt-0.5">Montant total dû aux associés par la SCI</p>
         </GlassCard>
@@ -136,7 +136,7 @@ export default function SciCcaPage() {
             </div>
             <form onSubmit={handleAdd} className="space-y-3">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Associé *</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Associé *</label>
                 <select value={form.associe_id} onChange={e => setForm(f => ({ ...f, associe_id: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                   <option value="" className="bg-[var(--surface)]">— Sélectionner</option>
                   {associates.map(a => <option key={a.id} value={a.id} className="bg-[var(--surface)]">{a.name} ({a.share_pct}%)</option>)}
@@ -144,7 +144,7 @@ export default function SciCcaPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Type *</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Type *</label>
                   <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                     <option value="avance" className="bg-[var(--surface)]">Avance</option>
                     <option value="remboursement" className="bg-[var(--surface)]">Remboursement</option>
@@ -152,15 +152,15 @@ export default function SciCcaPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Montant (€) *</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Montant (€) *</label>
                   <input type="number" value={form.montant} onChange={e => setForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Date</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Date</label>
                   <input type="date" value={form.date_operation} onChange={e => setForm(f => ({ ...f, date_operation: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Motif</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Motif</label>
                   <input type="text" value={form.motif} onChange={e => setForm(f => ({ ...f, motif: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
               </div>

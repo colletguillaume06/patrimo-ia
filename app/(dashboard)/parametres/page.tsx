@@ -43,7 +43,7 @@ export default function ParametresPage() {
         </h2>
         <form onSubmit={handleSave} className="space-y-3">
           <div>
-            <label className="block text-xs text-slate-400 mb-1">Nom complet</label>
+            <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Nom complet</label>
             <input type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))}
               className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
           </div>
@@ -56,7 +56,7 @@ export default function ParametresPage() {
               { key: 'bic', label: 'BIC / SWIFT', placeholder: 'BNPAFRPP' },
             ].map(({ key, label, placeholder }) => (
               <div key={key} className="mb-3">
-                <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">{label}</label>
                 <input type="text" placeholder={placeholder} value={(form as any)[key]}
                   onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
                   className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none font-mono" />

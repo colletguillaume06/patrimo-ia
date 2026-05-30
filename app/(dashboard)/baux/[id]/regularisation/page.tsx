@@ -127,12 +127,12 @@ Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées
           <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Calcul de régularisation {form.annee}</h2>
           <div className="grid grid-cols-2 gap-3 mb-5">
             <div>
-              <label className="block text-xs text-slate-400 mb-1">Année de régularisation</label>
+              <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Année de régularisation</label>
               <input type="number" value={form.annee} onChange={e => setForm(f => ({ ...f, annee: e.target.value }))}
                 className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
             </div>
             <div>
-              <label className="block text-xs text-slate-400 mb-1">Charges réelles de l'année (€)</label>
+              <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Charges réelles de l'année (€)</label>
               <input type="number" step="0.01" placeholder="0" value={form.charges_reelles}
                 onChange={e => setForm(f => ({ ...f, charges_reelles: e.target.value }))}
                 className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />

@@ -273,7 +273,7 @@ export default function TravauxPage() {
       {/* ── SECTION 3 — Résumé fiscal ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <GlassCard glow="green" className="p-4">
-          <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+          <p className="text-sm font-medium text-[#0F172A] mb-1.5 flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-green-400 inline-block" />
             Déductibles {now.getFullYear()}
           </p>
@@ -281,7 +281,7 @@ export default function TravauxPage() {
           <p className="text-xs text-slate-600 mt-0.5">entretien + charges BIC payés</p>
         </GlassCard>
         <GlassCard glow="cyan" className="p-4">
-          <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+          <p className="text-sm font-medium text-[#0F172A] mb-1.5 flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-cyan-400 inline-block" />
             Amortissables {now.getFullYear()}
           </p>
@@ -289,7 +289,7 @@ export default function TravauxPage() {
           <p className="text-xs text-slate-600 mt-0.5">à intégrer plan amortissement</p>
         </GlassCard>
         <GlassCard glow="amber" className="p-4">
-          <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+          <p className="text-sm font-medium text-[#0F172A] mb-1.5 flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-amber-400 inline-block" />
             Non encore payés
           </p>
@@ -297,7 +297,7 @@ export default function TravauxPage() {
           <p className="text-xs text-slate-600 mt-0.5">estimé - payé</p>
         </GlassCard>
         <GlassCard glow="red" className="p-4">
-          <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+          <p className="text-sm font-medium text-[#0F172A] mb-1.5 flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-red-400 inline-block" />
             Factures manquantes
           </p>
@@ -442,7 +442,7 @@ export default function TravauxPage() {
               {/* Bien + Statut */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Bien concerné *</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Bien concerné *</label>
                   <select value={form.property_id} onChange={e => set('property_id', e.target.value)} required
                     className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50">
                     <option value="" className="bg-[var(--surface)]">Sélectionner un bien</option>
@@ -450,7 +450,7 @@ export default function TravauxPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Statut</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Statut</label>
                   <select value={form.status} onChange={e => set('status', e.target.value)}
                     className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                     <option value="open" className="bg-[var(--surface)]">Planifié</option>
@@ -463,17 +463,17 @@ export default function TravauxPage() {
               {/* Titre + Date */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="col-span-2">
-                  <label className="block text-xs text-slate-400 mb-1">Titre des travaux *</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Titre des travaux *</label>
                   <input type="text" value={form.title} onChange={e => set('title', e.target.value)} required
                     placeholder="Ex : Remplacement chaudière" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Date des travaux</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Date des travaux</label>
                   <input type="date" value={form.date_travaux} onChange={e => set('date_travaux', e.target.value)}
                     className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Entreprise / Artisan</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Entreprise / Artisan</label>
                   <input type="text" value={form.nom_entreprise} onChange={e => set('nom_entreprise', e.target.value)}
                     placeholder="Ex : Plomberie Dupont" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
@@ -481,7 +481,7 @@ export default function TravauxPage() {
 
               {/* Description */}
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Description</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Description</label>
                 <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2}
                   placeholder="Détails des travaux, problème constaté..." className="w-full px-3 py-2 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none resize-none focus:border-blue-500/50" />
               </div>
@@ -489,17 +489,17 @@ export default function TravauxPage() {
               {/* Montants */}
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Coût estimé (€)</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Coût estimé (€)</label>
                   <input type="number" step="0.01" value={form.cout_estime} onChange={e => set('cout_estime', e.target.value)}
                     placeholder="0" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Coût payé (€)</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Coût payé (€)</label>
                   <input type="number" step="0.01" value={form.cout_paye} onChange={e => set('cout_paye', e.target.value)}
                     placeholder="0" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">N° facture</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">N° facture</label>
                   <input type="text" value={form.numero_facture} onChange={e => set('numero_facture', e.target.value)}
                     placeholder="FAC-2026-001" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
@@ -549,7 +549,7 @@ export default function TravauxPage() {
 
               {/* Upload facture */}
               <div>
-                <label className="block text-xs text-slate-400 mb-2">Facture (PDF ou image, max 15 MB)</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Facture (PDF ou image, max 15 MB)</label>
                 <div
                   onClick={() => fileRef.current?.click()}
                   className={cn(

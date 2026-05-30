@@ -88,7 +88,7 @@ export default function CourriersPage() {
                 <h3 className="font-display font-semibold text-[var(--text-primary)] mb-4">{selected.titre}</h3>
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Bien</label>
+                    <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Bien</label>
                     <select value={selectedProp} onChange={e => setSelectedProp(e.target.value)}
                       className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                       <option value="" className="bg-[var(--surface)]">— Sélectionner</option>
@@ -96,7 +96,7 @@ export default function CourriersPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Bail / Locataire</label>
+                    <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Bail / Locataire</label>
                     <select value={selectedLease} onChange={e => setSelectedLease(e.target.value)}
                       className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                       <option value="" className="bg-[var(--surface)]">— Sélectionner</option>
@@ -104,7 +104,7 @@ export default function CourriersPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Votre nom (bailleur)</label>
+                    <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Votre nom (bailleur)</label>
                     <input type="text" value={data.bailleur_nom ?? ''} onChange={e => setData(d => ({ ...d, bailleur_nom: e.target.value }))}
                       className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                   </div>

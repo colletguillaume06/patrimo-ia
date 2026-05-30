@@ -129,7 +129,7 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
               { key: 'loan_monthly', label: 'Mensualité crédit (€)', placeholder: '650', type: 'number' },
             ].map(({ key, label, placeholder, type = 'text', required }) => (
               <div key={key}>
-                <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">{label}</label>
                 <input
                   type={type}
                   placeholder={placeholder}
