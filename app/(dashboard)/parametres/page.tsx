@@ -33,33 +33,33 @@ export default function ParametresPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
-        <h1 className="font-display font-bold text-2xl text-text-primary">Paramètres</h1>
-        <p className="text-text-tertiary text-sm mt-1">Vos informations personnelles et coordonnées bancaires</p>
+        <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Paramètres</h1>
+        <p className="text-slate-400 text-sm mt-1">Vos informations personnelles et coordonnées bancaires</p>
       </div>
 
       <GlassCard>
-        <h2 className="font-display font-semibold text-text-primary mb-4 flex items-center gap-2">
-          <Settings className="h-4 w-4 text-text-tertiary" /> Profil
+        <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+          <Settings className="h-4 w-4 text-slate-400" /> Profil
         </h2>
         <form onSubmit={handleSave} className="space-y-3">
           <div>
-            <label className="block text-xs text-text-tertiary mb-1">Nom complet</label>
+            <label className="block text-xs text-slate-400 mb-1">Nom complet</label>
             <input type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))}
-              className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none" />
+              className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
           </div>
 
-          <div className="pt-3 border-t border-border">
-            <p className="text-xs text-text-tertiary mb-3 font-medium">Coordonnées bancaires (injectées dans les appels de loyer et quittances)</p>
+          <div className="pt-3 border-t border-white/[0.06]">
+            <p className="text-xs text-slate-400 mb-3 font-medium">Coordonnées bancaires (injectées dans les appels de loyer et quittances)</p>
             {[
               { key: 'titulaire_compte', label: 'Titulaire du compte', placeholder: 'Jean Dupont' },
               { key: 'iban', label: 'IBAN', placeholder: 'FR76 3000 4000 0100 0000 0000 123' },
               { key: 'bic', label: 'BIC / SWIFT', placeholder: 'BNPAFRPP' },
             ].map(({ key, label, placeholder }) => (
               <div key={key} className="mb-3">
-                <label className="block text-xs text-text-tertiary mb-1">{label}</label>
+                <label className="block text-xs text-slate-400 mb-1">{label}</label>
                 <input type="text" placeholder={placeholder} value={(form as any)[key]}
                   onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary placeholder-slate-600 text-sm focus:outline-none font-mono" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none font-mono" />
               </div>
             ))}
           </div>

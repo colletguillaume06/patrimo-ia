@@ -19,7 +19,7 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
     const optimal = simulation.regime
     return (
       <GlassCard>
-        <h3 className="font-display font-semibold text-text-primary mb-4">Simulation fiscale LMNP</h3>
+        <h3 className="font-display font-semibold text-[var(--text-primary)] mb-4">Simulation fiscale LMNP</h3>
         <div className="grid grid-cols-2 gap-3">
           {[
             { label: 'Micro-BIC (50%)', regime: 'micro' as const, impot: simulation.micro_bic_impot, base: simulation.micro_bic_base },
@@ -30,25 +30,25 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
               className={`relative p-4 rounded-xl border transition-all ${
                 optimal === regime
                   ? 'border-green-400/30 bg-green-400/5'
-                  : 'border-border bg-bg-secondary/50'
+                  : 'border-white/[0.08] bg-white/[0.03]'
               }`}
             >
               {optimal === regime && (
                 <div className="absolute -top-2 -right-2">
-                  <span className="flex items-center gap-1 text-xs font-semibold text-success-text bg-bg-card border border-green-400/30 px-2 py-0.5 rounded-full">
+                  <span className="flex items-center gap-1 text-xs font-semibold text-[var(--success)] bg-[var(--surface)] border border-green-400/30 px-2 py-0.5 rounded-full">
                     <CheckCircle className="h-3 w-3" /> Optimal
                   </span>
                 </div>
               )}
-              <p className="text-xs text-text-tertiary mb-2">{label}</p>
-              <p className="text-lg font-bold text-text-primary">{formatCurrency(impot)}</p>
-              <p className="text-xs text-text-secondary mt-0.5">Base : {formatCurrency(base)}</p>
+              <p className="text-xs text-slate-400 mb-2">{label}</p>
+              <p className="text-lg font-bold text-[var(--text-primary)]">{formatCurrency(impot)}</p>
+              <p className="text-xs text-slate-500 mt-0.5">Base : {formatCurrency(base)}</p>
             </div>
           ))}
         </div>
         {simulation.economie_regime_reel > 0 && (
           <div className="mt-3 p-3 bg-green-400/5 border border-[var(--success)/20] rounded-lg">
-            <p className="text-xs text-success-text font-medium">
+            <p className="text-xs text-[var(--success)] font-medium">
               💡 Économie en régime réel : {formatCurrency(simulation.economie_regime_reel)}/an
             </p>
           </div>
@@ -62,7 +62,7 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
 
   return (
     <GlassCard>
-      <h3 className="font-display font-semibold text-text-primary mb-4">Simulation fiscale Foncier</h3>
+      <h3 className="font-display font-semibold text-[var(--text-primary)] mb-4">Simulation fiscale Foncier</h3>
       <div className="grid grid-cols-2 gap-3">
         {[
           { label: 'Micro-foncier (30%)', regime: 'micro' as const, impot: s.micro_impot },
@@ -73,18 +73,18 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
             className={`relative p-4 rounded-xl border ${
               optimal === regime
                 ? 'border-green-400/30 bg-green-400/5'
-                : 'border-border bg-bg-secondary/50'
+                : 'border-white/[0.08] bg-white/[0.03]'
             }`}
           >
             {optimal === regime && (
               <div className="absolute -top-2 -right-2">
-                <span className="flex items-center gap-1 text-xs font-semibold text-success-text bg-bg-card border border-green-400/30 px-2 py-0.5 rounded-full">
+                <span className="flex items-center gap-1 text-xs font-semibold text-[var(--success)] bg-[var(--surface)] border border-green-400/30 px-2 py-0.5 rounded-full">
                   <CheckCircle className="h-3 w-3" /> Optimal
                 </span>
               </div>
             )}
-            <p className="text-xs text-text-tertiary mb-2">{label}</p>
-            <p className="text-lg font-bold text-text-primary">{formatCurrency(impot)}</p>
+            <p className="text-xs text-slate-400 mb-2">{label}</p>
+            <p className="text-lg font-bold text-[var(--text-primary)]">{formatCurrency(impot)}</p>
           </div>
         ))}
       </div>

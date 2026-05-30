@@ -2,16 +2,16 @@ import { cn } from '@/lib/utils'
 import type { PaymentStatus } from '@/types'
 
 const config: Record<PaymentStatus, { label: string; className: string }> = {
-  paid:    { label: 'Payé',        className: 'bg-success-bg text-success-text border-success-border' },
-  late:    { label: 'En retard',   className: 'bg-danger-bg text-danger-text border-danger-border' },
-  partial: { label: 'Partiel',     className: 'bg-warning-bg text-warning-text border-warning-border' },
-  pending: { label: 'En attente',  className: 'bg-bg-tertiary text-text-secondary border-border' },
+  paid: { label: 'Payé', className: 'bg-[var(--success-bg)] text-[var(--success)] border-[var(--success)/20]' },
+  late: { label: 'En retard', className: 'bg-red-400/10 text-red-400 border-red-400/20' },
+  partial: { label: 'Partiel', className: 'bg-amber-400/10 text-amber-400 border-amber-400/20' },
+  pending: { label: 'En attente', className: 'bg-slate-400/10 text-slate-400 border-slate-400/20' },
 }
 
 export function StatusBadge({ status }: { status: PaymentStatus }) {
   const { label, className } = config[status]
   return (
-    <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border', className)}>
+    <span className={cn('inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border', className)}>
       {label}
     </span>
   )

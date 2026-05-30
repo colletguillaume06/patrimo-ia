@@ -62,57 +62,57 @@ export default function LoyersPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="font-display font-bold text-2xl text-text-primary">Suivi des loyers</h1>
-        <p className="text-text-tertiary text-sm mt-1">Historique et gestion des paiements</p>
+        <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Suivi des loyers</h1>
+        <p className="text-slate-400 text-sm mt-1">Historique et gestion des paiements</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total encaissé', value: formatCurrency(stats.paid), color: 'text-success-text', glow: 'green' as const },
+          { label: 'Total encaissé', value: formatCurrency(stats.paid), color: 'text-[var(--success)]', glow: 'green' as const },
           { label: 'En retard', value: formatCurrency(stats.late), color: 'text-red-400', glow: 'red' as const },
           { label: 'En attente', value: formatCurrency(stats.pending), color: 'text-amber-400', glow: 'amber' as const },
           { label: 'Nb loyers en retard', value: `${payments.filter(p => p.status === 'late').length}`, color: 'text-red-400', glow: 'red' as const },
         ].map(({ label, value, color, glow }) => (
           <GlassCard key={label} glow={glow} className="p-4">
-            <p className="text-xs text-text-tertiary mb-1">{label}</p>
+            <p className="text-xs text-slate-400 mb-1">{label}</p>
             <p className={`text-xl font-bold font-mono ${color}`}>{value}</p>
           </GlassCard>
         ))}
       </div>
 
       <GlassCard>
-        <h2 className="font-display font-semibold text-text-primary mb-4">Paiements</h2>
+        <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Paiements</h2>
         {loading ? (
           <div className="space-y-3">
-            {[1, 2, 3].map(i => <div key={i} className="h-14 rounded-lg bg-bg-secondary/50 animate-pulse" />)}
+            {[1, 2, 3].map(i => <div key={i} className="h-14 rounded-lg bg-white/[0.03] animate-pulse" />)}
           </div>
         ) : payments.length === 0 ? (
-          <p className="text-sm text-text-secondary text-center py-8">Aucun paiement enregistré</p>
+          <p className="text-sm text-slate-500 text-center py-8">Aucun paiement enregistré</p>
         ) : (
           <div className="space-y-2">
             {payments.map(pay => (
               <div
                 key={pay.id}
-                className="flex items-center gap-4 p-3 rounded-xl hover:bg-bg-secondary/50 transition-colors"
+                className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/[0.03] transition-colors"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-medium text-text-primary">{pay.lease?.tenant_name ?? 'N/A'}</span>
-                    <span className="text-xs text-text-secondary">·</span>
-                    <span className="text-xs text-text-secondary">{pay.lease?.property?.name ?? 'Bien supprimé'}</span>
+                    <span className="text-sm font-medium text-[var(--text-primary)]">{pay.lease?.tenant_name ?? 'N/A'}</span>
+                    <span className="text-xs text-slate-600">·</span>
+                    <span className="text-xs text-slate-500">{pay.lease?.property?.name ?? 'Bien supprimé'}</span>
                   </div>
-                  <p className="text-xs text-text-secondary">
+                  <p className="text-xs text-slate-500">
                     Échéance {format(new Date(pay.due_date), 'dd MMM yyyy', { locale: fr })}
                     {pay.paid_date && ` · Payé le ${format(new Date(pay.paid_date), 'dd MMM', { locale: fr })}`}
                   </p>
                 </div>
-                <p className="text-sm font-semibold text-text-primary w-24 text-right">{formatCurrency(pay.amount)}</p>
+                <p className="text-sm font-semibold text-[var(--text-primary)] w-24 text-right">{formatCurrency(pay.amount)}</p>
                 <StatusBadge status={pay.status} />
                 <div className="flex items-center gap-2">
                   {pay.status !== 'paid' && (
                     <button
                       onClick={() => handleMarkPaid(pay.id)}
-                      className="h-8 px-3 rounded-lg bg-success-bg hover:bg-green-400/20 border border-[var(--success)/20] text-success-text text-xs font-medium transition-all flex items-center gap-1"
+                      className="h-8 px-3 rounded-lg bg-[var(--success-bg)] hover:bg-green-400/20 border border-[var(--success)/20] text-[var(--success)] text-xs font-medium transition-all flex items-center gap-1"
                     >
                       <CheckCircle className="h-3.5 w-3.5" /> Marquer reçu
                     </button>
@@ -128,7 +128,7 @@ export default function LoyersPage() {
                   {pay.lease?.is_active && (
                     <button
                       onClick={() => setRevisionLease(pay.lease)}
-                      className="h-8 px-3 rounded-lg bg-success-bg hover:bg-green-400/20 border border-[var(--success)/20] text-success-text text-xs font-medium transition-all flex items-center gap-1"
+                      className="h-8 px-3 rounded-lg bg-[var(--success-bg)] hover:bg-green-400/20 border border-[var(--success)/20] text-[var(--success)] text-xs font-medium transition-all flex items-center gap-1"
                     >
                       <TrendingUp className="h-3.5 w-3.5" /> Réviser IRL
                     </button>

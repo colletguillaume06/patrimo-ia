@@ -57,8 +57,8 @@ export default function BiensPage() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-text-primary">Mes biens</h1>
-          <p className="text-text-tertiary text-sm mt-1">{biens.length} bien{biens.length > 1 ? 's' : ''} dans votre portefeuille</p>
+          <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Mes biens</h1>
+          <p className="text-slate-400 text-sm mt-1">{biens.length} bien{biens.length > 1 ? 's' : ''} dans votre portefeuille</p>
         </div>
         <button
           onClick={() => setShowAdd(true)}
@@ -71,7 +71,7 @@ export default function BiensPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-56 rounded-xl bg-bg-secondary/50 animate-pulse" />
+            <div key={i} className="h-56 rounded-xl bg-white/[0.03] animate-pulse" />
           ))}
         </div>
       ) : biens.length === 0 ? (
@@ -79,8 +79,8 @@ export default function BiensPage() {
           <div className="h-16 w-16 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-4">
             <Building2 className="h-8 w-8 text-blue-400" />
           </div>
-          <h2 className="font-display font-semibold text-xl text-text-primary mb-2">Aucun bien</h2>
-          <p className="text-text-tertiary text-sm mb-6">Ajoutez votre premier bien pour commencer</p>
+          <h2 className="font-display font-semibold text-xl text-[var(--text-primary)] mb-2">Aucun bien</h2>
+          <p className="text-slate-400 text-sm mb-6">Ajoutez votre premier bien pour commencer</p>
           <button
             onClick={() => setShowAdd(true)}
             className="flex items-center gap-2 h-10 px-6 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all"

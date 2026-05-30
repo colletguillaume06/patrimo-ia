@@ -26,7 +26,7 @@ export function KpiGrid({ metrics }: KpiGridProps) {
       value: formatCurrency(metrics.monthly_cashflow),
       sub: 'net après charges',
       icon: TrendingUp,
-      iconBg: metrics.monthly_cashflow >= 0 ? 'bg-success-bg' : 'bg-red-50',
+      iconBg: metrics.monthly_cashflow >= 0 ? 'bg-[var(--success-bg)]' : 'bg-red-50',
       iconColor: metrics.monthly_cashflow >= 0 ? 'text-[#0E7A4F]' : 'text-[#B91C1C]',
       glow: metrics.monthly_cashflow >= 0 ? 'green' as const : 'red' as const,
       trend: metrics.monthly_cashflow >= 0 ? 'up' as const : 'down' as const,
@@ -55,7 +55,7 @@ export function KpiGrid({ metrics }: KpiGridProps) {
       glow: 'cyan' as const,
       trend: metrics.rendement_moyen >= 4 ? 'up' as const : 'neutral' as const,
       trendValue: metrics.rendement_moyen >= 6 ? 'excellent' : metrics.rendement_moyen >= 4 ? 'bon' : 'faible',
-      trendColor: metrics.rendement_moyen >= 4 ? 'text-[#0E7A4F]' : 'text-text-secondary',
+      trendColor: metrics.rendement_moyen >= 4 ? 'text-[#0E7A4F]' : 'text-[var(--text-muted)]',
     },
   ]
 
@@ -65,7 +65,7 @@ export function KpiGrid({ metrics }: KpiGridProps) {
         <GlassCard key={kpi.label} hover glow={kpi.glow} className="p-5 pt-6">
           <div className="flex items-start justify-between mb-3">
             {/* Label en uppercase petit */}
-            <p className="text-[12px] font-medium text-text-secondary uppercase tracking-wide">
+            <p className="text-[12px] font-medium text-[var(--text-muted)] uppercase tracking-wide">
               {kpi.label}
             </p>
             <div className={`h-8 w-8 rounded-lg ${kpi.iconBg} flex items-center justify-center`}>
@@ -74,7 +74,7 @@ export function KpiGrid({ metrics }: KpiGridProps) {
           </div>
 
           {/* Valeur principale — DM Mono obligatoire */}
-          <p className="text-[26px] font-semibold text-text-primary tracking-tight mb-2"
+          <p className="text-[26px] font-semibold text-[var(--text-primary)] tracking-tight mb-2"
              style={{ fontFamily: 'var(--font-dm-mono)' }}>
             {kpi.value}
           </p>
@@ -85,8 +85,8 @@ export function KpiGrid({ metrics }: KpiGridProps) {
             <span className={`text-[13px] font-medium ${kpi.trendColor}`}>
               {kpi.trendValue}
             </span>
-            <span className="text-[12px] text-text-tertiary">·</span>
-            <span className="text-[12px] text-text-secondary">{kpi.sub}</span>
+            <span className="text-[12px] text-[var(--text-subtle)]">·</span>
+            <span className="text-[12px] text-[var(--text-muted)]">{kpi.sub}</span>
           </div>
         </GlassCard>
       ))}

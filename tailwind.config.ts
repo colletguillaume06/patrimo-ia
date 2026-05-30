@@ -11,59 +11,36 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        /* ── Design system tokens ── */
-        bg: {
-          primary:   'var(--bg-primary)',
-          secondary: 'var(--bg-secondary)',
-          tertiary:  'var(--bg-tertiary)',
-          card:      'var(--bg-card)',
-        },
-        border: {
-          DEFAULT: 'var(--border)',
-          hover:   'var(--border-hover)',
-        },
-        text: {
-          primary:   'var(--text-primary)',
-          secondary: 'var(--text-secondary)',
-          tertiary:  'var(--text-tertiary)',
-          disabled:  'var(--text-disabled)',
-        },
-        accent: {
-          DEFAULT: 'var(--accent)',
-          hover:   'var(--accent-hover)',
-          text:    'var(--accent-text)',
-        },
-        success: {
-          bg:     'var(--success-bg)',
-          border: 'var(--success-border)',
-          text:   'var(--success-text)',
-        },
-        warning: {
-          bg:     'var(--warning-bg)',
-          border: 'var(--warning-border)',
-          text:   'var(--warning-text)',
-        },
-        danger: {
-          bg:     'var(--danger-bg)',
-          border: 'var(--danger-border)',
-          text:   'var(--danger-text)',
-        },
-        info: {
-          bg:     'var(--info-bg)',
-          border: 'var(--info-border)',
-          text:   'var(--info-text)',
-        },
-        /* ── Rétrocompat ── */
-        navy:  '#0B1628',
+        navy: '#0B1628',
         navy2: '#111E35',
+        blue: { DEFAULT: '#1A56DB', 600: '#1A56DB' },
+        cyan: { DEFAULT: '#06B6D4' },
+        green: { DEFAULT: '#10B981' },
+        amber: { DEFAULT: '#F59E0B' },
+        red: { DEFAULT: '#EF4444' },
+        slate: {
+          DEFAULT: '#8B9AB3',
+          800: '#1E293B',
+          700: '#334155',
+          600: '#475569',
+          500: '#64748B',
+          400: '#94A3B8',
+        },
+        border: 'rgba(255,255,255,0.08)',
+        glass: 'rgba(255,255,255,0.04)',
       },
       fontFamily: {
-        sans:    ['var(--font-dm-sans)', 'sans-serif'],
+        sans: ['var(--font-dm-sans)', 'sans-serif'],
         display: ['var(--font-syne)', 'sans-serif'],
-        mono:    ['var(--font-dm-mono)', 'DM Mono', 'monospace'],
+        mono: ['DM Mono', 'monospace'],
       },
       borderRadius: {
-        lg: '12px', xl: '16px', '2xl': '20px',
+        lg: '12px',
+        xl: '16px',
+        '2xl': '20px',
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
     },
   },

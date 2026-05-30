@@ -16,10 +16,10 @@ export function MobileNav({ profile, latePaymentsCount }: MobileNavProps) {
   return (
     <>
       <button
-        className="md:hidden h-9 w-9 rounded-lg bg-bg-tertiary/30 border border-border flex items-center justify-center"
+        className="md:hidden h-9 w-9 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center"
         onClick={() => setOpen(true)}
       >
-        <Menu className="h-4 w-4 text-text-tertiary" />
+        <Menu className="h-4 w-4 text-slate-400" />
       </button>
 
       {open && (
@@ -33,7 +33,7 @@ export function MobileNav({ profile, latePaymentsCount }: MobileNavProps) {
               className="absolute top-4 right-4 z-10 h-8 w-8 rounded-lg bg-white/[0.08] flex items-center justify-center"
               onClick={() => setOpen(false)}
             >
-              <X className="h-4 w-4 text-text-secondary" />
+              <X className="h-4 w-4 text-slate-300" />
             </button>
             <Sidebar profile={profile} latePaymentsCount={latePaymentsCount} />
           </div>

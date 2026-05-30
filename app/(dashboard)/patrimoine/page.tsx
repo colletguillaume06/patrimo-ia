@@ -39,12 +39,12 @@ function CompareBar({ label, actual, market, unite = '€' }: {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between text-xs">
-        <span className="text-text-tertiary">{label}</span>
+        <span className="text-slate-400">{label}</span>
         <div className="flex items-center gap-1.5">
           {isNear ? (
-            <span className="flex items-center gap-1 text-text-tertiary"><Minus className="h-3 w-3" /> Dans la moyenne</span>
+            <span className="flex items-center gap-1 text-slate-400"><Minus className="h-3 w-3" /> Dans la moyenne</span>
           ) : isOver ? (
-            <span className="flex items-center gap-1 text-success-text"><ArrowUp className="h-3 w-3" /> +{pct}% vs marché</span>
+            <span className="flex items-center gap-1 text-[var(--success)]"><ArrowUp className="h-3 w-3" /> +{pct}% vs marché</span>
           ) : (
             <span className="flex items-center gap-1 text-amber-400"><ArrowDown className="h-3 w-3" /> {pct}% vs marché</span>
           )}
@@ -53,8 +53,8 @@ function CompareBar({ label, actual, market, unite = '€' }: {
       <div className="relative h-6 bg-white/[0.05] rounded-lg overflow-hidden">
         {/* Barre marché */}
         <div className="absolute inset-y-0 left-0 right-0 flex items-center px-2 justify-between">
-          <span className="text-xs text-text-secondary z-10">{market.toLocaleString('fr-FR')} {unite} marché</span>
-          <span className="text-xs font-semibold text-text-primary z-10">{actual.toLocaleString('fr-FR')} {unite} actuel</span>
+          <span className="text-xs text-slate-600 z-10">{market.toLocaleString('fr-FR')} {unite} marché</span>
+          <span className="text-xs font-semibold text-[var(--text-primary)] z-10">{actual.toLocaleString('fr-FR')} {unite} actuel</span>
         </div>
         {/* Indicateur position */}
         <div
@@ -124,8 +124,8 @@ export default function PatrimoinePage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-text-primary">Valorisation patrimoine</h1>
-          <p className="text-text-tertiary text-sm mt-1">Prix marché récents · Loyers de référence · Plus-value latente</p>
+          <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Valorisation patrimoine</h1>
+          <p className="text-slate-400 text-sm mt-1">Prix marché récents · Loyers de référence · Plus-value latente</p>
         </div>
         <button
           onClick={estimerTout}
@@ -138,13 +138,13 @@ export default function PatrimoinePage() {
       {/* Synthèse globale */}
       {totalEstime > 0 && (
         <GlassCard glow={plusValueLatente && plusValueLatente > 0 ? 'green' : 'red'}>
-          <h2 className="font-display font-semibold text-text-primary mb-4">Synthèse portefeuille</h2>
+          <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Synthèse portefeuille</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Prix d\'acquisition', value: formatCurrency(totalAchat, true), color: 'text-text-primary', sub: `${properties.length} biens` },
+              { label: 'Prix d\'acquisition', value: formatCurrency(totalAchat, true), color: 'text-[var(--text-primary)]', sub: `${properties.length} biens` },
               { label: 'Valeur marché estimée', value: formatCurrency(totalEstime, true), color: 'text-blue-400', sub: new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) },
               {
-                label: 'Plus-value latente', color: plusValueLatente && plusValueLatente > 0 ? 'text-success-text' : 'text-red-400',
+                label: 'Plus-value latente', color: plusValueLatente && plusValueLatente > 0 ? 'text-[var(--success)]' : 'text-red-400',
                 value: plusValueLatente ? formatCurrency(plusValueLatente, true) : '—',
                 sub: plusValueLatente && totalAchat > 0 ? formatPct((plusValueLatente / totalAchat) * 100) + ' depuis achat' : '',
               },
@@ -155,10 +155,10 @@ export default function PatrimoinePage() {
                 sub: 'potentiel locatif',
               },
             ].map(({ label, value, color, sub }) => (
-              <div key={label} className="bg-bg-secondary/50 rounded-xl p-3">
-                <p className="text-xs text-text-secondary mb-1">{label}</p>
+              <div key={label} className="bg-white/[0.03] rounded-xl p-3">
+                <p className="text-xs text-slate-500 mb-1">{label}</p>
                 <p className={`text-lg font-bold font-mono ${color}`}>{value}</p>
-                {sub && <p className="text-xs text-text-secondary mt-0.5">{sub}</p>}
+                {sub && <p className="text-xs text-slate-600 mt-0.5">{sub}</p>}
               </div>
             ))}
           </div>
@@ -168,10 +168,10 @@ export default function PatrimoinePage() {
       {/* Par bien */}
       <div className="space-y-4">
         {loading ? (
-          [1, 2, 3].map(i => <div key={i} className="h-48 rounded-xl bg-bg-secondary/50 animate-pulse" />)
+          [1, 2, 3].map(i => <div key={i} className="h-48 rounded-xl bg-white/[0.03] animate-pulse" />)
         ) : properties.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-text-tertiary">Ajoutez des biens avec code postal et surface pour estimer</p>
+            <p className="text-slate-400">Ajoutez des biens avec code postal et surface pour estimer</p>
           </div>
         ) : properties.map(prop => {
           const est = estimations[prop.id]
@@ -186,9 +186,9 @@ export default function PatrimoinePage() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <ProfileBadge type={prop.type} size="sm" />
-                    <h3 className="font-display font-semibold text-text-primary">{prop.name}</h3>
+                    <h3 className="font-display font-semibold text-[var(--text-primary)]">{prop.name}</h3>
                   </div>
-                  <p className="flex items-center gap-1.5 text-xs text-text-secondary">
+                  <p className="flex items-center gap-1.5 text-xs text-slate-500">
                     <MapPin className="h-3 w-3" />
                     {[prop.address, prop.city, prop.postal_code].filter(Boolean).join(', ')}
                     {prop.surface_m2 && ` · ${prop.surface_m2} m²`}
@@ -207,71 +207,71 @@ export default function PatrimoinePage() {
               {/* Métriques principales */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                 {/* Valeur achat */}
-                <div className="bg-bg-secondary/50 rounded-xl p-3">
-                  <p className="text-xs text-text-secondary mb-1">Prix d'achat</p>
-                  <p className="text-base font-bold text-text-primary">{prop.purchase_price ? formatCurrency(prop.purchase_price) : '—'}</p>
-                  {prixM2Actuel && <p className="text-xs text-text-secondary mt-0.5">{prixM2Actuel.toLocaleString('fr-FR')} €/m²</p>}
+                <div className="bg-white/[0.03] rounded-xl p-3">
+                  <p className="text-xs text-slate-500 mb-1">Prix d'achat</p>
+                  <p className="text-base font-bold text-[var(--text-primary)]">{prop.purchase_price ? formatCurrency(prop.purchase_price) : '—'}</p>
+                  {prixM2Actuel && <p className="text-xs text-slate-600 mt-0.5">{prixM2Actuel.toLocaleString('fr-FR')} €/m²</p>}
                 </div>
 
                 {/* Valeur marché */}
-                <div className={`rounded-xl p-3 ${est?.valeur_estimee ? 'bg-blue-500/5 border border-blue-500/15' : 'bg-bg-secondary/50'}`}>
-                  <p className="text-xs text-text-secondary mb-1">Valeur marché estimée</p>
+                <div className={`rounded-xl p-3 ${est?.valeur_estimee ? 'bg-blue-500/5 border border-blue-500/15' : 'bg-white/[0.03]'}`}>
+                  <p className="text-xs text-slate-500 mb-1">Valeur marché estimée</p>
                   {est?.loading ? (
-                    <div className="h-6 w-24 bg-bg-secondary rounded animate-pulse" />
+                    <div className="h-6 w-24 bg-white/[0.06] rounded animate-pulse" />
                   ) : est?.valeur_estimee ? (
                     <>
                       <p className="text-base font-bold text-blue-400">{formatCurrency(est.valeur_estimee)}</p>
-                      <p className="text-xs text-text-secondary mt-0.5">
+                      <p className="text-xs text-slate-500 mt-0.5">
                         {est.valeur_basse.toLocaleString('fr-FR')} – {est.valeur_haute.toLocaleString('fr-FR')} €
                       </p>
                     </>
                   ) : (
-                    <p className="text-sm text-text-secondary">—</p>
+                    <p className="text-sm text-slate-600">—</p>
                   )}
                 </div>
 
                 {/* Plus-value */}
-                <div className={`rounded-xl p-3 ${plusValue !== null ? (plusValue > 0 ? 'bg-green-500/5 border border-green-500/15' : 'bg-red-500/5 border border-red-500/15') : 'bg-bg-secondary/50'}`}>
-                  <p className="text-xs text-text-secondary mb-1">Plus-value latente</p>
+                <div className={`rounded-xl p-3 ${plusValue !== null ? (plusValue > 0 ? 'bg-green-500/5 border border-green-500/15' : 'bg-red-500/5 border border-red-500/15') : 'bg-white/[0.03]'}`}>
+                  <p className="text-xs text-slate-500 mb-1">Plus-value latente</p>
                   {plusValue !== null ? (
                     <>
                       <div className="flex items-center gap-1">
-                        {plusValue > 0 ? <TrendingUp className="h-3.5 w-3.5 text-success-text" /> : <TrendingDown className="h-3.5 w-3.5 text-red-400" />}
-                        <p className={`text-base font-bold ${plusValue > 0 ? 'text-success-text' : 'text-red-400'}`}>
+                        {plusValue > 0 ? <TrendingUp className="h-3.5 w-3.5 text-[var(--success)]" /> : <TrendingDown className="h-3.5 w-3.5 text-red-400" />}
+                        <p className={`text-base font-bold ${plusValue > 0 ? 'text-[var(--success)]' : 'text-red-400'}`}>
                           {plusValue > 0 ? '+' : ''}{formatCurrency(plusValue)}
                         </p>
                       </div>
                       {prop.purchase_price && (
-                        <p className={`text-xs mt-0.5 ${plusValue > 0 ? 'text-success-text' : 'text-red-400'}`}>
+                        <p className={`text-xs mt-0.5 ${plusValue > 0 ? 'text-[var(--success)]' : 'text-red-400'}`}>
                           {plusValue > 0 ? '+' : ''}{formatPct((plusValue / prop.purchase_price) * 100)}
                         </p>
                       )}
                     </>
                   ) : (
-                    <p className="text-sm text-text-secondary">—</p>
+                    <p className="text-sm text-slate-600">—</p>
                   )}
                 </div>
 
                 {/* Loyer actuel vs marché */}
-                <div className={`rounded-xl p-3 ${est?.loyer_marche_mensuel ? 'bg-amber-500/5 border border-amber-500/15' : 'bg-bg-secondary/50'}`}>
-                  <p className="text-xs text-text-secondary mb-1">Loyer marché estimé</p>
+                <div className={`rounded-xl p-3 ${est?.loyer_marche_mensuel ? 'bg-amber-500/5 border border-amber-500/15' : 'bg-white/[0.03]'}`}>
+                  <p className="text-xs text-slate-500 mb-1">Loyer marché estimé</p>
                   {est?.loading ? (
-                    <div className="h-6 w-20 bg-bg-secondary rounded animate-pulse" />
+                    <div className="h-6 w-20 bg-white/[0.06] rounded animate-pulse" />
                   ) : est?.loyer_marche_mensuel ? (
                     <>
                       <p className="text-base font-bold text-amber-400">{formatCurrency(est.loyer_marche_mensuel)}/mois</p>
-                      <p className="text-xs text-text-secondary mt-0.5">{est.loyer_marche_m2} €/m²/mois</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{est.loyer_marche_m2} €/m²/mois</p>
                     </>
                   ) : (
-                    <p className="text-sm text-text-secondary">—</p>
+                    <p className="text-sm text-slate-600">—</p>
                   )}
                 </div>
               </div>
 
               {/* Barres de comparaison */}
               {est && !est.loading && (
-                <div className="space-y-3 pt-4 border-t border-border">
-                  <p className="text-xs font-medium text-text-tertiary">Comparaison avec le marché local ({est.date_reference})</p>
+                <div className="space-y-3 pt-4 border-t border-white/[0.06]">
+                  <p className="text-xs font-medium text-slate-400">Comparaison avec le marché local ({est.date_reference})</p>
 
                   {/* Prix au m² */}
                   {prixM2Actuel && (
@@ -295,14 +295,14 @@ export default function PatrimoinePage() {
 
                   {/* Tendance marché */}
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-text-secondary">Tendance prix secteur (12 mois)</span>
-                    <span className={`flex items-center gap-1 text-xs font-semibold ${est.tendance_annuelle > 0 ? 'text-success-text' : est.tendance_annuelle < 0 ? 'text-red-400' : 'text-text-tertiary'}`}>
+                    <span className="text-xs text-slate-500">Tendance prix secteur (12 mois)</span>
+                    <span className={`flex items-center gap-1 text-xs font-semibold ${est.tendance_annuelle > 0 ? 'text-[var(--success)]' : est.tendance_annuelle < 0 ? 'text-red-400' : 'text-slate-400'}`}>
                       {est.tendance_annuelle > 0 ? <ArrowUp className="h-3 w-3" /> : est.tendance_annuelle < 0 ? <ArrowDown className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
                       {est.tendance_annuelle > 0 ? '+' : ''}{est.tendance_annuelle}% / an
                     </span>
                   </div>
 
-                  <p className="text-xs text-text-secondary">Source : {est.source}</p>
+                  <p className="text-xs text-slate-600">Source : {est.source}</p>
                 </div>
               )}
 
@@ -316,8 +316,8 @@ export default function PatrimoinePage() {
         })}
       </div>
 
-      <div className="p-4 rounded-xl bg-white/[0.02] border border-border text-center">
-        <p className="text-xs text-text-secondary">
+      <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+        <p className="text-xs text-slate-500">
           Estimations basées sur le baromètre FNAIM · Notaires de France · MeilleursAgents — données {new Date().getFullYear()}.
           Ces valeurs sont indicatives (±15%) et ne remplacent pas une expertise professionnelle.
         </p>

@@ -22,7 +22,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .eq('status', 'late')
 
   return (
-    <div className="flex h-screen bg-bg-primary overflow-hidden">
+    <div className="flex h-screen bg-[var(--bg)] overflow-hidden">
       <div className="hidden md:flex flex-shrink-0">
         <Sidebar profile={profile as Profile} latePaymentsCount={lateCount ?? 0} />
       </div>
