@@ -174,7 +174,7 @@ export default function GenererBailPage() {
         <h1 className="font-display font-bold text-xl" style={{ color: 'var(--text-primary)' }}>Generer un bail</h1>
       </div>
 
-      <div className="p-4 rounded-xl border" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+      <div className="p-4 rounded-xl border" style={{ background: '#ffffff', borderColor: 'var(--border)' }}>
         <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
           Bien concerne (pré-remplit les données)
         </label>
@@ -194,8 +194,8 @@ export default function GenererBailPage() {
               const isSuggested = suggested.includes(bt.id)
               return (
                 <button key={bt.id} onClick={() => handleSelectType(bt)}
-                  className="relative text-left p-5 rounded-2xl border transition-all hover:shadow-md hover:-translate-y-0.5"
-                  style={{ background: 'var(--bg-card)', borderColor: isSuggested ? bt.color : 'var(--border)', borderWidth: isSuggested ? '2px' : '1px' }}>
+                  className="relative text-left p-5 rounded-2xl transition-all hover:shadow-lg hover:-translate-y-1 cursor-pointer"
+                  style={{ background: '#ffffff', borderColor: isSuggested ? bt.color : 'var(--border)', borderWidth: isSuggested ? '2px' : '1px' }}>
                   {isSuggested && (
                     <span className="absolute top-3 right-3 text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ background: bt.color }}>Recommande</span>
                   )}
@@ -204,22 +204,22 @@ export default function GenererBailPage() {
                       <bt.icon className="h-5 w-5" style={{ color: bt.color }} />
                     </div>
                     <div>
-                      <p className="font-display font-semibold text-base" style={{ color: 'var(--text-primary)' }}>{bt.label}</p>
-                      <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{bt.sous_label}</p>
+                      <p className="font-display font-bold text-lg" style={{ color: '#0F172A' }}>{bt.label}</p>
+                      <p className="text-sm font-medium" style={{ color: '#64748B' }}>{bt.sous_label}</p>
                     </div>
                   </div>
-                  <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>{bt.description}</p>
+                  <p className="text-sm mb-3 leading-relaxed" style={{ color: '#475569' }}>{bt.description}</p>
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="px-2 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)' }}>
+                    <div className="px-2.5 py-1.5 rounded-lg" style={{ background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
                       <span style={{ color: 'var(--text-tertiary)' }}>Duree : </span>
                       <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{bt.duree.split(' ')[0]}</span>
                     </div>
-                    <div className="px-2 py-1.5 rounded-lg" style={{ background: 'var(--bg-secondary)' }}>
+                    <div className="px-2.5 py-1.5 rounded-lg" style={{ background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
                       <span style={{ color: 'var(--text-tertiary)' }}>Preavis : </span>
                       <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{bt.preavis_loc}</span>
                     </div>
                   </div>
-                  <p className="text-xs mt-2 font-mono" style={{ color: 'var(--text-tertiary)' }}>{bt.loi}</p>
+                  <p className="text-xs mt-2 font-mono" style={{ color: bt.color, fontStyle: 'italic' }}>{bt.loi}</p>
                 </button>
               )
             })}
@@ -228,7 +228,7 @@ export default function GenererBailPage() {
       )}
 
       {step === 'form' && selectedType && (
-        <div className="p-6 rounded-2xl border" style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+        <div className="p-6 rounded-2xl border" style={{ background: '#ffffff', borderColor: 'var(--border)' }}>
           <div className="flex items-center gap-3 mb-6">
             <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: selectedType.bg }}>
               <selectedType.icon className="h-5 w-5" style={{ color: selectedType.color }} />
