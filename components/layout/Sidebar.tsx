@@ -28,6 +28,7 @@ const nav = [
   { href: '/contacts', label: 'Contacts', icon: Users },
   { href: '/documents', label: 'Documents', icon: FolderOpen },
   { href: '/courriers', label: 'Courriers', icon: Mail },
+  { href: '/parametres', label: 'Paramètres', icon: Settings },
 ]
 
 const planColors = {
