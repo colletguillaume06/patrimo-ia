@@ -7,24 +7,31 @@ interface GlassCardProps {
   glow?: 'blue' | 'green' | 'amber' | 'cyan' | 'red'
 }
 
-const glowMap = {
-  blue: 'radial-gradient(circle at top right, rgba(26,86,219,0.15) 0%, transparent 60%)',
-  green: 'radial-gradient(circle at top right, rgba(16,185,129,0.15) 0%, transparent 60%)',
-  amber: 'radial-gradient(circle at top right, rgba(245,158,11,0.15) 0%, transparent 60%)',
-  cyan: 'radial-gradient(circle at top right, rgba(6,182,212,0.15) 0%, transparent 60%)',
-  red: 'radial-gradient(circle at top right, rgba(239,68,68,0.15) 0%, transparent 60%)',
+// Barre colorée en haut de card pour les KPIs
+const glowMap: Record<string, string> = {
+  blue: '#1B4FD8',
+  green: '#0E7A4F',
+  amber: '#C27820',
+  cyan: '#0891B2',
+  red: '#B91C1C',
 }
 
 export function GlassCard({ children, className, hover = false, glow }: GlassCardProps) {
   return (
     <div
       className={cn(
-        'relative rounded-xl border border-white/[0.08] bg-white/[0.04] p-4 overflow-hidden',
-        hover && 'transition-transform duration-200 hover:-translate-y-0.5 hover:border-white/[0.12]',
+        'relative rounded-xl bg-white border border-[#E5E2DB] p-4 overflow-hidden',
+        hover && 'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-gray-100',
         className
       )}
-      style={glow ? { backgroundImage: glowMap[glow] } : undefined}
     >
+      {/* Barre colorée en haut si glow défini */}
+      {glow && (
+        <div
+          className="absolute top-0 left-4 right-4 h-[3px] rounded-full"
+          style={{ background: `linear-gradient(90deg, ${glowMap[glow]}, ${glowMap[glow]}88)` }}
+        />
+      )}
       {children}
     </div>
   )

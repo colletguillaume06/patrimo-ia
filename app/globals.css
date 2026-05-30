@@ -1,50 +1,87 @@
 @import "tailwindcss";
 
+/* ── Design tokens — Light mode (défaut) ─────────────────────── */
 :root {
+  /* Brand */
+  --brand: #1B4FD8;
+  --brand-light: #EEF3FF;
+  --brand-deep: #0F2D7A;
+
+  /* Sémantiques */
+  --success: #0E7A4F;
+  --success-bg: #E8F7F0;
+  --warning: #C27820;
+  --warning-bg: #FEF3DC;
+  --danger: #B91C1C;
+  --danger-bg: #FEE8E8;
+
+  /* Profils fiscaux */
+  --lmnp: #0E7A4F;
+  --sci: #0891B2;
+  --airbnb: #EA580C;
+  --nu: #1B4FD8;
+  --commerce: #7C3AED;
+
+  /* Neutres light */
+  --bg: #F8F7F4;
+  --surface: #FFFFFF;
+  --surface-2: #F0EEE9;
+  --border: #E5E2DB;
+  --border-subtle: #EEECE8;
+  --text-primary: #1A1714;
+  --text-secondary: #5C574F;
+  --text-muted: #9B9589;
+
+  /* Rétrocompat dark vars (pour les composants pas encore migrés) */
   --navy: #0B1628;
   --navy2: #111E35;
-  --blue: #1A56DB;
-  --cyan: #06B6D4;
-  --green: #10B981;
-  --amber: #F59E0B;
-  --red: #EF4444;
-  --slate: #8B9AB3;
-  --border: rgba(255,255,255,0.08);
-  --glass: rgba(255,255,255,0.04);
-  --background: #0B1628;
-  --foreground: #F1F5F9;
+  --blue: #1B4FD8;
+  --cyan: #0891B2;
+  --green: #0E7A4F;
+  --amber: #C27820;
+  --red: #B91C1C;
+  --slate: #9B9589;
+
   --radius: 12px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg);
+  --color-foreground: var(--text-primary);
   --font-sans: var(--font-dm-sans);
   --font-display: var(--font-syne);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html {
-  color-scheme: dark;
-}
+html { color-scheme: light; }
 
 body {
-  background: var(--navy);
-  color: var(--foreground);
+  background: var(--bg);
+  color: var(--text-primary);
   font-family: var(--font-dm-sans), sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── Scrollbar light ──────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+::-webkit-scrollbar-thumb { background: #D1CEC8; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #B8B4AE; }
 
+/* ── Utilitaires ─────────────────────────────────────────────── */
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.surface-raised {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* Rétrocompat .glass → surface en light */
 .glass {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(12px);
+  background: var(--surface);
+  border: 1px solid var(--border);
 }
