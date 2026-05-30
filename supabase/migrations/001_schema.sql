@@ -172,3 +172,18 @@ ALTER TABLE public.leases
   ADD COLUMN IF NOT EXISTS irl_reference_trimestre int CHECK (irl_reference_trimestre BETWEEN 1 AND 4),
   ADD COLUMN IF NOT EXISTS irl_reference_annee int,
   ADD COLUMN IF NOT EXISTS irl_reference_indice text DEFAULT 'irl';
+
+-- Enrichissement module travaux
+ALTER TABLE public.incidents
+  ADD COLUMN IF NOT EXISTS date_travaux date,
+  ADD COLUMN IF NOT EXISTS nom_entreprise text,
+  ADD COLUMN IF NOT EXISTS cout_paye numeric DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS cout_estime numeric DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS est_paye boolean DEFAULT false,
+  ADD COLUMN IF NOT EXISTS numero_facture text,
+  ADD COLUMN IF NOT EXISTS facture_url text,
+  ADD COLUMN IF NOT EXISTS categorie_fiscale text DEFAULT 'travaux_deductibles'
+    CHECK (categorie_fiscale IN (
+      'travaux_deductibles', 'travaux_amortissables',
+      'entretien_reparation', 'amelioration', 'construction_agrandissement'
+    ));
