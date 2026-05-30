@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, Building2, Banknote, FileText,
   Calculator, Wrench, Bot, Download, ChevronRight, Sparkles,
-  TrendingUp, BarChart3
+  TrendingUp, BarChart3, Users, FolderOpen, Mail, Settings
 } from 'lucide-react'
 import { cn, getInitials } from '@/lib/utils'
 import type { Profile } from '@/types'
@@ -25,6 +25,9 @@ const nav = [
   { href: '/travaux', label: 'Travaux', icon: Wrench },
   { href: '/copilot', label: 'Copilot IA', icon: Bot },
   { href: '/fiscal', label: 'Déclaration', icon: BarChart3 },
+  { href: '/contacts', label: 'Contacts', icon: Users },
+  { href: '/documents', label: 'Documents', icon: FolderOpen },
+  { href: '/courriers', label: 'Courriers', icon: Mail },
 ]
 
 const planColors = {
