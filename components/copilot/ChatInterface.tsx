@@ -54,7 +54,7 @@ export function ChatInterface({ initialMessages = [], propertyId, initialQuestio
           <Sparkles className="h-4.5 w-4.5 text-blue-400" />
         </div>
         <div>
-          <p className="font-display font-semibold text-[var(--text-primary)]">Propilot Copilot</p>
+          <p className="font-display font-semibold text-[var(--text-primary)]">Patrimo Copilot</p>
           <p className="text-xs text-slate-500">Expert en immobilier et fiscalité française</p>
         </div>
         <div className="ml-auto flex items-center gap-1.5">
@@ -120,7 +120,7 @@ export function ChatInterface({ initialMessages = [], propertyId, initialQuestio
           </button>
         </div>
         <p className="text-xs text-slate-600 mt-2 text-center">
-          Propilot AI · Expert immobilier IA · Ne remplace pas un conseil fiscal professionnel
+          Patrimo · Expert immobilier IA · Ne remplace pas un conseil fiscal professionnel
         </p>
       </div>
     </div>

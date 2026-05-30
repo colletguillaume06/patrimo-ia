@@ -65,7 +65,7 @@ export default function CompteLocatairePage() {
     txt += `${'─'.repeat(85)}\n`
     txt += `TOTAUX       | ${formatCurrency(total_attendu).padStart(10)} | ${formatCurrency(total_recu).padStart(10)} | ${formatCurrency(solde_global).padStart(10)}\n\n`
     txt += `Solde dû : ${formatCurrency(solde_global)}\n`
-    txt += `\nDocument établi par Propilot AI — ${today}\n`
+    txt += `\nDocument établi par Patrimo — ${today}\n`
 
     const blob = new Blob([txt], { type: 'text/plain; charset=utf-8' })
     const url = URL.createObjectURL(blob)

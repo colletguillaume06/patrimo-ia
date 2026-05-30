@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -51,7 +52,7 @@ const TMI_OPTIONS: { value: TMI; label: string; sub: string }[] = [
 // Conseils de l'assistant pour chaque étape
 const ASSISTANT_TIPS: Record<number, { titre: string; conseil: string; points: string[] }> = {
   1: {
-    titre: 'Bienvenue sur Propilot AI 👋',
+    titre: 'Bienvenue sur Patrimo 👋',
     conseil: 'Je vais vous guider pour configurer votre espace en 4 étapes rapides. Plus vos informations sont précises, plus mes simulations fiscales seront exactes.',
     points: [
       'Votre profil permet d\'adapter l\'interface à vos besoins',

@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       <p>La présente quittance ne vaut pas pour les sommes pouvant rester dues au titre d'arriérés éventuels.</p>
       <p>Cordialement,<br><strong>${profile?.full_name ?? 'Le propriétaire'}</strong></p>
       <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;" />
-      <p style="font-size: 11px; color: #666;">Quittance générée par Propilot AI — ${format(new Date(), 'dd/MM/yyyy')}</p>
+      <p style="font-size: 11px; color: #666;">Quittance générée par Patrimo — ${format(new Date(), 'dd/MM/yyyy')}</p>
     </div>
   `
 

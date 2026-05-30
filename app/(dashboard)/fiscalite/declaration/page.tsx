@@ -171,7 +171,7 @@ function ChatFiscal({ context }: { context: string }) {
           <Sparkles className="h-5 w-5 text-white" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-white">Propilot — Assistant fiscal</p>
+          <p className="text-sm font-semibold text-white">Patrimo — Assistant fiscal</p>
           <p className="text-xs text-white/70">Spécialisé 2042 · 2044 · 2072 · LMNP · SCI</p>
         </div>
         <div className="ml-auto flex items-center gap-1.5">
@@ -638,7 +638,7 @@ export default function DeclarationPage() {
           {/* Disclaimer final */}
           <div className="p-4 rounded-xl text-center text-xs"
             style={{ background: 'var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
-            Ces informations sont données à titre indicatif. Propilot AI n'est pas un cabinet de conseil fiscal. Pour les situations complexes, consultez un expert-comptable ou un conseiller fiscal agréé.
+            Ces informations sont données à titre indicatif. Patrimo n'est pas un cabinet de conseil fiscal. Pour les situations complexes, consultez un expert-comptable ou un conseiller fiscal agréé.
           </div>
         </div>
       </div>

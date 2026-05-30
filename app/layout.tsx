@@ -22,7 +22,7 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Propilot AI — Copilote immobilier intelligent',
+  title: 'Patrimo — Copilote immobilier intelligent',
   description: 'Gérez votre patrimoine immobilier avec l\'IA. Suivi des loyers, fiscalité optimisée, copilote IA pour propriétaires multi-biens.',
 }
 

@@ -19,13 +19,13 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
 
   const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
-  const fromName = profile?.full_name ?? 'Propilot AI'
+  const fromName = profile?.full_name ?? 'Patrimo'
 
   const html = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 24px; color: #1A1714;">
       ${parsed.data.body.replace(/\n/g, '<br/>').replace(/•/g, '&bull;')}
       <hr style="margin: 32px 0; border: none; border-top: 1px solid #E5E2DB;" />
-      <p style="font-size: 12px; color: #9B9589;">Email envoyé via <strong>Propilot AI</strong></p>
+      <p style="font-size: 12px; color: #9B9589;">Email envoyé via <strong>Patrimo</strong></p>
     </div>
   `
 

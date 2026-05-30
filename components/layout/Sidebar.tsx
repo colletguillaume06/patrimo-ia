@@ -10,6 +10,7 @@ import {
   FlaskConical, Loader2
 } from 'lucide-react'
 import { cn, getInitials } from '@/lib/utils'
+import { Logo } from '@/components/ui/Logo'
 import { toast } from 'sonner'
 import type { Profile } from '@/types'
 
