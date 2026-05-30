@@ -1,13 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useState } from 'react'
 import {
   LayoutDashboard, Building2, Banknote, FileText,
   Wrench, Download, ChevronRight, Sparkles, TrendingUp,
-  BarChart3, Users, FolderOpen, Mail, Settings, BookOpen
+  BarChart3, Users, FolderOpen, Mail, Settings, BookOpen,
+  FlaskConical, Loader2
 } from 'lucide-react'
 import { cn, getInitials } from '@/lib/utils'
+import { toast } from 'sonner'
 import type { Profile } from '@/types'
 
 interface SidebarProps {
@@ -38,22 +41,70 @@ const planLabels: Record<string, string> = { starter: 'Starter', pro: 'Pro', pre
 
 export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
   const pathname = usePathname()
+  const router = useRouter()
+  const [loadingDemo, setLoadingDemo] = useState(false)
+  const isDemo = (profile as any)?.demo_mode === true
+
   const isActive = (href: string) =>
     pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
+
+  const handleDemoToggle = async () => {
+    setLoadingDemo(true)
+    try {
+      if (isDemo) {
+        // Désactiver → reset + onboarding
+        const confirm = window.confirm(
+          'Désactiver le mode démo supprimera toutes les données fictives et vous redirigera vers l\'onboarding. Continuer ?'
+        )
+        if (!confirm) { setLoadingDemo(false); return }
+        const res = await fetch('/api/demo/toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'disable' }),
+        })
+        const data = await res.json()
+        if (res.ok) {
+          toast.success('Mode démo désactivé — données supprimées')
+          router.push('/onboarding')
+          router.refresh()
+        } else {
+          toast.error(data.error)
+        }
+      } else {
+        // Activer → charger données démo
+        const res = await fetch('/api/demo/toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'enable' }),
+        })
+        const data = await res.json()
+        if (res.ok) {
+          toast.success('Mode démo activé — 3 biens chargés !')
+          router.push('/dashboard')
+          router.refresh()
+        } else {
+          toast.error(data.error)
+        }
+      }
+    } finally {
+      setLoadingDemo(false)
+    }
+  }
 
   return (
     <aside className="flex flex-col h-full w-[220px] transition-colors"
       style={{ background: 'var(--sidebar-bg)', borderRight: '1px solid var(--sidebar-border)' }}>
 
       {/* Logo */}
-      <div className="px-5 py-5" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+      <div className="px-5 py-5" style={{ borderBottom: '1px solid var(--border-subtle, var(--border))' }}>
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[#1B4FD8] to-[#0891B2] flex items-center justify-center shadow-sm">
+          <div className="h-8 w-8 rounded-xl flex items-center justify-center shadow-sm"
+            style={{ background: 'linear-gradient(135deg, #1B4FD8, #0891B2)' }}>
             <Sparkles className="h-4 w-4 text-white" />
           </div>
           <span className="font-display font-bold text-base tracking-tight"
             style={{ color: 'var(--text-primary)' }}>
-            Propilot<span style={{ color: 'var(--brand)' }}> AI</span>
+            Propilot<span style={{ color: 'var(--accent)' }}> AI</span>
           </span>
         </div>
       </div>
@@ -66,12 +117,9 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
             <Link key={href} href={href}
               className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150"
               style={{
-                background: active ? 'var(--brand-light)' : 'transparent',
-                color: active ? 'var(--brand)' : 'var(--text-muted)',
-              }}
-              onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'var(--surface-2)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)' } }}
-              onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)' } }}
-            >
+                background: active ? 'var(--brand-light, #EEF3FF)' : 'transparent',
+                color: active ? 'var(--accent)' : 'var(--text-secondary)',
+              }}>
               <Icon className="h-[18px] w-[18px] flex-shrink-0" />
               <span className="flex-1">{label}</span>
               {href === '/loyers' && latePaymentsCount > 0 && (
@@ -83,25 +131,57 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
           )
         })}
 
-        <div className="my-2" style={{ borderTop: '1px solid var(--border-subtle)' }} />
+        <div className="my-2" style={{ borderTop: '1px solid var(--border)' }} />
 
         {navSecondary.map(({ href, label, icon: Icon }) => {
           const active = isActive(href)
           return (
             <Link key={href} href={href}
-              className="group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150"
+              className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150"
               style={{
-                background: active ? 'var(--brand-light)' : 'transparent',
-                color: active ? 'var(--brand)' : 'var(--text-subtle)',
-              }}
-              onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'var(--surface-2)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)' } }}
-              onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--text-subtle)' } }}
-            >
+                background: active ? 'var(--brand-light, #EEF3FF)' : 'transparent',
+                color: active ? 'var(--accent)' : 'var(--text-tertiary)',
+              }}>
               <Icon className="h-4 w-4 flex-shrink-0" />
               {label}
             </Link>
           )
         })}
+
+        {/* ── Mode démo ── */}
+        <div className="mt-2 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
+          <button
+            onClick={handleDemoToggle}
+            disabled={loadingDemo}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 disabled:opacity-60"
+            style={{
+              background: isDemo ? '#FEF3DC' : 'transparent',
+              color: isDemo ? '#92400E' : 'var(--text-tertiary)',
+              border: isDemo ? '1px solid #FCD34D' : '1px dashed var(--border)',
+            }}
+          >
+            {loadingDemo
+              ? <Loader2 className="h-4 w-4 flex-shrink-0 animate-spin" />
+              : <FlaskConical className="h-4 w-4 flex-shrink-0" />
+            }
+            <span className="flex-1 text-left">Mode démo</span>
+            {/* Toggle visuel */}
+            <div className={cn(
+              'h-5 w-9 rounded-full transition-colors relative flex-shrink-0',
+              isDemo ? 'bg-amber-400' : 'bg-gray-300'
+            )}>
+              <div className={cn(
+                'absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform',
+                isDemo ? 'translate-x-4' : 'translate-x-0.5'
+              )} />
+            </div>
+          </button>
+          {isDemo && (
+            <p className="text-xs px-3 mt-1.5" style={{ color: '#92400E' }}>
+              Données fictives actives
+            </p>
+          )}
+        </div>
       </nav>
 
       {/* Copilot — feature star */}
@@ -118,11 +198,11 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
       </div>
 
       {/* User */}
-      <div className="px-4 pb-4 pt-3" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+      <div className="px-4 pb-4 pt-3" style={{ borderTop: '1px solid var(--border)' }}>
         <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0"
-            style={{ background: 'var(--brand-light)', border: '1px solid var(--brand)', opacity: 0.8 }}>
-            <span className="text-xs font-bold" style={{ color: 'var(--brand)' }}>
+            style={{ background: 'var(--brand-light, #EEF3FF)', border: '1px solid var(--accent)' }}>
+            <span className="text-xs font-bold" style={{ color: 'var(--accent)' }}>
               {getInitials(profile?.full_name ?? null)}
             </span>
           </div>
@@ -130,11 +210,11 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
             <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
               {profile?.full_name ?? 'Mon compte'}
             </p>
-            <p className="text-xs font-medium" style={{ color: 'var(--brand)' }}>
+            <p className="text-xs font-medium" style={{ color: 'var(--accent)' }}>
               {planLabels[profile?.plan ?? 'starter']}
             </p>
           </div>
-          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--text-subtle)' }} />
+          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} />
         </div>
       </div>
     </aside>
