@@ -102,7 +102,7 @@ export default function BiensPage() {
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 h-10 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all"
+          className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all"
         >
           <Plus className="h-4 w-4" /> Ajouter un bien
         </button>
@@ -123,7 +123,7 @@ export default function BiensPage() {
           <p className="text-slate-400 text-sm mb-6">Ajoutez votre premier bien pour commencer</p>
           <button
             onClick={() => setShowAdd(true)}
-            className="flex items-center gap-2 h-10 px-6 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all"
+            className="flex items-center gap-2 h-10 px-6 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all"
           >
             <Plus className="h-4 w-4" /> Ajouter un bien
           </button>

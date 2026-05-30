@@ -115,7 +115,7 @@ export default function CopropriétéPage() {
               </div>
             ))}
           </div>
-          <button type="submit" disabled={saving} className="h-9 px-6 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50">Enregistrer</button>
+          <button type="submit" disabled={saving} className="h-9 px-6 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50">Enregistrer</button>
         </form>
       </GlassCard>
 
@@ -166,7 +166,7 @@ export default function CopropriétéPage() {
                 </select>
               </div>
               <div><label className="block text-xs text-slate-400 mb-1">Description</label><input type="text" value={appelForm.description} onChange={e => setAppelForm(f => ({ ...f, description: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" /></div>
-              <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50">Ajouter</button>
+              <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50">Ajouter</button>
             </form>
           </div>
         </div>

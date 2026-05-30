@@ -117,7 +117,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées
             </button>
           ))}
         </div>
-        <button onClick={handleSave} disabled={saving} className="h-9 px-5 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50">
+        <button onClick={handleSave} disabled={saving} className="h-9 px-5 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50">
           Enregistrer
         </button>
       </GlassCard>

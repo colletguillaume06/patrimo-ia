@@ -280,7 +280,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
             </div>
             <div className="flex gap-3">
               <button onClick={saveDG} disabled={saving}
-                className="flex-1 h-9 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all disabled:opacity-50">
+                className="flex-1 h-9 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all disabled:opacity-50">
                 Enregistrer
               </button>
               <button onClick={() => {
@@ -368,7 +368,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                 className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
             </div>
             <button onClick={saveGarant} disabled={saving}
-              className="w-full h-9 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all disabled:opacity-50">
+              className="w-full h-9 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all disabled:opacity-50">
               Enregistrer le garant
             </button>
           </div>
@@ -425,7 +425,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
               </div>
             </div>
             <button onClick={saveAssurance} disabled={saving}
-              className="w-full h-9 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all disabled:opacity-50">
+              className="w-full h-9 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all disabled:opacity-50">
               Enregistrer
             </button>
           </div>

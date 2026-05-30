@@ -79,7 +79,7 @@ export default function DiagnosticsPage() {
           <span className="text-slate-600">/</span>
           <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Diagnostics obligatoires</h1>
         </div>
-        <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all">
+        <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all">
           <Plus className="h-4 w-4" /> Ajouter
         </button>
       </div>
@@ -194,7 +194,7 @@ export default function DiagnosticsPage() {
                   </p>
                 )}
               </div>
-              <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50 transition-all">
+              <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50 transition-all">
                 {saving ? 'Enregistrement...' : 'Ajouter'}
               </button>
             </form>

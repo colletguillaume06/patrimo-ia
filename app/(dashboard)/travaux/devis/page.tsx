@@ -167,7 +167,7 @@ export default function DevisPage() {
                   </div>
                   <div className="flex gap-2">
                     <button type="button" onClick={() => setShowAdd(null)} className="flex-1 h-8 rounded-lg border border-white/[0.10] text-slate-400 text-xs">Annuler</button>
-                    <button type="submit" disabled={saving} className="flex-1 h-8 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-xs font-semibold disabled:opacity-50">Ajouter</button>
+                    <button type="submit" disabled={saving} className="flex-1 h-8 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-xs font-semibold disabled:opacity-50">Ajouter</button>
                   </div>
                 </form>
               </div>

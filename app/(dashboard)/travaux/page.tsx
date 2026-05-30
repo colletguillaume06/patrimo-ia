@@ -254,13 +254,17 @@ export default function TravauxPage() {
         </div>
         <div className="flex items-center gap-2">
           <Link href="/travaux/devis"
-            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-all"
-            style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
+            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold transition-all border"
+            style={{
+              background: '#fff',
+              borderColor: '#1D4ED8',
+              color: '#1D4ED8',
+            }}>
             <BarChart2 className="h-4 w-4" /> Comparer devis
           </Link>
           <button onClick={() => setShowAdd(true)}
-            className="flex items-center gap-2 h-10 px-4 rounded-xl text-white text-sm font-semibold transition-all"
-            style={{ background: 'var(--accent)' }}>
+            className="flex items-center gap-2 h-10 px-4 rounded-xl text-white text-sm font-semibold transition-all shadow-sm"
+            style={{ background: '#1D4ED8' }}>
             <Plus className="h-4 w-4" /> Nouveau ticket
           </button>
         </div>
@@ -583,7 +587,7 @@ export default function TravauxPage() {
                   Annuler
                 </button>
                 <button type="submit" disabled={saving}
-                  className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all disabled:opacity-50">
+                  className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all disabled:opacity-50">
                   {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Enregistrement...</> : <><Plus className="h-4 w-4" /> Créer le ticket</>}
                 </button>
               </div>

@@ -69,7 +69,7 @@ export default function SciCcaPage() {
           <span className="text-slate-600">/</span>
           <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Comptes courants associés</h1>
         </div>
-        <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all">
+        <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all">
           <Plus className="h-4 w-4" /> Nouvelle opération
         </button>
       </div>
@@ -164,7 +164,7 @@ export default function SciCcaPage() {
                   <input type="text" value={form.motif} onChange={e => setForm(f => ({ ...f, motif: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
               </div>
-              <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50">Enregistrer</button>
+              <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50">Enregistrer</button>
             </form>
           </div>
         </div>

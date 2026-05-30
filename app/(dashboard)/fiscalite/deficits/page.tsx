@@ -74,7 +74,7 @@ export default function DeficitsPage() {
           <span className="text-slate-600">/</span>
           <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Déficits fonciers reportables</h1>
         </div>
-        <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all">
+        <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all">
           <Plus className="h-4 w-4" /> Ajouter
         </button>
       </div>
@@ -210,7 +210,7 @@ export default function DeficitsPage() {
                 <label className="block text-xs text-slate-400 mb-1">Notes</label>
                 <input type="text" placeholder="Ex: Déficit 2044 ligne 420" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
               </div>
-              <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50">Ajouter</button>
+              <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50">Ajouter</button>
             </form>
           </div>
         </div>

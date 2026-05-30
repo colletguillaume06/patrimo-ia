@@ -64,7 +64,7 @@ export default function ParametresPage() {
             ))}
           </div>
 
-          <button type="submit" disabled={saving} className="h-10 px-6 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50 transition-all">
+          <button type="submit" disabled={saving} className="h-10 px-6 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50 transition-all">
             {saving ? 'Enregistrement...' : 'Sauvegarder'}
           </button>
         </form>

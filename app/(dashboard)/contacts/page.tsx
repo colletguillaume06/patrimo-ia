@@ -65,7 +65,7 @@ export default function ContactsPage() {
           <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Carnet de contacts</h1>
           <p className="text-slate-400 text-sm mt-1">{contacts.length} contact{contacts.length > 1 ? 's' : ''} · tous biens</p>
         </div>
-        <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 h-10 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all">
+        <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all">
           <Plus className="h-4 w-4" /> Ajouter
         </button>
       </div>
@@ -164,7 +164,7 @@ export default function ContactsPage() {
                 <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} rows={2}
                   className="w-full px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none resize-none" />
               </div>
-              <button type="submit" className="w-full h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all">
+              <button type="submit" className="w-full h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all">
                 Ajouter le contact
               </button>
             </form>

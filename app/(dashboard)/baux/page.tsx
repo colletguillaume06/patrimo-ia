@@ -78,7 +78,7 @@ export default function BauxPage() {
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 h-10 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all"
+          className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all"
         >
           <Plus className="h-4 w-4" /> Nouveau bail
         </button>
@@ -319,7 +319,7 @@ export default function BauxPage() {
 
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold mt-2"
+                className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold mt-2"
               >
                 <Plus className="h-4 w-4" /> Créer le bail
               </button>

@@ -100,7 +100,7 @@ export default function DocumentsPage() {
           <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">GED — Gestion documentaire</h1>
           <p className="text-slate-400 text-sm mt-1">{documents.length} document{documents.length > 1 ? 's' : ''}</p>
         </div>
-        <button onClick={() => setShowUpload(true)} className="flex items-center gap-2 h-10 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all">
+        <button onClick={() => setShowUpload(true)} className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all">
           <Upload className="h-4 w-4" /> Ajouter un document
         </button>
       </div>
@@ -203,7 +203,7 @@ export default function DocumentsPage() {
                   <input type="number" placeholder="2026" value={form.annee_fiscale} onChange={e => setForm(f => ({ ...f, annee_fiscale: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
               </div>
-              <button type="submit" disabled={uploading || !file} className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50 transition-all">
+              <button type="submit" disabled={uploading || !file} className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50 transition-all">
                 {uploading ? <><Loader2 className="h-4 w-4 animate-spin" /> Upload...</> : <><Upload className="h-4 w-4" /> Envoyer</>}
               </button>
             </form>

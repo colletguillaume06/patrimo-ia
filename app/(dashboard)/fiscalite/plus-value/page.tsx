@@ -106,11 +106,11 @@ export default function PlusValuePage() {
             <label className="block text-xs text-slate-400 mb-2">Frais d'acquisition</label>
             <div className="flex gap-3 mb-2">
               <button onClick={() => setForm(f => ({ ...f, use_forfait: true }))}
-                className={`flex-1 h-9 rounded-lg text-sm transition-all ${form.use_forfait ? 'bg-blue-500 text-white' : 'bg-white/[0.05] border border-white/[0.08] text-slate-400'}`}>
+                className={`flex-1 h-9 rounded-lg text-sm transition-all ${form.use_forfait ? 'bg-[#1D4ED8] text-white' : 'bg-white/[0.05] border border-white/[0.08] text-slate-400'}`}>
                 Forfait 7,5%
               </button>
               <button onClick={() => setForm(f => ({ ...f, use_forfait: false }))}
-                className={`flex-1 h-9 rounded-lg text-sm transition-all ${!form.use_forfait ? 'bg-blue-500 text-white' : 'bg-white/[0.05] border border-white/[0.08] text-slate-400'}`}>
+                className={`flex-1 h-9 rounded-lg text-sm transition-all ${!form.use_forfait ? 'bg-[#1D4ED8] text-white' : 'bg-white/[0.05] border border-white/[0.08] text-slate-400'}`}>
                 Montant réel
               </button>
             </div>

@@ -295,7 +295,7 @@ export default function FiscalitePage() {
             {YEARS.map(y => (
               <button key={y} onClick={() => setYear(y)}
                 className={`h-9 px-3 rounded-lg text-sm font-medium transition-all ${
-                  year === y ? 'bg-blue-500 text-white' : 'bg-white/[0.05] border border-white/[0.08] text-slate-400 hover:text-[var(--text-primary)]'
+                  year === y ? 'bg-[#1D4ED8] text-white' : 'bg-white/[0.05] border border-white/[0.08] text-slate-400 hover:text-[var(--text-primary)]'
                 }`}>
                 {y}
               </button>
