@@ -63,35 +63,75 @@ export function ProfileSCI({ property: p }: ProfileSCIProps) {
 
       {/* Associés */}
       <GlassCard>
-        <div className="flex items-center gap-2 mb-4">
-          <Users className="h-4 w-4 text-slate-400" />
-          <h3 className="font-display font-semibold text-[var(--text-primary)]">Répartition des parts</h3>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-slate-400" />
+            <h3 className="font-display font-semibold text-[var(--text-primary)]">Répartition des parts</h3>
+          </div>
+          {/* Capital total */}
+          {(p as any).sci_capital_parts && (
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
+              style={{ background: 'var(--info-bg)', color: 'var(--info-text)', border: '1px solid var(--info-border)' }}>
+              Capital : {(p as any).sci_capital_parts.toLocaleString('fr-FR')} parts
+            </span>
+          )}
         </div>
 
         {p.associates.length === 0 ? (
           <p className="text-sm text-slate-500">Aucun associé enregistré</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
+            {/* En-tête */}
+            <div className="grid grid-cols-4 gap-2 text-xs font-semibold uppercase tracking-wide pb-2 border-b"
+              style={{ color: 'var(--text-tertiary)', borderColor: 'var(--border)' }}>
+              <span>Associé</span>
+              <span className="text-center">Parts</span>
+              <span className="text-center">%</span>
+              <span className="text-right">Quote-part</span>
+            </div>
+
             {p.associates.map(assoc => {
               const montant = simulation.dividendes_disponibles * (assoc.share_pct / 100)
+              const capitalParts = (p as any).sci_capital_parts ?? 1000
+              const nombreParts = (assoc as any).nombre_parts
+                ?? Math.round(capitalParts * assoc.share_pct / 100)
+
               return (
-                <div key={assoc.id}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-slate-300">{assoc.name}</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-semibold text-[var(--text-primary)]">{formatCurrency(montant)}</span>
-                      <span className="text-xs text-cyan-400 font-medium w-12 text-right">{assoc.share_pct}%</span>
-                    </div>
+                <div key={assoc.id} className="space-y-2">
+                  <div className="grid grid-cols-4 gap-2 items-center">
+                    <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                      {assoc.name}
+                    </span>
+                    <span className="text-sm font-mono text-center" style={{ color: 'var(--text-primary)' }}>
+                      {nombreParts.toLocaleString('fr-FR')}
+                    </span>
+                    <span className="text-sm font-bold text-center text-cyan-500">
+                      {assoc.share_pct}%
+                    </span>
+                    <span className="text-sm font-semibold text-right" style={{ color: 'var(--success-text)' }}>
+                      {formatCurrency(montant)}
+                    </span>
                   </div>
-                  <div className="h-1.5 bg-bg-secondary rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-400"
-                      style={{ width: `${assoc.share_pct}%` }}
-                    />
+                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--bg-secondary)' }}>
+                    <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-400 transition-all"
+                      style={{ width: `${assoc.share_pct}%` }} />
                   </div>
                 </div>
               )
             })}
+
+            {/* Total */}
+            <div className="grid grid-cols-4 gap-2 pt-2 border-t font-bold text-sm"
+              style={{ borderColor: 'var(--border)' }}>
+              <span style={{ color: 'var(--text-primary)' }}>TOTAL</span>
+              <span className="text-center font-mono" style={{ color: 'var(--text-primary)' }}>
+                {((p as any).sci_capital_parts ?? 1000).toLocaleString('fr-FR')}
+              </span>
+              <span className="text-center text-cyan-500">100%</span>
+              <span className="text-right" style={{ color: 'var(--success-text)' }}>
+                {formatCurrency(simulation.dividendes_disponibles)}
+              </span>
+            </div>
           </div>
         )}
       </GlassCard>

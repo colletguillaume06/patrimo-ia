@@ -40,6 +40,7 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
     insurance_annual: '',
     numero_fiscal: '',
     loan_monthly: '',
+    sci_capital_parts: '1000',
   })
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
@@ -65,6 +66,7 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
       insurance_annual: Number(form.insurance_annual) || 0,
       loan_monthly: Number(form.loan_monthly) || 0,
       numero_fiscal: form.numero_fiscal || null,
+      sci_capital_parts: form.type === 'sci' ? (Number(form.sci_capital_parts) || 1000) : null,
     })
 
     setLoading(false)
@@ -140,6 +142,25 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
                 />
               </div>
             ))}
+
+            {/* Nombre de parts SCI */}
+            {form.type === 'sci' && (
+              <div className="p-4 rounded-xl border border-cyan-200 bg-cyan-50">
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">
+                  Capital social — nombre de parts total
+                </label>
+                <input
+                  type="number"
+                  placeholder="Ex : 1000"
+                  value={form.sci_capital_parts}
+                  onChange={e => set('sci_capital_parts', e.target.value)}
+                  className="w-full h-10 px-3 rounded-lg bg-white border border-cyan-200 text-[#0F172A] placeholder:text-[#94A3B8] text-sm font-mono focus:outline-none focus:border-cyan-400 transition-all"
+                />
+                <p className="text-xs text-[#0C4A6E] mt-1.5">
+                  Nombre total de parts sociales de la SCI (ex : 1 000 parts). Chaque associé se verra attribuer un nombre de parts proportionnel à son %.
+                </p>
+              </div>
+            )}
 
             {/* Numéro fiscal */}
             <div>
