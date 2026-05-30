@@ -28,9 +28,9 @@
   --surface-2: #F0EEE9;
   --border: #E5E2DB;
   --border-subtle: #EEECE8;
-  --text-primary: #1A1714;
-  --text-secondary: #5C574F;
-  --text-muted: #9B9589;
+  --text-primary: #0A0908;
+  --text-secondary: #2D2926;
+  --text-muted: #5C574F;
 
   /* Rétrocompat dark vars (pour les composants pas encore migrés) */
   --navy: #0B1628;

@@ -13,7 +13,7 @@ export function BiensList({ biens }: BiensListProps) {
   return (
     <GlassCard className="h-full">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-display font-semibold text-white">Mes biens</h2>
+        <h2 className="font-display font-semibold text-[#0A0908]">Mes biens</h2>
         <Link
           href="/biens"
           className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
@@ -25,10 +25,10 @@ export function BiensList({ biens }: BiensListProps) {
       {biens.length === 0 ? (
         <Link
           href="/biens"
-          className="flex flex-col items-center justify-center h-40 rounded-xl border-2 border-dashed border-white/[0.08] hover:border-blue-500/30 transition-colors group"
+          className="flex flex-col items-center justify-center h-40 rounded-xl border-2 border-dashed border-[#E5E2DB] hover:border-blue-500/30 transition-colors group"
         >
-          <Plus className="h-8 w-8 text-slate-600 group-hover:text-blue-400 mb-2 transition-colors" />
-          <p className="text-sm text-slate-500 group-hover:text-slate-300">Ajouter votre premier bien</p>
+          <Plus className="h-8 w-8 text-[#6B6560] group-hover:text-blue-400 mb-2 transition-colors" />
+          <p className="text-sm text-[#3D3A36] group-hover:text-[#1A1714]">Ajouter votre premier bien</p>
         </Link>
       ) : (
         <div className="space-y-2">
@@ -36,20 +36,20 @@ export function BiensList({ biens }: BiensListProps) {
             <Link
               key={bien.id}
               href={`/biens/${bien.id}`}
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/[0.04] transition-colors group"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-white transition-colors group"
             >
               <div
-                className="h-9 w-9 rounded-lg flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                className="h-9 w-9 rounded-lg flex items-center justify-center text-[#0A0908] text-sm font-bold flex-shrink-0"
                 style={{ background: `linear-gradient(135deg, #1A56DB22, #1A56DB44)` }}
               >
                 {bien.name[0]}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">{bien.name}</p>
-                <p className="text-xs text-slate-500 truncate">{bien.city ?? 'Ville non renseignée'}</p>
+                <p className="text-sm font-medium text-[#0A0908] truncate">{bien.name}</p>
+                <p className="text-xs text-[#3D3A36] truncate">{bien.city ?? 'Ville non renseignée'}</p>
               </div>
               <div className="text-right flex-shrink-0">
-                <p className="text-sm font-semibold text-white">
+                <p className="text-sm font-semibold text-[#0A0908]">
                   {bien.active_lease ? formatCurrency(bien.active_lease.monthly_rent) : '—'}
                 </p>
                 {bien.gross_yield !== null && (

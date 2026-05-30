@@ -50,7 +50,7 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
           <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[#1B4FD8] to-[#0891B2] flex items-center justify-center shadow-sm">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
-          <span className="font-display font-bold text-[16px] text-[#1A1714] tracking-tight">
+          <span className="font-display font-bold text-[16px] text-[#0A0908] tracking-tight">
             Propilot<span className="text-[#1B4FD8]"> AI</span>
           </span>
         </div>
@@ -65,9 +65,9 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
             <Link key={href} href={href}
               className={cn(
                 'group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-all duration-150',
-                active ? 'bg-[#EEF3FF] text-[#1B4FD8]' : 'text-[#5C574F] hover:bg-[#F0EEE9] hover:text-[#1A1714]'
+                active ? 'bg-[#EEF3FF] text-[#1B4FD8]' : 'text-[#1A1714] hover:bg-[#F0EEE9] hover:text-[#0A0908]'
               )}>
-              <Icon className={cn('h-[18px] w-[18px] flex-shrink-0', active ? 'text-[#1B4FD8]' : 'text-[#9B9589] group-hover:text-[#5C574F]')} />
+              <Icon className={cn('h-[18px] w-[18px] flex-shrink-0', active ? 'text-[#1B4FD8]' : 'text-[#3D3A36] group-hover:text-[#1A1714]')} />
               <span className="flex-1">{label}</span>
               {isLoyers && latePaymentsCount > 0 && (
                 <span className="h-5 min-w-5 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center px-1">
@@ -86,9 +86,9 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
             <Link key={href} href={href}
               className={cn(
                 'group flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-150',
-                active ? 'bg-[#EEF3FF] text-[#1B4FD8]' : 'text-[#9B9589] hover:bg-[#F0EEE9] hover:text-[#5C574F]'
+                active ? 'bg-[#EEF3FF] text-[#1B4FD8]' : 'text-[#3D3A36] hover:bg-[#F0EEE9] hover:text-[#1A1714]'
               )}>
-              <Icon className={cn('h-4 w-4 flex-shrink-0', active ? 'text-[#1B4FD8]' : 'text-[#C5C0B8]')} />
+              <Icon className={cn('h-4 w-4 flex-shrink-0', active ? 'text-[#1B4FD8]' : 'text-[#6B6560]')} />
               {label}
             </Link>
           )
@@ -118,12 +118,12 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-medium text-[#1A1714] truncate">{profile?.full_name ?? 'Mon compte'}</p>
+            <p className="text-[13px] font-medium text-[#0A0908] truncate">{profile?.full_name ?? 'Mon compte'}</p>
             <p className={cn('text-[11px] font-medium', planColors[profile?.plan ?? 'starter'])}>
               {planLabels[profile?.plan ?? 'starter']}
             </p>
           </div>
-          <ChevronRight className="h-3.5 w-3.5 text-[#C5C0B8] flex-shrink-0" />
+          <ChevronRight className="h-3.5 w-3.5 text-[#6B6560] flex-shrink-0" />
         </div>
       </div>
     </aside>

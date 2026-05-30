@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${syne.variable} ${dmSans.variable} ${dmMono.variable}`}>
-      <body className="min-h-screen bg-[#F8F7F4] text-[#1A1714] antialiased">
+      <body className="min-h-screen bg-[#F8F7F4] text-[#0A0908] antialiased">
         {children}
         <Toaster
           theme="light"
