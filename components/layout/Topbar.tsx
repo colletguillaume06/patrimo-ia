@@ -16,7 +16,7 @@ export function Topbar({ title, profile, latePaymentsCount = 0 }: TopbarProps) {
     <header className="sticky top-0 z-20 h-14 flex items-center gap-4 px-6 backdrop-blur-md border-b transition-colors"
       style={{ background: 'var(--topbar-bg)', borderColor: 'var(--border)' }}>
       <MobileNav profile={profile} latePaymentsCount={latePaymentsCount} />
-      <h1 className="font-display font-semibold text-[18px] flex-1"
+      <h1 className="font-display font-semibold text-lg flex-1"
           style={{ color: 'var(--text-primary)' }}>
         {title}
       </h1>

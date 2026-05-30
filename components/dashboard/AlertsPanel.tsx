@@ -51,14 +51,14 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
               <div className={cn('h-2 w-2 rounded-full mt-1.5', config.dot)} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className={cn('text-[14px] font-semibold', config.color)}>
+              <p className={cn('text-sm font-semibold', config.color)}>
                 {alert.property_name}
               </p>
-              <p className="text-[13px] text-[var(--text-secondary)] mt-0.5">{alert.message}</p>
+              <p className="text-sm text-[var(--text-secondary)] mt-0.5">{alert.message}</p>
             </div>
             {alert.action_label && alert.action_href && (
               <Link href={alert.action_href}
-                className={cn('flex-shrink-0 flex items-center gap-1 text-[13px] font-semibold whitespace-nowrap', config.color)}>
+                className={cn('flex-shrink-0 flex items-center gap-1 text-sm font-semibold whitespace-nowrap', config.color)}>
                 {alert.action_label} <ChevronRight className="h-3.5 w-3.5" />
               </Link>
             )}
@@ -79,11 +79,11 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
               )}>
                 <Icon className={cn('h-4 w-4 mt-0.5 flex-shrink-0', config.color)} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-medium text-[var(--text-primary)]">{alert.property_name}</p>
-                  <p className="text-[12px] text-[var(--text-secondary)] mt-0.5 line-clamp-2">{alert.message}</p>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">{alert.property_name}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2">{alert.message}</p>
                   {alert.action_label && alert.action_href && (
                     <Link href={alert.action_href}
-                      className={cn('mt-1.5 flex items-center gap-1 text-[12px] font-medium', config.color)}>
+                      className={cn('mt-1.5 flex items-center gap-1 text-xs font-medium', config.color)}>
                       {alert.action_label} <ChevronRight className="h-3 w-3" />
                     </Link>
                   )}

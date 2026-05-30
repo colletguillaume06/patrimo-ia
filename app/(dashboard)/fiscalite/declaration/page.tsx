@@ -76,11 +76,11 @@ function Section({ title, icon, children, defaultOpen = false, badge }:
         style={{ background: open ? 'var(--bg-secondary)' : 'var(--bg-card)' }}>
         <div className="flex items-center gap-3">
           {icon}
-          <span className="font-display font-semibold text-[15px]" style={{ color: 'var(--text-primary)' }}>
+          <span className="font-display font-semibold text-base" style={{ color: 'var(--text-primary)' }}>
             {title}
           </span>
           {badge && (
-            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
               style={{ background: 'var(--accent)', color: '#fff' }}>
               {badge}
             </span>
@@ -115,12 +115,12 @@ function CaseLine({ c }: { c: CaseDeclaration }) {
       </div>
       {/* Label + note */}
       <div className="flex-1 min-w-0">
-        <p className="text-[14px] font-medium" style={{ color: 'var(--text-primary)' }}>{c.label}</p>
+        <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{c.label}</p>
         {c.note && (
-          <p className="text-[12px] mt-0.5" style={{ color: 'var(--text-secondary)' }}>{c.note}</p>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{c.note}</p>
         )}
         {!c.obligatoire && (
-          <span className="text-[11px] font-medium" style={{ color: 'var(--text-tertiary)' }}>Optionnel</span>
+          <span className="text-xs font-medium" style={{ color: 'var(--text-tertiary)' }}>Optionnel</span>
         )}
       </div>
       {/* Valeur + copier */}
@@ -170,29 +170,29 @@ function ChatFiscal({ context }: { context: string }) {
           <Sparkles className="h-4 w-4 text-white" />
         </div>
         <div>
-          <p className="text-[14px] font-semibold" style={{ color: 'var(--text-primary)' }}>
+          <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
             Propilot — Assistant fiscal
           </p>
-          <p className="text-[11px]" style={{ color: 'var(--text-tertiary)' }}>
+          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
             Spécialisé déclaration 2042, 2044, 2072, LMNP
           </p>
         </div>
         <div className="ml-auto flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-success-text" />
-          <span className="text-[11px]" style={{ color: 'var(--success-text)' }}>En ligne</span>
+          <span className="text-xs" style={{ color: 'var(--success-text)' }}>En ligne</span>
         </div>
       </div>
 
       {/* Suggestions */}
       {messages.length === 0 && (
         <div className="px-4 py-3 border-b" style={{ borderColor: 'var(--border)' }}>
-          <p className="text-[11px] font-medium mb-2" style={{ color: 'var(--text-tertiary)' }}>
+          <p className="text-xs font-medium mb-2" style={{ color: 'var(--text-tertiary)' }}>
             Questions fréquentes
           </p>
           <div className="flex flex-wrap gap-1.5">
             {SUGGESTED_FISCAL.map(q => (
               <button key={q} onClick={() => handleSend(q)}
-                className="text-[11px] px-2.5 py-1 rounded-full border transition-all hover:border-accent-text"
+                className="text-xs px-2.5 py-1 rounded-full border transition-all hover:border-accent-text"
                 style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)', background: 'var(--bg-secondary)' }}>
                 {q}
               </button>
@@ -206,10 +206,10 @@ function ChatFiscal({ context }: { context: string }) {
         {messages.length === 0 && (
           <div className="text-center py-8">
             <Bot className="h-10 w-10 mx-auto mb-3" style={{ color: 'var(--text-tertiary)' }} />
-            <p className="text-[14px] font-medium" style={{ color: 'var(--text-primary)' }}>
+            <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
               Posez vos questions sur votre déclaration
             </p>
-            <p className="text-[12px] mt-1" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
               Je connais votre situation fiscale et vos biens
             </p>
           </div>
@@ -222,7 +222,7 @@ function ChatFiscal({ context }: { context: string }) {
                 <Sparkles className="h-3.5 w-3.5 text-white" />
               </div>
             )}
-            <div className={cn('max-w-[85%] px-3.5 py-2.5 rounded-2xl text-[13px] leading-relaxed', msg.role === 'user' ? 'rounded-tr-sm' : 'rounded-tl-sm')}
+            <div className={cn('max-w-[85%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed', msg.role === 'user' ? 'rounded-tr-sm' : 'rounded-tl-sm')}
               style={msg.role === 'user'
                 ? { background: 'var(--accent)', color: '#fff' }
                 : { background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border)' }
@@ -245,7 +245,7 @@ function ChatFiscal({ context }: { context: string }) {
 
       {/* Erreur API */}
       {apiError && (
-        <div className="px-4 py-2 text-[12px]" style={{ background: 'var(--danger-bg)', color: 'var(--danger-text)' }}>
+        <div className="px-4 py-2 text-xs" style={{ background: 'var(--danger-bg)', color: 'var(--danger-text)' }}>
           ⚠️ {apiError}
         </div>
       )}
@@ -258,7 +258,7 @@ function ChatFiscal({ context }: { context: string }) {
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
             placeholder="Ex: Comment déclarer mon déficit LMNP ?"
             rows={1}
-            className="flex-1 bg-transparent text-[13px] resize-none focus:outline-none"
+            className="flex-1 bg-transparent text-sm resize-none focus:outline-none"
             style={{ color: 'var(--text-primary)', minHeight: '22px', maxHeight: '80px' }} />
           <button onClick={() => handleSend()} disabled={!input.trim() || isLoading}
             className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 disabled:opacity-40 transition-all"
@@ -328,23 +328,23 @@ export default function DeclarationPage() {
           <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>
             Aide à la déclaration
           </h1>
-          <p className="text-[14px] mt-1" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
             Montants pré-calculés depuis vos données · Cliquez sur une valeur pour la copier
           </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-[13px]" style={{ color: 'var(--text-secondary)' }}>Revenus</span>
+            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Revenus</span>
             <select value={year} onChange={e => setYear(Number(e.target.value))}
-              className="h-9 px-3 rounded-lg border text-[13px] focus:outline-none focus:border-accent"
+              className="h-9 px-3 rounded-lg border text-sm focus:outline-none focus:border-accent"
               style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}>
               {[2025, 2024, 2023].map(y => <option key={y} value={y} className="bg-[var(--bg-secondary)]">{y}</option>)}
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[13px]" style={{ color: 'var(--text-secondary)' }}>TMI</span>
+            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>TMI</span>
             <select value={tmi} onChange={e => setTmi(Number(e.target.value))}
-              className="h-9 px-3 rounded-lg border text-[13px] focus:outline-none focus:border-accent"
+              className="h-9 px-3 rounded-lg border text-sm focus:outline-none focus:border-accent"
               style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}>
               {[11, 30, 41, 45].map(r => <option key={r} value={r} className="bg-[var(--bg-secondary)]">{r}%</option>)}
             </select>
@@ -356,7 +356,7 @@ export default function DeclarationPage() {
       <div className="flex items-start gap-3 p-4 rounded-xl border"
         style={{ background: 'var(--info-bg)', borderColor: 'var(--info-border)' }}>
         <Info className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: 'var(--info-text)' }} />
-        <p className="text-[13px]" style={{ color: 'var(--info-text)' }}>
+        <p className="text-sm" style={{ color: 'var(--info-text)' }}>
           Ces montants sont calculés automatiquement depuis vos données. Ils sont <strong>indicatifs</strong> — vérifiez avec votre expert-comptable avant de déposer. Liens officiels vers impots.gouv.fr fournis pour chaque formulaire.
         </p>
       </div>
@@ -371,24 +371,24 @@ export default function DeclarationPage() {
             icon={<BookOpen className="h-4 w-4" style={{ color: 'var(--accent-text)' }} />}
             badge="Tout le monde">
             <div className="mb-4 pb-4 border-b" style={{ borderColor: 'var(--border)' }}>
-              <p className="text-[13px]" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 Déclaration principale de revenus — à déposer avant fin mai sur impots.gouv.fr.
               </p>
               <a href="https://www.impots.gouv.fr/portail/formulaire/2042/declaration-des-revenus" target="_blank"
-                className="inline-flex items-center gap-1 text-[12px] mt-1.5 hover:underline"
+                className="inline-flex items-center gap-1 text-xs mt-1.5 hover:underline"
                 style={{ color: 'var(--accent-text)' }}>
                 <ExternalLink className="h-3 w-3" /> Formulaire officiel 2042
               </a>
             </div>
             <div className="p-3 rounded-lg mb-3" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-              <p className="text-[12px] font-semibold mb-2" style={{ color: 'var(--text-tertiary)' }}>VOTRE CHECKLIST 2042</p>
+              <p className="text-xs font-semibold mb-2" style={{ color: 'var(--text-tertiary)' }}>VOTRE CHECKLIST 2042</p>
               {[
                 'Vos relevés de loyers perçus (quittances)',
                 'Attestation de taxe foncière',
                 'Relevés de charges de copropriété',
                 'Intérêts d\'emprunt (attestation banque)',
               ].map(item => (
-                <p key={item} className="text-[12px] flex items-center gap-2 mb-1" style={{ color: 'var(--text-secondary)' }}>
+                <p key={item} className="text-xs flex items-center gap-2 mb-1" style={{ color: 'var(--text-secondary)' }}>
                   <CheckCircle className="h-3 w-3 flex-shrink-0" style={{ color: 'var(--success-text)' }} /> {item}
                 </p>
               ))}
@@ -402,11 +402,11 @@ export default function DeclarationPage() {
               badge={`${lmnpProps.length} bien${lmnpProps.length > 1 ? 's' : ''}`}
               defaultOpen>
               <div className="mb-4">
-                <p className="text-[13px] mb-2" style={{ color: 'var(--text-secondary)' }}>
+                <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
                   Revenus des locations meublées non professionnelles — annexe à joindre à votre 2042.
                 </p>
                 <a href="https://www.impots.gouv.fr/portail/formulaire/2042-c-pro/declaration-complementaire-des-revenus-des-professions-non-salariees" target="_blank"
-                  className="inline-flex items-center gap-1 text-[12px] hover:underline" style={{ color: 'var(--accent-text)' }}>
+                  className="inline-flex items-center gap-1 text-xs hover:underline" style={{ color: 'var(--accent-text)' }}>
                   <ExternalLink className="h-3 w-3" /> Notice 2042-C-PRO
                 </a>
               </div>
@@ -416,7 +416,7 @@ export default function DeclarationPage() {
                 const isReel = prop.lmnp_regime === 'reel'
                 return (
                   <div key={prop.id} className="mb-5">
-                    <p className="text-[13px] font-semibold mb-3 pb-2 border-b"
+                    <p className="text-sm font-semibold mb-3 pb-2 border-b"
                       style={{ color: 'var(--text-primary)', borderColor: 'var(--border)' }}>
                       {prop.name} — Régime {isReel ? 'réel' : 'micro-BIC'}
                     </p>
@@ -427,7 +427,7 @@ export default function DeclarationPage() {
                         <CaseLine c={{ code: '5NY', label: 'Déficit BIC non professionnel reportable', value: Math.abs(Math.min(0, sim.resultat_bic)), obligatoire: false, note: 'À remplir si résultat négatif — imputable sur revenus BIC des 10 ans suivants' }} />
                         <CaseLine c={{ code: '5QA', label: 'Recettes brutes perçues (pour info)', value: recettes, obligatoire: false, note: 'Sert au calcul du plafond des cotisations sociales' }} />
 
-                        <div className="mt-3 p-3 rounded-lg text-[12px]"
+                        <div className="mt-3 p-3 rounded-lg text-xs"
                           style={{ background: 'var(--warning-bg)', border: '1px solid var(--warning-border)', color: 'var(--warning-text)' }}>
                           <strong>⚠️ Régime réel :</strong> Vous devez également joindre la <strong>liasse 2033</strong> (bilan simplifié) ou avoir mandaté un expert-comptable (OGA). Sans adhésion à un OGA, une majoration de 25% s'applique sur vos bénéfices.
                         </div>
@@ -435,7 +435,7 @@ export default function DeclarationPage() {
                     ) : (
                       <>
                         <CaseLine c={{ code: '5ND', label: 'Recettes BIC non professionnelles (micro-BIC)', value: recettes, obligatoire: true, note: `L'administration appliquera automatiquement l'abattement de 50% → base imposable : ${formatCurrency(sim.micro_bic_base)}` }} />
-                        <div className="mt-3 p-3 rounded-lg text-[12px]"
+                        <div className="mt-3 p-3 rounded-lg text-xs"
                           style={{ background: 'var(--info-bg)', border: '1px solid var(--info-border)', color: 'var(--info-text)' }}>
                           💡 En micro-BIC : saisissez vos <strong>recettes brutes</strong> (pas les charges). L'abattement 50% est calculé automatiquement. Si vos charges réelles dépassent 50%, passez au régime réel.
                         </div>
@@ -447,13 +447,13 @@ export default function DeclarationPage() {
 
               {/* Pièges LMNP */}
               <div className="mt-2 p-3 rounded-lg" style={{ background: 'var(--danger-bg)', border: '1px solid var(--danger-border)' }}>
-                <p className="text-[12px] font-semibold mb-1.5" style={{ color: 'var(--danger-text)' }}>🚨 Pièges courants LMNP</p>
+                <p className="text-xs font-semibold mb-1.5" style={{ color: 'var(--danger-text)' }}>🚨 Pièges courants LMNP</p>
                 {[
                   'Oublier de déclarer le résultat même si = 0€ (régime réel obligatoire)',
                   'Confondre recettes HT et TTC (LMNP = exonéré TVA en général)',
                   'Ne pas reporter le déficit des années précédentes (cases 5GA à 5JA)',
                 ].map(p => (
-                  <p key={p} className="text-[11px] mb-1" style={{ color: 'var(--danger-text)' }}>• {p}</p>
+                  <p key={p} className="text-xs mb-1" style={{ color: 'var(--danger-text)' }}>• {p}</p>
                 ))}
               </div>
             </Section>
@@ -465,12 +465,12 @@ export default function DeclarationPage() {
               icon={<BookOpen className="h-4 w-4" style={{ color: 'var(--info-text)' }} />}
               badge={`${nuProps.length} bien${nuProps.length > 1 ? 's' : ''}`}>
               <div className="mb-4">
-                <p className="text-[13px] mb-2" style={{ color: 'var(--text-secondary)' }}>
+                <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
                   Déclaration des revenus fonciers (location nue) — régime réel.
                   Si revenus totaux ≤ 15 000€, vous pouvez opter pour le micro-foncier (case 4BE sur la 2042).
                 </p>
                 <a href="https://www.impots.gouv.fr/portail/formulaire/2044/declaration-des-revenus-fonciers" target="_blank"
-                  className="inline-flex items-center gap-1 text-[12px] hover:underline" style={{ color: 'var(--accent-text)' }}>
+                  className="inline-flex items-center gap-1 text-xs hover:underline" style={{ color: 'var(--accent-text)' }}>
                   <ExternalLink className="h-3 w-3" /> Notice 2044
                 </a>
               </div>
@@ -482,7 +482,7 @@ export default function DeclarationPage() {
                 const chargesHorsInterets = charges - interets
                 return (
                   <div key={prop.id} className="mb-5">
-                    <p className="text-[13px] font-semibold mb-3 pb-2 border-b"
+                    <p className="text-sm font-semibold mb-3 pb-2 border-b"
                       style={{ color: 'var(--text-primary)', borderColor: 'var(--border)' }}>
                       {prop.name}
                     </p>
@@ -500,14 +500,14 @@ export default function DeclarationPage() {
               })}
 
               <div className="mt-2 p-3 rounded-lg" style={{ background: 'var(--danger-bg)', border: '1px solid var(--danger-border)' }}>
-                <p className="text-[12px] font-semibold mb-1.5" style={{ color: 'var(--danger-text)' }}>🚨 Pièges courants 2044</p>
+                <p className="text-xs font-semibold mb-1.5" style={{ color: 'var(--danger-text)' }}>🚨 Pièges courants 2044</p>
                 {[
                   'Déduire des travaux de construction/agrandissement (non déductibles — augmentent le prix de revient)',
                   'Oublier l\'attestation d\'intérêts de votre banque (IFU)',
                   'Ne pas reporter les déficits des années antérieures (cases 156 ou 570)',
                   'Dépasser le seuil micro-foncier 15 000€ sans s\'en apercevoir',
                 ].map(p => (
-                  <p key={p} className="text-[11px] mb-1" style={{ color: 'var(--danger-text)' }}>• {p}</p>
+                  <p key={p} className="text-xs mb-1" style={{ color: 'var(--danger-text)' }}>• {p}</p>
                 ))}
               </div>
             </Section>
@@ -519,12 +519,12 @@ export default function DeclarationPage() {
               icon={<BookOpen className="h-4 w-4" style={{ color: 'var(--warning-text)' }} />}
               badge={`${sciProps.length} SCI`}>
               <div className="mb-4">
-                <p className="text-[13px] mb-2" style={{ color: 'var(--text-secondary)' }}>
+                <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
                   Déclaration de résultats de la SCI — à déposer avant le <strong>15 mai</strong> (ou le 2ème jour ouvré).
                   Chaque associé reporte sa quote-part sur sa 2044 personnelle.
                 </p>
                 <a href="https://www.impots.gouv.fr/portail/formulaire/2072/declaration-de-resultats-et-de-revenus-de-la-sci" target="_blank"
-                  className="inline-flex items-center gap-1 text-[12px] hover:underline" style={{ color: 'var(--accent-text)' }}>
+                  className="inline-flex items-center gap-1 text-xs hover:underline" style={{ color: 'var(--accent-text)' }}>
                   <ExternalLink className="h-3 w-3" /> Notice 2072
                 </a>
               </div>
@@ -535,7 +535,7 @@ export default function DeclarationPage() {
                 const sim = calculateSciSimulation({ resultat_comptable: revenus - charges, regime: (prop.sci_regime ?? 'ir') as 'ir' | 'is', taux_marginal: tmi / 100 })
                 return (
                   <div key={prop.id} className="mb-5">
-                    <p className="text-[13px] font-semibold mb-3 pb-2 border-b"
+                    <p className="text-sm font-semibold mb-3 pb-2 border-b"
                       style={{ color: 'var(--text-primary)', borderColor: 'var(--border)' }}>
                       {prop.sci_name ?? prop.name} — {prop.sci_regime?.toUpperCase() ?? 'IR'}
                     </p>
@@ -549,7 +549,7 @@ export default function DeclarationPage() {
 
                     {prop.sci_regime !== 'is' && (prop.sci_associates ?? []).length > 0 && (
                       <div className="mt-3">
-                        <p className="text-[12px] font-medium mb-2" style={{ color: 'var(--text-tertiary)' }}>
+                        <p className="text-xs font-medium mb-2" style={{ color: 'var(--text-tertiary)' }}>
                           QUOTE-PART PAR ASSOCIÉ — à reporter sur leur 2044 personnelle
                         </p>
                         {(prop.sci_associates ?? []).map((a: any) => (
@@ -583,12 +583,12 @@ export default function DeclarationPage() {
               ].map(e => (
                 <div key={e.date} className="flex items-center gap-3 p-3 rounded-xl"
                   style={{ background: e.urgent ? 'var(--danger-bg)' : 'var(--bg-secondary)', border: `1px solid ${e.urgent ? 'var(--danger-border)' : 'var(--border)'}` }}>
-                  <span className="text-[12px] font-bold w-16 flex-shrink-0"
+                  <span className="text-xs font-bold w-16 flex-shrink-0"
                     style={{ color: e.urgent ? 'var(--danger-text)' : 'var(--text-tertiary)' }}>
                     {e.date}
                   </span>
-                  <span className="text-[13px] flex-1" style={{ color: 'var(--text-primary)' }}>{e.label}</span>
-                  <span className="text-[11px] px-2 py-0.5 rounded-full"
+                  <span className="text-sm flex-1" style={{ color: 'var(--text-primary)' }}>{e.label}</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full"
                     style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>
                     {e.concerne}
                   </span>
@@ -602,10 +602,10 @@ export default function DeclarationPage() {
         {/* ── COLONNE DROITE : Chat IA ── */}
         <div className="space-y-4">
           <div>
-            <h2 className="font-display font-semibold text-[16px] mb-1" style={{ color: 'var(--text-primary)' }}>
+            <h2 className="font-display font-semibold text-base mb-1" style={{ color: 'var(--text-primary)' }}>
               Assistant déclaration IA
             </h2>
-            <p className="text-[13px]" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               Posez toutes vos questions — l'IA connaît votre situation et les formulaires fiscaux français.
             </p>
           </div>
@@ -613,7 +613,7 @@ export default function DeclarationPage() {
 
           {/* Ressources officielles */}
           <GlassCard>
-            <h3 className="font-semibold text-[14px] mb-3" style={{ color: 'var(--text-primary)' }}>
+            <h3 className="font-semibold text-sm mb-3" style={{ color: 'var(--text-primary)' }}>
               Ressources officielles
             </h3>
             <div className="space-y-2">
@@ -627,7 +627,7 @@ export default function DeclarationPage() {
                 <a key={r.url} href={r.url} target="_blank" rel="noopener noreferrer"
                   className="flex items-center justify-between p-2.5 rounded-lg border transition-all hover:border-accent group"
                   style={{ borderColor: 'var(--border)', background: 'var(--bg-secondary)' }}>
-                  <span className="text-[13px]" style={{ color: 'var(--text-primary)' }}>{r.label}</span>
+                  <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{r.label}</span>
                   <ExternalLink className="h-3.5 w-3.5 opacity-50 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--accent-text)' }} />
                 </a>
               ))}
@@ -635,7 +635,7 @@ export default function DeclarationPage() {
           </GlassCard>
 
           {/* Disclaimer final */}
-          <div className="p-4 rounded-xl text-center text-[12px]"
+          <div className="p-4 rounded-xl text-center text-xs"
             style={{ background: 'var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
             Ces informations sont données à titre indicatif. Propilot AI n'est pas un cabinet de conseil fiscal. Pour les situations complexes, consultez un expert-comptable ou un conseiller fiscal agréé.
           </div>

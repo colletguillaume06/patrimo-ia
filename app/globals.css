@@ -118,9 +118,27 @@ body {
   background: var(--bg);
   color: var(--text-primary);
   font-family: var(--font-dm-sans), sans-serif;
+  font-size: 15px;           /* taille de base augmentée */
+  line-height: 1.6;          /* aération du texte */
+  letter-spacing: 0.01em;    /* légère aération des lettres */
   -webkit-font-smoothing: antialiased;
   transition: background 0.2s ease, color 0.2s ease;
 }
+
+/* Headings lisibles */
+h1, h2, h3, h4 {
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+/* Textes secondaires — minimum 14px */
+.text-xs  { font-size: 13px !important; line-height: 1.5; }
+.text-sm  { font-size: 14px !important; line-height: 1.55; }
+.text-base{ font-size: 15px !important; line-height: 1.6; }
+
+/* Labels de tableau et petits libellés */
+th { font-size: 13px; letter-spacing: 0.04em; }
+td { font-size: 14px; }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }

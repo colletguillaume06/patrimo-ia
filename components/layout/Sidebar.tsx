@@ -51,7 +51,7 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
           <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[#1B4FD8] to-[#0891B2] flex items-center justify-center shadow-sm">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
-          <span className="font-display font-bold text-[16px] tracking-tight"
+          <span className="font-display font-bold text-base tracking-tight"
             style={{ color: 'var(--text-primary)' }}>
             Propilot<span style={{ color: 'var(--brand)' }}> AI</span>
           </span>
@@ -64,7 +64,7 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
           const active = isActive(href)
           return (
             <Link key={href} href={href}
-              className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-all duration-150"
+              className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150"
               style={{
                 background: active ? 'var(--brand-light)' : 'transparent',
                 color: active ? 'var(--brand)' : 'var(--text-muted)',
@@ -75,7 +75,7 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
               <Icon className="h-[18px] w-[18px] flex-shrink-0" />
               <span className="flex-1">{label}</span>
               {href === '/loyers' && latePaymentsCount > 0 && (
-                <span className="h-5 min-w-5 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center px-1">
+                <span className="h-5 min-w-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center px-1">
                   {latePaymentsCount}
                 </span>
               )}
@@ -89,7 +89,7 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
           const active = isActive(href)
           return (
             <Link key={href} href={href}
-              className="group flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-150"
+              className="group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150"
               style={{
                 background: active ? 'var(--brand-light)' : 'transparent',
                 color: active ? 'var(--brand)' : 'var(--text-subtle)',
@@ -107,7 +107,7 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
       {/* Copilot — feature star */}
       <div className="px-3 pb-3">
         <Link href="/copilot"
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-semibold text-white transition-all duration-200 hover:-translate-y-0.5"
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5"
           style={{
             background: 'linear-gradient(135deg, #1B4FD8, #0891B2)',
             boxShadow: '0 4px 12px rgba(27,79,216,0.25)',
@@ -122,15 +122,15 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
         <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0"
             style={{ background: 'var(--brand-light)', border: '1px solid var(--brand)', opacity: 0.8 }}>
-            <span className="text-[12px] font-bold" style={{ color: 'var(--brand)' }}>
+            <span className="text-xs font-bold" style={{ color: 'var(--brand)' }}>
               {getInitials(profile?.full_name ?? null)}
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+            <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
               {profile?.full_name ?? 'Mon compte'}
             </p>
-            <p className="text-[11px] font-medium" style={{ color: 'var(--brand)' }}>
+            <p className="text-xs font-medium" style={{ color: 'var(--brand)' }}>
               {planLabels[profile?.plan ?? 'starter']}
             </p>
           </div>
