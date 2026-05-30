@@ -7,8 +7,9 @@ import { UploadBail } from '@/components/baux/UploadBail'
 import { formatCurrency } from '@/lib/utils'
 import { format, differenceInMonths } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { FileText, Plus, X, CheckCircle2 } from 'lucide-react'
+import { FileText, Plus, X, CheckCircle2, Info } from 'lucide-react'
 import { toast } from 'sonner'
+import { INDICES_IRL, INDICES_ILC, INDICES_ILAT, getIndicesList } from '@/lib/fiscal/indices'
 
 export default function BauxPage() {
   const [leases, setLeases] = useState<any[]>([])
@@ -20,6 +21,10 @@ export default function BauxPage() {
     tenant_name: '', tenant_email: '', tenant_phone: '',
     monthly_rent: '', charges: '', deposit: '',
     start_date: '', end_date: '',
+    irl_reference_indice: 'irl',
+    irl_reference_valeur: '',
+    irl_reference_trimestre: '',
+    irl_reference_annee: '',
   })
   const supabase = createClient()
 
@@ -48,13 +53,17 @@ export default function BauxPage() {
       start_date: form.start_date,
       end_date: form.end_date || null,
       is_active: true,
+      irl_reference_indice: form.irl_reference_indice || 'irl',
+      irl_reference_valeur: form.irl_reference_valeur ? Number(form.irl_reference_valeur) : null,
+      irl_reference_trimestre: form.irl_reference_trimestre ? Number(form.irl_reference_trimestre) : null,
+      irl_reference_annee: form.irl_reference_annee ? Number(form.irl_reference_annee) : null,
     })
     if (error) {
       toast.error(error.message)
     } else {
       toast.success('Bail ajouté')
       setShowAdd(false)
-      setForm({ tenant_name: '', tenant_email: '', tenant_phone: '', monthly_rent: '', charges: '', deposit: '', start_date: '', end_date: '' })
+      setForm({ tenant_name: '', tenant_email: '', tenant_phone: '', monthly_rent: '', charges: '', deposit: '', start_date: '', end_date: '', irl_reference_indice: 'irl', irl_reference_valeur: '', irl_reference_trimestre: '', irl_reference_annee: '' })
       load()
     }
   }
@@ -193,6 +202,68 @@ export default function BauxPage() {
                   />
                 </div>
               ))}
+              {/* Section indice de référence */}
+              <div className="pt-3 border-t border-white/[0.06]">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <p className="text-xs font-medium text-slate-300">Indice de référence à la signature</p>
+                  <div className="group relative">
+                    <Info className="h-3.5 w-3.5 text-slate-600 cursor-help" />
+                    <div className="absolute bottom-5 left-0 w-64 px-3 py-2 bg-[#0D1B2E] border border-white/[0.10] rounded-lg text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-xl">
+                      Ces informations figurent dans votre bail, clause d'indexation. Elles permettent le calcul exact de la révision annuelle.
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-xs text-slate-400 mb-1">Indice utilisé</label>
+                    <select
+                      value={form.irl_reference_indice}
+                      onChange={e => setForm(f => ({ ...f, irl_reference_indice: e.target.value }))}
+                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none focus:border-blue-500/50"
+                    >
+                      <option value="irl" className="bg-[#111E35]">IRL — location nue/meublée</option>
+                      <option value="ilc" className="bg-[#111E35]">ILC — local commercial</option>
+                      <option value="ilat" className="bg-[#111E35]">ILAT — tertiaire</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-400 mb-1">Valeur de l'indice</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      placeholder="Ex : 141.36"
+                      value={form.irl_reference_valeur}
+                      onChange={e => setForm(f => ({ ...f, irl_reference_valeur: e.target.value }))}
+                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm font-mono focus:outline-none focus:border-blue-500/50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-400 mb-1">Trimestre de référence</label>
+                    <select
+                      value={form.irl_reference_trimestre}
+                      onChange={e => setForm(f => ({ ...f, irl_reference_trimestre: e.target.value }))}
+                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white text-sm focus:outline-none focus:border-blue-500/50"
+                    >
+                      <option value="" className="bg-[#111E35]">— Trimestre</option>
+                      <option value="1" className="bg-[#111E35]">T1 (janv.–mars)</option>
+                      <option value="2" className="bg-[#111E35]">T2 (avr.–juin)</option>
+                      <option value="3" className="bg-[#111E35]">T3 (juil.–sept.)</option>
+                      <option value="4" className="bg-[#111E35]">T4 (oct.–déc.)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-400 mb-1">Année de référence</label>
+                    <input
+                      type="number"
+                      placeholder="Ex : 2024"
+                      value={form.irl_reference_annee}
+                      onChange={e => setForm(f => ({ ...f, irl_reference_annee: e.target.value }))}
+                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <button
                 type="submit"
                 className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold mt-2"

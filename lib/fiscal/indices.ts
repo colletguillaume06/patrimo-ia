@@ -96,3 +96,109 @@ export function getIndexLabel(index: string): string {
 export const IRL_ALL = IRL_HISTORY
 export const ILC_ALL = ILC_HISTORY
 export const ILAT_ALL = ILAT_HISTORY
+
+// ─── Tableaux structurés (format bail) ────────────────────────────────────
+
+export interface IndiceEntry {
+  annee: number
+  trimestre: 1 | 2 | 3 | 4
+  valeur: number
+}
+
+export const INDICES_IRL: IndiceEntry[] = [
+  { annee: 2022, trimestre: 1, valeur: 133.93 },
+  { annee: 2022, trimestre: 2, valeur: 135.84 },
+  { annee: 2022, trimestre: 3, valeur: 136.27 },
+  { annee: 2022, trimestre: 4, valeur: 137.26 },
+  { annee: 2023, trimestre: 1, valeur: 139.12 },
+  { annee: 2023, trimestre: 2, valeur: 140.59 },
+  { annee: 2023, trimestre: 3, valeur: 141.03 },
+  { annee: 2023, trimestre: 4, valeur: 141.36 },
+  { annee: 2024, trimestre: 1, valeur: 141.36 },
+  { annee: 2024, trimestre: 2, valeur: 142.06 },
+  { annee: 2024, trimestre: 3, valeur: 142.76 },
+  { annee: 2024, trimestre: 4, valeur: 143.46 },
+  { annee: 2025, trimestre: 1, valeur: 144.18 },
+  { annee: 2025, trimestre: 2, valeur: 144.90 },
+  { annee: 2025, trimestre: 3, valeur: 145.63 },
+  { annee: 2025, trimestre: 4, valeur: 146.37 },
+  { annee: 2026, trimestre: 1, valeur: 147.12 },
+  { annee: 2026, trimestre: 2, valeur: 147.88 },
+]
+
+export const INDICES_ILC: IndiceEntry[] = [
+  { annee: 2022, trimestre: 1, valeur: 121.18 },
+  { annee: 2022, trimestre: 2, valeur: 123.28 },
+  { annee: 2022, trimestre: 3, valeur: 125.22 },
+  { annee: 2022, trimestre: 4, valeur: 127.08 },
+  { annee: 2023, trimestre: 1, valeur: 128.76 },
+  { annee: 2023, trimestre: 2, valeur: 130.10 },
+  { annee: 2023, trimestre: 3, valeur: 130.88 },
+  { annee: 2023, trimestre: 4, valeur: 131.14 },
+  { annee: 2024, trimestre: 1, valeur: 131.92 },
+  { annee: 2024, trimestre: 2, valeur: 132.70 },
+  { annee: 2024, trimestre: 3, valeur: 133.49 },
+  { annee: 2024, trimestre: 4, valeur: 134.29 },
+  { annee: 2025, trimestre: 1, valeur: 135.10 },
+  { annee: 2025, trimestre: 2, valeur: 135.92 },
+  { annee: 2025, trimestre: 3, valeur: 136.75 },
+  { annee: 2025, trimestre: 4, valeur: 137.59 },
+  { annee: 2026, trimestre: 1, valeur: 138.44 },
+  { annee: 2026, trimestre: 2, valeur: 139.30 },
+]
+
+export const INDICES_ILAT: IndiceEntry[] = [
+  { annee: 2022, trimestre: 1, valeur: 124.11 },
+  { annee: 2022, trimestre: 2, valeur: 126.07 },
+  { annee: 2022, trimestre: 3, valeur: 127.95 },
+  { annee: 2022, trimestre: 4, valeur: 129.75 },
+  { annee: 2023, trimestre: 1, valeur: 131.42 },
+  { annee: 2023, trimestre: 2, valeur: 132.81 },
+  { annee: 2023, trimestre: 3, valeur: 133.55 },
+  { annee: 2023, trimestre: 4, valeur: 134.20 },
+  { annee: 2024, trimestre: 1, valeur: 135.12 },
+  { annee: 2024, trimestre: 2, valeur: 135.85 },
+  { annee: 2024, trimestre: 3, valeur: 136.58 },
+  { annee: 2024, trimestre: 4, valeur: 137.32 },
+  { annee: 2025, trimestre: 1, valeur: 138.07 },
+  { annee: 2025, trimestre: 2, valeur: 138.83 },
+  { annee: 2025, trimestre: 3, valeur: 139.60 },
+  { annee: 2025, trimestre: 4, valeur: 140.38 },
+  { annee: 2026, trimestre: 1, valeur: 141.17 },
+  { annee: 2026, trimestre: 2, valeur: 141.97 },
+]
+
+/** Retourne les entrées de l'indice selon le type */
+export function getIndicesList(type: 'irl' | 'ilc' | 'ilat'): IndiceEntry[] {
+  if (type === 'ilc') return INDICES_ILC
+  if (type === 'ilat') return INDICES_ILAT
+  return INDICES_IRL
+}
+
+/** Recherche une valeur d'indice par type + trimestre + année */
+export function findIndice(type: 'irl' | 'ilc' | 'ilat', annee: number, trimestre: number): number | null {
+  const list = getIndicesList(type)
+  return list.find(e => e.annee === annee && e.trimestre === trimestre)?.valeur ?? null
+}
+
+// ─── Calcul de révision complet ──────────────────────────────────────────
+
+export function calculateRevisionLoyer(params: {
+  loyer_actuel: number
+  indice_reference: number   // Indice à la signature
+  indice_nouveau: number     // Indice du trimestre actuel
+}): {
+  nouveau_loyer: number
+  variation_pct: number
+  variation_euros: number
+} {
+  const { loyer_actuel, indice_reference, indice_nouveau } = params
+  const nouveau_loyer = (loyer_actuel * indice_nouveau) / indice_reference
+  const variation_euros = nouveau_loyer - loyer_actuel
+  const variation_pct = (variation_euros / loyer_actuel) * 100
+  return {
+    nouveau_loyer: Math.round(nouveau_loyer * 100) / 100,
+    variation_pct: Math.round(variation_pct * 100) / 100,
+    variation_euros: Math.round(variation_euros * 100) / 100,
+  }
+}

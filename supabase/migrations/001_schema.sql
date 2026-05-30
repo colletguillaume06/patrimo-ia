@@ -165,3 +165,10 @@ create index on public.ai_messages(user_id, created_at);
 
 -- Ajout numéro fiscal
 ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS numero_fiscal text;
+
+-- Indice de référence à la signature du bail
+ALTER TABLE public.leases
+  ADD COLUMN IF NOT EXISTS irl_reference_valeur numeric,
+  ADD COLUMN IF NOT EXISTS irl_reference_trimestre int CHECK (irl_reference_trimestre BETWEEN 1 AND 4),
+  ADD COLUMN IF NOT EXISTS irl_reference_annee int,
+  ADD COLUMN IF NOT EXISTS irl_reference_indice text DEFAULT 'irl';

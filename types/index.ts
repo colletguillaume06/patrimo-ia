@@ -60,6 +60,10 @@ export interface Lease {
   notice_months: number
   indexation_index: string
   last_revision_date: string | null
+  irl_reference_valeur: number | null
+  irl_reference_trimestre: 1 | 2 | 3 | 4 | null
+  irl_reference_annee: number | null
+  irl_reference_indice: 'irl' | 'ilc' | 'ilat' | null
   pdf_url: string | null
   parsed_data: ParsedLeaseData | null
   is_active: boolean
