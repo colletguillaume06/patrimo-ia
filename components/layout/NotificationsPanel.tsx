@@ -49,7 +49,7 @@ export function NotificationsPanel() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="relative h-9 w-9 rounded-lg bg-white/[0.04] border border-[#E5E2DB] flex items-center justify-center hover:bg-white/[0.07] transition-colors"
+        className="relative h-9 w-9 rounded-lg bg-white/[0.04] border border-[var(--border)] flex items-center justify-center hover:bg-white/[0.07] transition-colors"
       >
         <Bell className="h-4 w-4 text-[var(--text-secondary)]" />
         {count > 0 && (
@@ -60,7 +60,7 @@ export function NotificationsPanel() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-11 w-80 bg-white border border-[#E5E2DB] rounded-2xl shadow-2xl z-50 overflow-hidden">
+        <div className="absolute right-0 top-11 w-80 bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-2xl z-50 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
             <h3 className="font-display font-semibold text-[var(--text-primary)] text-sm">
               Alertes {count > 0 && <span className="text-[var(--text-muted)]">({count})</span>}

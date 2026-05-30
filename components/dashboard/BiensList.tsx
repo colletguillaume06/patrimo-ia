@@ -25,7 +25,7 @@ export function BiensList({ biens }: BiensListProps) {
       {biens.length === 0 ? (
         <Link
           href="/biens"
-          className="flex flex-col items-center justify-center h-40 rounded-xl border-2 border-dashed border-[#E5E2DB] hover:border-blue-500/30 transition-colors group"
+          className="flex flex-col items-center justify-center h-40 rounded-xl border-2 border-dashed border-[var(--border)] hover:border-blue-500/30 transition-colors group"
         >
           <Plus className="h-8 w-8 text-[var(--text-subtle)] group-hover:text-blue-400 mb-2 transition-colors" />
           <p className="text-sm text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]">Ajouter votre premier bien</p>

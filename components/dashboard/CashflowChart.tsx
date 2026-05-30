@@ -11,7 +11,7 @@ interface CashflowChartProps {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-white border border-[#E5E2DB] rounded-xl p-3 shadow-xl text-xs">
+    <div className="bg-white border border-[var(--border)] rounded-xl p-3 shadow-xl text-xs">
       <p className="text-[var(--text-muted)] mb-2 font-medium">{label}</p>
       <p className="text-[var(--success)]">Revenus : {formatCurrency(payload[0]?.value ?? 0)}</p>
       <p className="text-red-400">Charges : {formatCurrency(payload[1]?.value ?? 0)}</p>

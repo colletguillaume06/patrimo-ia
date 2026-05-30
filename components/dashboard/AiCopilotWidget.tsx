@@ -26,7 +26,7 @@ export function AiCopilotWidget() {
           <Link
             key={q}
             href={`/copilot?q=${encodeURIComponent(q)}`}
-            className="flex items-center gap-2 p-2.5 rounded-lg bg-[#F8F7F4] hover:bg-white/[0.06] border border-[#EEECE8] hover:border-blue-500/20 transition-all group"
+            className="flex items-center gap-2 p-2.5 rounded-lg bg-[#F8F7F4] hover:bg-white/[0.06] border border-[var(--border-subtle)] hover:border-blue-500/20 transition-all group"
           >
             <Bot className="h-3.5 w-3.5 text-[var(--text-muted)] group-hover:text-blue-400 flex-shrink-0 transition-colors" />
             <span className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] flex-1 transition-colors line-clamp-1">
