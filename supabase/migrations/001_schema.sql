@@ -162,3 +162,6 @@ create index on public.payments(lease_id, status);
 create index on public.expenses(property_id, date);
 create index on public.incidents(property_id, status);
 create index on public.ai_messages(user_id, created_at);
+
+-- Ajout numéro fiscal
+ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS numero_fiscal text;

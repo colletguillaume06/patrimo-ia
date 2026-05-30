@@ -1,6 +1,7 @@
 import { GlassCard } from '@/components/ui/GlassCard'
 import { SimulationCard } from '@/components/fiscalite/SimulationCard'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
+import { NumeroFiscalBadge } from '@/components/biens/NumeroFiscalBadge'
 import { formatCurrency, formatPct } from '@/lib/utils'
 import { calculateFoncierSimulation } from '@/lib/fiscal/foncier'
 import { AlertTriangle } from 'lucide-react'
@@ -38,6 +39,7 @@ export function ProfileNu({ property: p }: ProfileNuProps) {
             <ProfileBadge type="nu" />
             <h2 className="font-display font-bold text-2xl text-white mt-2">{p.name}</h2>
             <p className="text-slate-400 text-sm">{p.address}, {p.city}</p>
+            <div className="mt-2"><NumeroFiscalBadge numero_fiscal={p.numero_fiscal ?? null} property_id={p.id} /></div>
           </div>
         </div>
 

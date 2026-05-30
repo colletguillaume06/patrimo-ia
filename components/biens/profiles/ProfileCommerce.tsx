@@ -1,5 +1,6 @@
 import { GlassCard } from '@/components/ui/GlassCard'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
+import { NumeroFiscalBadge } from '@/components/biens/NumeroFiscalBadge'
 import { formatCurrency, monthsUntil } from '@/lib/utils'
 import { calculateRevisionILC, calculateRevisionILAT } from '@/lib/fiscal/indices'
 import { AlertTriangle, CheckCircle2 } from 'lucide-react'
@@ -49,6 +50,7 @@ export function ProfileCommerce({ property: p }: ProfileCommerceProps) {
             <h2 className="font-display font-bold text-2xl text-white mt-2">{p.name}</h2>
             <p className="text-slate-400 text-sm">{p.address}, {p.city}</p>
             {p.bail_type && <p className="text-xs text-slate-500 mt-0.5">Bail {p.bail_type}</p>}
+            <div className="mt-2"><NumeroFiscalBadge numero_fiscal={p.numero_fiscal ?? null} property_id={p.id} /></div>
           </div>
         </div>
 

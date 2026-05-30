@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 export async function POST(req: NextRequest) {
-  if (!process.env.OPENAI_API_KEY) {
+  if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json(
-      { error: 'OPENAI_API_KEY non configurée. L\'OCR nécessite OpenAI.' },
+      { error: 'GEMINI_API_KEY non configurée. L\'OCR nécessite Gemini.' },
       { status: 503 }
     )
   }
@@ -85,7 +85,10 @@ export async function POST(req: NextRequest) {
 
   // 3. Extraction structurée GPT-4o
   const { default: OpenAI } = await import('openai')
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  const openai = new OpenAI({
+    apiKey: process.env.GEMINI_API_KEY,
+    baseURL: 'https://api.groq.com/openai/v1',
+  })
 
   const extractionPrompt = `Tu es expert en baux immobiliers français. Analyse ce texte extrait d'un bail et retourne UNIQUEMENT un objet JSON valide avec exactement ces champs (null si non trouvé) :
 
@@ -115,7 +118,7 @@ ${extractedText.slice(0, 8000)}`
   let parsed_data: any = {}
   try {
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'llama-3.3-70b-versatile',
       messages: [{ role: 'user', content: extractionPrompt }],
       response_format: { type: 'json_object' },
       max_tokens: 800,

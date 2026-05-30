@@ -1,5 +1,6 @@
 import { GlassCard } from '@/components/ui/GlassCard'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
+import { NumeroFiscalBadge } from '@/components/biens/NumeroFiscalBadge'
 import { formatCurrency, formatPct } from '@/lib/utils'
 import { calculateSciSimulation } from '@/lib/fiscal/sci'
 import { AlertTriangle, Users } from 'lucide-react'
@@ -37,6 +38,7 @@ export function ProfileSCI({ property: p }: ProfileSCIProps) {
             <h2 className="font-display font-bold text-2xl text-white mt-2">{p.name}</h2>
             {p.sci_name && <p className="text-cyan-400 text-sm font-medium">{p.sci_name}</p>}
             {p.sci_siren && <p className="text-slate-500 text-xs">SIREN : {p.sci_siren}</p>}
+            <div className="mt-2"><NumeroFiscalBadge numero_fiscal={p.numero_fiscal ?? null} property_id={p.id} /></div>
           </div>
           <div className="text-right">
             <p className="text-xs text-slate-500 mb-0.5">Régime fiscal</p>

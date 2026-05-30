@@ -14,9 +14,9 @@ const schema = z.object({
 
 export async function POST(req: NextRequest) {
   // Vérification clé OpenAI en amont — retourne une erreur lisible si absente
-  if (!process.env.OPENAI_API_KEY) {
+  if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json(
-      { error: 'OPENAI_API_KEY non configurée. Ajoutez-la dans .env.local pour activer le Copilot.' },
+      { error: 'GEMINI_API_KEY non configurée. Ajoutez-la dans .env.local pour activer le Copilot.' },
       { status: 503 }
     )
   }
@@ -69,7 +69,10 @@ export async function POST(req: NextRequest) {
 
   // Import dynamique pour éviter que l'absence de clé ne crash au démarrage
   const { default: OpenAI } = await import('openai')
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  const openai = new OpenAI({
+    apiKey: process.env.GEMINI_API_KEY,
+    baseURL: 'https://api.groq.com/openai/v1',
+  })
 
   const messages: any[] = [
     { role: 'system', content: systemPrompt },
@@ -88,7 +91,7 @@ export async function POST(req: NextRequest) {
   let stream: any
   try {
     stream = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'llama-3.3-70b-versatile',
       messages,
       stream: true,
       max_tokens: 1500,

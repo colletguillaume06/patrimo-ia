@@ -127,7 +127,14 @@ export default function FiscalPage() {
                   })
                   return (
                     <div key={prop.id} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-                      <p className="text-sm font-medium text-white mb-3">{prop.name}</p>
+                      <div className="flex items-center gap-3 mb-3">
+                        <p className="text-sm font-medium text-white">{prop.name}</p>
+                        {prop.numero_fiscal && (
+                          <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-xs font-mono text-slate-400">
+                            # {prop.numero_fiscal}
+                          </span>
+                        )}
+                      </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div>
                           <p className="text-xs text-slate-500">Recettes BIC (case 5ND)</p>
@@ -182,7 +189,14 @@ export default function FiscalPage() {
                   })
                   return (
                     <div key={prop.id} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-                      <p className="text-sm font-medium text-white mb-3">{prop.name}</p>
+                      <div className="flex items-center gap-3 mb-3">
+                        <p className="text-sm font-medium text-white">{prop.name}</p>
+                        {prop.numero_fiscal && (
+                          <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-xs font-mono text-slate-400">
+                            # {prop.numero_fiscal}
+                          </span>
+                        )}
+                      </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div>
                           <p className="text-xs text-slate-500">Revenus bruts (ligne 210)</p>
@@ -237,7 +251,14 @@ export default function FiscalPage() {
                 })
                 return (
                   <div key={prop.id} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-                    <p className="text-sm font-medium text-white mb-3">{prop.sci_name ?? prop.name}</p>
+                    <div className="flex items-center gap-3 mb-3">
+                      <p className="text-sm font-medium text-white">{prop.sci_name ?? prop.name}</p>
+                      {prop.numero_fiscal && (
+                        <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-xs font-mono text-slate-400">
+                          # {prop.numero_fiscal}
+                        </span>
+                      )}
+                    </div>
                     <div className="grid grid-cols-3 gap-3">
                       <div>
                         <p className="text-xs text-slate-500">Résultat comptable</p>

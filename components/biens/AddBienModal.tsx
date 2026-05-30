@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { X, Plus } from 'lucide-react'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
 import type { PropertyType } from '@/types'
+import { Info } from 'lucide-react'
 
 const PROPERTY_TYPES: { value: PropertyType; label: string; desc: string }[] = [
   { value: 'lmnp', label: 'LMNP', desc: 'Meublé non professionnel' },
@@ -37,6 +38,7 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
     monthly_charges: '',
     property_tax: '',
     insurance_annual: '',
+    numero_fiscal: '',
     loan_monthly: '',
   })
 
@@ -62,6 +64,7 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
       property_tax: Number(form.property_tax) || 0,
       insurance_annual: Number(form.insurance_annual) || 0,
       loan_monthly: Number(form.loan_monthly) || 0,
+      numero_fiscal: form.numero_fiscal || null,
     })
 
     setLoading(false)
@@ -137,6 +140,26 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
                 />
               </div>
             ))}
+
+            {/* Numéro fiscal */}
+            <div>
+              <div className="flex items-center gap-1.5 mb-1">
+                <label className="text-xs text-slate-400">Numéro fiscal du bien</label>
+                <div className="group relative">
+                  <Info className="h-3.5 w-3.5 text-slate-600 cursor-help" />
+                  <div className="absolute bottom-5 left-1/2 -translate-x-1/2 w-56 px-3 py-2 bg-[#0D1B2E] border border-white/[0.10] rounded-lg text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-xl">
+                    Numéro à 13 chiffres, visible sur votre taxe foncière
+                  </div>
+                </div>
+              </div>
+              <input
+                type="text"
+                placeholder="Ex : 0012345678901"
+                value={form.numero_fiscal}
+                onChange={e => set('numero_fiscal', e.target.value)}
+                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 transition-all font-mono"
+              />
+            </div>
 
             <div className="flex gap-3 pt-2">
               <button

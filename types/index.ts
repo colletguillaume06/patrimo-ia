@@ -38,6 +38,7 @@ export interface Property {
   airbnb_platform_fees: number
   bail_type: string | null
   indice_revision: 'irl' | 'ilc' | 'ilat' | null
+  numero_fiscal: string | null
   created_at: string
   updated_at: string
   leases?: Lease[]

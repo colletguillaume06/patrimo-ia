@@ -2,6 +2,7 @@ import { GlassCard } from '@/components/ui/GlassCard'
 import { SimulationCard } from '@/components/fiscalite/SimulationCard'
 import { AmortissementTable } from '@/components/fiscalite/AmortissementTable'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
+import { NumeroFiscalBadge } from '@/components/biens/NumeroFiscalBadge'
 import { formatCurrency, formatPct } from '@/lib/utils'
 import { calculateLmnpSimulation, calculateDepreciation } from '@/lib/fiscal/lmnp'
 import type { Property, Lease, DepreciationPlan, Expense } from '@/types'
@@ -39,6 +40,9 @@ export function ProfileLMNP({ property: p }: ProfileLMNPProps) {
             <ProfileBadge type="lmnp" />
             <h2 className="font-display font-bold text-2xl text-white mt-2">{p.name}</h2>
             <p className="text-slate-400 text-sm">{p.address}, {p.city}</p>
+            <div className="mt-2">
+              <NumeroFiscalBadge numero_fiscal={p.numero_fiscal ?? null} property_id={p.id} />
+            </div>
           </div>
           <div className="text-right">
             <p className="text-xs text-slate-500 mb-0.5">Régime</p>
