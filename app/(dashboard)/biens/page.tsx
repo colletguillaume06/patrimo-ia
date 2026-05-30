@@ -18,33 +18,73 @@ export default function BiensPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      const { data } = await supabase
-        .from('properties')
-        .select('*, leases(*, payments(*))')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+      // Récupérer propriétés + baux + paiements + réservations Airbnb
+      const [propsRes, bookingsRes] = await Promise.all([
+        supabase
+          .from('properties')
+          .select('*, leases(*, payments(*))')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('airbnb_bookings')
+          .select('property_id, total_revenue, nightly_rate, nights, check_in')
+          .gte('check_in', `${new Date().getFullYear()}-01-01`),
+      ])
 
-      const enriched: PropertyWithMetrics[] = (data ?? []).map(p => {
+      const bookingsByProp: Record<string, any[]> = {}
+      for (const b of bookingsRes.data ?? []) {
+        if (!bookingsByProp[b.property_id]) bookingsByProp[b.property_id] = []
+        bookingsByProp[b.property_id].push(b)
+      }
+
+      const now = new Date()
+
+      const enriched: PropertyWithMetrics[] = (propsRes.data ?? []).map(p => {
         const activeLeases = p.leases?.filter((l: any) => l.is_active) ?? []
         const active_lease = activeLeases[0] ?? null
-        const monthlyRent = active_lease?.monthly_rent ?? 0
-        const gross_yield = p.purchase_price && monthlyRent
-          ? (monthlyRent * 12 / p.purchase_price) * 100 : null
         const total_charges = p.monthly_charges + p.loan_monthly + (p.property_tax / 12) + (p.insurance_annual / 12)
         const allPayments = p.leases?.flatMap((l: any) => l.payments ?? []) ?? []
         const latest_payment = allPayments.sort((a: any, b: any) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )[0] ?? null
 
+        // Revenus YTD des paiements de loyers
+        const loyers_ytd = allPayments
+          .filter((pay: any) => pay.status === 'paid' && new Date(pay.due_date).getFullYear() === now.getFullYear())
+          .reduce((s: number, pay: any) => s + pay.amount, 0)
+
+        // Airbnb : calculer les revenus depuis les réservations
+        const airbnbBookings = bookingsByProp[p.id] ?? []
+        const airbnb_revenue_ytd = airbnbBookings.reduce((s, b) => s + (b.total_revenue ?? b.nightly_rate * (b.nights ?? 0)), 0)
+        const airbnb_nuits_ytd = airbnbBookings.reduce((s, b) => s + (b.nights ?? 0), 0)
+        const airbnb_monthly_avg = airbnb_revenue_ytd > 0 && now.getMonth() > 0
+          ? airbnb_revenue_ytd / now.getMonth()
+          : 0
+
+        // Revenus effectifs selon le type
+        const isAirbnb = p.type === 'airbnb'
+        const monthlyRent = isAirbnb
+          ? airbnb_monthly_avg
+          : (active_lease?.monthly_rent ?? 0)
+
+        const total_revenue_ytd = isAirbnb ? airbnb_revenue_ytd : loyers_ytd
+
+        const gross_yield = p.purchase_price && monthlyRent > 0
+          ? (monthlyRent * 12 / p.purchase_price) * 100
+          : null
+
         return {
           ...p,
           gross_yield,
-          net_yield: p.purchase_price && monthlyRent ? ((monthlyRent - total_charges) * 12 / p.purchase_price) * 100 : null,
+          net_yield: p.purchase_price && monthlyRent > 0 ? ((monthlyRent - total_charges) * 12 / p.purchase_price) * 100 : null,
           monthly_cashflow: monthlyRent - total_charges,
-          total_revenue_ytd: allPayments.filter((pay: any) => pay.status === 'paid' && new Date(pay.due_date).getFullYear() === new Date().getFullYear()).reduce((s: number, p: any) => s + p.amount, 0),
+          total_revenue_ytd,
           total_expenses_ytd: 0,
           active_lease,
           latest_payment,
+          // Extra Airbnb
+          airbnb_nuits_ytd: isAirbnb ? airbnb_nuits_ytd : undefined,
+          airbnb_monthly_avg: isAirbnb ? airbnb_monthly_avg : undefined,
         }
       })
       setBiens(enriched)
