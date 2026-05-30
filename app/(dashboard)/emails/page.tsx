@@ -574,28 +574,6 @@ export default function EmailsPage() {
                 />
               </div>
 
-              {/* Variables */}
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: 'var(--text-tertiary)' }}>
-                  Variables — modifiez pour personnaliser
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {selectedTpl.vars.map(v => (
-                    <div key={v} className="flex items-center gap-2">
-                      <span className="text-xs font-mono px-2 py-0.5 rounded flex-shrink-0"
-                        style={{ background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE' }}>
-                        {'{' + v + '}'}
-                      </span>
-                      <input
-                        value={vars[v] ?? ''}
-                        onChange={e => setVars(prev => ({ ...prev, [v]: e.target.value }))}
-                        className="flex-1 h-7 px-2 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
-                        style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
 
               {/* Actions */}
               <div className="flex gap-3 pt-2 border-t" style={{ borderColor: 'var(--border)' }}>
