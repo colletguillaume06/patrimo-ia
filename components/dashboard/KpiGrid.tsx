@@ -26,7 +26,7 @@ export function KpiGrid({ metrics }: KpiGridProps) {
       value: formatCurrency(metrics.monthly_cashflow),
       sub: 'net après charges',
       icon: TrendingUp,
-      iconBg: metrics.monthly_cashflow >= 0 ? 'bg-emerald-50' : 'bg-red-50',
+      iconBg: metrics.monthly_cashflow >= 0 ? 'bg-[var(--success-bg)]' : 'bg-red-50',
       iconColor: metrics.monthly_cashflow >= 0 ? 'text-[#0E7A4F]' : 'text-[#B91C1C]',
       glow: metrics.monthly_cashflow >= 0 ? 'green' as const : 'red' as const,
       trend: metrics.monthly_cashflow >= 0 ? 'up' as const : 'down' as const,

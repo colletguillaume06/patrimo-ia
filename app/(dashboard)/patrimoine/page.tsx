@@ -44,7 +44,7 @@ function CompareBar({ label, actual, market, unite = '€' }: {
           {isNear ? (
             <span className="flex items-center gap-1 text-slate-400"><Minus className="h-3 w-3" /> Dans la moyenne</span>
           ) : isOver ? (
-            <span className="flex items-center gap-1 text-green-400"><ArrowUp className="h-3 w-3" /> +{pct}% vs marché</span>
+            <span className="flex items-center gap-1 text-[var(--success)]"><ArrowUp className="h-3 w-3" /> +{pct}% vs marché</span>
           ) : (
             <span className="flex items-center gap-1 text-amber-400"><ArrowDown className="h-3 w-3" /> {pct}% vs marché</span>
           )}
@@ -144,7 +144,7 @@ export default function PatrimoinePage() {
               { label: 'Prix d\'acquisition', value: formatCurrency(totalAchat, true), color: 'text-[#0A0908]', sub: `${properties.length} biens` },
               { label: 'Valeur marché estimée', value: formatCurrency(totalEstime, true), color: 'text-blue-400', sub: new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) },
               {
-                label: 'Plus-value latente', color: plusValueLatente && plusValueLatente > 0 ? 'text-green-400' : 'text-red-400',
+                label: 'Plus-value latente', color: plusValueLatente && plusValueLatente > 0 ? 'text-[var(--success)]' : 'text-red-400',
                 value: plusValueLatente ? formatCurrency(plusValueLatente, true) : '—',
                 sub: plusValueLatente && totalAchat > 0 ? formatPct((plusValueLatente / totalAchat) * 100) + ' depuis achat' : '',
               },
@@ -236,13 +236,13 @@ export default function PatrimoinePage() {
                   {plusValue !== null ? (
                     <>
                       <div className="flex items-center gap-1">
-                        {plusValue > 0 ? <TrendingUp className="h-3.5 w-3.5 text-green-400" /> : <TrendingDown className="h-3.5 w-3.5 text-red-400" />}
-                        <p className={`text-base font-bold ${plusValue > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {plusValue > 0 ? <TrendingUp className="h-3.5 w-3.5 text-[var(--success)]" /> : <TrendingDown className="h-3.5 w-3.5 text-red-400" />}
+                        <p className={`text-base font-bold ${plusValue > 0 ? 'text-[var(--success)]' : 'text-red-400'}`}>
                           {plusValue > 0 ? '+' : ''}{formatCurrency(plusValue)}
                         </p>
                       </div>
                       {prop.purchase_price && (
-                        <p className={`text-xs mt-0.5 ${plusValue > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        <p className={`text-xs mt-0.5 ${plusValue > 0 ? 'text-[var(--success)]' : 'text-red-400'}`}>
                           {plusValue > 0 ? '+' : ''}{formatPct((plusValue / prop.purchase_price) * 100)}
                         </p>
                       )}
@@ -296,7 +296,7 @@ export default function PatrimoinePage() {
                   {/* Tendance marché */}
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-slate-500">Tendance prix secteur (12 mois)</span>
-                    <span className={`flex items-center gap-1 text-xs font-semibold ${est.tendance_annuelle > 0 ? 'text-green-400' : est.tendance_annuelle < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                    <span className={`flex items-center gap-1 text-xs font-semibold ${est.tendance_annuelle > 0 ? 'text-[var(--success)]' : est.tendance_annuelle < 0 ? 'text-red-400' : 'text-slate-400'}`}>
                       {est.tendance_annuelle > 0 ? <ArrowUp className="h-3 w-3" /> : est.tendance_annuelle < 0 ? <ArrowDown className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
                       {est.tendance_annuelle > 0 ? '+' : ''}{est.tendance_annuelle}% / an
                     </span>

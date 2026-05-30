@@ -138,7 +138,7 @@ export default function CopropriétéPage() {
                   <p className="text-sm text-[#0A0908]">{a.description || a.type.replace('_', ' ')}</p>
                   <p className="text-xs text-slate-500">{format(new Date(a.date_appel), 'dd/MM/yyyy')} · {a.type === 'charges_courantes' ? 'Charges courantes' : a.type === 'travaux_votes' ? 'Travaux votés' : 'Fonds travaux'}</p>
                 </div>
-                <p className={`text-sm font-semibold ${a.paye ? 'text-green-400' : 'text-amber-400'}`}>{formatCurrency(a.montant)}</p>
+                <p className={`text-sm font-semibold ${a.paye ? 'text-[var(--success)]' : 'text-amber-400'}`}>{formatCurrency(a.montant)}</p>
               </div>
             ))}
           </div>

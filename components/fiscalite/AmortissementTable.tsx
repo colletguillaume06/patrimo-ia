@@ -27,7 +27,7 @@ export function AmortissementTable({ plans }: AmortissementTableProps) {
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-slate-300">{label}</span>
                   {isActive && (
-                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-green-400/10 text-green-400 border border-green-400/20">
+                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-[var(--success-bg)] text-[var(--success)] border border-[var(--success)/20]">
                       Actif
                     </span>
                   )}

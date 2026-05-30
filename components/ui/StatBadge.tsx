@@ -9,7 +9,7 @@ interface StatBadgeProps {
 }
 
 export function StatBadge({ value, label, trend, className }: StatBadgeProps) {
-  const trendColor = trend === 'up' ? 'text-green-400' : trend === 'down' ? 'text-red-400' : 'text-slate-400'
+  const trendColor = trend === 'up' ? 'text-[var(--success)]' : trend === 'down' ? 'text-red-400' : 'text-slate-400'
   const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus
 
   return (

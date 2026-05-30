@@ -1,86 +1,126 @@
 @import "tailwindcss";
 
-/* ── Design tokens — Light mode (défaut) ─────────────────────── */
+/* ════════════════════════════════════════════════════
+   LIGHT MODE (défaut)
+   ════════════════════════════════════════════════════ */
 :root {
-  /* Brand */
-  --brand: #1B4FD8;
-  --brand-light: #EEF3FF;
-  --brand-deep: #0F2D7A;
+  --brand:        #1B4FD8;
+  --brand-light:  #EEF3FF;
+  --brand-deep:   #0F2D7A;
 
-  /* Sémantiques */
-  --success: #0E7A4F;
-  --success-bg: #E8F7F0;
-  --warning: #C27820;
-  --warning-bg: #FEF3DC;
-  --danger: #B91C1C;
-  --danger-bg: #FEE8E8;
+  --success:      #2A6B3E;   /* Vert classique — forêt, pas fluo */
+  --success-bg:   #EAF3EE;
+  --success-text: #1E5230;
 
-  /* Profils fiscaux */
-  --lmnp: #0E7A4F;
-  --sci: #0891B2;
-  --airbnb: #EA580C;
-  --nu: #1B4FD8;
-  --commerce: #7C3AED;
+  --warning:      #B45309;
+  --warning-bg:   #FEF3DC;
+  --warning-text: #92400E;
 
-  /* Neutres light */
-  --bg: #F8F7F4;
-  --surface: #FFFFFF;
-  --surface-2: #F0EEE9;
-  --border: #E5E2DB;
-  --border-subtle: #EEECE8;
-  --text-primary: #0A0908;
+  --danger:       #B91C1C;
+  --danger-bg:    #FEE8E8;
+  --danger-text:  #991B1B;
+
+  --lmnp:         #2A6B3E;
+  --sci:          #0C7A9E;
+  --airbnb:       #C2410C;
+  --nu:           #1B4FD8;
+  --commerce:     #6D28D9;
+
+  --bg:           #F8F7F4;
+  --surface:      #FFFFFF;
+  --surface-2:    #F0EEE9;
+  --border:       #E5E2DB;
+  --border-subtle:#EEECE8;
+
+  --text-primary:   #0A0908;
   --text-secondary: #2D2926;
-  --text-muted: #5C574F;
+  --text-muted:     #5C574F;
+  --text-subtle:    #8A837A;
 
-  /* Rétrocompat dark vars (pour les composants pas encore migrés) */
-  --navy: #0B1628;
-  --navy2: #111E35;
-  --blue: #1B4FD8;
-  --cyan: #0891B2;
-  --green: #0E7A4F;
-  --amber: #C27820;
-  --red: #B91C1C;
-  --slate: #9B9589;
+  --sidebar-bg:     #FFFFFF;
+  --sidebar-border: #E5E2DB;
+  --topbar-bg:      rgba(255,255,255,0.9);
+
+  --scrollbar:      #D1CEC8;
+  --scrollbar-hover:#B8B4AE;
 
   --radius: 12px;
+  color-scheme: light;
 }
 
+/* ════════════════════════════════════════════════════
+   DARK MODE — class="dark" sur <html>
+   ════════════════════════════════════════════════════ */
+html.dark {
+  --brand:        #4B7BF5;
+  --brand-light:  rgba(75,123,245,0.12);
+  --brand-deep:   #93B4FF;
+
+  --success:      #4CAF78;   /* Vert classique — sobre sur fond sombre */
+  --success-bg:   rgba(76,175,120,0.12);
+  --success-text: #6FCF97;
+
+  --warning:      #F5A623;
+  --warning-bg:   rgba(245,166,35,0.12);
+  --warning-text: #F5C96A;
+
+  --danger:       #F47070;
+  --danger-bg:    rgba(244,112,112,0.12);
+  --danger-text:  #FCA5A5;
+
+  --lmnp:         #4CAF78;
+  --sci:          #38BDF8;
+  --airbnb:       #FB923C;
+  --nu:           #4B7BF5;
+  --commerce:     #A78BFA;
+
+  --bg:           #0B1628;
+  --surface:      #111E35;
+  --surface-2:    #172035;
+  --border:       rgba(255,255,255,0.08);
+  --border-subtle:rgba(255,255,255,0.05);
+
+  --text-primary:   #F1F5F9;
+  --text-secondary: #CBD5E1;
+  --text-muted:     #94A3B8;
+  --text-subtle:    #64748B;
+
+  --sidebar-bg:     #0D1B2E;
+  --sidebar-border: rgba(255,255,255,0.06);
+  --topbar-bg:      rgba(11,22,40,0.85);
+
+  --scrollbar:      rgba(255,255,255,0.12);
+  --scrollbar-hover:rgba(255,255,255,0.20);
+
+  color-scheme: dark;
+}
+
+/* ════════════════════════════════════════════════════
+   BASE
+   ════════════════════════════════════════════════════ */
 @theme inline {
   --color-background: var(--bg);
   --color-foreground: var(--text-primary);
-  --font-sans: var(--font-dm-sans);
+  --font-sans:    var(--font-dm-sans);
   --font-display: var(--font-syne);
 }
 
 * { box-sizing: border-box; }
-
-html { color-scheme: light; }
 
 body {
   background: var(--bg);
   color: var(--text-primary);
   font-family: var(--font-dm-sans), sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
-/* ── Scrollbar light ──────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #D1CEC8; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #B8B4AE; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
 
-/* ── Utilitaires ─────────────────────────────────────────────── */
-.surface {
-  background: var(--surface);
-  border: 1px solid var(--border);
-}
-.surface-raised {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-
-/* Rétrocompat .glass → surface en light */
+/* ── GlassCard adaptatif ─────────────────────────── */
 .glass {
   background: var(--surface);
   border: 1px solid var(--border);

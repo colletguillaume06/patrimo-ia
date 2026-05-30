@@ -59,7 +59,7 @@ export function ChatInterface({ initialMessages = [], propertyId, initialQuestio
         </div>
         <div className="ml-auto flex items-center gap-1.5">
           <span className={`h-2 w-2 rounded-full ${apiError ? 'bg-red-400' : 'bg-green-400 animate-pulse'}`} />
-          <span className={`text-xs ${apiError ? 'text-red-400' : 'text-green-400'}`}>
+          <span className={`text-xs ${apiError ? 'text-red-400' : 'text-[var(--success)]'}`}>
             {apiError ? 'Hors ligne' : 'En ligne'}
           </span>
         </div>

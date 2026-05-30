@@ -117,7 +117,7 @@ export default function OnboardingPage() {
               {STEPS.map((s, i) => (
                 <div key={s.id} className="flex items-center gap-2 flex-1">
                   <div className={`flex items-center gap-1.5 text-xs font-medium transition-all ${
-                    step === s.id ? 'text-blue-400' : step > s.id ? 'text-green-400' : 'text-slate-600'
+                    step === s.id ? 'text-blue-400' : step > s.id ? 'text-[var(--success)]' : 'text-slate-600'
                   }`}>
                     {step > s.id
                       ? <CheckCircle2 className="h-4 w-4" />

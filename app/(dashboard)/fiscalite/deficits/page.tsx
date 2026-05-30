@@ -88,14 +88,14 @@ export default function DeficitsPage() {
         </GlassCard>
         <GlassCard glow={expirantCetteAnnee.length > 0 ? 'red' : 'green'} className="p-4">
           <p className="text-xs text-slate-400 mb-1">Expirant cette année</p>
-          <p className={`text-xl font-bold font-mono ${expirantCetteAnnee.length > 0 ? 'text-red-400' : 'text-green-400'}`}>
+          <p className={`text-xl font-bold font-mono ${expirantCetteAnnee.length > 0 ? 'text-red-400' : 'text-[var(--success)]'}`}>
             {expirantCetteAnnee.length > 0 ? formatCurrency(expirantCetteAnnee.reduce((s, d) => s + d.montant_restant, 0)) : '0 €'}
           </p>
           <p className="text-xs text-slate-600 mt-0.5">À imputer avant fin {now.getFullYear()}</p>
         </GlassCard>
         <GlassCard className="p-4">
           <p className="text-xs text-slate-400 mb-1">Économie potentielle (TMI 30%)</p>
-          <p className="text-xl font-bold font-mono text-green-400">{formatCurrency(totalDisponible * 0.30)}</p>
+          <p className="text-xl font-bold font-mono text-[var(--success)]">{formatCurrency(totalDisponible * 0.30)}</p>
           <p className="text-xs text-slate-600 mt-0.5">Si tout imputé à 30%</p>
         </GlassCard>
       </div>

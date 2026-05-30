@@ -53,7 +53,7 @@ export function BiensList({ biens }: BiensListProps) {
                   {bien.active_lease ? formatCurrency(bien.active_lease.monthly_rent) : '—'}
                 </p>
                 {bien.gross_yield !== null && (
-                  <p className="text-xs text-green-400">{formatPct(bien.gross_yield)}</p>
+                  <p className="text-xs text-[var(--success)]">{formatPct(bien.gross_yield)}</p>
                 )}
               </div>
               <ProfileBadge type={bien.type} size="sm" />

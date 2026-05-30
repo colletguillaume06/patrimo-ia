@@ -48,7 +48,7 @@ export function ProfileNu({ property: p }: ProfileNuProps) {
             { label: 'Revenus bruts', value: formatCurrency(revenus_bruts), color: 'text-[#0A0908]' },
             { label: 'Charges déductibles', value: formatCurrency(charges), color: 'text-red-400' },
             { label: 'Revenu net', value: formatCurrency(simulation.revenu_net), color: simulation.revenu_net <= 0 ? 'text-blue-400' : 'text-amber-400' },
-            { label: 'Rendement brut', value: p.gross_yield ? formatPct(p.gross_yield) : '—', color: 'text-green-400' },
+            { label: 'Rendement brut', value: p.gross_yield ? formatPct(p.gross_yield) : '—', color: 'text-[var(--success)]' },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-white/[0.03] rounded-xl p-3">
               <p className="text-xs text-slate-500 mb-1">{label}</p>

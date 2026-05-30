@@ -97,8 +97,8 @@ export default function CompteLocatairePage() {
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: 'Total attendu', value: formatCurrency(total_attendu), color: 'text-[#0A0908]' },
-          { label: 'Total reçu', value: formatCurrency(total_recu), color: 'text-green-400' },
-          { label: 'Solde global', value: formatCurrency(solde_global), color: solde_global <= 0 ? 'text-green-400' : 'text-red-400' },
+          { label: 'Total reçu', value: formatCurrency(total_recu), color: 'text-[var(--success)]' },
+          { label: 'Solde global', value: formatCurrency(solde_global), color: solde_global <= 0 ? 'text-[var(--success)]' : 'text-red-400' },
         ].map(({ label, value, color }) => (
           <GlassCard key={label} className="p-4">
             <p className="text-xs text-slate-400 mb-1">{label}</p>
@@ -127,7 +127,7 @@ export default function CompteLocatairePage() {
             <tbody>
               {rows.map((r, i) => {
                 const StatusIcon = r.status === 'paid' ? CheckCircle2 : r.status === 'late' ? AlertCircle : Clock
-                const iconColor = r.status === 'paid' ? 'text-green-400' : r.status === 'late' ? 'text-red-400' : 'text-slate-500'
+                const iconColor = r.status === 'paid' ? 'text-[var(--success)]' : r.status === 'late' ? 'text-red-400' : 'text-slate-500'
                 return (
                   <tr key={r.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] text-right">
                     <td className="py-2.5 px-3 text-left text-slate-300 whitespace-nowrap">
@@ -136,18 +136,18 @@ export default function CompteLocatairePage() {
                     <td className="py-2.5 px-3 text-[#0A0908]">{formatCurrency(r.attendu)}</td>
                     <td className="py-2.5 px-3">
                       {r.recu > 0
-                        ? <span className={r.status === 'partial' ? 'text-amber-400' : 'text-green-400'}>{formatCurrency(r.recu)}</span>
+                        ? <span className={r.status === 'partial' ? 'text-amber-400' : 'text-[var(--success)]'}>{formatCurrency(r.recu)}</span>
                         : <span className="text-slate-600">—</span>
                       }
                     </td>
                     <td className="py-2.5 px-3">
                       {r.ecart === 0
-                        ? <span className="text-green-400">0 €</span>
+                        ? <span className="text-[var(--success)]">0 €</span>
                         : <span className="text-red-400">-{formatCurrency(r.ecart)}</span>
                       }
                     </td>
                     <td className="py-2.5 px-3">
-                      <span className={r.cumul <= 0 ? 'text-green-400 font-semibold' : 'text-red-400 font-semibold'}>
+                      <span className={r.cumul <= 0 ? 'text-[var(--success)] font-semibold' : 'text-red-400 font-semibold'}>
                         {formatCurrency(r.cumul)}
                       </span>
                     </td>
@@ -167,7 +167,7 @@ export default function CompteLocatairePage() {
               <tr className="border-t-2 border-white/[0.12] bg-white/[0.02] text-right">
                 <td className="py-3 px-3 text-left font-bold text-[#0A0908]">TOTAL</td>
                 <td className="py-3 px-3 font-bold text-[#0A0908]">{formatCurrency(total_attendu)}</td>
-                <td className="py-3 px-3 font-bold text-green-400">{formatCurrency(total_recu)}</td>
+                <td className="py-3 px-3 font-bold text-[var(--success)]">{formatCurrency(total_recu)}</td>
                 <td className="py-3 px-3 font-bold" style={{ color: solde_global <= 0 ? '#10B981' : '#EF4444' }}>{formatCurrency(solde_global)}</td>
                 <td colSpan={2} />
               </tr>

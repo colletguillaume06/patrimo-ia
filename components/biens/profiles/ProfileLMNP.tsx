@@ -46,15 +46,15 @@ export function ProfileLMNP({ property: p }: ProfileLMNPProps) {
           </div>
           <div className="text-right">
             <p className="text-xs text-slate-500 mb-0.5">Régime</p>
-            <span className="text-sm font-semibold text-green-400 uppercase">{p.lmnp_regime ?? 'Non défini'}</span>
+            <span className="text-sm font-semibold text-[var(--success)] uppercase">{p.lmnp_regime ?? 'Non défini'}</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: 'Loyer mensuel', value: p.active_lease ? formatCurrency(p.active_lease.monthly_rent) : '—', color: 'text-[#0A0908]' },
-            { label: 'Rendement brut', value: p.gross_yield ? formatPct(p.gross_yield) : '—', color: 'text-green-400' },
-            { label: 'Cashflow net', value: p.monthly_cashflow !== null ? formatCurrency(p.monthly_cashflow) : '—', color: (p.monthly_cashflow ?? 0) >= 0 ? 'text-green-400' : 'text-red-400' },
+            { label: 'Rendement brut', value: p.gross_yield ? formatPct(p.gross_yield) : '—', color: 'text-[var(--success)]' },
+            { label: 'Cashflow net', value: p.monthly_cashflow !== null ? formatCurrency(p.monthly_cashflow) : '—', color: (p.monthly_cashflow ?? 0) >= 0 ? 'text-[var(--success)]' : 'text-red-400' },
             { label: 'Résultat BIC', value: formatCurrency(resultat), color: resultat <= 0 ? 'text-blue-400' : 'text-amber-400' },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-white/[0.03] rounded-xl p-3">
@@ -70,7 +70,7 @@ export function ProfileLMNP({ property: p }: ProfileLMNPProps) {
         <h3 className="font-display font-semibold text-[#0A0908] mb-4">Résultat BIC {new Date().getFullYear()}</h3>
         <div className="space-y-3">
           {[
-            { label: 'Recettes locatives', value: recettes, color: 'text-green-400' },
+            { label: 'Recettes locatives', value: recettes, color: 'text-[var(--success)]' },
             { label: 'Charges réelles', value: -charges, color: 'text-red-400' },
             { label: 'Amortissements', value: -amortissements, color: 'text-blue-400' },
           ].map(({ label, value, color }) => (

@@ -152,7 +152,7 @@ export default function PlusValuePage() {
                 { label: 'Prix de revient', value: formatCurrency(result.prix_revient), color: 'text-[#0A0908]' },
                 { label: 'Plus-value brute', value: formatCurrency(result.pv_brute), color: result.pv_brute > 0 ? 'text-amber-400' : 'text-blue-400' },
                 { label: 'Impôt total', value: formatCurrency(result.impot_total), color: 'text-red-400' },
-                { label: 'Net vendeur', value: formatCurrency(result.net_vendeur), color: 'text-green-400' },
+                { label: 'Net vendeur', value: formatCurrency(result.net_vendeur), color: 'text-[var(--success)]' },
               ].map(({ label, value, color }) => (
                 <div key={label} className="bg-white/[0.03] rounded-xl p-3">
                   <p className="text-xs text-slate-500 mb-1">{label}</p>
@@ -168,10 +168,10 @@ export default function PlusValuePage() {
                   { label: `IR 19% — abattement ${result.abattement_ir_pct}%`, base: result.pv_imposable_ir, impot: result.impot_ir, exo: result.exonere_ir, exo_label: 'Exonéré IR (22 ans+)' },
                   { label: `PS 17,2% — abattement ${result.abattement_ps_pct}%`, base: result.pv_imposable_ps, impot: result.impot_ps, exo: result.exonere_ps, exo_label: 'Exonéré PS (30 ans+)' },
                 ].map(({ label, base, impot, exo, exo_label }) => (
-                  <div key={label} className={`p-4 rounded-xl border ${exo ? 'border-green-400/20 bg-green-400/5' : 'border-white/[0.08] bg-white/[0.03]'}`}>
+                  <div key={label} className={`p-4 rounded-xl border ${exo ? 'border-[var(--success)/20] bg-green-400/5' : 'border-white/[0.08] bg-white/[0.03]'}`}>
                     <p className="text-xs text-slate-500 mb-2">{label}</p>
                     {exo ? (
-                      <p className="text-sm font-semibold text-green-400 flex items-center gap-1">
+                      <p className="text-sm font-semibold text-[var(--success)] flex items-center gap-1">
                         <CheckCircle2 className="h-4 w-4" /> {exo_label}
                       </p>
                     ) : (
@@ -210,11 +210,11 @@ export default function PlusValuePage() {
                     return (
                       <tr key={p.annee} className={`border-b border-white/[0.04] ${isCurrent ? 'bg-blue-500/10' : ''}`}>
                         <td className="py-2 px-3 text-slate-300">{p.label}</td>
-                        <td className="py-2 px-3 text-green-400">{p.ir}%</td>
+                        <td className="py-2 px-3 text-[var(--success)]">{p.ir}%</td>
                         <td className="py-2 px-3 text-cyan-400">{p.ps}%</td>
                         <td className="py-2 px-3">
                           {isCurrent && <span className="text-xs text-blue-400 font-medium">← Votre situation</span>}
-                          {p.ir >= 100 && p.ps >= 100 && <span className="text-xs text-green-400">Exonération totale</span>}
+                          {p.ir >= 100 && p.ps >= 100 && <span className="text-xs text-[var(--success)]">Exonération totale</span>}
                         </td>
                       </tr>
                     )

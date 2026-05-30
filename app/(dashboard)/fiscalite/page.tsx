@@ -56,7 +56,7 @@ function CopyButton({ value }: { value: number }) {
       onClick={handleCopy}
       className="inline-flex items-center gap-1 h-6 px-2 rounded-md bg-white/[0.06] hover:bg-blue-500/15 border border-white/[0.08] hover:border-blue-500/30 text-xs text-slate-400 hover:text-blue-400 transition-all"
     >
-      {copied ? <CheckCircle className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
+      {copied ? <CheckCircle className="h-3 w-3 text-[var(--success)]" /> : <Copy className="h-3 w-3" />}
       <span className="font-mono">{value.toFixed(2)} €</span>
     </button>
   )
@@ -352,7 +352,7 @@ export default function FiscalitePage() {
                         <ProfileBadge type={d.type as any} size="sm" />
                       </td>
                       <td className="py-3 px-3 text-slate-300 text-xs">{regimeLabel(d)}</td>
-                      <td className="py-3 px-3 text-green-400 font-semibold">{formatCurrency(d.revenus)}</td>
+                      <td className="py-3 px-3 text-[var(--success)] font-semibold">{formatCurrency(d.revenus)}</td>
                       <td className="py-3 px-3 text-red-400">{formatCurrency(d.charges)}</td>
                       <td className="py-3 px-3 text-blue-400">{d.travaux_deductibles > 0 ? formatCurrency(d.travaux_deductibles) : '—'}</td>
                       <td className="py-3 px-3 text-cyan-400">{d.amortissements > 0 ? formatCurrency(d.amortissements) : '—'}</td>
@@ -371,7 +371,7 @@ export default function FiscalitePage() {
                 <tfoot>
                   <tr className="border-t-2 border-white/[0.12] bg-white/[0.02]">
                     <td className="py-3 px-3 font-bold text-[#0A0908]" colSpan={4}>TOTAL</td>
-                    <td className="py-3 px-3 font-bold text-green-400">{formatCurrency(totaux.revenus)}</td>
+                    <td className="py-3 px-3 font-bold text-[var(--success)]">{formatCurrency(totaux.revenus)}</td>
                     <td className="py-3 px-3 font-bold text-red-400">{formatCurrency(totaux.charges)}</td>
                     <td className="py-3 px-3 font-bold text-blue-400">{totaux.travaux > 0 ? formatCurrency(totaux.travaux) : '—'}</td>
                     <td className="py-3 px-3 font-bold text-cyan-400">{totaux.amortissements > 0 ? formatCurrency(totaux.amortissements) : '—'}</td>
@@ -395,7 +395,7 @@ export default function FiscalitePage() {
               {/* Formulaire 2042-C-PRO */}
               {hasLmnp && (
                 <Accordion title="Formulaire 2042-C-PRO" defaultOpen badge={
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-green-400/10 border border-green-400/20 text-green-400">LMNP / LMP</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--success-bg)] border border-[var(--success)/20] text-[var(--success)]">LMNP / LMP</span>
                 }>
                   <p className="text-xs text-slate-500 mb-4">Revenus des locations meublées non professionnelles — à reporter sur votre 2042 principale</p>
                   {lmnpProps.map(d => {
@@ -535,7 +535,7 @@ export default function FiscalitePage() {
               {[
                 { label: 'IRL (Loyers habitation)', value: IRL_CURRENT, color: 'text-blue-400' },
                 { label: 'ILC (Loyers commerciaux)', value: ILC_CURRENT, color: 'text-cyan-400' },
-                { label: 'ILAT (Activités tertiaires)', value: ILAT_CURRENT, color: 'text-green-400' },
+                { label: 'ILAT (Activités tertiaires)', value: ILAT_CURRENT, color: 'text-[var(--success)]' },
               ].map(({ label, value, color }) => (
                 <div key={label} className="bg-white/[0.03] rounded-xl p-4">
                   <p className="text-xs text-slate-500 mb-1">{label}</p>

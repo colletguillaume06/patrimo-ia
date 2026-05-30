@@ -35,7 +35,7 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
             >
               {optimal === regime && (
                 <div className="absolute -top-2 -right-2">
-                  <span className="flex items-center gap-1 text-xs font-semibold text-green-400 bg-[#111E35] border border-green-400/30 px-2 py-0.5 rounded-full">
+                  <span className="flex items-center gap-1 text-xs font-semibold text-[var(--success)] bg-[#111E35] border border-green-400/30 px-2 py-0.5 rounded-full">
                     <CheckCircle className="h-3 w-3" /> Optimal
                   </span>
                 </div>
@@ -47,8 +47,8 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
           ))}
         </div>
         {simulation.economie_regime_reel > 0 && (
-          <div className="mt-3 p-3 bg-green-400/5 border border-green-400/20 rounded-lg">
-            <p className="text-xs text-green-400 font-medium">
+          <div className="mt-3 p-3 bg-green-400/5 border border-[var(--success)/20] rounded-lg">
+            <p className="text-xs text-[var(--success)] font-medium">
               💡 Économie en régime réel : {formatCurrency(simulation.economie_regime_reel)}/an
             </p>
           </div>
@@ -78,7 +78,7 @@ export function SimulationCard({ simulation, type }: SimulationCardProps) {
           >
             {optimal === regime && (
               <div className="absolute -top-2 -right-2">
-                <span className="flex items-center gap-1 text-xs font-semibold text-green-400 bg-[#111E35] border border-green-400/30 px-2 py-0.5 rounded-full">
+                <span className="flex items-center gap-1 text-xs font-semibold text-[var(--success)] bg-[#111E35] border border-green-400/30 px-2 py-0.5 rounded-full">
                   <CheckCircle className="h-3 w-3" /> Optimal
                 </span>
               </div>

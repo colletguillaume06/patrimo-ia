@@ -99,7 +99,7 @@ export default function BauxPage() {
                     <div className="flex items-center gap-2 mb-1">
                       <p className="text-sm font-semibold text-[#0A0908]">{lease.tenant_name}</p>
                       {lease.is_active ? (
-                        <span className="flex items-center gap-1 text-xs text-green-400 bg-green-400/10 border border-green-400/20 px-2 py-0.5 rounded-full">
+                        <span className="flex items-center gap-1 text-xs text-[var(--success)] bg-[var(--success-bg)] border border-[var(--success)/20] px-2 py-0.5 rounded-full">
                           <CheckCircle2 className="h-3 w-3" /> Actif
                         </span>
                       ) : (

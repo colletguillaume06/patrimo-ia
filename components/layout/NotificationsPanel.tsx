@@ -77,8 +77,8 @@ export function NotificationsPanel() {
               </div>
             ) : alerts.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10 text-center px-4">
-                <div className="h-10 w-10 rounded-xl bg-green-400/10 flex items-center justify-center mb-3">
-                  <Bell className="h-5 w-5 text-green-400" />
+                <div className="h-10 w-10 rounded-xl bg-[var(--success-bg)] flex items-center justify-center mb-3">
+                  <Bell className="h-5 w-5 text-[var(--success)]" />
                 </div>
                 <p className="text-sm font-medium text-[#0A0908]">Tout est en ordre ✅</p>
                 <p className="text-xs text-[#3D3A36] mt-1">Aucune alerte en cours</p>

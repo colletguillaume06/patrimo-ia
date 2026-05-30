@@ -150,7 +150,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
       <div className="relative w-full max-w-lg bg-[#111E35] border border-white/[0.08] rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-green-400" />
+            <TrendingUp className="h-4 w-4 text-[var(--success)]" />
             <h2 className="font-display font-semibold text-[#0A0908]">Révision de loyer</h2>
           </div>
           <button onClick={onClose} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10]">
@@ -166,7 +166,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
             Indice : {indice.toUpperCase()} — Indice actuel {newQuarterLabel} : <span className="font-mono font-semibold">{nouvelIndice}</span>
           </p>
           {hasRef && refLabel && (
-            <p className="text-xs text-green-400 mt-0.5">
+            <p className="text-xs text-[var(--success)] mt-0.5">
               ✓ Indice à la signature : <span className="font-mono">{ancienVal}</span> ({refLabel}) — pré-rempli depuis le bail
             </p>
           )}
@@ -197,10 +197,10 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
 
             {/* Calcul détaillé */}
             {calcul && (
-              <div className="p-4 rounded-xl bg-green-400/5 border border-green-400/20 space-y-2.5">
+              <div className="p-4 rounded-xl bg-green-400/5 border border-[var(--success)/20] space-y-2.5">
                 {/* Formule */}
                 <p className="text-xs text-slate-400 font-mono text-center bg-white/[0.04] rounded-lg py-2">
-                  {lease.monthly_rent} × {nouvelIndice} ÷ {ancienVal} = <span className="text-green-400 font-bold">{calcul.nouveau_loyer.toFixed(2)} €</span>
+                  {lease.monthly_rent} × {nouvelIndice} ÷ {ancienVal} = <span className="text-[var(--success)] font-bold">{calcul.nouveau_loyer.toFixed(2)} €</span>
                 </p>
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-sm">
@@ -217,11 +217,11 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-400">Nouveau loyer</span>
-                    <span className="text-green-400 font-bold">{formatCurrency(calcul.nouveau_loyer)}</span>
+                    <span className="text-[var(--success)] font-bold">{formatCurrency(calcul.nouveau_loyer)}</span>
                   </div>
                   <div className="flex justify-between text-sm border-t border-white/[0.06] pt-1.5">
                     <span className="text-slate-400">Variation</span>
-                    <span className="text-green-400 font-semibold">
+                    <span className="text-[var(--success)] font-semibold">
                       +{formatCurrency(calcul.variation_euros)} (+{calcul.variation_pct}%)
                     </span>
                   </div>
@@ -278,7 +278,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
               className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-400 text-sm font-semibold transition-all"
             >
               {copied
-                ? <><CheckCircle className="h-4 w-4 text-green-400" /> Copié !</>
+                ? <><CheckCircle className="h-4 w-4 text-[var(--success)]" /> Copié !</>
                 : <><Copy className="h-4 w-4" /> Copier la lettre</>
               }
             </button>

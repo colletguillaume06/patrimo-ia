@@ -179,7 +179,7 @@ export default function DocumentsPage() {
                 <label className="block text-xs text-slate-400 mb-1">Fichier *</label>
                 <div onClick={() => fileRef.current?.click()} className={`flex items-center gap-3 p-3 rounded-xl border border-dashed cursor-pointer transition-all ${file ? 'border-green-400/30 bg-green-400/5' : 'border-white/[0.10] hover:border-blue-400/30'}`}>
                   {file ? (
-                    <><FileText className="h-5 w-5 text-green-400 flex-shrink-0" /><p className="text-sm text-green-400 truncate">{file.name}</p></>
+                    <><FileText className="h-5 w-5 text-[var(--success)] flex-shrink-0" /><p className="text-sm text-[var(--success)] truncate">{file.name}</p></>
                   ) : (
                     <><Upload className="h-5 w-5 text-slate-500 flex-shrink-0" /><p className="text-sm text-slate-500">Cliquez pour choisir</p></>
                   )}

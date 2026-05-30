@@ -18,7 +18,7 @@ import {
 import Link from 'next/link'
 
 const ASSURANCE_CONFIG = {
-  valide: { label: 'Valide', color: 'text-green-400', bg: 'bg-green-400/10', border: 'border-green-400/20' },
+  valide: { label: 'Valide', color: 'text-[var(--success)]', bg: 'bg-[var(--success-bg)]', border: 'border-[var(--success)/20]' },
   expire_bientot: { label: 'Expire bientôt', color: 'text-amber-400', bg: 'bg-amber-400/10', border: 'border-amber-400/20' },
   expiree: { label: 'Expirée', color: 'text-red-400', bg: 'bg-red-400/10', border: 'border-red-400/20' },
   manquante: { label: 'Manquante', color: 'text-slate-500', bg: 'bg-slate-500/10', border: 'border-slate-500/20' },
@@ -202,8 +202,8 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
           {[
             { label: 'Montant DG', value: formatCurrency(lease.deposit || 0), color: 'text-[#0A0908]' },
             { label: 'Montant retenu', value: lease.depot_garantie_montant_retenu > 0 ? formatCurrency(lease.depot_garantie_montant_retenu) : '—', color: 'text-red-400' },
-            { label: 'Restitué', value: lease.depot_garantie_montant_retenu > 0 ? formatCurrency((lease.deposit || 0) - (lease.depot_garantie_montant_retenu || 0)) : '—', color: 'text-green-400' },
-            { label: 'Statut', value: dgStatut.message, color: dgStatut.statut === 'restitue' ? 'text-green-400' : dgStatut.statut === 'urgent' || dgStatut.statut === 'depasse' ? 'text-red-400' : 'text-amber-400' },
+            { label: 'Restitué', value: lease.depot_garantie_montant_retenu > 0 ? formatCurrency((lease.deposit || 0) - (lease.depot_garantie_montant_retenu || 0)) : '—', color: 'text-[var(--success)]' },
+            { label: 'Statut', value: dgStatut.message, color: dgStatut.statut === 'restitue' ? 'text-[var(--success)]' : dgStatut.statut === 'urgent' || dgStatut.statut === 'depasse' ? 'text-red-400' : 'text-amber-400' },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-white/[0.03] rounded-xl p-3">
               <p className="text-xs text-slate-500 mb-1">{label}</p>

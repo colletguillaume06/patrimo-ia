@@ -37,9 +37,9 @@ interface CategorieConfig {
 const CATEGORIES: Record<CategorieFiscale, CategorieConfig> = {
   entretien_reparation: {
     label: 'Entretien / Réparation',
-    color: 'text-green-400',
-    bg: 'bg-green-400/10',
-    border: 'border-green-400/20',
+    color: 'text-[var(--success)]',
+    bg: 'bg-[var(--success-bg)]',
+    border: 'border-[var(--success)/20]',
     tooltip: 'Déductible immédiatement en charge (régime réel foncier ou BIC). Ex: remplacement robinet, peinture, réparation toiture.',
     deductible: 'oui',
   },
@@ -80,7 +80,7 @@ const CATEGORIES: Record<CategorieFiscale, CategorieConfig> = {
 const STATUS_CONFIG: Record<IncidentStatus, { label: string; icon: any; color: string; bg: string }> = {
   open: { label: 'Planifié', icon: AlertCircle, color: 'text-slate-400', bg: 'bg-slate-400/10' },
   in_progress: { label: 'En cours', icon: Clock, color: 'text-amber-400', bg: 'bg-amber-400/10' },
-  resolved: { label: 'Terminé', icon: CheckCircle2, color: 'text-green-400', bg: 'bg-green-400/10' },
+  resolved: { label: 'Terminé', icon: CheckCircle2, color: 'text-[var(--success)]', bg: 'bg-[var(--success-bg)]' },
 }
 
 const FORM_INITIAL = {
@@ -101,7 +101,7 @@ function CategorieTooltip({ cat }: { cat: CategorieFiscale }) {
       <div className="absolute bottom-5 left-0 w-72 px-3 py-2.5 bg-[#0D1B2E] border border-white/[0.10] rounded-xl text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-2xl">
         <p className="font-medium mb-1" style={{ color: cfg.color.replace('text-', '') }}>{cfg.label}</p>
         <p className="leading-relaxed">{cfg.tooltip}</p>
-        <p className={`mt-1.5 font-medium ${cfg.deductible === 'oui' ? 'text-green-400' : cfg.deductible === 'partiel' ? 'text-amber-400' : 'text-red-400'}`}>
+        <p className={`mt-1.5 font-medium ${cfg.deductible === 'oui' ? 'text-[var(--success)]' : cfg.deductible === 'partiel' ? 'text-amber-400' : 'text-red-400'}`}>
           {cfg.deductible === 'oui' ? '✓ Déductible' : cfg.deductible === 'partiel' ? '⚠ Déductible selon conditions' : '✗ Non déductible'}
         </p>
       </div>
@@ -266,7 +266,7 @@ export default function TravauxPage() {
             <span className="h-2 w-2 rounded-full bg-green-400 inline-block" />
             Déductibles {now.getFullYear()}
           </p>
-          <p className="text-xl font-bold font-mono text-green-400">{formatCurrency(stats.deductibles)}</p>
+          <p className="text-xl font-bold font-mono text-[var(--success)]">{formatCurrency(stats.deductibles)}</p>
           <p className="text-xs text-slate-600 mt-0.5">entretien + charges BIC payés</p>
         </GlassCard>
         <GlassCard glow="cyan" className="p-4">
@@ -351,7 +351,7 @@ export default function TravauxPage() {
                             {inc.est_paye ? (
                               <button
                                 onClick={() => handleTogglePaye(inc.id, inc.est_paye, inc.cout_paye)}
-                                className="flex items-center gap-1 text-green-400 hover:text-green-300 transition-colors"
+                                className="flex items-center gap-1 text-[var(--success)] hover:text-green-300 transition-colors"
                               >
                                 <ToggleRight className="h-4 w-4" />
                                 <span className="font-semibold">{formatCurrency(inc.cout_paye || 0)}</span>
@@ -502,7 +502,7 @@ export default function TravauxPage() {
                 </button>
                 <span className="text-sm text-slate-300">Facture payée</span>
                 {form.est_paye && (
-                  <span className="flex items-center gap-1 text-xs text-green-400">
+                  <span className="flex items-center gap-1 text-xs text-[var(--success)]">
                     <CheckCircle2 className="h-3.5 w-3.5" /> Payé
                   </span>
                 )}
@@ -528,7 +528,7 @@ export default function TravauxPage() {
                       )}
                     >
                       <span className="font-medium">{cfg.label}</span>
-                      <span className={cn('text-xs', cfg.deductible === 'oui' ? 'text-green-400' : cfg.deductible === 'partiel' ? 'text-amber-400' : 'text-red-400')}>
+                      <span className={cn('text-xs', cfg.deductible === 'oui' ? 'text-[var(--success)]' : cfg.deductible === 'partiel' ? 'text-amber-400' : 'text-red-400')}>
                         {cfg.deductible === 'oui' ? '✓ Déductible' : cfg.deductible === 'partiel' ? '⚠ Conditionnel' : '✗ Non déductible'}
                       </span>
                     </button>
@@ -548,9 +548,9 @@ export default function TravauxPage() {
                 >
                   {pendingFile ? (
                     <>
-                      <FileText className="h-5 w-5 text-green-400 flex-shrink-0" />
+                      <FileText className="h-5 w-5 text-[var(--success)] flex-shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-green-400 font-medium truncate">{pendingFile.name}</p>
+                        <p className="text-sm text-[var(--success)] font-medium truncate">{pendingFile.name}</p>
                         <p className="text-xs text-slate-500">{(pendingFile.size / 1024).toFixed(0)} KB</p>
                       </div>
                       <button type="button" onClick={e => { e.stopPropagation(); setPendingFile(null) }}

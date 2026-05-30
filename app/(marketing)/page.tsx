@@ -143,7 +143,7 @@ export default function LandingPage() {
                 <ul className="space-y-2 mb-6">
                   {features.map(f => (
                     <li key={f} className="flex items-center gap-2 text-sm text-slate-300">
-                      <CheckCircle className="h-4 w-4 text-green-400 flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-[var(--success)] flex-shrink-0" />
                       {f}
                     </li>
                   ))}

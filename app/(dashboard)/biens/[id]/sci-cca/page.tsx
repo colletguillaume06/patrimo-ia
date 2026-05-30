@@ -84,8 +84,8 @@ export default function SciCcaPage() {
             </div>
             <div className="grid grid-cols-3 gap-2">
               <div><p className="text-xs text-slate-500">Avances</p><p className="text-sm font-semibold text-[#0A0908]">{formatCurrency(a.avances)}</p></div>
-              <div><p className="text-xs text-slate-500">Remb.</p><p className="text-sm font-semibold text-green-400">-{formatCurrency(a.remboursements)}</p></div>
-              <div><p className="text-xs text-slate-500">Solde CCA</p><p className={`text-sm font-bold ${a.solde > 0 ? 'text-amber-400' : 'text-green-400'}`}>{formatCurrency(a.solde)}</p></div>
+              <div><p className="text-xs text-slate-500">Remb.</p><p className="text-sm font-semibold text-[var(--success)]">-{formatCurrency(a.remboursements)}</p></div>
+              <div><p className="text-xs text-slate-500">Solde CCA</p><p className={`text-sm font-bold ${a.solde > 0 ? 'text-amber-400' : 'text-[var(--success)]'}`}>{formatCurrency(a.solde)}</p></div>
             </div>
           </GlassCard>
         ))}
@@ -110,14 +110,14 @@ export default function SciCcaPage() {
           <div className="space-y-2">
             {operations.map(op => (
               <div key={op.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.02] transition-colors">
-                <div className={`h-8 w-8 rounded-lg flex items-center justify-center text-lg flex-shrink-0 ${op.type === 'avance' ? 'bg-amber-400/10' : op.type === 'remboursement' ? 'bg-green-400/10' : 'bg-blue-400/10'}`}>
+                <div className={`h-8 w-8 rounded-lg flex items-center justify-center text-lg flex-shrink-0 ${op.type === 'avance' ? 'bg-amber-400/10' : op.type === 'remboursement' ? 'bg-[var(--success-bg)]' : 'bg-blue-400/10'}`}>
                   {op.type === 'avance' ? '↑' : op.type === 'remboursement' ? '↓' : '📈'}
                 </div>
                 <div className="flex-1">
                   <p className="text-sm text-[#0A0908]">{op.associe?.name}</p>
                   <p className="text-xs text-slate-500">{format(new Date(op.date_operation), 'dd/MM/yyyy')} · {op.type === 'avance' ? 'Avance' : op.type === 'remboursement' ? 'Remboursement' : 'Intérêts'}{op.motif && ` · ${op.motif}`}</p>
                 </div>
-                <p className={`font-semibold ${op.type === 'avance' ? 'text-amber-400' : 'text-green-400'}`}>
+                <p className={`font-semibold ${op.type === 'avance' ? 'text-amber-400' : 'text-[var(--success)]'}`}>
                   {op.type === 'remboursement' ? '-' : '+'}{formatCurrency(op.montant)}
                 </p>
               </div>

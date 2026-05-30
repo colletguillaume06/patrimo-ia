@@ -58,7 +58,7 @@ export function ProfileCommerce({ property: p }: ProfileCommerceProps) {
           {[
             { label: 'Loyer HT mensuel', value: formatCurrency(loyer_ht), color: 'text-[#0A0908]' },
             { label: 'Révision dans', value: monthsToEnd !== null ? `${monthsToEnd} mois` : '—', color: isPreavisAlert ? 'text-red-400' : 'text-amber-400' },
-            { label: 'Nouveau loyer estimé', value: newRent ? formatCurrency(newRent) : '—', color: 'text-green-400' },
+            { label: 'Nouveau loyer estimé', value: newRent ? formatCurrency(newRent) : '—', color: 'text-[var(--success)]' },
             { label: 'Indice révision', value: (p.indice_revision ?? 'ILC').toUpperCase(), color: 'text-cyan-400' },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-white/[0.03] rounded-xl p-3">
@@ -109,7 +109,7 @@ export function ProfileCommerce({ property: p }: ProfileCommerceProps) {
         <div className="space-y-2">
           {checklistItems.map(({ label, done }) => (
             <div key={label} className="flex items-center gap-3 p-2.5 rounded-lg">
-              <CheckCircle2 className={`h-4 w-4 flex-shrink-0 ${done ? 'text-green-400' : 'text-slate-700'}`} />
+              <CheckCircle2 className={`h-4 w-4 flex-shrink-0 ${done ? 'text-[var(--success)]' : 'text-slate-700'}`} />
               <span className={`text-sm ${done ? 'text-slate-300' : 'text-slate-500'}`}>{label}</span>
             </div>
           ))}

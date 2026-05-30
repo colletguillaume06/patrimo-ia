@@ -36,13 +36,13 @@ export function BienCard({ bien }: BienCardProps) {
         </div>
         <div className="bg-white/[0.03] rounded-lg p-2.5">
           <p className="text-xs text-slate-500 mb-0.5">Rendement brut</p>
-          <p className="text-sm font-semibold text-green-400">
+          <p className="text-sm font-semibold text-[var(--success)]">
             {bien.gross_yield !== null ? formatPct(bien.gross_yield) : '—'}
           </p>
         </div>
         <div className="bg-white/[0.03] rounded-lg p-2.5">
           <p className="text-xs text-slate-500 mb-0.5">Cashflow net</p>
-          <p className={`text-sm font-semibold ${(bien.monthly_cashflow ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+          <p className={`text-sm font-semibold ${(bien.monthly_cashflow ?? 0) >= 0 ? 'text-[var(--success)]' : 'text-red-400'}`}>
             {bien.monthly_cashflow !== null ? formatCurrency(bien.monthly_cashflow) : '—'}
           </p>
         </div>

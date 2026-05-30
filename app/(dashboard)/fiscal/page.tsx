@@ -91,7 +91,7 @@ export default function FiscalPage() {
         <h2 className="font-display font-semibold text-[#0A0908] mb-4">Synthèse {year}</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'Revenus bruts', value: formatCurrency(totalRevenusBruts), color: 'text-green-400' },
+            { label: 'Revenus bruts', value: formatCurrency(totalRevenusBruts), color: 'text-[var(--success)]' },
             { label: 'Charges réelles', value: formatCurrency(totalCharges), color: 'text-red-400' },
             { label: 'Amortissements', value: formatCurrency(totalAmortissements), color: 'text-blue-400' },
             { label: 'Résultat net', value: formatCurrency(totalResultat), color: totalResultat <= 0 ? 'text-blue-400' : 'text-amber-400' },
@@ -138,7 +138,7 @@ export default function FiscalPage() {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div>
                           <p className="text-xs text-slate-500">Recettes BIC (case 5ND)</p>
-                          <p className="text-sm font-semibold text-green-400">{formatCurrency(sim.recettes)}</p>
+                          <p className="text-sm font-semibold text-[var(--success)]">{formatCurrency(sim.recettes)}</p>
                         </div>
                         <div>
                           <p className="text-xs text-slate-500">Résultat BIC</p>
@@ -156,7 +156,7 @@ export default function FiscalPage() {
                         </div>
                       </div>
                       {sim.resultat_bic <= 0 && (
-                        <div className="mt-3 flex items-center gap-2 text-xs text-green-400">
+                        <div className="mt-3 flex items-center gap-2 text-xs text-[var(--success)]">
                           <CheckCircle2 className="h-3.5 w-3.5" />
                           Résultat nul grâce aux amortissements — aucun impôt BIC dû
                         </div>
@@ -200,7 +200,7 @@ export default function FiscalPage() {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div>
                           <p className="text-xs text-slate-500">Revenus bruts (ligne 210)</p>
-                          <p className="text-sm font-semibold text-green-400">{formatCurrency(sim.revenus_bruts)}</p>
+                          <p className="text-sm font-semibold text-[var(--success)]">{formatCurrency(sim.revenus_bruts)}</p>
                         </div>
                         <div>
                           <p className="text-xs text-slate-500">Charges déductibles</p>
@@ -270,7 +270,7 @@ export default function FiscalPage() {
                       </div>
                       <div>
                         <p className="text-xs text-slate-500">Dividendes distribuables</p>
-                        <p className="text-sm font-semibold text-green-400">{formatCurrency(sim.dividendes_disponibles)}</p>
+                        <p className="text-sm font-semibold text-[var(--success)]">{formatCurrency(sim.dividendes_disponibles)}</p>
                       </div>
                     </div>
                     <div className="mt-3 flex items-center gap-2 text-xs text-amber-400">

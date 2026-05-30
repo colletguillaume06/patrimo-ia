@@ -120,7 +120,7 @@ export default function DevisPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-medium text-[#0A0908]">{d.entreprise}</p>
-                          {isRetenu && <span className="text-xs text-green-400 bg-green-400/10 border border-green-400/20 px-1.5 py-0.5 rounded-full">Retenu</span>}
+                          {isRetenu && <span className="text-xs text-[var(--success)] bg-[var(--success-bg)] border border-[var(--success)/20] px-1.5 py-0.5 rounded-full">Retenu</span>}
                           {isExpire && !isRetenu && <span className="text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full">Expiré</span>}
                         </div>
                         <p className="text-xs text-slate-500 mt-0.5">
@@ -137,7 +137,7 @@ export default function DevisPage() {
                       </div>
                       {!isRetenu && !isRefuse && (
                         <button onClick={() => handleRetenir(d.id, inc.id, d.entreprise, d.montant)}
-                          className="flex-shrink-0 flex items-center gap-1.5 h-8 px-3 rounded-lg bg-green-400/10 hover:bg-green-400/20 border border-green-400/20 text-green-400 text-xs font-medium transition-all">
+                          className="flex-shrink-0 flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[var(--success-bg)] hover:bg-green-400/20 border border-[var(--success)/20] text-[var(--success)] text-xs font-medium transition-all">
                           <CheckCircle2 className="h-3.5 w-3.5" /> Retenir
                         </button>
                       )}

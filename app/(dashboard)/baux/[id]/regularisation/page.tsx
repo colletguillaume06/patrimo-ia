@@ -140,7 +140,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées
           </div>
 
           {charges_reelles > 0 && (
-            <div className={`p-4 rounded-xl border space-y-2 mb-5 ${solde >= 0 ? 'border-green-400/20 bg-green-400/5' : 'border-red-400/20 bg-red-400/5'}`}>
+            <div className={`p-4 rounded-xl border space-y-2 mb-5 ${solde >= 0 ? 'border-[var(--success)/20] bg-green-400/5' : 'border-red-400/20 bg-red-400/5'}`}>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-400">Provisions versées ({charges_mensuelles}€ × 12)</span>
                 <span className="text-[#0A0908] font-semibold">{formatCurrency(provisions)}</span>
@@ -150,10 +150,10 @@ Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées
                 <span className="text-[#0A0908] font-semibold">{formatCurrency(charges_reelles)}</span>
               </div>
               <div className="flex justify-between text-sm border-t border-white/[0.08] pt-2 font-bold">
-                <span className={solde >= 0 ? 'text-green-400' : 'text-red-400'}>
+                <span className={solde >= 0 ? 'text-[var(--success)]' : 'text-red-400'}>
                   {solde >= 0 ? '✓ À rembourser au locataire' : '⚠ À appeler au locataire'}
                 </span>
-                <span className={solde >= 0 ? 'text-green-400' : 'text-red-400'}>
+                <span className={solde >= 0 ? 'text-[var(--success)]' : 'text-red-400'}>
                   {formatCurrency(Math.abs(solde))}
                 </span>
               </div>
@@ -162,7 +162,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées
 
           <button onClick={handleCopy} disabled={charges_reelles === 0}
             className="flex items-center gap-2 h-9 px-5 rounded-lg bg-white/[0.06] border border-white/[0.10] text-slate-300 hover:text-[#0A0908] text-sm transition-all disabled:opacity-40">
-            {copied ? <><CheckCircle className="h-4 w-4 text-green-400" /> Copié !</> : <><Copy className="h-4 w-4" /> Générer courrier de régularisation</>}
+            {copied ? <><CheckCircle className="h-4 w-4 text-[var(--success)]" /> Copié !</> : <><Copy className="h-4 w-4" /> Générer courrier de régularisation</>}
           </button>
         </GlassCard>
       )}

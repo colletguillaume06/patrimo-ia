@@ -13,7 +13,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return (
     <div className="bg-white border border-[#E5E2DB] rounded-xl p-3 shadow-xl text-xs">
       <p className="text-[#3D3A36] mb-2 font-medium">{label}</p>
-      <p className="text-green-400">Revenus : {formatCurrency(payload[0]?.value ?? 0)}</p>
+      <p className="text-[var(--success)]">Revenus : {formatCurrency(payload[0]?.value ?? 0)}</p>
       <p className="text-red-400">Charges : {formatCurrency(payload[1]?.value ?? 0)}</p>
     </div>
   )

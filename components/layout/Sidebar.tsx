@@ -4,9 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, Building2, Banknote, FileText,
-  Calculator, Wrench, Bot, Download, ChevronRight,
-  Sparkles, TrendingUp, BarChart3, Users, FolderOpen,
-  Mail, Settings
+  Wrench, Download, ChevronRight, Sparkles, TrendingUp,
+  BarChart3, Users, FolderOpen, Mail, Settings
 } from 'lucide-react'
 import { cn, getInitials } from '@/lib/utils'
 import type { Profile } from '@/types'
@@ -34,8 +33,7 @@ const navSecondary = [
   { href: '/parametres', label: 'Paramètres', icon: Settings },
 ]
 
-const planLabels = { starter: 'Starter', pro: 'Pro', premium: 'Premium ✦' }
-const planColors = { starter: 'text-gray-500', pro: 'text-[#1B4FD8]', premium: 'text-amber-600' }
+const planLabels: Record<string, string> = { starter: 'Starter', pro: 'Pro', premium: 'Premium ✦' }
 
 export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
   const pathname = usePathname()
@@ -43,15 +41,18 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
     pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
 
   return (
-    <aside className="flex flex-col h-full w-[220px] bg-white border-r border-[#E5E2DB]">
+    <aside className="flex flex-col h-full w-[220px] transition-colors"
+      style={{ background: 'var(--sidebar-bg)', borderRight: '1px solid var(--sidebar-border)' }}>
+
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-[#EEECE8]">
+      <div className="px-5 py-5" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
         <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[#1B4FD8] to-[#0891B2] flex items-center justify-center shadow-sm">
-            <Sparkles className="h-4 w-4 text-[#0A0908]" />
+            <Sparkles className="h-4 w-4 text-white" />
           </div>
-          <span className="font-display font-bold text-[16px] text-[#0A0908] tracking-tight">
-            Propilot<span className="text-[#1B4FD8]"> AI</span>
+          <span className="font-display font-bold text-[16px] tracking-tight"
+            style={{ color: 'var(--text-primary)' }}>
+            Propilot<span style={{ color: 'var(--brand)' }}> AI</span>
           </span>
         </div>
       </div>
@@ -60,16 +61,19 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
       <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
         {nav.map(({ href, label, icon: Icon }) => {
           const active = isActive(href)
-          const isLoyers = href === '/loyers'
           return (
             <Link key={href} href={href}
-              className={cn(
-                'group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-all duration-150',
-                active ? 'bg-[#EEF3FF] text-[#1B4FD8]' : 'text-[#1A1714] hover:bg-[#F0EEE9] hover:text-[#0A0908]'
-              )}>
-              <Icon className={cn('h-[18px] w-[18px] flex-shrink-0', active ? 'text-[#1B4FD8]' : 'text-[#3D3A36] group-hover:text-[#1A1714]')} />
+              className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] font-medium transition-all duration-150"
+              style={{
+                background: active ? 'var(--brand-light)' : 'transparent',
+                color: active ? 'var(--brand)' : 'var(--text-muted)',
+              }}
+              onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'var(--surface-2)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)' } }}
+              onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)' } }}
+            >
+              <Icon className="h-[18px] w-[18px] flex-shrink-0" />
               <span className="flex-1">{label}</span>
-              {isLoyers && latePaymentsCount > 0 && (
+              {href === '/loyers' && latePaymentsCount > 0 && (
                 <span className="h-5 min-w-5 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center px-1">
                   {latePaymentsCount}
                 </span>
@@ -78,17 +82,21 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
           )
         })}
 
-        <div className="my-2 border-t border-[#EEECE8]" />
+        <div className="my-2" style={{ borderTop: '1px solid var(--border-subtle)' }} />
 
         {navSecondary.map(({ href, label, icon: Icon }) => {
           const active = isActive(href)
           return (
             <Link key={href} href={href}
-              className={cn(
-                'group flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-150',
-                active ? 'bg-[#EEF3FF] text-[#1B4FD8]' : 'text-[#3D3A36] hover:bg-[#F0EEE9] hover:text-[#1A1714]'
-              )}>
-              <Icon className={cn('h-4 w-4 flex-shrink-0', active ? 'text-[#1B4FD8]' : 'text-[#6B6560]')} />
+              className="group flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-150"
+              style={{
+                background: active ? 'var(--brand-light)' : 'transparent',
+                color: active ? 'var(--brand)' : 'var(--text-subtle)',
+              }}
+              onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'var(--surface-2)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)' } }}
+              onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--text-subtle)' } }}
+            >
+              <Icon className="h-4 w-4 flex-shrink-0" />
               {label}
             </Link>
           )
@@ -98,32 +106,34 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
       {/* Copilot — feature star */}
       <div className="px-3 pb-3">
         <Link href="/copilot"
-          className={cn(
-            'flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-semibold transition-all duration-200',
-            isActive('/copilot')
-              ? 'bg-[#1B4FD8] text-[#0A0908]'
-              : 'bg-gradient-to-r from-[#1B4FD8] to-[#0891B2] text-white shadow-md shadow-blue-200 hover:shadow-lg hover:shadow-blue-300 hover:-translate-y-0.5'
-          )}>
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-semibold text-white transition-all duration-200 hover:-translate-y-0.5"
+          style={{
+            background: 'linear-gradient(135deg, #1B4FD8, #0891B2)',
+            boxShadow: '0 4px 12px rgba(27,79,216,0.25)',
+          }}>
           <Sparkles className="h-[18px] w-[18px]" />
           Demander à Propilot
         </Link>
       </div>
 
       {/* User */}
-      <div className="px-4 pb-4 border-t border-[#EEECE8] pt-3">
+      <div className="px-4 pb-4 pt-3" style={{ borderTop: '1px solid var(--border-subtle)' }}>
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-full bg-[#EEF3FF] border border-[#C7D9FF] flex items-center justify-center flex-shrink-0">
-            <span className="text-[12px] font-bold text-[#1B4FD8]">
+          <div className="h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0"
+            style={{ background: 'var(--brand-light)', border: '1px solid var(--brand)', opacity: 0.8 }}>
+            <span className="text-[12px] font-bold" style={{ color: 'var(--brand)' }}>
               {getInitials(profile?.full_name ?? null)}
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-medium text-[#0A0908] truncate">{profile?.full_name ?? 'Mon compte'}</p>
-            <p className={cn('text-[11px] font-medium', planColors[profile?.plan ?? 'starter'])}>
+            <p className="text-[13px] font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+              {profile?.full_name ?? 'Mon compte'}
+            </p>
+            <p className="text-[11px] font-medium" style={{ color: 'var(--brand)' }}>
               {planLabels[profile?.plan ?? 'starter']}
             </p>
           </div>
-          <ChevronRight className="h-3.5 w-3.5 text-[#6B6560] flex-shrink-0" />
+          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--text-subtle)' }} />
         </div>
       </div>
     </aside>

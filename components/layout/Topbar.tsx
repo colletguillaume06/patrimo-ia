@@ -2,6 +2,7 @@
 
 import { MobileNav } from './MobileNav'
 import { NotificationsPanel } from './NotificationsPanel'
+import { ThemeToggle } from './ThemeToggle'
 import type { Profile } from '@/types'
 
 interface TopbarProps {
@@ -12,10 +13,17 @@ interface TopbarProps {
 
 export function Topbar({ title, profile, latePaymentsCount = 0 }: TopbarProps) {
   return (
-    <header className="sticky top-0 z-20 h-14 flex items-center gap-4 px-6 bg-white/90 backdrop-blur-md border-b border-[#E5E2DB]">
+    <header className="sticky top-0 z-20 h-14 flex items-center gap-4 px-6 backdrop-blur-md border-b transition-colors"
+      style={{ background: 'var(--topbar-bg)', borderColor: 'var(--border)' }}>
       <MobileNav profile={profile} latePaymentsCount={latePaymentsCount} />
-      <h1 className="font-display font-semibold text-[18px] text-[#0A0908] flex-1">{title}</h1>
-      <NotificationsPanel />
+      <h1 className="font-display font-semibold text-[18px] flex-1"
+          style={{ color: 'var(--text-primary)' }}>
+        {title}
+      </h1>
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
+        <NotificationsPanel />
+      </div>
     </header>
   )
 }

@@ -14,9 +14,9 @@ const EXPORTS = [
     filename: (y: number) => `revenus_${y}.csv`,
     endpoint: (y: number) => `/api/export/revenus?year=${y}`,
     description: 'Loyers, charges, statuts, dates d\'encaissement',
-    color: 'text-green-400',
-    bg: 'bg-green-400/10',
-    border: 'border-green-400/20',
+    color: 'text-[var(--success)]',
+    bg: 'bg-[var(--success-bg)]',
+    border: 'border-[var(--success)/20]',
     cols: 'Mois · Bien · N° fiscal · Locataire · Loyer HC · Charges · Statut · Date encaissement',
   },
   {

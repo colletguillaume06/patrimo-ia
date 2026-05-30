@@ -50,7 +50,7 @@ export function ProfileSCI({ property: p }: ProfileSCIProps) {
           {[
             { label: 'Résultat comptable', value: formatCurrency(resultat), color: resultat >= 0 ? 'text-[#0A0908]' : 'text-red-400' },
             { label: p.sci_regime === 'is' ? 'IS dû' : 'Impôt estimé', value: formatCurrency(simulation.is_du), color: 'text-amber-400' },
-            { label: 'Dividendes disponibles', value: formatCurrency(simulation.dividendes_disponibles), color: 'text-green-400' },
+            { label: 'Dividendes disponibles', value: formatCurrency(simulation.dividendes_disponibles), color: 'text-[var(--success)]' },
             { label: 'Nb associés', value: `${p.associates.length}`, color: 'text-cyan-400' },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-white/[0.03] rounded-xl p-3">

@@ -39,7 +39,7 @@ export function ProfileAirbnb({ property: p }: ProfileAirbnbProps) {
           {[
             { label: 'RevPAR', value: formatCurrency(revPar), color: 'text-[#0A0908]' },
             { label: "Taux d'occupation", value: formatPct(occupancyRate), color: 'text-amber-400' },
-            { label: 'Recettes BIC', value: formatCurrency(totalRevenue), color: 'text-green-400' },
+            { label: 'Recettes BIC', value: formatCurrency(totalRevenue), color: 'text-[var(--success)]' },
             { label: 'Nuits réservées', value: `${totalNights}`, color: totalNights > 100 ? 'text-red-400' : 'text-[#0A0908]' },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-white/[0.03] rounded-xl p-3">
@@ -100,7 +100,7 @@ export function ProfileAirbnb({ property: p }: ProfileAirbnbProps) {
                   <p className="text-xs text-slate-500">{b.check_in} → {b.check_out} ({b.nights} nuits)</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-green-400">{formatCurrency(b.total_revenue ?? b.nightly_rate * (b.nights ?? 1))}</p>
+                  <p className="text-sm font-semibold text-[var(--success)]">{formatCurrency(b.total_revenue ?? b.nightly_rate * (b.nights ?? 1))}</p>
                   <p className="text-xs text-slate-600">{formatCurrency(b.nightly_rate)}/nuit</p>
                 </div>
               </div>

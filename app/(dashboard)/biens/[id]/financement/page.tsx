@@ -134,7 +134,7 @@ export default function FinancementPage() {
               { label: 'Mensualité totale', value: formatCurrency(kpis.mensualite_avec_assurance), sub: `dont ${formatCurrency(kpis.mensualite)} hors assurance`, color: 'text-[#0A0908]' },
               { label: 'Capital restant dû', value: formatCurrency(kpis.capital_restant), sub: 'au jour d\'aujourd\'hui', color: 'text-amber-400' },
               { label: 'Intérêts ce mois', value: formatCurrency(kpis.part_interets_ce_mois), sub: `Capital : ${formatCurrency(kpis.part_capital_ce_mois)}`, color: 'text-red-400' },
-              { label: `Intérêts déductibles ${new Date().getFullYear()}`, value: formatCurrency(interetsAnnee), sub: 'à reporter en charges', color: 'text-green-400' },
+              { label: `Intérêts déductibles ${new Date().getFullYear()}`, value: formatCurrency(interetsAnnee), sub: 'à reporter en charges', color: 'text-[var(--success)]' },
             ].map(({ label, value, sub, color }) => (
               <GlassCard key={label} className="p-4">
                 <p className="text-xs text-slate-400 mb-1">{label}</p>
@@ -191,7 +191,7 @@ export default function FinancementPage() {
                         <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{format(e.date, 'MM/yyyy')}</td>
                         <td className="py-2.5 px-3 text-[#0A0908] font-medium">{formatCurrency(e.mensualite)}</td>
                         <td className="py-2.5 px-3 text-red-400">{formatCurrency(e.interets)}</td>
-                        <td className="py-2.5 px-3 text-green-400">{formatCurrency(e.capital_amorti)}</td>
+                        <td className="py-2.5 px-3 text-[var(--success)]">{formatCurrency(e.capital_amorti)}</td>
                         <td className="py-2.5 px-3 text-slate-500">{formatCurrency(e.assurance)}</td>
                         <td className="py-2.5 px-3 text-amber-400 font-mono">{formatCurrency(e.capital_restant)}</td>
                       </tr>
@@ -200,8 +200,8 @@ export default function FinancementPage() {
                 </tbody>
               </table>
             </div>
-            <div className="mt-3 p-3 rounded-lg bg-green-400/5 border border-green-400/20">
-              <p className="text-xs text-green-400">
+            <div className="mt-3 p-3 rounded-lg bg-green-400/5 border border-[var(--success)/20]">
+              <p className="text-xs text-[var(--success)]">
                 💡 Intérêts {new Date().getFullYear()} déductibles : <strong>{formatCurrency(interetsAnnee)}</strong> — à reporter ligne 250 du formulaire 2044 (foncier nu) ou en charges BIC (LMNP)
               </p>
             </div>

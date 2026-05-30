@@ -119,7 +119,7 @@ export default function CourriersPage() {
                 <div className="flex gap-3 mt-4">
                   <button onClick={handleCopy}
                     className="flex-1 flex items-center justify-center gap-2 h-10 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-400 text-sm font-semibold transition-all">
-                    {copied ? <><CheckCircle className="h-4 w-4 text-green-400" /> Copié !</> : <><Copy className="h-4 w-4" /> Copier le courrier</>}
+                    {copied ? <><CheckCircle className="h-4 w-4 text-[var(--success)]" /> Copié !</> : <><Copy className="h-4 w-4" /> Copier le courrier</>}
                   </button>
                 </div>
                 {selected.lrar && (

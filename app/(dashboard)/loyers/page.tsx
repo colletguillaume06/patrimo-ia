@@ -68,7 +68,7 @@ export default function LoyersPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total encaissé', value: formatCurrency(stats.paid), color: 'text-green-400', glow: 'green' as const },
+          { label: 'Total encaissé', value: formatCurrency(stats.paid), color: 'text-[var(--success)]', glow: 'green' as const },
           { label: 'En retard', value: formatCurrency(stats.late), color: 'text-red-400', glow: 'red' as const },
           { label: 'En attente', value: formatCurrency(stats.pending), color: 'text-amber-400', glow: 'amber' as const },
           { label: 'Nb loyers en retard', value: `${payments.filter(p => p.status === 'late').length}`, color: 'text-red-400', glow: 'red' as const },
@@ -112,7 +112,7 @@ export default function LoyersPage() {
                   {pay.status !== 'paid' && (
                     <button
                       onClick={() => handleMarkPaid(pay.id)}
-                      className="h-8 px-3 rounded-lg bg-green-400/10 hover:bg-green-400/20 border border-green-400/20 text-green-400 text-xs font-medium transition-all flex items-center gap-1"
+                      className="h-8 px-3 rounded-lg bg-[var(--success-bg)] hover:bg-green-400/20 border border-[var(--success)/20] text-[var(--success)] text-xs font-medium transition-all flex items-center gap-1"
                     >
                       <CheckCircle className="h-3.5 w-3.5" /> Marquer reçu
                     </button>
@@ -128,7 +128,7 @@ export default function LoyersPage() {
                   {pay.lease?.is_active && (
                     <button
                       onClick={() => setRevisionLease(pay.lease)}
-                      className="h-8 px-3 rounded-lg bg-green-400/10 hover:bg-green-400/20 border border-green-400/20 text-green-400 text-xs font-medium transition-all flex items-center gap-1"
+                      className="h-8 px-3 rounded-lg bg-[var(--success-bg)] hover:bg-green-400/20 border border-[var(--success)/20] text-[var(--success)] text-xs font-medium transition-all flex items-center gap-1"
                     >
                       <TrendingUp className="h-3.5 w-3.5" /> Réviser IRL
                     </button>
