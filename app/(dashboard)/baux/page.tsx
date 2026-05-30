@@ -8,6 +8,7 @@ import { formatCurrency } from '@/lib/utils'
 import { format, differenceInMonths } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { FileText, Plus, X, CheckCircle2, Info, Eye, Download } from 'lucide-react'
+import Link from 'next/link'
 import { toast } from 'sonner'
 import { INDICES_IRL, INDICES_ILC, INDICES_ILAT, getIndicesList } from '@/lib/fiscal/indices'
 
@@ -76,12 +77,19 @@ export default function BauxPage() {
           <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Baux</h1>
           <p className="text-slate-400 text-sm mt-1">{leases.length} bail{leases.length > 1 ? 'x' : ''} enregistré{leases.length > 1 ? 's' : ''}</p>
         </div>
-        <button
-          onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all"
-        >
-          <Plus className="h-4 w-4" /> Nouveau bail
-        </button>
+        <div className="flex items-center gap-2">
+          <Link href="/baux/generer"
+            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold border transition-all"
+            style={{ borderColor: '#1D4ED8', color: '#1D4ED8', background: '#EFF6FF' }}>
+            <FileText className="h-4 w-4" /> Générer un bail
+          </Link>
+          <button
+            onClick={() => setShowAdd(true)}
+            className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all"
+          >
+            <Plus className="h-4 w-4" /> Saisir un bail
+          </button>
+        </div>
       </div>
 
       {loading ? (
