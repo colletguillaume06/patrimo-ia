@@ -68,19 +68,19 @@ export default function FiscalPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Tableau fiscal {year}</h1>
-          <p className="text-slate-400 text-sm mt-1">Récapitulatif déclaratif par régime</p>
+          <h1 className="font-display font-bold text-2xl text-text-primary">Tableau fiscal {year}</h1>
+          <p className="text-text-tertiary text-sm mt-1">Récapitulatif déclaratif par régime</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <label className="text-xs text-slate-400">TMI :</label>
+            <label className="text-xs text-text-tertiary">TMI :</label>
             <select value={tmi} onChange={e => setTmi(Number(e.target.value))}
-              className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
-              {[11, 30, 41, 45].map(r => <option key={r} value={r} className="bg-[var(--surface)]">{r}%</option>)}
+              className="h-9 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none">
+              {[11, 30, 41, 45].map(r => <option key={r} value={r} className="bg-bg-card">{r}%</option>)}
             </select>
           </div>
           <button onClick={handleExport}
-            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-white/[0.06] border border-white/[0.08] text-slate-300 hover:text-[var(--text-primary)] text-sm transition-all">
+            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-bg-secondary border border-border text-text-secondary hover:text-text-primary text-sm transition-all">
             <Download className="h-4 w-4" /> Export CSV
           </button>
         </div>
@@ -88,16 +88,16 @@ export default function FiscalPage() {
 
       {/* Synthèse globale */}
       <GlassCard glow="blue">
-        <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Synthèse {year}</h2>
+        <h2 className="font-display font-semibold text-text-primary mb-4">Synthèse {year}</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'Revenus bruts', value: formatCurrency(totalRevenusBruts), color: 'text-[var(--success)]' },
+            { label: 'Revenus bruts', value: formatCurrency(totalRevenusBruts), color: 'text-success-text' },
             { label: 'Charges réelles', value: formatCurrency(totalCharges), color: 'text-red-400' },
             { label: 'Amortissements', value: formatCurrency(totalAmortissements), color: 'text-blue-400' },
             { label: 'Résultat net', value: formatCurrency(totalResultat), color: totalResultat <= 0 ? 'text-blue-400' : 'text-amber-400' },
           ].map(({ label, value, color }) => (
-            <div key={label} className="bg-white/[0.03] rounded-xl p-3">
-              <p className="text-xs text-slate-500 mb-1">{label}</p>
+            <div key={label} className="bg-bg-secondary/50 rounded-xl p-3">
+              <p className="text-xs text-text-secondary mb-1">{label}</p>
               <p className={`text-lg font-bold font-mono ${color}`}>{value}</p>
             </div>
           ))}
@@ -113,9 +113,9 @@ export default function FiscalPage() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <ProfileBadge type="lmnp" />
-                  <h3 className="font-display font-semibold text-[var(--text-primary)]">LMNP — Formulaire 2042-C-PRO</h3>
+                  <h3 className="font-display font-semibold text-text-primary">LMNP — Formulaire 2042-C-PRO</h3>
                 </div>
-                <FileText className="h-4 w-4 text-slate-500" />
+                <FileText className="h-4 w-4 text-text-secondary" />
               </div>
               <div className="space-y-3">
                 {propData.filter(p => p.type === 'lmnp').map(prop => {
@@ -126,37 +126,37 @@ export default function FiscalPage() {
                     taux_marginal: tmi / 100,
                   })
                   return (
-                    <div key={prop.id} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                    <div key={prop.id} className="p-4 rounded-xl bg-bg-secondary/50 border border-border">
                       <div className="flex items-center gap-3 mb-3">
-                        <p className="text-sm font-medium text-[var(--text-primary)]">{prop.name}</p>
+                        <p className="text-sm font-medium text-text-primary">{prop.name}</p>
                         {prop.numero_fiscal && (
-                          <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-xs font-mono text-slate-400">
+                          <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-border text-xs font-mono text-text-tertiary">
                             # {prop.numero_fiscal}
                           </span>
                         )}
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div>
-                          <p className="text-xs text-slate-500">Recettes BIC (case 5ND)</p>
-                          <p className="text-sm font-semibold text-[var(--success)]">{formatCurrency(sim.recettes)}</p>
+                          <p className="text-xs text-text-secondary">Recettes BIC (case 5ND)</p>
+                          <p className="text-sm font-semibold text-success-text">{formatCurrency(sim.recettes)}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Résultat BIC</p>
+                          <p className="text-xs text-text-secondary">Résultat BIC</p>
                           <p className={`text-sm font-semibold ${sim.resultat_bic <= 0 ? 'text-blue-400' : 'text-amber-400'}`}>
                             {formatCurrency(sim.resultat_bic)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Régime optimal</p>
-                          <p className="text-sm font-semibold text-[var(--text-primary)] uppercase">{sim.regime}</p>
+                          <p className="text-xs text-text-secondary">Régime optimal</p>
+                          <p className="text-sm font-semibold text-text-primary uppercase">{sim.regime}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Impôt estimé</p>
+                          <p className="text-xs text-text-secondary">Impôt estimé</p>
                           <p className="text-sm font-semibold text-amber-400">{formatCurrency(sim.impot_estime)}</p>
                         </div>
                       </div>
                       {sim.resultat_bic <= 0 && (
-                        <div className="mt-3 flex items-center gap-2 text-xs text-[var(--success)]">
+                        <div className="mt-3 flex items-center gap-2 text-xs text-success-text">
                           <CheckCircle2 className="h-3.5 w-3.5" />
                           Résultat nul grâce aux amortissements — aucun impôt BIC dû
                         </div>
@@ -177,7 +177,7 @@ export default function FiscalPage() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <ProfileBadge type="nu" />
-                  <h3 className="font-display font-semibold text-[var(--text-primary)]">Foncier nu — Formulaire 2044</h3>
+                  <h3 className="font-display font-semibold text-text-primary">Foncier nu — Formulaire 2044</h3>
                 </div>
               </div>
               <div className="space-y-3">
@@ -188,33 +188,33 @@ export default function FiscalPage() {
                     taux_marginal: tmi / 100,
                   })
                   return (
-                    <div key={prop.id} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                    <div key={prop.id} className="p-4 rounded-xl bg-bg-secondary/50 border border-border">
                       <div className="flex items-center gap-3 mb-3">
-                        <p className="text-sm font-medium text-[var(--text-primary)]">{prop.name}</p>
+                        <p className="text-sm font-medium text-text-primary">{prop.name}</p>
                         {prop.numero_fiscal && (
-                          <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-xs font-mono text-slate-400">
+                          <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-border text-xs font-mono text-text-tertiary">
                             # {prop.numero_fiscal}
                           </span>
                         )}
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div>
-                          <p className="text-xs text-slate-500">Revenus bruts (ligne 210)</p>
-                          <p className="text-sm font-semibold text-[var(--success)]">{formatCurrency(sim.revenus_bruts)}</p>
+                          <p className="text-xs text-text-secondary">Revenus bruts (ligne 210)</p>
+                          <p className="text-sm font-semibold text-success-text">{formatCurrency(sim.revenus_bruts)}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Charges déductibles</p>
+                          <p className="text-xs text-text-secondary">Charges déductibles</p>
                           <p className="text-sm font-semibold text-red-400">{formatCurrency(sim.charges_deductibles)}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Revenu net / déficit</p>
+                          <p className="text-xs text-text-secondary">Revenu net / déficit</p>
                           <p className={`text-sm font-semibold ${sim.revenu_net <= 0 ? 'text-blue-400' : 'text-amber-400'}`}>
                             {formatCurrency(sim.revenu_net)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Régime optimal</p>
-                          <p className="text-sm font-semibold text-[var(--text-primary)] uppercase">{sim.regime_optimal}</p>
+                          <p className="text-xs text-text-secondary">Régime optimal</p>
+                          <p className="text-sm font-semibold text-text-primary uppercase">{sim.regime_optimal}</p>
                         </div>
                       </div>
                       {sim.deficit_foncier && (
@@ -241,7 +241,7 @@ export default function FiscalPage() {
             <GlassCard>
               <div className="flex items-center gap-2 mb-4">
                 <ProfileBadge type="sci" />
-                <h3 className="font-display font-semibold text-[var(--text-primary)]">SCI — Formulaire 2072</h3>
+                <h3 className="font-display font-semibold text-text-primary">SCI — Formulaire 2072</h3>
               </div>
               {propData.filter(p => p.type === 'sci').map(prop => {
                 const sim = calculateSciSimulation({
@@ -250,27 +250,27 @@ export default function FiscalPage() {
                   taux_marginal: tmi / 100,
                 })
                 return (
-                  <div key={prop.id} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <div key={prop.id} className="p-4 rounded-xl bg-bg-secondary/50 border border-border">
                     <div className="flex items-center gap-3 mb-3">
-                      <p className="text-sm font-medium text-[var(--text-primary)]">{prop.sci_name ?? prop.name}</p>
+                      <p className="text-sm font-medium text-text-primary">{prop.sci_name ?? prop.name}</p>
                       {prop.numero_fiscal && (
-                        <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-xs font-mono text-slate-400">
+                        <span className="flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.05] border border-border text-xs font-mono text-text-tertiary">
                           # {prop.numero_fiscal}
                         </span>
                       )}
                     </div>
                     <div className="grid grid-cols-3 gap-3">
                       <div>
-                        <p className="text-xs text-slate-500">Résultat comptable</p>
-                        <p className="text-sm font-semibold text-[var(--text-primary)]">{formatCurrency(sim.resultat_comptable)}</p>
+                        <p className="text-xs text-text-secondary">Résultat comptable</p>
+                        <p className="text-sm font-semibold text-text-primary">{formatCurrency(sim.resultat_comptable)}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-500">{prop.sci_regime === 'is' ? 'IS dû' : 'Quote-part IR'}</p>
+                        <p className="text-xs text-text-secondary">{prop.sci_regime === 'is' ? 'IS dû' : 'Quote-part IR'}</p>
                         <p className="text-sm font-semibold text-amber-400">{formatCurrency(sim.is_du)}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-500">Dividendes distribuables</p>
-                        <p className="text-sm font-semibold text-[var(--success)]">{formatCurrency(sim.dividendes_disponibles)}</p>
+                        <p className="text-xs text-text-secondary">Dividendes distribuables</p>
+                        <p className="text-sm font-semibold text-success-text">{formatCurrency(sim.dividendes_disponibles)}</p>
                       </div>
                     </div>
                     <div className="mt-3 flex items-center gap-2 text-xs text-amber-400">
@@ -285,7 +285,7 @@ export default function FiscalPage() {
 
           {properties.length === 0 && !loading && (
             <div className="text-center py-16">
-              <p className="text-slate-400">Ajoutez des biens pour voir le tableau fiscal</p>
+              <p className="text-text-tertiary">Ajoutez des biens pour voir le tableau fiscal</p>
             </div>
           )}
         </div>

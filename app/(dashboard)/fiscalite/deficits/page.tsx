@@ -68,11 +68,11 @@ export default function DeficitsPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/fiscalite" className="text-slate-400 hover:text-[var(--text-primary)] text-sm flex items-center gap-1">
+          <Link href="/fiscalite" className="text-text-tertiary hover:text-text-primary text-sm flex items-center gap-1">
             <ChevronLeft className="h-4 w-4" /> Fiscalité
           </Link>
-          <span className="text-slate-600">/</span>
-          <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Déficits fonciers reportables</h1>
+          <span className="text-text-secondary">/</span>
+          <h1 className="font-display font-bold text-xl text-text-primary">Déficits fonciers reportables</h1>
         </div>
         <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all">
           <Plus className="h-4 w-4" /> Ajouter
@@ -82,21 +82,21 @@ export default function DeficitsPage() {
       {/* KPIs */}
       <div className="grid grid-cols-3 gap-4">
         <GlassCard glow="blue" className="p-4">
-          <p className="text-xs text-slate-400 mb-1">Stock disponible</p>
+          <p className="text-xs text-text-tertiary mb-1">Stock disponible</p>
           <p className="text-xl font-bold font-mono text-blue-400">{formatCurrency(totalDisponible)}</p>
-          <p className="text-xs text-slate-600 mt-0.5">Imputables sur revenus fonciers</p>
+          <p className="text-xs text-text-secondary mt-0.5">Imputables sur revenus fonciers</p>
         </GlassCard>
         <GlassCard glow={expirantCetteAnnee.length > 0 ? 'red' : 'green'} className="p-4">
-          <p className="text-xs text-slate-400 mb-1">Expirant cette année</p>
-          <p className={`text-xl font-bold font-mono ${expirantCetteAnnee.length > 0 ? 'text-red-400' : 'text-[var(--success)]'}`}>
+          <p className="text-xs text-text-tertiary mb-1">Expirant cette année</p>
+          <p className={`text-xl font-bold font-mono ${expirantCetteAnnee.length > 0 ? 'text-red-400' : 'text-success-text'}`}>
             {expirantCetteAnnee.length > 0 ? formatCurrency(expirantCetteAnnee.reduce((s, d) => s + d.montant_restant, 0)) : '0 €'}
           </p>
-          <p className="text-xs text-slate-600 mt-0.5">À imputer avant fin {now.getFullYear()}</p>
+          <p className="text-xs text-text-secondary mt-0.5">À imputer avant fin {now.getFullYear()}</p>
         </GlassCard>
         <GlassCard className="p-4">
-          <p className="text-xs text-slate-400 mb-1">Économie potentielle (TMI 30%)</p>
-          <p className="text-xl font-bold font-mono text-[var(--success)]">{formatCurrency(totalDisponible * 0.30)}</p>
-          <p className="text-xs text-slate-600 mt-0.5">Si tout imputé à 30%</p>
+          <p className="text-xs text-text-tertiary mb-1">Économie potentielle (TMI 30%)</p>
+          <p className="text-xl font-bold font-mono text-success-text">{formatCurrency(totalDisponible * 0.30)}</p>
+          <p className="text-xs text-text-secondary mt-0.5">Si tout imputé à 30%</p>
         </GlassCard>
       </div>
 
@@ -116,20 +116,20 @@ export default function DeficitsPage() {
 
       {/* Tableau */}
       <GlassCard>
-        <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Suivi des déficits</h2>
+        <h2 className="font-display font-semibold text-text-primary mb-4">Suivi des déficits</h2>
         {loading ? (
-          <div className="space-y-2">{[1,2,3].map(i => <div key={i} className="h-12 rounded-lg bg-white/[0.03] animate-pulse" />)}</div>
+          <div className="space-y-2">{[1,2,3].map(i => <div key={i} className="h-12 rounded-lg bg-bg-secondary/50 animate-pulse" />)}</div>
         ) : deficits.length === 0 ? (
           <div className="py-10 text-center">
             <TrendingDown className="h-10 w-10 text-slate-700 mx-auto mb-3" />
-            <p className="text-slate-400 text-sm">Aucun déficit enregistré</p>
-            <p className="text-slate-600 text-xs mt-1">Ajoutez vos déficits fonciers des années précédentes</p>
+            <p className="text-text-tertiary text-sm">Aucun déficit enregistré</p>
+            <p className="text-text-secondary text-xs mt-1">Ajoutez vos déficits fonciers des années précédentes</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-xs text-slate-500 border-b border-white/[0.06]">
+                <tr className="text-xs text-text-secondary border-b border-border">
                   {['Année','Bien','Montant initial','Imputé','Restant','Expire en','Statut'].map(h =>
                     <th key={h} className="text-left py-2.5 px-3 font-medium">{h}</th>
                   )}
@@ -142,23 +142,23 @@ export default function DeficitsPage() {
                   const isUsed = d.montant_restant <= 0
                   return (
                     <tr key={d.id} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
-                      <td className="py-3 px-3 text-[var(--text-primary)] font-semibold">{d.annee}</td>
-                      <td className="py-3 px-3 text-slate-300">{d.property?.name ?? 'Global'}</td>
-                      <td className="py-3 px-3 text-[var(--text-primary)]">{formatCurrency(d.montant_initial)}</td>
-                      <td className="py-3 px-3 text-slate-400">{formatCurrency(d.montant_impute ?? 0)}</td>
+                      <td className="py-3 px-3 text-text-primary font-semibold">{d.annee}</td>
+                      <td className="py-3 px-3 text-text-secondary">{d.property?.name ?? 'Global'}</td>
+                      <td className="py-3 px-3 text-text-primary">{formatCurrency(d.montant_initial)}</td>
+                      <td className="py-3 px-3 text-text-tertiary">{formatCurrency(d.montant_impute ?? 0)}</td>
                       <td className="py-3 px-3">
-                        <span className={`font-semibold ${isUsed ? 'text-slate-600' : isExpired ? 'text-red-400' : 'text-blue-400'}`}>
+                        <span className={`font-semibold ${isUsed ? 'text-text-secondary' : isExpired ? 'text-red-400' : 'text-blue-400'}`}>
                           {formatCurrency(d.montant_restant)}
                         </span>
                       </td>
                       <td className="py-3 px-3">
-                        <span className={`text-xs ${expiresThis ? 'text-red-400 font-semibold' : isExpired ? 'text-slate-600' : 'text-slate-400'}`}>
+                        <span className={`text-xs ${expiresThis ? 'text-red-400 font-semibold' : isExpired ? 'text-text-secondary' : 'text-text-tertiary'}`}>
                           {d.expire_en} {expiresThis && '⚠️'}
                         </span>
                       </td>
                       <td className="py-3 px-3">
                         {isUsed ? (
-                          <span className="flex items-center gap-1 text-xs text-slate-600"><CheckCircle2 className="h-3.5 w-3.5" /> Épuisé</span>
+                          <span className="flex items-center gap-1 text-xs text-text-secondary"><CheckCircle2 className="h-3.5 w-3.5" /> Épuisé</span>
                         ) : isExpired ? (
                           <span className="text-xs text-red-400">Expiré</span>
                         ) : (
@@ -183,32 +183,32 @@ export default function DeficitsPage() {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAdd(false)} />
-          <div className="relative w-full max-w-md bg-[var(--surface)] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+          <div className="relative w-full max-w-md bg-bg-card border border-border rounded-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-display font-semibold text-[var(--text-primary)]">Ajouter un déficit foncier</h2>
-              <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center"><X className="h-4 w-4 text-slate-400" /></button>
+              <h2 className="font-display font-semibold text-text-primary">Ajouter un déficit foncier</h2>
+              <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg bg-bg-secondary flex items-center justify-center"><X className="h-4 w-4 text-text-tertiary" /></button>
             </div>
             <form onSubmit={handleAdd} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Année *</label>
-                  <input type="number" value={form.annee} onChange={e => setForm(f => ({ ...f, annee: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                  <label className="block text-xs text-text-tertiary mb-1">Année *</label>
+                  <input type="number" value={form.annee} onChange={e => setForm(f => ({ ...f, annee: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Montant (€) *</label>
-                  <input type="number" value={form.montant_initial} onChange={e => setForm(f => ({ ...f, montant_initial: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                  <label className="block text-xs text-text-tertiary mb-1">Montant (€) *</label>
+                  <input type="number" value={form.montant_initial} onChange={e => setForm(f => ({ ...f, montant_initial: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Bien (optionnel)</label>
-                <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
-                  <option value="" className="bg-[var(--surface)]">Tous biens (global)</option>
-                  {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
+                <label className="block text-xs text-text-tertiary mb-1">Bien (optionnel)</label>
+                <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none">
+                  <option value="" className="bg-bg-card">Tous biens (global)</option>
+                  {properties.map(p => <option key={p.id} value={p.id} className="bg-bg-card">{p.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Notes</label>
-                <input type="text" placeholder="Ex: Déficit 2044 ligne 420" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
+                <label className="block text-xs text-text-tertiary mb-1">Notes</label>
+                <input type="text" placeholder="Ex: Déficit 2044 ligne 420" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary placeholder-slate-600 text-sm focus:outline-none" />
               </div>
               <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50">Ajouter</button>
             </form>

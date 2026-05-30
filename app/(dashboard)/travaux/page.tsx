@@ -37,8 +37,8 @@ interface CategorieConfig {
 const CATEGORIES: Record<CategorieFiscale, CategorieConfig> = {
   entretien_reparation: {
     label: 'Entretien / Réparation',
-    color: 'text-[var(--success)]',
-    bg: 'bg-[var(--success-bg)]',
+    color: 'text-success-text',
+    bg: 'bg-success-bg',
     border: 'border-[var(--success)/20]',
     tooltip: 'Déductible immédiatement en charge (régime réel foncier ou BIC). Ex: remplacement robinet, peinture, réparation toiture.',
     deductible: 'oui',
@@ -78,9 +78,9 @@ const CATEGORIES: Record<CategorieFiscale, CategorieConfig> = {
 }
 
 const STATUS_CONFIG: Record<IncidentStatus, { label: string; icon: any; color: string; bg: string }> = {
-  open: { label: 'Planifié', icon: AlertCircle, color: 'text-slate-400', bg: 'bg-slate-400/10' },
+  open: { label: 'Planifié', icon: AlertCircle, color: 'text-text-tertiary', bg: 'bg-slate-400/10' },
   in_progress: { label: 'En cours', icon: Clock, color: 'text-amber-400', bg: 'bg-amber-400/10' },
-  resolved: { label: 'Terminé', icon: CheckCircle2, color: 'text-[var(--success)]', bg: 'bg-[var(--success-bg)]' },
+  resolved: { label: 'Terminé', icon: CheckCircle2, color: 'text-success-text', bg: 'bg-success-bg' },
 }
 
 const FORM_INITIAL = {
@@ -97,11 +97,11 @@ function CategorieTooltip({ cat }: { cat: CategorieFiscale }) {
   const cfg = CATEGORIES[cat]
   return (
     <div className="group relative inline-flex">
-      <Info className="h-3.5 w-3.5 text-slate-600 cursor-help" />
-      <div className="absolute bottom-5 left-0 w-72 px-3 py-2.5 bg-[var(--bg)] border border-white/[0.10] rounded-xl text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-2xl">
+      <Info className="h-3.5 w-3.5 text-text-secondary cursor-help" />
+      <div className="absolute bottom-5 left-0 w-72 px-3 py-2.5 bg-bg-primary border border-border rounded-xl text-xs text-text-secondary opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-2xl">
         <p className="font-medium mb-1" style={{ color: cfg.color.replace('text-', '') }}>{cfg.label}</p>
         <p className="leading-relaxed">{cfg.tooltip}</p>
-        <p className={`mt-1.5 font-medium ${cfg.deductible === 'oui' ? 'text-[var(--success)]' : cfg.deductible === 'partiel' ? 'text-amber-400' : 'text-red-400'}`}>
+        <p className={`mt-1.5 font-medium ${cfg.deductible === 'oui' ? 'text-success-text' : cfg.deductible === 'partiel' ? 'text-amber-400' : 'text-red-400'}`}>
           {cfg.deductible === 'oui' ? '✓ Déductible' : cfg.deductible === 'partiel' ? '⚠ Déductible selon conditions' : '✗ Non déductible'}
         </p>
       </div>
@@ -246,8 +246,8 @@ export default function TravauxPage() {
       {/* En-tête */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Travaux & Incidents</h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <h1 className="font-display font-bold text-2xl text-text-primary">Travaux & Incidents</h1>
+          <p className="text-text-tertiary text-sm mt-1">
             {incidents.filter(i => i.status !== 'resolved').length} en cours · {incidents.length} au total
           </p>
         </div>
@@ -262,46 +262,46 @@ export default function TravauxPage() {
       {/* ── SECTION 3 — Résumé fiscal ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <GlassCard glow="green" className="p-4">
-          <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+          <p className="text-xs text-text-tertiary mb-1 flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-green-400 inline-block" />
             Déductibles {now.getFullYear()}
           </p>
-          <p className="text-xl font-bold font-mono text-[var(--success)]">{formatCurrency(stats.deductibles)}</p>
-          <p className="text-xs text-slate-600 mt-0.5">entretien + charges BIC payés</p>
+          <p className="text-xl font-bold font-mono text-success-text">{formatCurrency(stats.deductibles)}</p>
+          <p className="text-xs text-text-secondary mt-0.5">entretien + charges BIC payés</p>
         </GlassCard>
         <GlassCard glow="cyan" className="p-4">
-          <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+          <p className="text-xs text-text-tertiary mb-1 flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-cyan-400 inline-block" />
             Amortissables {now.getFullYear()}
           </p>
           <p className="text-xl font-bold font-mono text-cyan-400">{formatCurrency(stats.amortissables)}</p>
-          <p className="text-xs text-slate-600 mt-0.5">à intégrer plan amortissement</p>
+          <p className="text-xs text-text-secondary mt-0.5">à intégrer plan amortissement</p>
         </GlassCard>
         <GlassCard glow="amber" className="p-4">
-          <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+          <p className="text-xs text-text-tertiary mb-1 flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-amber-400 inline-block" />
             Non encore payés
           </p>
           <p className="text-xl font-bold font-mono text-amber-400">{formatCurrency(stats.nonPaye)}</p>
-          <p className="text-xs text-slate-600 mt-0.5">estimé - payé</p>
+          <p className="text-xs text-text-secondary mt-0.5">estimé - payé</p>
         </GlassCard>
         <GlassCard glow="red" className="p-4">
-          <p className="text-xs text-slate-400 mb-1 flex items-center gap-1">
+          <p className="text-xs text-text-tertiary mb-1 flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-red-400 inline-block" />
             Factures manquantes
           </p>
           <p className="text-xl font-bold font-mono text-red-400">{stats.facturesManquantes}</p>
-          <p className="text-xs text-slate-600 mt-0.5">payé sans justificatif</p>
+          <p className="text-xs text-text-secondary mt-0.5">payé sans justificatif</p>
         </GlassCard>
       </div>
 
       {/* ── SECTION 2 — Liste par bien ── */}
       {loading ? (
-        <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-32 rounded-xl bg-white/[0.03] animate-pulse" />)}</div>
+        <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-32 rounded-xl bg-bg-secondary/50 animate-pulse" />)}</div>
       ) : incidents.length === 0 ? (
         <GlassCard className="py-16 text-center">
           <Wrench className="h-12 w-12 text-slate-700 mx-auto mb-4" />
-          <p className="text-slate-400">Aucun ticket enregistré</p>
+          <p className="text-text-tertiary">Aucun ticket enregistré</p>
           <button onClick={() => setShowAdd(true)} className="mt-4 text-sm text-blue-400 hover:text-blue-300">
             + Créer le premier ticket
           </button>
@@ -310,14 +310,14 @@ export default function TravauxPage() {
         <div className="space-y-6">
           {Object.entries(byProperty).map(([pid, { name, items }]) => (
             <GlassCard key={pid}>
-              <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+              <h2 className="font-display font-semibold text-text-primary mb-4 flex items-center gap-2">
                 {name}
-                <span className="text-xs text-slate-500 font-normal">{items.length} ticket{items.length > 1 ? 's' : ''}</span>
+                <span className="text-xs text-text-secondary font-normal">{items.length} ticket{items.length > 1 ? 's' : ''}</span>
               </h2>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-xs text-slate-500 border-b border-white/[0.06]">
+                    <tr className="text-xs text-text-secondary border-b border-border">
                       {['Date', 'Entreprise', 'Travaux', 'Estimé', 'Payé', 'Statut', 'Catégorie fiscale', '📎'].map(h => (
                         <th key={h} className="text-left py-2 px-3 font-medium">{h}</th>
                       ))}
@@ -329,29 +329,29 @@ export default function TravauxPage() {
                       const catCfg = CATEGORIES[cat]
                       return (
                         <tr key={inc.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
-                          <td className="py-3 px-3 text-slate-400 whitespace-nowrap">
+                          <td className="py-3 px-3 text-text-tertiary whitespace-nowrap">
                             {inc.date_travaux ? format(new Date(inc.date_travaux), 'dd/MM/yy') : '—'}
                           </td>
-                          <td className="py-3 px-3 text-slate-300 max-w-[120px] truncate">
-                            {inc.nom_entreprise || <span className="text-slate-600">—</span>}
+                          <td className="py-3 px-3 text-text-secondary max-w-[120px] truncate">
+                            {inc.nom_entreprise || <span className="text-text-secondary">—</span>}
                           </td>
                           <td className="py-3 px-3">
-                            <p className="text-[var(--text-primary)] font-medium">{inc.title}</p>
+                            <p className="text-text-primary font-medium">{inc.title}</p>
                             {inc.description && (
-                              <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{inc.description}</p>
+                              <p className="text-xs text-text-secondary mt-0.5 line-clamp-1">{inc.description}</p>
                             )}
                             {inc.numero_facture && (
-                              <p className="text-xs text-slate-600 mt-0.5">Facture #{inc.numero_facture}</p>
+                              <p className="text-xs text-text-secondary mt-0.5">Facture #{inc.numero_facture}</p>
                             )}
                           </td>
-                          <td className="py-3 px-3 text-slate-400 whitespace-nowrap">
+                          <td className="py-3 px-3 text-text-tertiary whitespace-nowrap">
                             {inc.cout_estime ? formatCurrency(inc.cout_estime) : '—'}
                           </td>
                           <td className="py-3 px-3 whitespace-nowrap">
                             {inc.est_paye ? (
                               <button
                                 onClick={() => handleTogglePaye(inc.id, inc.est_paye, inc.cout_paye)}
-                                className="flex items-center gap-1 text-[var(--success)] hover:text-green-300 transition-colors"
+                                className="flex items-center gap-1 text-success-text hover:text-green-300 transition-colors"
                               >
                                 <ToggleRight className="h-4 w-4" />
                                 <span className="font-semibold">{formatCurrency(inc.cout_paye || 0)}</span>
@@ -359,7 +359,7 @@ export default function TravauxPage() {
                             ) : (
                               <button
                                 onClick={() => handleTogglePaye(inc.id, inc.est_paye, inc.cout_paye)}
-                                className="flex items-center gap-1 text-slate-600 hover:text-slate-400 transition-colors"
+                                className="flex items-center gap-1 text-text-secondary hover:text-text-tertiary transition-colors"
                               >
                                 <ToggleLeft className="h-4 w-4" />
                                 <span className="text-xs">Estimé: {inc.cout_estime ? formatCurrency(inc.cout_estime) : '—'}</span>
@@ -373,9 +373,9 @@ export default function TravauxPage() {
                               className="bg-transparent text-xs border-0 focus:outline-none cursor-pointer"
                               style={{ color: STATUS_CONFIG[inc.status as IncidentStatus].color.replace('text-', '') }}
                             >
-                              <option value="open" className="bg-[var(--surface)]">Planifié</option>
-                              <option value="in_progress" className="bg-[var(--surface)]">En cours</option>
-                              <option value="resolved" className="bg-[var(--surface)]">Terminé</option>
+                              <option value="open" className="bg-bg-card">Planifié</option>
+                              <option value="in_progress" className="bg-bg-card">En cours</option>
+                              <option value="resolved" className="bg-bg-card">Terminé</option>
                             </select>
                           </td>
                           <td className="py-3 px-3">
@@ -413,16 +413,16 @@ export default function TravauxPage() {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => { setShowAdd(false); setForm(FORM_INITIAL); setPendingFile(null) }} />
-          <div className="relative w-full max-w-2xl bg-[var(--surface)] border border-white/[0.08] rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-2xl bg-bg-card border border-border rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
 
-            <div className="sticky top-0 flex items-center justify-between px-6 py-4 bg-[var(--surface)] border-b border-white/[0.06] z-10">
+            <div className="sticky top-0 flex items-center justify-between px-6 py-4 bg-bg-card border-b border-border z-10">
               <div className="flex items-center gap-2">
                 <Wrench className="h-4 w-4 text-blue-400" />
-                <h2 className="font-display font-semibold text-[var(--text-primary)]">Nouveau ticket travaux</h2>
+                <h2 className="font-display font-semibold text-text-primary">Nouveau ticket travaux</h2>
               </div>
               <button onClick={() => { setShowAdd(false); setForm(FORM_INITIAL); setPendingFile(null) }}
-                className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10]">
-                <X className="h-4 w-4 text-slate-400" />
+                className="h-8 w-8 rounded-lg bg-bg-secondary flex items-center justify-center hover:bg-white/[0.10]">
+                <X className="h-4 w-4 text-text-tertiary" />
               </button>
             </div>
 
@@ -431,20 +431,20 @@ export default function TravauxPage() {
               {/* Bien + Statut */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Bien concerné *</label>
+                  <label className="block text-xs text-text-tertiary mb-1">Bien concerné *</label>
                   <select value={form.property_id} onChange={e => set('property_id', e.target.value)} required
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50">
-                    <option value="" className="bg-[var(--surface)]">Sélectionner un bien</option>
-                    {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none focus:border-blue-500/50">
+                    <option value="" className="bg-bg-card">Sélectionner un bien</option>
+                    {properties.map(p => <option key={p.id} value={p.id} className="bg-bg-card">{p.name}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Statut</label>
+                  <label className="block text-xs text-text-tertiary mb-1">Statut</label>
                   <select value={form.status} onChange={e => set('status', e.target.value)}
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
-                    <option value="open" className="bg-[var(--surface)]">Planifié</option>
-                    <option value="in_progress" className="bg-[var(--surface)]">En cours</option>
-                    <option value="resolved" className="bg-[var(--surface)]">Terminé</option>
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none">
+                    <option value="open" className="bg-bg-card">Planifié</option>
+                    <option value="in_progress" className="bg-bg-card">En cours</option>
+                    <option value="resolved" className="bg-bg-card">Terminé</option>
                   </select>
                 </div>
               </div>
@@ -452,45 +452,45 @@ export default function TravauxPage() {
               {/* Titre + Date */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="col-span-2">
-                  <label className="block text-xs text-slate-400 mb-1">Titre des travaux *</label>
+                  <label className="block text-xs text-text-tertiary mb-1">Titre des travaux *</label>
                   <input type="text" value={form.title} onChange={e => set('title', e.target.value)} required
-                    placeholder="Ex : Remplacement chaudière" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="Ex : Remplacement chaudière" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Date des travaux</label>
+                  <label className="block text-xs text-text-tertiary mb-1">Date des travaux</label>
                   <input type="date" value={form.date_travaux} onChange={e => set('date_travaux', e.target.value)}
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50" />
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Entreprise / Artisan</label>
+                  <label className="block text-xs text-text-tertiary mb-1">Entreprise / Artisan</label>
                   <input type="text" value={form.nom_entreprise} onChange={e => set('nom_entreprise', e.target.value)}
-                    placeholder="Ex : Plomberie Dupont" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="Ex : Plomberie Dupont" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Description</label>
+                <label className="block text-xs text-text-tertiary mb-1">Description</label>
                 <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2}
-                  placeholder="Détails des travaux, problème constaté..." className="w-full px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none resize-none focus:border-blue-500/50" />
+                  placeholder="Détails des travaux, problème constaté..." className="w-full px-3 py-2 rounded-lg bg-bg-secondary border border-border text-text-primary placeholder-slate-600 text-sm focus:outline-none resize-none focus:border-blue-500/50" />
               </div>
 
               {/* Montants */}
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Coût estimé (€)</label>
+                  <label className="block text-xs text-text-tertiary mb-1">Coût estimé (€)</label>
                   <input type="number" step="0.01" value={form.cout_estime} onChange={e => set('cout_estime', e.target.value)}
-                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">Coût payé (€)</label>
+                  <label className="block text-xs text-text-tertiary mb-1">Coût payé (€)</label>
                   <input type="number" step="0.01" value={form.cout_paye} onChange={e => set('cout_paye', e.target.value)}
-                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">N° facture</label>
+                  <label className="block text-xs text-text-tertiary mb-1">N° facture</label>
                   <input type="text" value={form.numero_facture} onChange={e => set('numero_facture', e.target.value)}
-                    placeholder="FAC-2026-001" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="FAC-2026-001" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
               </div>
 
@@ -500,9 +500,9 @@ export default function TravauxPage() {
                   className={cn('h-6 w-11 rounded-full transition-colors relative flex-shrink-0', form.est_paye ? 'bg-green-500' : 'bg-white/[0.10]')}>
                   <div className={cn('absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform', form.est_paye ? 'translate-x-5' : 'translate-x-0.5')} />
                 </button>
-                <span className="text-sm text-slate-300">Facture payée</span>
+                <span className="text-sm text-text-secondary">Facture payée</span>
                 {form.est_paye && (
-                  <span className="flex items-center gap-1 text-xs text-[var(--success)]">
+                  <span className="flex items-center gap-1 text-xs text-success-text">
                     <CheckCircle2 className="h-3.5 w-3.5" /> Payé
                   </span>
                 )}
@@ -511,7 +511,7 @@ export default function TravauxPage() {
               {/* Catégorie fiscale */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <label className="text-xs text-slate-400">Catégorie fiscale</label>
+                  <label className="text-xs text-text-tertiary">Catégorie fiscale</label>
                   <CategorieTooltip cat={form.categorie_fiscale} />
                 </div>
                 <div className="grid grid-cols-1 gap-1.5">
@@ -524,11 +524,11 @@ export default function TravauxPage() {
                         'flex items-center justify-between px-3 py-2.5 rounded-xl border text-left text-sm transition-all',
                         form.categorie_fiscale === val
                           ? `${cfg.bg} ${cfg.border} ${cfg.color}`
-                          : 'border-white/[0.06] bg-white/[0.02] text-slate-400 hover:bg-white/[0.05]'
+                          : 'border-border bg-white/[0.02] text-text-tertiary hover:bg-white/[0.05]'
                       )}
                     >
                       <span className="font-medium">{cfg.label}</span>
-                      <span className={cn('text-xs', cfg.deductible === 'oui' ? 'text-[var(--success)]' : cfg.deductible === 'partiel' ? 'text-amber-400' : 'text-red-400')}>
+                      <span className={cn('text-xs', cfg.deductible === 'oui' ? 'text-success-text' : cfg.deductible === 'partiel' ? 'text-amber-400' : 'text-red-400')}>
                         {cfg.deductible === 'oui' ? '✓ Déductible' : cfg.deductible === 'partiel' ? '⚠ Conditionnel' : '✗ Non déductible'}
                       </span>
                     </button>
@@ -538,30 +538,30 @@ export default function TravauxPage() {
 
               {/* Upload facture */}
               <div>
-                <label className="block text-xs text-slate-400 mb-2">Facture (PDF ou image, max 15 MB)</label>
+                <label className="block text-xs text-text-tertiary mb-2">Facture (PDF ou image, max 15 MB)</label>
                 <div
                   onClick={() => fileRef.current?.click()}
                   className={cn(
                     'flex items-center gap-3 p-3 rounded-xl border border-dashed cursor-pointer transition-all',
-                    pendingFile ? 'border-green-400/30 bg-green-400/5' : 'border-white/[0.10] hover:border-blue-400/30 hover:bg-blue-400/5'
+                    pendingFile ? 'border-green-400/30 bg-green-400/5' : 'border-border hover:border-blue-400/30 hover:bg-blue-400/5'
                   )}
                 >
                   {pendingFile ? (
                     <>
-                      <FileText className="h-5 w-5 text-[var(--success)] flex-shrink-0" />
+                      <FileText className="h-5 w-5 text-success-text flex-shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-[var(--success)] font-medium truncate">{pendingFile.name}</p>
-                        <p className="text-xs text-slate-500">{(pendingFile.size / 1024).toFixed(0)} KB</p>
+                        <p className="text-sm text-success-text font-medium truncate">{pendingFile.name}</p>
+                        <p className="text-xs text-text-secondary">{(pendingFile.size / 1024).toFixed(0)} KB</p>
                       </div>
                       <button type="button" onClick={e => { e.stopPropagation(); setPendingFile(null) }}
                         className="h-6 w-6 rounded flex items-center justify-center hover:bg-white/[0.10]">
-                        <X className="h-3.5 w-3.5 text-slate-400" />
+                        <X className="h-3.5 w-3.5 text-text-tertiary" />
                       </button>
                     </>
                   ) : (
                     <>
-                      <Upload className="h-5 w-5 text-slate-500 flex-shrink-0" />
-                      <p className="text-sm text-slate-500">Cliquez pour choisir un fichier</p>
+                      <Upload className="h-5 w-5 text-text-secondary flex-shrink-0" />
+                      <p className="text-sm text-text-secondary">Cliquez pour choisir un fichier</p>
                     </>
                   )}
                   <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" className="hidden"
@@ -570,9 +570,9 @@ export default function TravauxPage() {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 pt-2 border-t border-white/[0.06]">
+              <div className="flex gap-3 pt-2 border-t border-border">
                 <button type="button" onClick={() => { setShowAdd(false); setForm(FORM_INITIAL); setPendingFile(null) }}
-                  className="flex-1 h-10 rounded-lg border border-white/[0.10] text-slate-400 hover:text-[var(--text-primary)] text-sm transition-all">
+                  className="flex-1 h-10 rounded-lg border border-border text-text-tertiary hover:text-text-primary text-sm transition-all">
                   Annuler
                 </button>
                 <button type="submit" disabled={saving}

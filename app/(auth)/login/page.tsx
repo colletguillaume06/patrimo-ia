@@ -27,7 +27,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-bg-primary flex items-center justify-center p-4">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl" />
       </div>
@@ -42,11 +42,11 @@ export default function LoginPage() {
           </span>
         </div>
 
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-8">
+        <div className="bg-bg-tertiary/30 border border-border rounded-2xl p-8">
           <h1 className="font-display font-semibold text-xl text-white text-center mb-1">
             Connexion
           </h1>
-          <p className="text-slate-400 text-sm text-center mb-6">
+          <p className="text-text-tertiary text-sm text-center mb-6">
             Accédez à votre tableau de bord immobilier
           </p>
 
@@ -57,7 +57,7 @@ export default function LoginPage() {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              className="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all"
+              className="w-full h-11 px-4 rounded-xl bg-bg-secondary border border-border text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all"
             />
             <input
               type="password"
@@ -65,7 +65,7 @@ export default function LoginPage() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              className="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all"
+              className="w-full h-11 px-4 rounded-xl bg-bg-secondary border border-border text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all"
             />
             <button
               type="submit"
@@ -78,11 +78,11 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-4 p-3 rounded-lg bg-blue-500/5 border border-blue-500/20 text-center">
-            <p className="text-xs text-slate-400">Compte de test :</p>
+            <p className="text-xs text-text-tertiary">Compte de test :</p>
             <p className="text-xs text-blue-400 font-mono mt-0.5">admin@propilot.ai / propilot2025</p>
           </div>
 
-          <p className="text-center text-xs text-slate-600 mt-4">
+          <p className="text-center text-xs text-text-secondary mt-4">
             Pas encore de compte ?{' '}
             <Link href="/register" className="text-blue-400 hover:text-blue-300">
               Créer un compte

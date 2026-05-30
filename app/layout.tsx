@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Syne, DM_Sans, DM_Mono } from 'next/font/google'
+import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 import './globals.css'
 
@@ -28,21 +29,24 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${syne.variable} ${dmSans.variable} ${dmMono.variable}`}>
-      <body className="min-h-screen bg-[#F8F7F4] text-[var(--text-primary)] antialiased">
-        {children}
-        <Toaster
-          theme="light"
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: '#FFFFFF',
-              border: '1px solid #E5E2DB',
-              color: '#1A1714',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-            },
-          }}
-        />
+    <html
+      lang="fr"
+      className={`${syne.variable} ${dmSans.variable} ${dmMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-screen bg-bg-primary text-text-primary antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange={false}
+        >
+          {children}
+          <Toaster
+            theme="system"
+            position="top-right"
+          />
+        </ThemeProvider>
       </body>
     </html>
   )

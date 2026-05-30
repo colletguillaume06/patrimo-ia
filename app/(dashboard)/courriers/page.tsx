@@ -60,8 +60,8 @@ export default function CourriersPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <div>
-        <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Bibliothèque de courriers</h1>
-        <p className="text-slate-400 text-sm mt-1">Modèles juridiques pré-remplis avec vos données</p>
+        <h1 className="font-display font-bold text-2xl text-text-primary">Bibliothèque de courriers</h1>
+        <p className="text-text-tertiary text-sm mt-1">Modèles juridiques pré-remplis avec vos données</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -69,12 +69,12 @@ export default function CourriersPage() {
         <div className="space-y-2">
           {COURRIERS_TEMPLATES.map(tpl => (
             <button key={tpl.id} onClick={() => setSelected(tpl)}
-              className={`w-full text-left p-4 rounded-xl border transition-all ${selected?.id === tpl.id ? 'border-blue-500/50 bg-blue-500/10' : 'border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.05]'}`}>
-              <p className="text-sm font-medium text-[var(--text-primary)]">{tpl.titre}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{tpl.description}</p>
+              className={`w-full text-left p-4 rounded-xl border transition-all ${selected?.id === tpl.id ? 'border-blue-500/50 bg-blue-500/10' : 'border-border bg-white/[0.02] hover:bg-white/[0.05]'}`}>
+              <p className="text-sm font-medium text-text-primary">{tpl.titre}</p>
+              <p className="text-xs text-text-secondary mt-0.5">{tpl.description}</p>
               <div className="flex items-center gap-2 mt-2">
                 {tpl.lrar && <span className="text-xs px-1.5 py-0.5 rounded bg-amber-400/10 border border-amber-400/20 text-amber-400">LRAR</span>}
-                <span className="text-xs text-slate-600">{tpl.delai_preavis}</span>
+                <span className="text-xs text-text-secondary">{tpl.delai_preavis}</span>
               </div>
             </button>
           ))}
@@ -85,33 +85,33 @@ export default function CourriersPage() {
           {selected ? (
             <>
               <GlassCard>
-                <h3 className="font-display font-semibold text-[var(--text-primary)] mb-4">{selected.titre}</h3>
+                <h3 className="font-display font-semibold text-text-primary mb-4">{selected.titre}</h3>
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Bien</label>
+                    <label className="block text-xs text-text-tertiary mb-1">Bien</label>
                     <select value={selectedProp} onChange={e => setSelectedProp(e.target.value)}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
-                      <option value="" className="bg-[var(--surface)]">— Sélectionner</option>
-                      {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
+                      className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none">
+                      <option value="" className="bg-bg-card">— Sélectionner</option>
+                      {properties.map(p => <option key={p.id} value={p.id} className="bg-bg-card">{p.name}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Bail / Locataire</label>
+                    <label className="block text-xs text-text-tertiary mb-1">Bail / Locataire</label>
                     <select value={selectedLease} onChange={e => setSelectedLease(e.target.value)}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
-                      <option value="" className="bg-[var(--surface)]">— Sélectionner</option>
-                      {leases.map(l => <option key={l.id} value={l.id} className="bg-[var(--surface)]">{l.tenant_name}</option>)}
+                      className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none">
+                      <option value="" className="bg-bg-card">— Sélectionner</option>
+                      {leases.map(l => <option key={l.id} value={l.id} className="bg-bg-card">{l.tenant_name}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Votre nom (bailleur)</label>
+                    <label className="block text-xs text-text-tertiary mb-1">Votre nom (bailleur)</label>
                     <input type="text" value={data.bailleur_nom ?? ''} onChange={e => setData(d => ({ ...d, bailleur_nom: e.target.value }))}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                      className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none" />
                   </div>
                 </div>
 
                 <div className="relative">
-                  <pre className="text-xs text-slate-300 font-mono leading-relaxed bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 whitespace-pre-wrap max-h-80 overflow-y-auto">
+                  <pre className="text-xs text-text-secondary font-mono leading-relaxed bg-bg-secondary/50 border border-border rounded-xl p-4 whitespace-pre-wrap max-h-80 overflow-y-auto">
                     {texte}
                   </pre>
                 </div>
@@ -119,7 +119,7 @@ export default function CourriersPage() {
                 <div className="flex gap-3 mt-4">
                   <button onClick={handleCopy}
                     className="flex-1 flex items-center justify-center gap-2 h-10 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-400 text-sm font-semibold transition-all">
-                    {copied ? <><CheckCircle className="h-4 w-4 text-[var(--success)]" /> Copié !</> : <><Copy className="h-4 w-4" /> Copier le courrier</>}
+                    {copied ? <><CheckCircle className="h-4 w-4 text-success-text" /> Copié !</> : <><Copy className="h-4 w-4" /> Copier le courrier</>}
                   </button>
                 </div>
                 {selected.lrar && (
@@ -130,7 +130,7 @@ export default function CourriersPage() {
           ) : (
             <GlassCard className="py-16 text-center">
               <FileText className="h-12 w-12 text-slate-700 mx-auto mb-3" />
-              <p className="text-slate-400">Sélectionnez un modèle de courrier</p>
+              <p className="text-text-tertiary">Sélectionnez un modèle de courrier</p>
             </GlassCard>
           )}
         </div>

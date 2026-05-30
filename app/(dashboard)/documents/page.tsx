@@ -97,8 +97,8 @@ export default function DocumentsPage() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">GED — Gestion documentaire</h1>
-          <p className="text-slate-400 text-sm mt-1">{documents.length} document{documents.length > 1 ? 's' : ''}</p>
+          <h1 className="font-display font-bold text-2xl text-text-primary">GED — Gestion documentaire</h1>
+          <p className="text-text-tertiary text-sm mt-1">{documents.length} document{documents.length > 1 ? 's' : ''}</p>
         </div>
         <button onClick={() => setShowUpload(true)} className="flex items-center gap-2 h-10 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all">
           <Upload className="h-4 w-4" /> Ajouter un document
@@ -108,49 +108,49 @@ export default function DocumentsPage() {
       {/* Filtres */}
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-40">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary" />
           <input type="text" placeholder="Rechercher..." value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full h-10 pl-9 pr-4 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
+            className="w-full h-10 pl-9 pr-4 rounded-xl bg-bg-secondary border border-border text-text-primary placeholder-slate-600 text-sm focus:outline-none" />
         </div>
-        <select value={propFilter} onChange={e => setPropFilter(e.target.value)} className="h-10 px-3 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
-          <option value="all" className="bg-[var(--surface)]">Tous les biens</option>
-          {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
+        <select value={propFilter} onChange={e => setPropFilter(e.target.value)} className="h-10 px-3 rounded-xl bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none">
+          <option value="all" className="bg-bg-card">Tous les biens</option>
+          {properties.map(p => <option key={p.id} value={p.id} className="bg-bg-card">{p.name}</option>)}
         </select>
-        <select value={catFilter} onChange={e => setCatFilter(e.target.value)} className="h-10 px-3 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
-          <option value="all" className="bg-[var(--surface)]">Toutes catégories</option>
-          {Object.entries(CATEGORIES).map(([k, v]) => <option key={k} value={k} className="bg-[var(--surface)]">{v.icon} {v.label}</option>)}
+        <select value={catFilter} onChange={e => setCatFilter(e.target.value)} className="h-10 px-3 rounded-xl bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none">
+          <option value="all" className="bg-bg-card">Toutes catégories</option>
+          {Object.entries(CATEGORIES).map(([k, v]) => <option key={k} value={k} className="bg-bg-card">{v.icon} {v.label}</option>)}
         </select>
       </div>
 
       {/* Documents par catégorie */}
       {loading ? (
-        <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-32 rounded-xl bg-white/[0.03] animate-pulse" />)}</div>
+        <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-32 rounded-xl bg-bg-secondary/50 animate-pulse" />)}</div>
       ) : Object.keys(byCategory).length === 0 ? (
         <GlassCard className="py-16 text-center">
           <Folder className="h-12 w-12 text-slate-700 mx-auto mb-4" />
-          <p className="text-slate-400">Aucun document — ajoutez votre premier fichier</p>
+          <p className="text-text-tertiary">Aucun document — ajoutez votre premier fichier</p>
         </GlassCard>
       ) : Object.entries(byCategory).map(([cat, docs]) => {
         const catInfo = CATEGORIES[cat]
         return (
           <GlassCard key={cat}>
-            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+            <h2 className="font-display font-semibold text-text-primary mb-4 flex items-center gap-2">
               <span>{catInfo.icon}</span> {catInfo.label}
-              <span className="text-xs text-slate-500 font-normal">({docs.length})</span>
+              <span className="text-xs text-text-secondary font-normal">({docs.length})</span>
             </h2>
             <div className="space-y-2">
               {docs.map(doc => (
-                <div key={doc.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.03] transition-colors">
-                  <FileText className="h-5 w-5 text-slate-500 flex-shrink-0" />
+                <div key={doc.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-bg-secondary/50 transition-colors">
+                  <FileText className="h-5 w-5 text-text-secondary flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">{doc.nom}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm font-medium text-text-primary truncate">{doc.nom}</p>
+                    <p className="text-xs text-text-secondary">
                       {doc.property?.name && <span>{doc.property.name} · </span>}
                       {doc.annee_fiscale && <span>{doc.annee_fiscale} · </span>}
                       {format(new Date(doc.created_at), 'dd/MM/yyyy')}
                       {doc.file_size_bytes && <span> · {Math.round(doc.file_size_bytes / 1024)} KB</span>}
                     </p>
-                    {doc.description && <p className="text-xs text-slate-600 mt-0.5 truncate">{doc.description}</p>}
+                    {doc.description && <p className="text-xs text-text-secondary mt-0.5 truncate">{doc.description}</p>}
                   </div>
                   <a href={doc.file_url} target="_blank" rel="noopener noreferrer"
                     className="h-8 w-8 rounded-lg bg-blue-400/10 hover:bg-blue-400/20 border border-blue-400/20 flex items-center justify-center flex-shrink-0 transition-colors">
@@ -167,40 +167,40 @@ export default function DocumentsPage() {
       {showUpload && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowUpload(false)} />
-          <div className="relative w-full max-w-md bg-[var(--surface)] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+          <div className="relative w-full max-w-md bg-bg-card border border-border rounded-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-display font-semibold text-[var(--text-primary)]">Ajouter un document</h2>
-              <button onClick={() => setShowUpload(false)} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center">
-                <X className="h-4 w-4 text-slate-400" />
+              <h2 className="font-display font-semibold text-text-primary">Ajouter un document</h2>
+              <button onClick={() => setShowUpload(false)} className="h-8 w-8 rounded-lg bg-bg-secondary flex items-center justify-center">
+                <X className="h-4 w-4 text-text-tertiary" />
               </button>
             </div>
             <form onSubmit={handleUpload} className="space-y-3">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Fichier *</label>
-                <div onClick={() => fileRef.current?.click()} className={`flex items-center gap-3 p-3 rounded-xl border border-dashed cursor-pointer transition-all ${file ? 'border-green-400/30 bg-green-400/5' : 'border-white/[0.10] hover:border-blue-400/30'}`}>
+                <label className="block text-xs text-text-tertiary mb-1">Fichier *</label>
+                <div onClick={() => fileRef.current?.click()} className={`flex items-center gap-3 p-3 rounded-xl border border-dashed cursor-pointer transition-all ${file ? 'border-green-400/30 bg-green-400/5' : 'border-border hover:border-blue-400/30'}`}>
                   {file ? (
-                    <><FileText className="h-5 w-5 text-[var(--success)] flex-shrink-0" /><p className="text-sm text-[var(--success)] truncate">{file.name}</p></>
+                    <><FileText className="h-5 w-5 text-success-text flex-shrink-0" /><p className="text-sm text-success-text truncate">{file.name}</p></>
                   ) : (
-                    <><Upload className="h-5 w-5 text-slate-500 flex-shrink-0" /><p className="text-sm text-slate-500">Cliquez pour choisir</p></>
+                    <><Upload className="h-5 w-5 text-text-secondary flex-shrink-0" /><p className="text-sm text-text-secondary">Cliquez pour choisir</p></>
                   )}
                   <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.csv" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) setFile(f) }} />
                 </div>
               </div>
-              <div><label className="block text-xs text-slate-400 mb-1">Nom du document</label><input type="text" placeholder={file?.name ?? 'Titre du document'} value={form.nom} onChange={e => setForm(f => ({ ...f, nom: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" /></div>
-              <div><label className="block text-xs text-slate-400 mb-1">Catégorie *</label>
-                <select value={form.categorie} onChange={e => setForm(f => ({ ...f, categorie: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
-                  {Object.entries(CATEGORIES).map(([k, v]) => <option key={k} value={k} className="bg-[var(--surface)]">{v.icon} {v.label}</option>)}
+              <div><label className="block text-xs text-text-tertiary mb-1">Nom du document</label><input type="text" placeholder={file?.name ?? 'Titre du document'} value={form.nom} onChange={e => setForm(f => ({ ...f, nom: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none" /></div>
+              <div><label className="block text-xs text-text-tertiary mb-1">Catégorie *</label>
+                <select value={form.categorie} onChange={e => setForm(f => ({ ...f, categorie: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none">
+                  {Object.entries(CATEGORIES).map(([k, v]) => <option key={k} value={k} className="bg-bg-card">{v.icon} {v.label}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-xs text-slate-400 mb-1">Bien</label>
-                  <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
-                    <option value="" className="bg-[var(--surface)]">Global</option>
-                    {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
+                <div><label className="block text-xs text-text-tertiary mb-1">Bien</label>
+                  <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none">
+                    <option value="" className="bg-bg-card">Global</option>
+                    {properties.map(p => <option key={p.id} value={p.id} className="bg-bg-card">{p.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-xs text-slate-400 mb-1">Année fiscale</label>
-                  <input type="number" placeholder="2026" value={form.annee_fiscale} onChange={e => setForm(f => ({ ...f, annee_fiscale: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                <div><label className="block text-xs text-text-tertiary mb-1">Année fiscale</label>
+                  <input type="number" placeholder="2026" value={form.annee_fiscale} onChange={e => setForm(f => ({ ...f, annee_fiscale: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none" />
                 </div>
               </div>
               <button type="submit" disabled={uploading || !file} className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50 transition-all">

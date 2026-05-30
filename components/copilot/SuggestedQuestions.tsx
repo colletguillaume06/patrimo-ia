@@ -7,8 +7,8 @@ interface SuggestedQuestionsProps {
 
 export function SuggestedQuestions({ onSelect }: SuggestedQuestionsProps) {
   return (
-    <div className="p-4 border-b border-white/[0.06]">
-      <p className="flex items-center gap-1.5 text-xs text-slate-500 mb-3">
+    <div className="p-4 border-b border-border">
+      <p className="flex items-center gap-1.5 text-xs text-text-secondary mb-3">
         <Lightbulb className="h-3.5 w-3.5 text-amber-400" />
         Questions suggérées
       </p>
@@ -17,7 +17,7 @@ export function SuggestedQuestions({ onSelect }: SuggestedQuestionsProps) {
           <button
             key={q}
             onClick={() => onSelect(q)}
-            className="text-xs px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-400 hover:text-[var(--text-primary)] hover:border-blue-500/30 hover:bg-blue-500/5 transition-all"
+            className="text-xs px-3 py-1.5 rounded-full bg-bg-tertiary/30 border border-border text-text-tertiary hover:text-text-primary hover:border-blue-500/30 hover:bg-blue-500/5 transition-all"
           >
             {q}
           </button>

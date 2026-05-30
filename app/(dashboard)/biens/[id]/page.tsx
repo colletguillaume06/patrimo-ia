@@ -65,7 +65,7 @@ export default async function BienDetailPage({ params }: Props) {
     <div className="max-w-5xl mx-auto space-y-6">
       <Link
         href="/biens"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-[var(--text-primary)] transition-colors mb-2"
+        className="inline-flex items-center gap-1.5 text-sm text-text-tertiary hover:text-text-primary transition-colors mb-2"
       >
         <ChevronLeft className="h-4 w-4" /> Retour à mes biens
       </Link>

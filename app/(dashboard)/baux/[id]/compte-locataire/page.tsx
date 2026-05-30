@@ -76,19 +76,19 @@ export default function CompteLocatairePage() {
     URL.revokeObjectURL(url)
   }
 
-  if (loading) return <div className="max-w-4xl mx-auto"><div className="h-48 rounded-xl bg-white/[0.03] animate-pulse" /></div>
+  if (loading) return <div className="max-w-4xl mx-auto"><div className="h-48 rounded-xl bg-bg-secondary/50 animate-pulse" /></div>
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href={`/baux/${id}`} className="text-slate-400 hover:text-[var(--text-primary)] text-sm flex items-center gap-1">
+          <Link href={`/baux/${id}`} className="text-text-tertiary hover:text-text-primary text-sm flex items-center gap-1">
             <ChevronLeft className="h-4 w-4" /> {lease?.tenant_name}
           </Link>
-          <span className="text-slate-600">/</span>
-          <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Relevé de compte</h1>
+          <span className="text-text-secondary">/</span>
+          <h1 className="font-display font-bold text-xl text-text-primary">Relevé de compte</h1>
         </div>
-        <button onClick={exportTxt} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-white/[0.06] border border-white/[0.08] text-slate-300 hover:text-[var(--text-primary)] text-sm transition-all">
+        <button onClick={exportTxt} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-bg-secondary border border-border text-text-secondary hover:text-text-primary text-sm transition-all">
           <Download className="h-4 w-4" /> Exporter
         </button>
       </div>
@@ -96,12 +96,12 @@ export default function CompteLocatairePage() {
       {/* KPIs */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total attendu', value: formatCurrency(total_attendu), color: 'text-[var(--text-primary)]' },
-          { label: 'Total reçu', value: formatCurrency(total_recu), color: 'text-[var(--success)]' },
-          { label: 'Solde global', value: formatCurrency(solde_global), color: solde_global <= 0 ? 'text-[var(--success)]' : 'text-red-400' },
+          { label: 'Total attendu', value: formatCurrency(total_attendu), color: 'text-text-primary' },
+          { label: 'Total reçu', value: formatCurrency(total_recu), color: 'text-success-text' },
+          { label: 'Solde global', value: formatCurrency(solde_global), color: solde_global <= 0 ? 'text-success-text' : 'text-red-400' },
         ].map(({ label, value, color }) => (
           <GlassCard key={label} className="p-4">
-            <p className="text-xs text-slate-400 mb-1">{label}</p>
+            <p className="text-xs text-text-tertiary mb-1">{label}</p>
             <p className={`text-xl font-bold font-mono ${color}`}>{value}</p>
           </GlassCard>
         ))}
@@ -109,16 +109,16 @@ export default function CompteLocatairePage() {
 
       {/* Tableau complet */}
       <GlassCard>
-        <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">
+        <h2 className="font-display font-semibold text-text-primary mb-4">
           Historique complet — {lease?.tenant_name}
-          <span className="text-slate-500 font-normal text-sm ml-2">
+          <span className="text-text-secondary font-normal text-sm ml-2">
             {lease?.property?.name ?? lease?.property?.address}
           </span>
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-xs text-slate-500 border-b border-white/[0.06]">
+              <tr className="text-xs text-text-secondary border-b border-border">
                 {['Mois','Attendu','Reçu','Écart','Cumul','Statut'].map(h =>
                   <th key={h} className="text-right py-2.5 px-3 font-medium first:text-left">{h}</th>
                 )}
@@ -127,27 +127,27 @@ export default function CompteLocatairePage() {
             <tbody>
               {rows.map((r, i) => {
                 const StatusIcon = r.status === 'paid' ? CheckCircle2 : r.status === 'late' ? AlertCircle : Clock
-                const iconColor = r.status === 'paid' ? 'text-[var(--success)]' : r.status === 'late' ? 'text-red-400' : 'text-slate-500'
+                const iconColor = r.status === 'paid' ? 'text-success-text' : r.status === 'late' ? 'text-red-400' : 'text-text-secondary'
                 return (
                   <tr key={r.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] text-right">
-                    <td className="py-2.5 px-3 text-left text-slate-300 whitespace-nowrap">
+                    <td className="py-2.5 px-3 text-left text-text-secondary whitespace-nowrap">
                       {format(new Date(r.due_date), 'MMMM yyyy', { locale: fr })}
                     </td>
-                    <td className="py-2.5 px-3 text-[var(--text-primary)]">{formatCurrency(r.attendu)}</td>
+                    <td className="py-2.5 px-3 text-text-primary">{formatCurrency(r.attendu)}</td>
                     <td className="py-2.5 px-3">
                       {r.recu > 0
-                        ? <span className={r.status === 'partial' ? 'text-amber-400' : 'text-[var(--success)]'}>{formatCurrency(r.recu)}</span>
-                        : <span className="text-slate-600">—</span>
+                        ? <span className={r.status === 'partial' ? 'text-amber-400' : 'text-success-text'}>{formatCurrency(r.recu)}</span>
+                        : <span className="text-text-secondary">—</span>
                       }
                     </td>
                     <td className="py-2.5 px-3">
                       {r.ecart === 0
-                        ? <span className="text-[var(--success)]">0 €</span>
+                        ? <span className="text-success-text">0 €</span>
                         : <span className="text-red-400">-{formatCurrency(r.ecart)}</span>
                       }
                     </td>
                     <td className="py-2.5 px-3">
-                      <span className={r.cumul <= 0 ? 'text-[var(--success)] font-semibold' : 'text-red-400 font-semibold'}>
+                      <span className={r.cumul <= 0 ? 'text-success-text font-semibold' : 'text-red-400 font-semibold'}>
                         {formatCurrency(r.cumul)}
                       </span>
                     </td>
@@ -165,9 +165,9 @@ export default function CompteLocatairePage() {
             </tbody>
             <tfoot>
               <tr className="border-t-2 border-white/[0.12] bg-white/[0.02] text-right">
-                <td className="py-3 px-3 text-left font-bold text-[var(--text-primary)]">TOTAL</td>
-                <td className="py-3 px-3 font-bold text-[var(--text-primary)]">{formatCurrency(total_attendu)}</td>
-                <td className="py-3 px-3 font-bold text-[var(--success)]">{formatCurrency(total_recu)}</td>
+                <td className="py-3 px-3 text-left font-bold text-text-primary">TOTAL</td>
+                <td className="py-3 px-3 font-bold text-text-primary">{formatCurrency(total_attendu)}</td>
+                <td className="py-3 px-3 font-bold text-success-text">{formatCurrency(total_recu)}</td>
                 <td className="py-3 px-3 font-bold" style={{ color: solde_global <= 0 ? '#10B981' : '#EF4444' }}>{formatCurrency(solde_global)}</td>
                 <td colSpan={2} />
               </tr>

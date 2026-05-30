@@ -11,9 +11,9 @@ interface CashflowChartProps {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-white border border-[var(--border)] rounded-xl p-3 shadow-xl text-xs">
-      <p className="text-[var(--text-muted)] mb-2 font-medium">{label}</p>
-      <p className="text-[var(--success)]">Revenus : {formatCurrency(payload[0]?.value ?? 0)}</p>
+    <div className="bg-white border border-border rounded-xl p-3 shadow-xl text-xs">
+      <p className="text-text-secondary mb-2 font-medium">{label}</p>
+      <p className="text-success-text">Revenus : {formatCurrency(payload[0]?.value ?? 0)}</p>
       <p className="text-red-400">Charges : {formatCurrency(payload[1]?.value ?? 0)}</p>
     </div>
   )
@@ -22,7 +22,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export function CashflowChart({ data }: CashflowChartProps) {
   return (
     <GlassCard>
-      <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Revenus & Charges — 12 mois</h2>
+      <h2 className="font-display font-semibold text-text-primary mb-4">Revenus & Charges — 12 mois</h2>
       <ResponsiveContainer width="100%" height={200}>
         <AreaChart data={data} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
           <defs>

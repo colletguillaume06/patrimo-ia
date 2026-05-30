@@ -14,8 +14,8 @@ const EXPORTS = [
     filename: (y: number) => `revenus_${y}.csv`,
     endpoint: (y: number) => `/api/export/revenus?year=${y}`,
     description: 'Loyers, charges, statuts, dates d\'encaissement',
-    color: 'text-[var(--success)]',
-    bg: 'bg-[var(--success-bg)]',
+    color: 'text-success-text',
+    bg: 'bg-success-bg',
     border: 'border-[var(--success)/20]',
     cols: 'Mois · Bien · N° fiscal · Locataire · Loyer HC · Charges · Statut · Date encaissement',
   },
@@ -115,15 +115,15 @@ export default function ExportsPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Exports comptables</h1>
-        <p className="text-slate-400 text-sm mt-1">Données prêtes pour votre expert-comptable, encodage UTF-8</p>
+        <h1 className="font-display font-bold text-2xl text-text-primary">Exports comptables</h1>
+        <p className="text-text-tertiary text-sm mt-1">Données prêtes pour votre expert-comptable, encodage UTF-8</p>
       </div>
 
       {/* Sélecteur d'année + tout exporter */}
       <GlassCard className="p-5">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-[var(--text-primary)] mb-1">Année fiscale</p>
+            <p className="text-sm font-medium text-text-primary mb-1">Année fiscale</p>
             <div className="flex gap-2">
               {YEARS.map(y => (
                 <button
@@ -132,7 +132,7 @@ export default function ExportsPage() {
                   className={`h-9 px-4 rounded-lg text-sm font-medium transition-all ${
                     year === y
                       ? 'bg-blue-500 text-white'
-                      : 'bg-white/[0.05] border border-white/[0.08] text-slate-400 hover:text-[var(--text-primary)] hover:bg-white/[0.08]'
+                      : 'bg-white/[0.05] border border-border text-text-tertiary hover:text-text-primary hover:bg-white/[0.08]'
                   }`}
                 >
                   {y}
@@ -144,7 +144,7 @@ export default function ExportsPage() {
           <button
             onClick={downloadAll}
             disabled={loadingZip}
-            className="flex items-center gap-2 h-11 px-6 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-[var(--text-primary)] text-sm font-semibold transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20 flex-shrink-0"
+            className="flex items-center gap-2 h-11 px-6 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-text-primary text-sm font-semibold transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20 flex-shrink-0"
           >
             {loadingZip
               ? <><Loader2 className="h-4 w-4 animate-spin" /> Génération ZIP...</>
@@ -165,8 +165,8 @@ export default function ExportsPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-4 mb-1">
                   <div>
-                    <p className="text-sm font-semibold text-[var(--text-primary)]">{exp.label}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{exp.description}</p>
+                    <p className="text-sm font-semibold text-text-primary">{exp.label}</p>
+                    <p className="text-xs text-text-tertiary mt-0.5">{exp.description}</p>
                   </div>
                   <button
                     onClick={() => downloadFile(exp)}
@@ -191,8 +191,8 @@ export default function ExportsPage() {
 
       {/* Note expert-comptable */}
       <GlassCard className="p-4">
-        <p className="text-xs text-slate-500 leading-relaxed">
-          📋 <strong className="text-slate-400">Format Excel :</strong> Ouvrez les .csv dans Excel → Données → À partir du texte/CSV → Délimiteur point-virgule → Encodage UTF-8.<br />
+        <p className="text-xs text-text-secondary leading-relaxed">
+          📋 <strong className="text-text-tertiary">Format Excel :</strong> Ouvrez les .csv dans Excel → Données → À partir du texte/CSV → Délimiteur point-virgule → Encodage UTF-8.<br />
           Le fichier ZIP contient les 3 exports prêts à transmettre à votre expert-comptable ou à importer dans votre logiciel comptable.
         </p>
       </GlassCard>
@@ -204,8 +204,8 @@ export default function ExportsPage() {
             <Sparkles className="h-5 w-5 text-blue-400" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-[var(--text-primary)]">Données de démonstration</p>
-            <p className="text-xs text-slate-400 mt-0.5">3 biens fictifs avec loyers, travaux et dépenses pour explorer l'app</p>
+            <p className="text-sm font-semibold text-text-primary">Données de démonstration</p>
+            <p className="text-xs text-text-tertiary mt-0.5">3 biens fictifs avec loyers, travaux et dépenses pour explorer l'app</p>
           </div>
         </div>
         <button
@@ -218,7 +218,7 @@ export default function ExportsPage() {
             : <><Sparkles className="h-4 w-4" /> Charger les données de démonstration</>
           }
         </button>
-        <p className="text-xs text-slate-600 text-center mt-2">⚠️ Remplace vos données actuelles</p>
+        <p className="text-xs text-text-secondary text-center mt-2">⚠️ Remplace vos données actuelles</p>
       </GlassCard>
     </div>
   )

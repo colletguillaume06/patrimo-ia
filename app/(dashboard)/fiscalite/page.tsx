@@ -54,9 +54,9 @@ function CopyButton({ value }: { value: number }) {
   return (
     <button
       onClick={handleCopy}
-      className="inline-flex items-center gap-1 h-6 px-2 rounded-md bg-white/[0.06] hover:bg-blue-500/15 border border-white/[0.08] hover:border-blue-500/30 text-xs text-slate-400 hover:text-blue-400 transition-all"
+      className="inline-flex items-center gap-1 h-6 px-2 rounded-md bg-bg-secondary hover:bg-blue-500/15 border border-border hover:border-blue-500/30 text-xs text-text-tertiary hover:text-blue-400 transition-all"
     >
-      {copied ? <CheckCircle className="h-3 w-3 text-[var(--success)]" /> : <Copy className="h-3 w-3" />}
+      {copied ? <CheckCircle className="h-3 w-3 text-success-text" /> : <Copy className="h-3 w-3" />}
       <span className="font-mono">{value.toFixed(2)} €</span>
     </button>
   )
@@ -67,14 +67,14 @@ function Accordion({ title, badge, children, defaultOpen = false }: {
 }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <div className="border border-white/[0.08] rounded-xl overflow-hidden">
+    <div className="border border-border rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-5 py-4 bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 bg-bg-secondary/50 hover:bg-white/[0.05] transition-colors"
       >
         <div className="flex items-center gap-3">
-          {open ? <ChevronDown className="h-4 w-4 text-slate-400" /> : <ChevronRight className="h-4 w-4 text-slate-400" />}
-          <span className="font-display font-semibold text-[var(--text-primary)]">{title}</span>
+          {open ? <ChevronDown className="h-4 w-4 text-text-tertiary" /> : <ChevronRight className="h-4 w-4 text-text-tertiary" />}
+          <span className="font-display font-semibold text-text-primary">{title}</span>
           {badge}
         </div>
       </button>
@@ -87,7 +87,7 @@ function DeclarationRow({ label, caseNum, value, note }: {
   label: string; caseNum?: string; value: number; note?: string
 }) {
   return (
-    <div className="flex items-center justify-between py-3 border-b border-white/[0.06] last:border-0">
+    <div className="flex items-center justify-between py-3 border-b border-border last:border-0">
       <div className="flex-1 min-w-0 pr-4">
         <div className="flex items-center gap-2">
           {caseNum && (
@@ -95,9 +95,9 @@ function DeclarationRow({ label, caseNum, value, note }: {
               {caseNum}
             </span>
           )}
-          <span className="text-sm text-slate-300">{label}</span>
+          <span className="text-sm text-text-secondary">{label}</span>
         </div>
-        {note && <p className="text-xs text-slate-600 mt-0.5 ml-0">{note}</p>}
+        {note && <p className="text-xs text-text-secondary mt-0.5 ml-0">{note}</p>}
       </div>
       <CopyButton value={value} />
     </div>
@@ -132,10 +132,10 @@ function CalendrierFiscal({ hasSci, hasLmnp, hasFoncier, year }: {
         const isUrgent = diff >= 0 && diff <= 7
         const isProche = diff > 7 && diff <= 30
 
-        const statusColor = isPast ? 'text-slate-600' : isUrgent ? 'text-red-400' : isProche ? 'text-amber-400' : 'text-slate-400'
-        const statusBg = isPast ? 'bg-slate-800/50' : isUrgent ? 'bg-red-400/8 border-red-400/20' : isProche ? 'bg-amber-400/8 border-amber-400/20' : 'bg-white/[0.02] border-white/[0.06]'
+        const statusColor = isPast ? 'text-text-secondary' : isUrgent ? 'text-red-400' : isProche ? 'text-amber-400' : 'text-text-tertiary'
+        const statusBg = isPast ? 'bg-slate-800/50' : isUrgent ? 'bg-red-400/8 border-red-400/20' : isProche ? 'bg-amber-400/8 border-amber-400/20' : 'bg-white/[0.02] border-border'
         const badgeText = isPast ? 'Passé' : isUrgent ? `Urgent — J-${diff}` : isProche ? `Dans ${diff} jours` : `${format(date, 'd MMM', { locale: fr })}`
-        const badgeColor = isPast ? 'text-slate-600 bg-white/[0.04]' : isUrgent ? 'text-red-400 bg-red-400/10 border-red-400/20' : isProche ? 'text-amber-400 bg-amber-400/10 border-amber-400/20' : 'text-slate-400 bg-white/[0.05]'
+        const badgeColor = isPast ? 'text-text-secondary bg-bg-tertiary/30' : isUrgent ? 'text-red-400 bg-red-400/10 border-red-400/20' : isProche ? 'text-amber-400 bg-amber-400/10 border-amber-400/20' : 'text-text-tertiary bg-white/[0.05]'
 
         return (
           <div key={i} className={`flex items-center gap-4 p-3 rounded-xl border transition-all ${statusBg}`}>
@@ -145,10 +145,10 @@ function CalendrierFiscal({ hasSci, hasLmnp, hasFoncier, year }: {
               </p>
             </div>
             <div className="flex-1 min-w-0">
-              <p className={`text-sm font-medium ${isPast ? 'text-slate-500' : 'text-slate-200'}`}>
+              <p className={`text-sm font-medium ${isPast ? 'text-text-secondary' : 'text-slate-200'}`}>
                 {ech.icon} {ech.label}
               </p>
-              <p className="text-xs text-slate-600 mt-0.5">{ech.sub}</p>
+              <p className="text-xs text-text-secondary mt-0.5">{ech.sub}</p>
             </div>
             <span className={`flex-shrink-0 text-xs px-2 py-0.5 rounded-full border ${badgeColor}`}>
               {badgeText}
@@ -286,8 +286,8 @@ export default function FiscalitePage() {
       {/* ── En-tête + filtres ── */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Fiscalité</h1>
-          <p className="text-slate-400 text-sm mt-1">Simulations · Déclarations · Calendrier fiscal</p>
+          <h1 className="font-display font-bold text-2xl text-text-primary">Fiscalité</h1>
+          <p className="text-text-tertiary text-sm mt-1">Simulations · Déclarations · Calendrier fiscal</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {/* Sélecteur année */}
@@ -295,7 +295,7 @@ export default function FiscalitePage() {
             {YEARS.map(y => (
               <button key={y} onClick={() => setYear(y)}
                 className={`h-9 px-3 rounded-lg text-sm font-medium transition-all ${
-                  year === y ? 'bg-blue-500 text-white' : 'bg-white/[0.05] border border-white/[0.08] text-slate-400 hover:text-[var(--text-primary)]'
+                  year === y ? 'bg-blue-500 text-white' : 'bg-white/[0.05] border border-border text-text-tertiary hover:text-text-primary'
                 }`}>
                 {y}
               </button>
@@ -303,36 +303,36 @@ export default function FiscalitePage() {
           </div>
           {/* Sélecteur bien */}
           <select value={selectedPropId} onChange={e => setSelectedPropId(e.target.value)}
-            className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50 max-w-[180px]">
-            <option value="all" className="bg-[var(--surface)]">Tous les biens</option>
-            {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
+            className="h-9 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none focus:border-blue-500/50 max-w-[180px]">
+            <option value="all" className="bg-bg-card">Tous les biens</option>
+            {properties.map(p => <option key={p.id} value={p.id} className="bg-bg-card">{p.name}</option>)}
           </select>
           {/* TMI */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500">TMI</span>
+            <span className="text-xs text-text-secondary">TMI</span>
             <select value={tmi} onChange={e => setTmi(Number(e.target.value))}
-              className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
-              {[11, 30, 41, 45].map(r => <option key={r} value={r} className="bg-[var(--surface)]">{r}%</option>)}
+              className="h-9 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none">
+              {[11, 30, 41, 45].map(r => <option key={r} value={r} className="bg-bg-card">{r}%</option>)}
             </select>
           </div>
         </div>
       </div>
 
       {loading ? (
-        <div className="space-y-4">{[1, 2, 3].map(i => <div key={i} className="h-32 rounded-xl bg-white/[0.03] animate-pulse" />)}</div>
+        <div className="space-y-4">{[1, 2, 3].map(i => <div key={i} className="h-32 rounded-xl bg-bg-secondary/50 animate-pulse" />)}</div>
       ) : filtered.length === 0 ? (
         <GlassCard className="py-16 text-center">
-          <p className="text-slate-400">Aucun bien pour cette sélection</p>
+          <p className="text-text-tertiary">Aucun bien pour cette sélection</p>
         </GlassCard>
       ) : (
         <>
           {/* ── BLOC 1 — Résumé par bien ── */}
           <GlassCard>
-            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Résumé par bien — {year}</h2>
+            <h2 className="font-display font-semibold text-text-primary mb-4">Résumé par bien — {year}</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-xs text-slate-500 border-b border-white/[0.06]">
+                  <tr className="text-xs text-text-secondary border-b border-border">
                     {['Bien', 'N° fiscal', 'Type', 'Régime', 'Revenus bruts', 'Charges', 'Travaux déd.', 'Amortiss.', 'Résultat net', 'Impôt estimé'].map(h => (
                       <th key={h} className="text-left py-2.5 px-3 font-medium whitespace-nowrap">{h}</th>
                     ))}
@@ -342,17 +342,17 @@ export default function FiscalitePage() {
                   {filtered.map(d => (
                     <tr key={d.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
                       <td className="py-3 px-3">
-                        <p className="font-medium text-[var(--text-primary)]">{d.name}</p>
-                        {d.sci_name && <p className="text-xs text-slate-500">{d.sci_name}</p>}
+                        <p className="font-medium text-text-primary">{d.name}</p>
+                        {d.sci_name && <p className="text-xs text-text-secondary">{d.sci_name}</p>}
                       </td>
-                      <td className="py-3 px-3 font-mono text-xs text-slate-500">
+                      <td className="py-3 px-3 font-mono text-xs text-text-secondary">
                         {d.numero_fiscal ?? <span className="text-slate-700">—</span>}
                       </td>
                       <td className="py-3 px-3">
                         <ProfileBadge type={d.type as any} size="sm" />
                       </td>
-                      <td className="py-3 px-3 text-slate-300 text-xs">{regimeLabel(d)}</td>
-                      <td className="py-3 px-3 text-[var(--success)] font-semibold">{formatCurrency(d.revenus)}</td>
+                      <td className="py-3 px-3 text-text-secondary text-xs">{regimeLabel(d)}</td>
+                      <td className="py-3 px-3 text-success-text font-semibold">{formatCurrency(d.revenus)}</td>
                       <td className="py-3 px-3 text-red-400">{formatCurrency(d.charges)}</td>
                       <td className="py-3 px-3 text-blue-400">{d.travaux_deductibles > 0 ? formatCurrency(d.travaux_deductibles) : '—'}</td>
                       <td className="py-3 px-3 text-cyan-400">{d.amortissements > 0 ? formatCurrency(d.amortissements) : '—'}</td>
@@ -370,8 +370,8 @@ export default function FiscalitePage() {
                 </tbody>
                 <tfoot>
                   <tr className="border-t-2 border-white/[0.12] bg-white/[0.02]">
-                    <td className="py-3 px-3 font-bold text-[var(--text-primary)]" colSpan={4}>TOTAL</td>
-                    <td className="py-3 px-3 font-bold text-[var(--success)]">{formatCurrency(totaux.revenus)}</td>
+                    <td className="py-3 px-3 font-bold text-text-primary" colSpan={4}>TOTAL</td>
+                    <td className="py-3 px-3 font-bold text-success-text">{formatCurrency(totaux.revenus)}</td>
                     <td className="py-3 px-3 font-bold text-red-400">{formatCurrency(totaux.charges)}</td>
                     <td className="py-3 px-3 font-bold text-blue-400">{totaux.travaux > 0 ? formatCurrency(totaux.travaux) : '—'}</td>
                     <td className="py-3 px-3 font-bold text-cyan-400">{totaux.amortissements > 0 ? formatCurrency(totaux.amortissements) : '—'}</td>
@@ -389,15 +389,15 @@ export default function FiscalitePage() {
 
           {/* ── BLOC 2 — Ce que vous devez déclarer ── */}
           <div>
-            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-3">Ce que vous devez déclarer</h2>
+            <h2 className="font-display font-semibold text-text-primary mb-3">Ce que vous devez déclarer</h2>
             <div className="space-y-3">
 
               {/* Formulaire 2042-C-PRO */}
               {hasLmnp && (
                 <Accordion title="Formulaire 2042-C-PRO" defaultOpen badge={
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--success-bg)] border border-[var(--success)/20] text-[var(--success)]">LMNP / LMP</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-success-bg border border-[var(--success)/20] text-success-text">LMNP / LMP</span>
                 }>
-                  <p className="text-xs text-slate-500 mb-4">Revenus des locations meublées non professionnelles — à reporter sur votre 2042 principale</p>
+                  <p className="text-xs text-text-secondary mb-4">Revenus des locations meublées non professionnelles — à reporter sur votre 2042 principale</p>
                   {lmnpProps.map(d => {
                     const recettes = d.revenus
                     const sim = calculateLmnpSimulation({
@@ -407,7 +407,7 @@ export default function FiscalitePage() {
                     const isReel = d.lmnp_regime === 'reel'
                     return (
                       <div key={d.id} className="mb-5">
-                        <p className="text-xs font-semibold text-slate-400 mb-2 flex items-center gap-2">
+                        <p className="text-xs font-semibold text-text-tertiary mb-2 flex items-center gap-2">
                           {d.name}
                           <ProfileBadge type="lmnp" size="sm" />
                         </p>
@@ -433,14 +433,14 @@ export default function FiscalitePage() {
                 <Accordion title="Formulaire 2044" badge={
                   <span className="text-xs px-2 py-0.5 rounded-full bg-blue-400/10 border border-blue-400/20 text-blue-400">Location nue</span>
                 }>
-                  <p className="text-xs text-slate-500 mb-4">Revenus fonciers (locations nues) — régime réel</p>
+                  <p className="text-xs text-text-secondary mb-4">Revenus fonciers (locations nues) — régime réel</p>
                   {nuProps.map(d => {
                     const sim = calculateFoncierSimulation({
                       revenus_bruts: d.revenus, charges_deductibles: d.charges, taux_marginal: tmi / 100,
                     })
                     return (
                       <div key={d.id} className="mb-5">
-                        <p className="text-xs font-semibold text-slate-400 mb-2">{d.name}</p>
+                        <p className="text-xs font-semibold text-text-tertiary mb-2">{d.name}</p>
                         <DeclarationRow label="Revenus bruts" caseNum="Ligne 110" value={sim.revenus_bruts} />
                         <DeclarationRow label="Total des charges déductibles" caseNum="Ligne 220" value={sim.charges_deductibles} />
                         <DeclarationRow
@@ -467,7 +467,7 @@ export default function FiscalitePage() {
                 <Accordion title="Formulaire 2072" badge={
                   <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/20 text-cyan-400">SCI</span>
                 }>
-                  <p className="text-xs text-slate-500 mb-4">
+                  <p className="text-xs text-text-secondary mb-4">
                     Déclaration de résultats de la SCI — à déposer avant le 2ème jour ouvré de mai
                   </p>
                   {sciProps.map(d => {
@@ -477,7 +477,7 @@ export default function FiscalitePage() {
                     })
                     return (
                       <div key={d.id} className="mb-5">
-                        <p className="text-xs font-semibold text-slate-400 mb-2">
+                        <p className="text-xs font-semibold text-text-tertiary mb-2">
                           {d.sci_name ?? d.name} ({d.sci_regime?.toUpperCase() ?? 'IR'})
                         </p>
                         <DeclarationRow label="Résultat de la société" value={sim.resultat_comptable} />
@@ -490,7 +490,7 @@ export default function FiscalitePage() {
                         ) : (
                           d.sci_associates.length > 0 && (
                             <div className="mt-2 space-y-1">
-                              <p className="text-xs text-slate-500 mb-2">Quote-part par associé (à reporter sur leur 2044) :</p>
+                              <p className="text-xs text-text-secondary mb-2">Quote-part par associé (à reporter sur leur 2044) :</p>
                               {d.sci_associates.map((a: any) => (
                                 <DeclarationRow
                                   key={a.id}
@@ -513,16 +513,16 @@ export default function FiscalitePage() {
 
             </div>
 
-            <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
-              <p className="text-xs text-slate-500 text-center">
-                ⚠️ Ces montants sont des <strong className="text-slate-400">estimations calculées automatiquement</strong>. Faites-les vérifier par un expert-comptable avant toute déclaration fiscale. Les montants définitifs peuvent différer selon votre situation personnelle.
+            <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-border">
+              <p className="text-xs text-text-secondary text-center">
+                ⚠️ Ces montants sont des <strong className="text-text-tertiary">estimations calculées automatiquement</strong>. Faites-les vérifier par un expert-comptable avant toute déclaration fiscale. Les montants définitifs peuvent différer selon votre situation personnelle.
               </p>
             </div>
           </div>
 
           {/* ── BLOC 3 — Calendrier fiscal ── */}
           <div>
-            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-3">Calendrier fiscal {year}</h2>
+            <h2 className="font-display font-semibold text-text-primary mb-3">Calendrier fiscal {year}</h2>
             <GlassCard>
               <CalendrierFiscal hasSci={hasSci} hasLmnp={hasLmnp} hasFoncier={hasFoncier} year={year} />
             </GlassCard>
@@ -530,17 +530,17 @@ export default function FiscalitePage() {
 
           {/* Indices */}
           <GlassCard>
-            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Indices de référence ({getQuarterLabel()})</h2>
+            <h2 className="font-display font-semibold text-text-primary mb-4">Indices de référence ({getQuarterLabel()})</h2>
             <div className="grid grid-cols-3 gap-4">
               {[
                 { label: 'IRL (Loyers habitation)', value: IRL_CURRENT, color: 'text-blue-400' },
                 { label: 'ILC (Loyers commerciaux)', value: ILC_CURRENT, color: 'text-cyan-400' },
-                { label: 'ILAT (Activités tertiaires)', value: ILAT_CURRENT, color: 'text-[var(--success)]' },
+                { label: 'ILAT (Activités tertiaires)', value: ILAT_CURRENT, color: 'text-success-text' },
               ].map(({ label, value, color }) => (
-                <div key={label} className="bg-white/[0.03] rounded-xl p-4">
-                  <p className="text-xs text-slate-500 mb-1">{label}</p>
+                <div key={label} className="bg-bg-secondary/50 rounded-xl p-4">
+                  <p className="text-xs text-text-secondary mb-1">{label}</p>
                   <p className={`text-2xl font-bold font-mono ${color}`}>{value}</p>
-                  <p className="text-xs text-slate-600 mt-1">Référence {getQuarterLabel()}</p>
+                  <p className="text-xs text-text-secondary mt-1">Référence {getQuarterLabel()}</p>
                 </div>
               ))}
             </div>

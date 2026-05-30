@@ -69,14 +69,14 @@ export default function RegisterPage() {
   }
 
   const inputClass = (field: keyof FormErrors) =>
-    `w-full h-11 px-4 rounded-xl bg-white/[0.06] border text-white placeholder-slate-600 text-sm focus:outline-none transition-all ${
+    `w-full h-11 px-4 rounded-xl bg-bg-secondary border text-white placeholder-slate-600 text-sm focus:outline-none transition-all ${
       errors[field]
         ? 'border-red-500/60 focus:border-red-500'
-        : 'border-white/[0.10] focus:border-blue-500/50'
+        : 'border-border focus:border-blue-500/50'
     }`
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-bg-primary flex items-center justify-center p-4">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl" />
       </div>
@@ -91,11 +91,11 @@ export default function RegisterPage() {
           </span>
         </div>
 
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-8">
+        <div className="bg-bg-tertiary/30 border border-border rounded-2xl p-8">
           <h1 className="font-display font-semibold text-xl text-white text-center mb-1">
             Créer un compte
           </h1>
-          <p className="text-slate-400 text-sm text-center mb-6">
+          <p className="text-text-tertiary text-sm text-center mb-6">
             Commencez gratuitement, sans carte bancaire
           </p>
 
@@ -150,7 +150,7 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-secondary transition-colors"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -171,7 +171,7 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => setShowConfirm(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-secondary transition-colors"
                 >
                   {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -189,7 +189,7 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <p className="text-center text-xs text-slate-600 mt-6">
+          <p className="text-center text-xs text-text-secondary mt-6">
             Déjà un compte ?{' '}
             <Link href="/login" className="text-blue-400 hover:text-blue-300">
               Se connecter

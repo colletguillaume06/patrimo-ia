@@ -65,16 +65,16 @@ export default function DevisPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <Link href="/travaux" className="text-slate-400 hover:text-[var(--text-primary)] text-sm flex items-center gap-1"><ChevronLeft className="h-4 w-4" /> Travaux</Link>
-        <span className="text-slate-600">/</span>
-        <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Comparateur de devis</h1>
+        <Link href="/travaux" className="text-text-tertiary hover:text-text-primary text-sm flex items-center gap-1"><ChevronLeft className="h-4 w-4" /> Travaux</Link>
+        <span className="text-text-secondary">/</span>
+        <h1 className="font-display font-bold text-xl text-text-primary">Comparateur de devis</h1>
       </div>
 
       {loading ? (
-        <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-40 rounded-xl bg-white/[0.03] animate-pulse" />)}</div>
+        <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-40 rounded-xl bg-bg-secondary/50 animate-pulse" />)}</div>
       ) : incidents.length === 0 ? (
         <GlassCard className="py-16 text-center">
-          <p className="text-slate-400">Aucun ticket ouvert — créez d'abord un ticket travaux</p>
+          <p className="text-text-tertiary">Aucun ticket ouvert — créez d'abord un ticket travaux</p>
         </GlassCard>
       ) : incidents.map(inc => {
         const incDevis = devis.filter(d => d.incident_id === inc.id).sort((a, b) => a.montant - b.montant)
@@ -85,8 +85,8 @@ export default function DevisPage() {
           <GlassCard key={inc.id}>
             <div className="flex items-start justify-between mb-4">
               <div>
-                <p className="text-sm font-semibold text-[var(--text-primary)]">{inc.title}</p>
-                <p className="text-xs text-slate-500">{inc.property?.name} · {incDevis.length} devis</p>
+                <p className="text-sm font-semibold text-text-primary">{inc.title}</p>
+                <p className="text-xs text-text-secondary">{inc.property?.name} · {incDevis.length} devis</p>
               </div>
               <button onClick={() => setShowAdd(inc.id)}
                 className="flex items-center gap-1.5 h-7 px-3 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-medium">
@@ -95,7 +95,7 @@ export default function DevisPage() {
             </div>
 
             {incDevis.length === 0 ? (
-              <p className="text-sm text-slate-600 italic">Aucun devis reçu</p>
+              <p className="text-sm text-text-secondary italic">Aucun devis reçu</p>
             ) : (
               <div className="space-y-2">
                 {incDevis.map(d => {
@@ -111,7 +111,7 @@ export default function DevisPage() {
                       isRetenu ? 'border-green-400/30 bg-green-400/5' :
                       isRefuse ? 'border-white/[0.04] bg-white/[0.01] opacity-50' :
                       isExpire ? 'border-amber-400/20 bg-amber-400/5' :
-                      'border-white/[0.08] bg-white/[0.02]'
+                      'border-border bg-white/[0.02]'
                     }`}>
                       {/* Badge moins cher */}
                       {d.id === moinsCher?.id && !isRefuse && (
@@ -119,25 +119,25 @@ export default function DevisPage() {
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium text-[var(--text-primary)]">{d.entreprise}</p>
-                          {isRetenu && <span className="text-xs text-[var(--success)] bg-[var(--success-bg)] border border-[var(--success)/20] px-1.5 py-0.5 rounded-full">Retenu</span>}
+                          <p className="text-sm font-medium text-text-primary">{d.entreprise}</p>
+                          {isRetenu && <span className="text-xs text-success-text bg-success-bg border border-[var(--success)/20] px-1.5 py-0.5 rounded-full">Retenu</span>}
                           {isExpire && !isRetenu && <span className="text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full">Expiré</span>}
                         </div>
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-xs text-text-secondary mt-0.5">
                           Reçu le {format(new Date(d.date_reception), 'dd/MM/yyyy')}
                           {d.delai_execution_jours && ` · Délai : ${d.delai_execution_jours}j`}
                           {d.notes && ` · ${d.notes}`}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-base font-bold text-[var(--text-primary)]">{formatCurrency(d.montant)}</p>
+                        <p className="text-base font-bold text-text-primary">{formatCurrency(d.montant)}</p>
                         {diff > 0 && !isRefuse && (
                           <p className="text-xs text-red-400">+{diff.toFixed(1)}% vs le moins cher</p>
                         )}
                       </div>
                       {!isRetenu && !isRefuse && (
                         <button onClick={() => handleRetenir(d.id, inc.id, d.entreprise, d.montant)}
-                          className="flex-shrink-0 flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[var(--success-bg)] hover:bg-green-400/20 border border-[var(--success)/20] text-[var(--success)] text-xs font-medium transition-all">
+                          className="flex-shrink-0 flex items-center gap-1.5 h-8 px-3 rounded-lg bg-success-bg hover:bg-green-400/20 border border-[var(--success)/20] text-success-text text-xs font-medium transition-all">
                           <CheckCircle2 className="h-3.5 w-3.5" /> Retenir
                         </button>
                       )}
@@ -146,9 +146,9 @@ export default function DevisPage() {
                 })}
 
                 {incDevis.length >= 2 && (
-                  <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.06]">
-                    <p className="text-xs text-slate-400">
-                      Écart entre devis : <span className="text-[var(--text-primary)] font-semibold">{formatCurrency(incDevis[incDevis.length - 1].montant - incDevis[0].montant)}</span>
+                  <div className="p-3 rounded-lg bg-white/[0.02] border border-border">
+                    <p className="text-xs text-text-tertiary">
+                      Écart entre devis : <span className="text-text-primary font-semibold">{formatCurrency(incDevis[incDevis.length - 1].montant - incDevis[0].montant)}</span>
                       {' '}({((incDevis[incDevis.length - 1].montant - incDevis[0].montant) / incDevis[0].montant * 100).toFixed(1)}%)
                     </p>
                   </div>
@@ -157,16 +157,16 @@ export default function DevisPage() {
             )}
 
             {showAdd === inc.id && (
-              <div className="mt-4 pt-4 border-t border-white/[0.06]">
+              <div className="mt-4 pt-4 border-t border-border">
                 <form onSubmit={e => handleAdd(e, inc.id)} className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
-                    <div><label className="block text-xs text-slate-400 mb-1">Entreprise *</label><input type="text" value={form.entreprise} onChange={e => setForm(f => ({ ...f, entreprise: e.target.value }))} required className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" /></div>
-                    <div><label className="block text-xs text-slate-400 mb-1">Montant (€) *</label><input type="number" value={form.montant} onChange={e => setForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" /></div>
-                    <div><label className="block text-xs text-slate-400 mb-1">Date réception</label><input type="date" value={form.date_reception} onChange={e => setForm(f => ({ ...f, date_reception: e.target.value }))} className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" /></div>
-                    <div><label className="block text-xs text-slate-400 mb-1">Délai exécution (jours)</label><input type="number" value={form.delai_execution_jours} onChange={e => setForm(f => ({ ...f, delai_execution_jours: e.target.value }))} className="w-full h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" /></div>
+                    <div><label className="block text-xs text-text-tertiary mb-1">Entreprise *</label><input type="text" value={form.entreprise} onChange={e => setForm(f => ({ ...f, entreprise: e.target.value }))} required className="w-full h-9 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none" /></div>
+                    <div><label className="block text-xs text-text-tertiary mb-1">Montant (€) *</label><input type="number" value={form.montant} onChange={e => setForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-9 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none" /></div>
+                    <div><label className="block text-xs text-text-tertiary mb-1">Date réception</label><input type="date" value={form.date_reception} onChange={e => setForm(f => ({ ...f, date_reception: e.target.value }))} className="w-full h-9 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none" /></div>
+                    <div><label className="block text-xs text-text-tertiary mb-1">Délai exécution (jours)</label><input type="number" value={form.delai_execution_jours} onChange={e => setForm(f => ({ ...f, delai_execution_jours: e.target.value }))} className="w-full h-9 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary text-sm focus:outline-none" /></div>
                   </div>
                   <div className="flex gap-2">
-                    <button type="button" onClick={() => setShowAdd(null)} className="flex-1 h-8 rounded-lg border border-white/[0.10] text-slate-400 text-xs">Annuler</button>
+                    <button type="button" onClick={() => setShowAdd(null)} className="flex-1 h-8 rounded-lg border border-border text-text-tertiary text-xs">Annuler</button>
                     <button type="submit" disabled={saving} className="flex-1 h-8 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-xs font-semibold disabled:opacity-50">Ajouter</button>
                   </div>
                 </form>

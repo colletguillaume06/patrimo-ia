@@ -147,26 +147,26 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg bg-[var(--surface)] border border-white/[0.08] rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-lg bg-bg-card border border-border rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-[var(--success)]" />
-            <h2 className="font-display font-semibold text-[var(--text-primary)]">Révision de loyer</h2>
+            <TrendingUp className="h-4 w-4 text-success-text" />
+            <h2 className="font-display font-semibold text-text-primary">Révision de loyer</h2>
           </div>
-          <button onClick={onClose} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10]">
-            <X className="h-4 w-4 text-slate-400" />
+          <button onClick={onClose} className="h-8 w-8 rounded-lg bg-bg-secondary flex items-center justify-center hover:bg-white/[0.10]">
+            <X className="h-4 w-4 text-text-tertiary" />
           </button>
         </div>
 
         {/* Infos bail */}
-        <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] mb-5">
-          <p className="text-xs text-slate-500">{lease.tenant_name} · {lease.property?.name}</p>
-          <p className="text-lg font-bold text-[var(--text-primary)] mt-0.5">{formatCurrency(lease.monthly_rent)}/mois</p>
+        <div className="p-3 rounded-xl bg-bg-secondary/50 border border-border mb-5">
+          <p className="text-xs text-text-secondary">{lease.tenant_name} · {lease.property?.name}</p>
+          <p className="text-lg font-bold text-text-primary mt-0.5">{formatCurrency(lease.monthly_rent)}/mois</p>
           <p className="text-xs text-blue-400 mt-0.5">
             Indice : {indice.toUpperCase()} — Indice actuel {newQuarterLabel} : <span className="font-mono font-semibold">{nouvelIndice}</span>
           </p>
           {hasRef && refLabel && (
-            <p className="text-xs text-[var(--success)] mt-0.5">
+            <p className="text-xs text-success-text mt-0.5">
               ✓ Indice à la signature : <span className="font-mono">{ancienVal}</span> ({refLabel}) — pré-rempli depuis le bail
             </p>
           )}
@@ -176,7 +176,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Indice de référence */}
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5">
+              <label className="block text-xs text-text-tertiary mb-1.5">
                 Indice {indice.toUpperCase()} à la signature du bail (ou dernière révision)
               </label>
               <input
@@ -186,10 +186,10 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
                 value={ancienIndice}
                 onChange={e => setAncienIndice(e.target.value)}
                 required
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm font-mono focus:outline-none focus:border-blue-500/50"
+                className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-text-primary placeholder-slate-600 text-sm font-mono focus:outline-none focus:border-blue-500/50"
               />
               {!hasRef && (
-                <p className="text-xs text-slate-600 mt-1">
+                <p className="text-xs text-text-secondary mt-1">
                   Trouvez l'indice sur <a href="https://www.insee.fr" target="_blank" className="text-blue-400 hover:underline">insee.fr</a>
                 </p>
               )}
@@ -199,29 +199,29 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
             {calcul && (
               <div className="p-4 rounded-xl bg-green-400/5 border border-[var(--success)/20] space-y-2.5">
                 {/* Formule */}
-                <p className="text-xs text-slate-400 font-mono text-center bg-white/[0.04] rounded-lg py-2">
-                  {lease.monthly_rent} × {nouvelIndice} ÷ {ancienVal} = <span className="text-[var(--success)] font-bold">{calcul.nouveau_loyer.toFixed(2)} €</span>
+                <p className="text-xs text-text-tertiary font-mono text-center bg-bg-tertiary/30 rounded-lg py-2">
+                  {lease.monthly_rent} × {nouvelIndice} ÷ {ancienVal} = <span className="text-success-text font-bold">{calcul.nouveau_loyer.toFixed(2)} €</span>
                 </p>
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Indice référence {refLabel ? `(${refLabel})` : ''}</span>
-                    <span className="text-[var(--text-primary)] font-mono">{ancienVal}</span>
+                    <span className="text-text-tertiary">Indice référence {refLabel ? `(${refLabel})` : ''}</span>
+                    <span className="text-text-primary font-mono">{ancienVal}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Indice actuel ({newQuarterLabel})</span>
-                    <span className="text-[var(--text-primary)] font-mono">{nouvelIndice}</span>
+                    <span className="text-text-tertiary">Indice actuel ({newQuarterLabel})</span>
+                    <span className="text-text-primary font-mono">{nouvelIndice}</span>
                   </div>
-                  <div className="flex justify-between text-sm border-t border-white/[0.06] pt-1.5">
-                    <span className="text-slate-400">Loyer actuel</span>
-                    <span className="text-[var(--text-primary)]">{formatCurrency(lease.monthly_rent)}</span>
+                  <div className="flex justify-between text-sm border-t border-border pt-1.5">
+                    <span className="text-text-tertiary">Loyer actuel</span>
+                    <span className="text-text-primary">{formatCurrency(lease.monthly_rent)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Nouveau loyer</span>
-                    <span className="text-[var(--success)] font-bold">{formatCurrency(calcul.nouveau_loyer)}</span>
+                    <span className="text-text-tertiary">Nouveau loyer</span>
+                    <span className="text-success-text font-bold">{formatCurrency(calcul.nouveau_loyer)}</span>
                   </div>
-                  <div className="flex justify-between text-sm border-t border-white/[0.06] pt-1.5">
-                    <span className="text-slate-400">Variation</span>
-                    <span className="text-[var(--success)] font-semibold">
+                  <div className="flex justify-between text-sm border-t border-border pt-1.5">
+                    <span className="text-text-tertiary">Variation</span>
+                    <span className="text-success-text font-semibold">
                       +{formatCurrency(calcul.variation_euros)} (+{calcul.variation_pct}%)
                     </span>
                   </div>
@@ -237,9 +237,9 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
               >
                 <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${notify ? 'translate-x-4' : 'translate-x-0.5'}`} />
               </div>
-              <span className="text-sm text-slate-300">
+              <span className="text-sm text-text-secondary">
                 Notifier {lease.tenant_name} par email
-                {!lease.tenant_email && <span className="text-slate-600 ml-1">(email non renseigné)</span>}
+                {!lease.tenant_email && <span className="text-text-secondary ml-1">(email non renseigné)</span>}
               </span>
             </label>
 
@@ -248,7 +248,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
                 type="button"
                 onClick={() => setShowLettre(true)}
                 disabled={!calcul}
-                className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] text-slate-300 text-sm font-medium transition-all disabled:opacity-40"
+                className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-bg-secondary hover:bg-white/[0.10] border border-border text-text-secondary text-sm font-medium transition-all disabled:opacity-40"
               >
                 <FileText className="h-4 w-4" /> Lettre de révision
               </button>
@@ -265,11 +265,11 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
           /* Lettre de révision */
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-[var(--text-primary)]">Lettre de révision</p>
-              <button onClick={() => setShowLettre(false)} className="text-xs text-slate-400 hover:text-[var(--text-primary)]">← Retour</button>
+              <p className="text-sm font-medium text-text-primary">Lettre de révision</p>
+              <button onClick={() => setShowLettre(false)} className="text-xs text-text-tertiary hover:text-text-primary">← Retour</button>
             </div>
             <div className="relative">
-              <pre className="text-xs text-slate-300 font-mono leading-relaxed bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 overflow-x-auto whitespace-pre-wrap max-h-80 overflow-y-auto">
+              <pre className="text-xs text-text-secondary font-mono leading-relaxed bg-bg-secondary/50 border border-border rounded-xl p-4 overflow-x-auto whitespace-pre-wrap max-h-80 overflow-y-auto">
                 {lettre}
               </pre>
             </div>
@@ -278,11 +278,11 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
               className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-400 text-sm font-semibold transition-all"
             >
               {copied
-                ? <><CheckCircle className="h-4 w-4 text-[var(--success)]" /> Copié !</>
+                ? <><CheckCircle className="h-4 w-4 text-success-text" /> Copié !</>
                 : <><Copy className="h-4 w-4" /> Copier la lettre</>
               }
             </button>
-            <p className="text-xs text-slate-600 text-center">
+            <p className="text-xs text-text-secondary text-center">
               Personnalisez le nom du propriétaire avant envoi. Envoi recommandé en LRAR.
             </p>
           </div>

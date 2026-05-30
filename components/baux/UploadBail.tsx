@@ -52,22 +52,22 @@ export function UploadBail({ propertyId, onSuccess }: UploadBailProps) {
       onDragLeave={() => setDragging(false)}
       onDrop={e => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files[0]; if (f) handleFile(f) }}
       className={`relative border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-all ${
-        dragging ? 'border-blue-500/50 bg-blue-500/5' : 'border-white/[0.08] hover:border-white/[0.16]'
+        dragging ? 'border-blue-500/50 bg-blue-500/5' : 'border-border hover:border-white/[0.16]'
       }`}
     >
       {uploading ? (
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 text-blue-400 animate-spin" />
           <p className="text-sm text-blue-400">{progress}</p>
-          <p className="text-xs text-slate-500">L'IA analyse votre bail...</p>
+          <p className="text-xs text-text-secondary">L'IA analyse votre bail...</p>
         </div>
       ) : (
         <>
           <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-3">
             <FileText className="h-6 w-6 text-blue-400" />
           </div>
-          <p className="text-sm font-medium text-[var(--text-primary)] mb-1">Déposez votre bail PDF</p>
-          <p className="text-xs text-slate-500 mb-4">L'IA extraira automatiquement loyer, charges, durée, index...</p>
+          <p className="text-sm font-medium text-text-primary mb-1">Déposez votre bail PDF</p>
+          <p className="text-xs text-text-secondary mb-4">L'IA extraira automatiquement loyer, charges, durée, index...</p>
           <label className="cursor-pointer flex items-center gap-2 h-9 px-4 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-400 text-sm font-medium transition-all">
             <Upload className="h-4 w-4" />
             Choisir un fichier
