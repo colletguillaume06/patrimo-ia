@@ -17,7 +17,7 @@ export function BienCard({ bien }: BienCardProps) {
           <div className="flex items-center gap-2 mb-1">
             <ProfileBadge type={bien.type} size="sm" />
           </div>
-          <h3 className="font-display font-semibold text-[#0A0908] text-base truncate">{bien.name}</h3>
+          <h3 className="font-display font-semibold text-[var(--text-primary)] text-base truncate">{bien.name}</h3>
           {bien.city && (
             <p className="flex items-center gap-1 text-xs text-slate-500 mt-0.5">
               <MapPin className="h-3 w-3" />
@@ -30,7 +30,7 @@ export function BienCard({ bien }: BienCardProps) {
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="bg-white/[0.03] rounded-lg p-2.5">
           <p className="text-xs text-slate-500 mb-0.5">Loyer mensuel</p>
-          <p className="text-sm font-semibold text-[#0A0908]">
+          <p className="text-sm font-semibold text-[var(--text-primary)]">
             {bien.active_lease ? formatCurrency(bien.active_lease.monthly_rent) : '—'}
           </p>
         </div>
@@ -48,7 +48,7 @@ export function BienCard({ bien }: BienCardProps) {
         </div>
         <div className="bg-white/[0.03] rounded-lg p-2.5">
           <p className="text-xs text-slate-500 mb-0.5">Surface</p>
-          <p className="text-sm font-semibold text-[#0A0908]">
+          <p className="text-sm font-semibold text-[var(--text-primary)]">
             {bien.surface_m2 ? `${bien.surface_m2} m²` : '—'}
           </p>
         </div>

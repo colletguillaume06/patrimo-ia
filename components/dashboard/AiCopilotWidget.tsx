@@ -16,8 +16,8 @@ export function AiCopilotWidget() {
           <Sparkles className="h-4 w-4 text-blue-400" />
         </div>
         <div>
-          <h2 className="font-display font-semibold text-[#0A0908] text-sm">Copilot IA</h2>
-          <p className="text-xs text-[#3D3A36]">Votre expert immobilier</p>
+          <h2 className="font-display font-semibold text-[var(--text-primary)] text-sm">Copilot IA</h2>
+          <p className="text-xs text-[var(--text-muted)]">Votre expert immobilier</p>
         </div>
       </div>
 
@@ -28,11 +28,11 @@ export function AiCopilotWidget() {
             href={`/copilot?q=${encodeURIComponent(q)}`}
             className="flex items-center gap-2 p-2.5 rounded-lg bg-[#F8F7F4] hover:bg-white/[0.06] border border-[#EEECE8] hover:border-blue-500/20 transition-all group"
           >
-            <Bot className="h-3.5 w-3.5 text-[#3D3A36] group-hover:text-blue-400 flex-shrink-0 transition-colors" />
-            <span className="text-xs text-[#3D3A36] group-hover:text-[#1A1714] flex-1 transition-colors line-clamp-1">
+            <Bot className="h-3.5 w-3.5 text-[var(--text-muted)] group-hover:text-blue-400 flex-shrink-0 transition-colors" />
+            <span className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] flex-1 transition-colors line-clamp-1">
               {q}
             </span>
-            <ArrowRight className="h-3 w-3 text-[#6B6560] group-hover:text-blue-400 flex-shrink-0 transition-colors" />
+            <ArrowRight className="h-3 w-3 text-[var(--text-subtle)] group-hover:text-blue-400 flex-shrink-0 transition-colors" />
           </Link>
         ))}
       </div>

@@ -29,7 +29,7 @@ export function ProfileAirbnb({ property: p }: ProfileAirbnbProps) {
         <div className="flex items-start justify-between mb-6">
           <div>
             <ProfileBadge type="airbnb" />
-            <h2 className="font-display font-bold text-2xl text-[#0A0908] mt-2">{p.name}</h2>
+            <h2 className="font-display font-bold text-2xl text-[var(--text-primary)] mt-2">{p.name}</h2>
             <p className="text-slate-400 text-sm">{p.address}, {p.city}</p>
             <div className="mt-2"><NumeroFiscalBadge numero_fiscal={p.numero_fiscal ?? null} property_id={p.id} /></div>
           </div>
@@ -37,10 +37,10 @@ export function ProfileAirbnb({ property: p }: ProfileAirbnbProps) {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'RevPAR', value: formatCurrency(revPar), color: 'text-[#0A0908]' },
+            { label: 'RevPAR', value: formatCurrency(revPar), color: 'text-[var(--text-primary)]' },
             { label: "Taux d'occupation", value: formatPct(occupancyRate), color: 'text-amber-400' },
             { label: 'Recettes BIC', value: formatCurrency(totalRevenue), color: 'text-[var(--success)]' },
-            { label: 'Nuits réservées', value: `${totalNights}`, color: totalNights > 100 ? 'text-red-400' : 'text-[#0A0908]' },
+            { label: 'Nuits réservées', value: `${totalNights}`, color: totalNights > 100 ? 'text-red-400' : 'text-[var(--text-primary)]' },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-white/[0.03] rounded-xl p-3">
               <p className="text-xs text-slate-500 mb-1">{label}</p>
@@ -53,7 +53,7 @@ export function ProfileAirbnb({ property: p }: ProfileAirbnbProps) {
       {/* Compteur 120 nuits */}
       <GlassCard>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-display font-semibold text-[#0A0908]">Compteur annuel (loi ELAN)</h3>
+          <h3 className="font-display font-semibold text-[var(--text-primary)]">Compteur annuel (loi ELAN)</h3>
           {isNearLimit && (
             <span className="flex items-center gap-1.5 text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2.5 py-1 rounded-full">
               <AlertTriangle className="h-3 w-3" /> Attention
@@ -62,7 +62,7 @@ export function ProfileAirbnb({ property: p }: ProfileAirbnbProps) {
         </div>
         <div className="flex items-center justify-between mb-2 text-sm">
           <span className="text-slate-400">{totalNights} nuits utilisées</span>
-          <span className="font-semibold text-[#0A0908]">{nightsRemaining} restantes</span>
+          <span className="font-semibold text-[var(--text-primary)]">{nightsRemaining} restantes</span>
         </div>
         <div className="h-3 bg-white/[0.06] rounded-full overflow-hidden">
           <div
@@ -88,7 +88,7 @@ export function ProfileAirbnb({ property: p }: ProfileAirbnbProps) {
 
       {/* Calendrier réservations */}
       <GlassCard>
-        <h3 className="font-display font-semibold text-[#0A0908] mb-4">Réservations récentes</h3>
+        <h3 className="font-display font-semibold text-[var(--text-primary)] mb-4">Réservations récentes</h3>
         {bookings.length === 0 ? (
           <p className="text-sm text-slate-500">Aucune réservation enregistrée cette année</p>
         ) : (

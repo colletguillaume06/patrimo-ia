@@ -147,11 +147,11 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg bg-[#111E35] border border-white/[0.08] rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-lg bg-[var(--surface)] border border-white/[0.08] rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-[var(--success)]" />
-            <h2 className="font-display font-semibold text-[#0A0908]">Révision de loyer</h2>
+            <h2 className="font-display font-semibold text-[var(--text-primary)]">Révision de loyer</h2>
           </div>
           <button onClick={onClose} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10]">
             <X className="h-4 w-4 text-slate-400" />
@@ -161,7 +161,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
         {/* Infos bail */}
         <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] mb-5">
           <p className="text-xs text-slate-500">{lease.tenant_name} · {lease.property?.name}</p>
-          <p className="text-lg font-bold text-[#0A0908] mt-0.5">{formatCurrency(lease.monthly_rent)}/mois</p>
+          <p className="text-lg font-bold text-[var(--text-primary)] mt-0.5">{formatCurrency(lease.monthly_rent)}/mois</p>
           <p className="text-xs text-blue-400 mt-0.5">
             Indice : {indice.toUpperCase()} — Indice actuel {newQuarterLabel} : <span className="font-mono font-semibold">{nouvelIndice}</span>
           </p>
@@ -186,7 +186,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
                 value={ancienIndice}
                 onChange={e => setAncienIndice(e.target.value)}
                 required
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm font-mono focus:outline-none focus:border-blue-500/50"
+                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm font-mono focus:outline-none focus:border-blue-500/50"
               />
               {!hasRef && (
                 <p className="text-xs text-slate-600 mt-1">
@@ -205,15 +205,15 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-400">Indice référence {refLabel ? `(${refLabel})` : ''}</span>
-                    <span className="text-[#0A0908] font-mono">{ancienVal}</span>
+                    <span className="text-[var(--text-primary)] font-mono">{ancienVal}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-400">Indice actuel ({newQuarterLabel})</span>
-                    <span className="text-[#0A0908] font-mono">{nouvelIndice}</span>
+                    <span className="text-[var(--text-primary)] font-mono">{nouvelIndice}</span>
                   </div>
                   <div className="flex justify-between text-sm border-t border-white/[0.06] pt-1.5">
                     <span className="text-slate-400">Loyer actuel</span>
-                    <span className="text-[#0A0908]">{formatCurrency(lease.monthly_rent)}</span>
+                    <span className="text-[var(--text-primary)]">{formatCurrency(lease.monthly_rent)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-400">Nouveau loyer</span>
@@ -265,8 +265,8 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
           /* Lettre de révision */
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-[#0A0908]">Lettre de révision</p>
-              <button onClick={() => setShowLettre(false)} className="text-xs text-slate-400 hover:text-[#0A0908]">← Retour</button>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Lettre de révision</p>
+              <button onClick={() => setShowLettre(false)} className="text-xs text-slate-400 hover:text-[var(--text-primary)]">← Retour</button>
             </div>
             <div className="relative">
               <pre className="text-xs text-slate-300 font-mono leading-relaxed bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 overflow-x-auto whitespace-pre-wrap max-h-80 overflow-y-auto">

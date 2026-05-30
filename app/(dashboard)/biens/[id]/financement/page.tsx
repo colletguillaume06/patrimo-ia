@@ -91,16 +91,16 @@ export default function FinancementPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <Link href={`/biens/${id}`} className="text-slate-400 hover:text-[#0A0908] text-sm flex items-center gap-1">
+        <Link href={`/biens/${id}`} className="text-slate-400 hover:text-[var(--text-primary)] text-sm flex items-center gap-1">
           <ChevronLeft className="h-4 w-4" /> {property?.name}
         </Link>
         <span className="text-slate-600">/</span>
-        <h1 className="font-display font-bold text-xl text-[#0A0908]">Financement</h1>
+        <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Financement</h1>
       </div>
 
       {/* Formulaire prêt */}
       <GlassCard>
-        <h2 className="font-display font-semibold text-[#0A0908] mb-4">Paramètres du prêt</h2>
+        <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Paramètres du prêt</h2>
         <form onSubmit={handleSave} className="space-y-3">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {[
@@ -116,7 +116,7 @@ export default function FinancementPage() {
                 <label className="block text-xs text-slate-400 mb-1">{label}</label>
                 <input type={type} step={step} placeholder={placeholder} value={(form as any)[key]} required={required}
                   onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
               </div>
             ))}
           </div>
@@ -131,7 +131,7 @@ export default function FinancementPage() {
           {/* KPIs */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Mensualité totale', value: formatCurrency(kpis.mensualite_avec_assurance), sub: `dont ${formatCurrency(kpis.mensualite)} hors assurance`, color: 'text-[#0A0908]' },
+              { label: 'Mensualité totale', value: formatCurrency(kpis.mensualite_avec_assurance), sub: `dont ${formatCurrency(kpis.mensualite)} hors assurance`, color: 'text-[var(--text-primary)]' },
               { label: 'Capital restant dû', value: formatCurrency(kpis.capital_restant), sub: 'au jour d\'aujourd\'hui', color: 'text-amber-400' },
               { label: 'Intérêts ce mois', value: formatCurrency(kpis.part_interets_ce_mois), sub: `Capital : ${formatCurrency(kpis.part_capital_ce_mois)}`, color: 'text-red-400' },
               { label: `Intérêts déductibles ${new Date().getFullYear()}`, value: formatCurrency(interetsAnnee), sub: 'à reporter en charges', color: 'text-[var(--success)]' },
@@ -146,7 +146,7 @@ export default function FinancementPage() {
 
           {/* Graphique capital restant */}
           <GlassCard>
-            <h3 className="font-display font-semibold text-[#0A0908] mb-4">Évolution du capital restant dû</h3>
+            <h3 className="font-display font-semibold text-[var(--text-primary)] mb-4">Évolution du capital restant dû</h3>
             <ResponsiveContainer width="100%" height={160}>
               <AreaChart data={chartData}>
                 <defs>
@@ -166,7 +166,7 @@ export default function FinancementPage() {
           {/* Tableau d'amortissement */}
           <GlassCard>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-display font-semibold text-[#0A0908]">Tableau d'amortissement</h3>
+              <h3 className="font-display font-semibold text-[var(--text-primary)]">Tableau d'amortissement</h3>
               <div className="flex items-center gap-2 text-xs text-slate-400">
                 <button disabled={page === 0} onClick={() => setPage(p => p - 1)} className="h-7 w-7 rounded-lg bg-white/[0.06] flex items-center justify-center disabled:opacity-30 hover:bg-white/[0.10]"><ChevronLeft className="h-4 w-4" /></button>
                 <span>{page + 1} / {totalPages}</span>
@@ -189,7 +189,7 @@ export default function FinancementPage() {
                       <tr key={e.numero} className={`border-b border-white/[0.04] text-right ${isCurrentMonth ? 'bg-blue-500/10' : 'hover:bg-white/[0.02]'}`}>
                         <td className="py-2.5 px-3 text-left text-slate-500">{e.numero}</td>
                         <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{format(e.date, 'MM/yyyy')}</td>
-                        <td className="py-2.5 px-3 text-[#0A0908] font-medium">{formatCurrency(e.mensualite)}</td>
+                        <td className="py-2.5 px-3 text-[var(--text-primary)] font-medium">{formatCurrency(e.mensualite)}</td>
                         <td className="py-2.5 px-3 text-red-400">{formatCurrency(e.interets)}</td>
                         <td className="py-2.5 px-3 text-[var(--success)]">{formatCurrency(e.capital_amorti)}</td>
                         <td className="py-2.5 px-3 text-slate-500">{formatCurrency(e.assurance)}</td>

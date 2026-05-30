@@ -95,7 +95,7 @@ export default function OnboardingPage() {
   const progress = ((step - 1) / (STEPS.length - 1)) * 100
 
   return (
-    <div className="min-h-screen bg-[#0B1628] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center p-4">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full bg-blue-500/6 blur-3xl" />
       </div>
@@ -105,9 +105,9 @@ export default function OnboardingPage() {
         {/* Logo */}
         <div className="flex items-center justify-center gap-2.5 mb-8">
           <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-[#0A0908]" />
+            <Sparkles className="h-4 w-4 text-[var(--text-primary)]" />
           </div>
-          <span className="font-display font-bold text-xl text-[#0A0908]">Propilot <span className="text-blue-400">AI</span></span>
+          <span className="font-display font-bold text-xl text-[var(--text-primary)]">Propilot <span className="text-blue-400">AI</span></span>
         </div>
 
         {/* Stepper + barre de progression */}
@@ -148,7 +148,7 @@ export default function OnboardingPage() {
           {step === 1 && (
             <div className="space-y-6">
               <div>
-                <h1 className="font-display font-bold text-2xl text-[#0A0908] mb-1">Bienvenue 👋</h1>
+                <h1 className="font-display font-bold text-2xl text-[var(--text-primary)] mb-1">Bienvenue 👋</h1>
                 <p className="text-slate-400 text-sm">Quelques questions pour personnaliser votre expérience.</p>
               </div>
 
@@ -160,7 +160,7 @@ export default function OnboardingPage() {
                   value={prenom}
                   onChange={e => setPrenom(e.target.value)}
                   autoFocus
-                  className="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 transition-all"
+                  className="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 transition-all"
                 />
               </div>
 
@@ -179,7 +179,7 @@ export default function OnboardingPage() {
                     >
                       <span className="text-2xl">{o.emoji}</span>
                       <div>
-                        <p className="text-sm font-medium text-[#0A0908]">{o.label}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)]">{o.label}</p>
                         <p className="text-xs text-slate-500 mt-0.5">{o.desc}</p>
                       </div>
                       {objectif === o.value && <CheckCircle2 className="h-4 w-4 text-blue-400 ml-auto flex-shrink-0" />}
@@ -194,7 +194,7 @@ export default function OnboardingPage() {
           {step === 2 && (
             <div className="space-y-6">
               <div>
-                <h1 className="font-display font-bold text-2xl text-[#0A0908] mb-1">Votre portefeuille</h1>
+                <h1 className="font-display font-bold text-2xl text-[var(--text-primary)] mb-1">Votre portefeuille</h1>
                 <p className="text-slate-400 text-sm">Dites-nous en plus sur vos biens.</p>
               </div>
 
@@ -237,7 +237,7 @@ export default function OnboardingPage() {
                       >
                         <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: t.color }} />
                         <div className="flex-1">
-                          <span className="text-sm font-medium text-[#0A0908]">{t.label}</span>
+                          <span className="text-sm font-medium text-[var(--text-primary)]">{t.label}</span>
                           <span className="text-xs text-slate-500 ml-2">{t.desc}</span>
                         </div>
                         {selected && <CheckCircle2 className="h-4 w-4 flex-shrink-0" style={{ color: t.color }} />}
@@ -253,7 +253,7 @@ export default function OnboardingPage() {
           {step === 3 && (
             <div className="space-y-6">
               <div>
-                <h1 className="font-display font-bold text-2xl text-[#0A0908] mb-1">Votre situation fiscale</h1>
+                <h1 className="font-display font-bold text-2xl text-[var(--text-primary)] mb-1">Votre situation fiscale</h1>
                 <p className="text-slate-400 text-sm">Pour des simulations précises dès le départ.</p>
               </div>
 
@@ -271,7 +271,7 @@ export default function OnboardingPage() {
                       }`}
                     >
                       <div>
-                        <p className="text-sm font-medium text-[#0A0908]">{r.label}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)]">{r.label}</p>
                         <p className="text-xs text-slate-500 mt-0.5">{r.desc}</p>
                       </div>
                       {regime === r.value && <CheckCircle2 className="h-4 w-4 text-blue-400 flex-shrink-0" />}
@@ -293,7 +293,7 @@ export default function OnboardingPage() {
                           : 'border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.05]'
                       }`}
                     >
-                      <p className="text-base font-bold text-[#0A0908]">{t.label}</p>
+                      <p className="text-base font-bold text-[var(--text-primary)]">{t.label}</p>
                       <p className="text-xs text-slate-500 mt-0.5 leading-tight">{t.sub}</p>
                     </button>
                   ))}
@@ -310,7 +310,7 @@ export default function OnboardingPage() {
               </div>
 
               <div>
-                <h1 className="font-display font-bold text-2xl text-[#0A0908] mb-2">
+                <h1 className="font-display font-bold text-2xl text-[var(--text-primary)] mb-2">
                   Tout est prêt, {prenom} ! 🎉
                 </h1>
                 <p className="text-slate-400 text-sm leading-relaxed">
@@ -326,7 +326,7 @@ export default function OnboardingPage() {
                   { label: 'TMI', value: tmi ? `${tmi}%` : '—' },
                 ].map(({ label, value }) => (
                   <div key={label} className="bg-white/[0.03] rounded-xl p-3 border border-white/[0.06]">
-                    <p className="text-lg font-bold text-[#0A0908]">{value}</p>
+                    <p className="text-lg font-bold text-[var(--text-primary)]">{value}</p>
                     <p className="text-xs text-slate-500 mt-0.5">{label}</p>
                   </div>
                 ))}
@@ -335,7 +335,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleFinish}
                 disabled={saving}
-                className="w-full flex items-center justify-center gap-2 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-[#0A0908] text-sm font-semibold transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20"
+                className="w-full flex items-center justify-center gap-2 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-[var(--text-primary)] text-sm font-semibold transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20"
               >
                 {saving ? 'Enregistrement...' : 'Accéder à mon dashboard'}
                 {!saving && <ArrowRight className="h-4 w-4" />}
@@ -349,7 +349,7 @@ export default function OnboardingPage() {
               {step > 1 && (
                 <button
                   onClick={() => setStep(s => s - 1)}
-                  className="flex items-center gap-1.5 h-11 px-4 rounded-xl border border-white/[0.10] text-slate-400 hover:text-[#0A0908] text-sm font-medium transition-all"
+                  className="flex items-center gap-1.5 h-11 px-4 rounded-xl border border-white/[0.10] text-slate-400 hover:text-[var(--text-primary)] text-sm font-medium transition-all"
                 >
                   <ArrowLeft className="h-4 w-4" /> Retour
                 </button>
@@ -357,7 +357,7 @@ export default function OnboardingPage() {
               <button
                 onClick={() => setStep(s => s + 1)}
                 disabled={!canNext()}
-                className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl bg-blue-500 hover:bg-blue-400 disabled:opacity-40 disabled:cursor-not-allowed text-[#0A0908] text-sm font-semibold transition-all"
+                className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl bg-blue-500 hover:bg-blue-400 disabled:opacity-40 disabled:cursor-not-allowed text-[var(--text-primary)] text-sm font-semibold transition-all"
               >
                 {step === 3 ? 'Voir le récap' : 'Continuer'} <ArrowRight className="h-4 w-4" />
               </button>

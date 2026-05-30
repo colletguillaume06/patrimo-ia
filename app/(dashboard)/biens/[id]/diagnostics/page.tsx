@@ -73,11 +73,11 @@ export default function DiagnosticsPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href={`/biens/${id}`} className="text-slate-400 hover:text-[#0A0908] text-sm flex items-center gap-1">
+          <Link href={`/biens/${id}`} className="text-slate-400 hover:text-[var(--text-primary)] text-sm flex items-center gap-1">
             <ChevronLeft className="h-4 w-4" /> {property?.name}
           </Link>
           <span className="text-slate-600">/</span>
-          <h1 className="font-display font-bold text-xl text-[#0A0908]">Diagnostics obligatoires</h1>
+          <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Diagnostics obligatoires</h1>
         </div>
         <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all">
           <Plus className="h-4 w-4" /> Ajouter
@@ -124,7 +124,7 @@ export default function DiagnosticsPage() {
                   return (
                     <tr key={type} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
                       <td className="py-3 px-3">
-                        <p className="text-[#0A0908] font-medium">{DIAG_LABELS[type]}</p>
+                        <p className="text-[var(--text-primary)] font-medium">{DIAG_LABELS[type]}</p>
                         {diag.type === 'dpe' && diag.valeur_dpe && (
                           <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${DPE_COLORS[diag.valeur_dpe as DPELettre]?.bg} ${DPE_COLORS[diag.valeur_dpe as DPELettre]?.text}`}>
                             {diag.valeur_dpe}
@@ -154,40 +154,40 @@ export default function DiagnosticsPage() {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAdd(false)} />
-          <div className="relative w-full max-w-md bg-[#111E35] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+          <div className="relative w-full max-w-md bg-[var(--surface)] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-display font-semibold text-[#0A0908]">Nouveau diagnostic</h2>
+              <h2 className="font-display font-semibold text-[var(--text-primary)]">Nouveau diagnostic</h2>
               <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center"><X className="h-4 w-4 text-slate-400" /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Type *</label>
-                <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value as DiagType }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
-                  {TYPES.map(t => <option key={t} value={t} className="bg-[#111E35]">{DIAG_LABELS[t]}</option>)}
+                <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value as DiagType }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                  {TYPES.map(t => <option key={t} value={t} className="bg-[var(--surface)]">{DIAG_LABELS[t]}</option>)}
                 </select>
               </div>
               {form.type === 'dpe' && (
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Classe énergétique</label>
-                  <select value={form.valeur_dpe} onChange={e => setForm(f => ({ ...f, valeur_dpe: e.target.value as DPELettre }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
-                    <option value="" className="bg-[#111E35]">—</option>
-                    {(['A','B','C','D','E','F','G'] as DPELettre[]).map(l => <option key={l} value={l} className="bg-[#111E35]">{l}</option>)}
+                  <select value={form.valeur_dpe} onChange={e => setForm(f => ({ ...f, valeur_dpe: e.target.value as DPELettre }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                    <option value="" className="bg-[var(--surface)]">—</option>
+                    {(['A','B','C','D','E','F','G'] as DPELettre[]).map(l => <option key={l} value={l} className="bg-[var(--surface)]">{l}</option>)}
                   </select>
                 </div>
               )}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Date réalisation *</label>
-                  <input type="date" value={form.date_realisation} onChange={e => setForm(f => ({ ...f, date_realisation: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
+                  <input type="date" value={form.date_realisation} onChange={e => setForm(f => ({ ...f, date_realisation: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Cabinet</label>
-                  <input type="text" placeholder="Nom du cabinet" value={form.cabinet} onChange={e => setForm(f => ({ ...f, cabinet: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none" />
+                  <input type="text" placeholder="Nom du cabinet" value={form.cabinet} onChange={e => setForm(f => ({ ...f, cabinet: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
                 </div>
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Résultat</label>
-                <input type="text" placeholder="Ex: négatif, classe C, 45 kWh/m²..." value={form.resultat} onChange={e => setForm(f => ({ ...f, resultat: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none" />
+                <input type="text" placeholder="Ex: négatif, classe C, 45 kWh/m²..." value={form.resultat} onChange={e => setForm(f => ({ ...f, resultat: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
                 {form.date_realisation && (
                   <p className="text-xs text-blue-400 mt-1">
                     Expiration calculée : {(() => { const d = calculerExpiration(form.type, new Date(form.date_realisation), form.resultat || undefined); return d ? format(d, 'dd/MM/yyyy') : 'Illimitée' })()}

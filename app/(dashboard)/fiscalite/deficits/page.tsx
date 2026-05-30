@@ -68,11 +68,11 @@ export default function DeficitsPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/fiscalite" className="text-slate-400 hover:text-[#0A0908] text-sm flex items-center gap-1">
+          <Link href="/fiscalite" className="text-slate-400 hover:text-[var(--text-primary)] text-sm flex items-center gap-1">
             <ChevronLeft className="h-4 w-4" /> Fiscalité
           </Link>
           <span className="text-slate-600">/</span>
-          <h1 className="font-display font-bold text-xl text-[#0A0908]">Déficits fonciers reportables</h1>
+          <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Déficits fonciers reportables</h1>
         </div>
         <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all">
           <Plus className="h-4 w-4" /> Ajouter
@@ -116,7 +116,7 @@ export default function DeficitsPage() {
 
       {/* Tableau */}
       <GlassCard>
-        <h2 className="font-display font-semibold text-[#0A0908] mb-4">Suivi des déficits</h2>
+        <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Suivi des déficits</h2>
         {loading ? (
           <div className="space-y-2">{[1,2,3].map(i => <div key={i} className="h-12 rounded-lg bg-white/[0.03] animate-pulse" />)}</div>
         ) : deficits.length === 0 ? (
@@ -142,9 +142,9 @@ export default function DeficitsPage() {
                   const isUsed = d.montant_restant <= 0
                   return (
                     <tr key={d.id} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
-                      <td className="py-3 px-3 text-[#0A0908] font-semibold">{d.annee}</td>
+                      <td className="py-3 px-3 text-[var(--text-primary)] font-semibold">{d.annee}</td>
                       <td className="py-3 px-3 text-slate-300">{d.property?.name ?? 'Global'}</td>
-                      <td className="py-3 px-3 text-[#0A0908]">{formatCurrency(d.montant_initial)}</td>
+                      <td className="py-3 px-3 text-[var(--text-primary)]">{formatCurrency(d.montant_initial)}</td>
                       <td className="py-3 px-3 text-slate-400">{formatCurrency(d.montant_impute ?? 0)}</td>
                       <td className="py-3 px-3">
                         <span className={`font-semibold ${isUsed ? 'text-slate-600' : isExpired ? 'text-red-400' : 'text-blue-400'}`}>
@@ -183,32 +183,32 @@ export default function DeficitsPage() {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAdd(false)} />
-          <div className="relative w-full max-w-md bg-[#111E35] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+          <div className="relative w-full max-w-md bg-[var(--surface)] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-display font-semibold text-[#0A0908]">Ajouter un déficit foncier</h2>
+              <h2 className="font-display font-semibold text-[var(--text-primary)]">Ajouter un déficit foncier</h2>
               <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center"><X className="h-4 w-4 text-slate-400" /></button>
             </div>
             <form onSubmit={handleAdd} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Année *</label>
-                  <input type="number" value={form.annee} onChange={e => setForm(f => ({ ...f, annee: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
+                  <input type="number" value={form.annee} onChange={e => setForm(f => ({ ...f, annee: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Montant (€) *</label>
-                  <input type="number" value={form.montant_initial} onChange={e => setForm(f => ({ ...f, montant_initial: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
+                  <input type="number" value={form.montant_initial} onChange={e => setForm(f => ({ ...f, montant_initial: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Bien (optionnel)</label>
-                <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
-                  <option value="" className="bg-[#111E35]">Tous biens (global)</option>
-                  {properties.map(p => <option key={p.id} value={p.id} className="bg-[#111E35]">{p.name}</option>)}
+                <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                  <option value="" className="bg-[var(--surface)]">Tous biens (global)</option>
+                  {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Notes</label>
-                <input type="text" placeholder="Ex: Déficit 2044 ligne 420" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none" />
+                <input type="text" placeholder="Ex: Déficit 2044 ligne 420" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
               </div>
               <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50">Ajouter</button>
             </form>

@@ -3,9 +3,9 @@ import { ArrowRight, Building2, Bot, Calculator, FileText, Shield, Zap, CheckCir
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0B1628] text-white overflow-hidden">
+    <div className="min-h-screen bg-[var(--bg)] text-white overflow-hidden">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-6 lg:px-10 bg-[#0B1628]/80 backdrop-blur-md border-b border-white/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-6 lg:px-10 bg-[var(--bg)]/80 backdrop-blur-md border-b border-white/[0.06]">
         <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
             <Sparkles className="h-4 w-4 text-white" />

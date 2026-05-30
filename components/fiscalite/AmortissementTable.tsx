@@ -12,7 +12,7 @@ export function AmortissementTable({ plans }: AmortissementTableProps) {
 
   return (
     <GlassCard>
-      <h3 className="font-display font-semibold text-[#0A0908] mb-4">Plan d'amortissement</h3>
+      <h3 className="font-display font-semibold text-[var(--text-primary)] mb-4">Plan d'amortissement</h3>
       <div className="space-y-3">
         {plans.map(plan => {
           const startYear = new Date(plan.start_date).getFullYear()
@@ -33,7 +33,7 @@ export function AmortissementTable({ plans }: AmortissementTableProps) {
                   )}
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-semibold text-[#0A0908]">{formatCurrency(plan.annual_amount)}/an</span>
+                  <span className="text-sm font-semibold text-[var(--text-primary)]">{formatCurrency(plan.annual_amount)}/an</span>
                   <span className="text-xs text-slate-500 ml-2">{plan.duration_years} ans</span>
                 </div>
               </div>

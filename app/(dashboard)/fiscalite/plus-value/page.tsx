@@ -69,21 +69,21 @@ export default function PlusValuePage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <Link href="/fiscalite" className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-[#0A0908]">
+        <Link href="/fiscalite" className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-[var(--text-primary)]">
           <ChevronLeft className="h-4 w-4" /> Fiscalité
         </Link>
-        <h1 className="font-display font-bold text-2xl text-[#0A0908]">Simulateur plus-value</h1>
+        <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Simulateur plus-value</h1>
       </div>
 
       <GlassCard>
-        <h2 className="font-display font-semibold text-[#0A0908] mb-4">Données du bien</h2>
+        <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Données du bien</h2>
         <div className="space-y-3">
           <div>
             <label className="block text-xs text-slate-400 mb-1">Bien (optionnel — pré-remplit les champs)</label>
             <select value={selectedId} onChange={e => setSelectedId(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
-              <option value="" className="bg-[#111E35]">Saisie manuelle</option>
-              {properties.map(p => <option key={p.id} value={p.id} className="bg-[#111E35]">{p.name}</option>)}
+              className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+              <option value="" className="bg-[var(--surface)]">Saisie manuelle</option>
+              {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
             </select>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -97,7 +97,7 @@ export default function PlusValuePage() {
                 <label className="block text-xs text-slate-400 mb-1">{label}</label>
                 <input type={type} placeholder={placeholder} value={(form as any)[key]}
                   onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
               </div>
             ))}
           </div>
@@ -119,7 +119,7 @@ export default function PlusValuePage() {
             ) : (
               <input type="number" placeholder="Frais réels en €" value={form.frais_acquisition_montant}
                 onChange={e => setForm(f => ({ ...f, frais_acquisition_montant: e.target.value }))}
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
+                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
             )}
           </div>
 
@@ -128,7 +128,7 @@ export default function PlusValuePage() {
               <label className="block text-xs text-slate-400 mb-1">Travaux non déductibles (€) — saisis manuellement</label>
               <input type="number" placeholder="0" value={form.travaux_non_deductibles}
                 onChange={e => setForm(f => ({ ...f, travaux_non_deductibles: e.target.value }))}
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
+                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
               {travaux_nd > 0 && <p className="text-xs text-blue-400 mt-0.5">+ {formatCurrency(travaux_nd)} détectés automatiquement (construction)</p>}
             </div>
             {prop?.type === 'lmnp' && (
@@ -136,7 +136,7 @@ export default function PlusValuePage() {
                 <label className="block text-xs text-slate-400 mb-1">Amortissements cumulés pris (€)</label>
                 <input type="number" placeholder="0" value={form.amortissements_pris}
                   onChange={e => setForm(f => ({ ...f, amortissements_pris: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
               </div>
             )}
           </div>
@@ -146,10 +146,10 @@ export default function PlusValuePage() {
       {result && (
         <>
           <GlassCard glow={result.exonere_ir && result.exonere_ps ? 'green' : 'amber'}>
-            <h2 className="font-display font-semibold text-[#0A0908] mb-4">Résultat de la simulation</h2>
+            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Résultat de la simulation</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
               {[
-                { label: 'Prix de revient', value: formatCurrency(result.prix_revient), color: 'text-[#0A0908]' },
+                { label: 'Prix de revient', value: formatCurrency(result.prix_revient), color: 'text-[var(--text-primary)]' },
                 { label: 'Plus-value brute', value: formatCurrency(result.pv_brute), color: result.pv_brute > 0 ? 'text-amber-400' : 'text-blue-400' },
                 { label: 'Impôt total', value: formatCurrency(result.impot_total), color: 'text-red-400' },
                 { label: 'Net vendeur', value: formatCurrency(result.net_vendeur), color: 'text-[var(--success)]' },
@@ -193,7 +193,7 @@ export default function PlusValuePage() {
           </GlassCard>
 
           <GlassCard>
-            <h2 className="font-display font-semibold text-[#0A0908] mb-4">Paliers d'abattement</h2>
+            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Paliers d'abattement</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>

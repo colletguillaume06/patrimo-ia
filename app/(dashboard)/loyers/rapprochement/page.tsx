@@ -58,22 +58,22 @@ export default function RapprochementPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <Link href="/loyers" className="text-slate-400 hover:text-[#0A0908] text-sm flex items-center gap-1"><ChevronLeft className="h-4 w-4" /> Loyers</Link>
+        <Link href="/loyers" className="text-slate-400 hover:text-[var(--text-primary)] text-sm flex items-center gap-1"><ChevronLeft className="h-4 w-4" /> Loyers</Link>
         <span className="text-slate-600">/</span>
-        <h1 className="font-display font-bold text-xl text-[#0A0908]">Rapprochement bancaire</h1>
+        <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Rapprochement bancaire</h1>
       </div>
 
       {/* Sélecteur mois */}
       <div className="flex items-center gap-3">
         <button onClick={() => setSelectedMonth(m => subMonths(m, 1))} className="h-9 w-9 rounded-lg bg-white/[0.06] border border-white/[0.08] flex items-center justify-center hover:bg-white/[0.10]"><ChevronLeft className="h-4 w-4 text-slate-400" /></button>
-        <span className="font-display font-semibold text-[#0A0908] capitalize min-w-36 text-center">{moisLabel}</span>
+        <span className="font-display font-semibold text-[var(--text-primary)] capitalize min-w-36 text-center">{moisLabel}</span>
         <button onClick={() => setSelectedMonth(m => subMonths(m, -1))} className="h-9 w-9 rounded-lg bg-white/[0.06] border border-white/[0.08] flex items-center justify-center hover:bg-white/[0.10]"><ChevronRight className="h-4 w-4 text-slate-400" /></button>
       </div>
 
       {/* Résumé */}
       <div className="grid grid-cols-4 gap-4">
         {[
-          { label: 'Attendu', value: formatCurrency(total_attendu), color: 'text-[#0A0908]' },
+          { label: 'Attendu', value: formatCurrency(total_attendu), color: 'text-[var(--text-primary)]' },
           { label: 'Reçu', value: formatCurrency(total_recu), color: 'text-[var(--success)]' },
           { label: 'Écart', value: formatCurrency(total_attendu - total_recu), color: total_attendu - total_recu === 0 ? 'text-[var(--success)]' : 'text-red-400' },
           { label: 'En attente', value: `${en_attente} loyer${en_attente > 1 ? 's' : ''}`, color: en_attente === 0 ? 'text-[var(--success)]' : 'text-amber-400' },
@@ -87,7 +87,7 @@ export default function RapprochementPage() {
 
       {/* Tableau de rapprochement */}
       <GlassCard>
-        <h2 className="font-display font-semibold text-[#0A0908] mb-4">Rapprochement — {moisLabel}</h2>
+        <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Rapprochement — {moisLabel}</h2>
         {loading ? (
           <div className="space-y-2">{[1,2,3].map(i => <div key={i} className="h-14 rounded-lg bg-white/[0.03] animate-pulse" />)}</div>
         ) : payments.length === 0 ? (
@@ -110,8 +110,8 @@ export default function RapprochementPage() {
                   return (
                     <tr key={p.id} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
                       <td className="py-3 px-3 text-slate-300">{p.lease?.property?.name ?? '—'}</td>
-                      <td className="py-3 px-3 text-[#0A0908] font-medium">{p.lease?.tenant_name ?? '—'}</td>
-                      <td className="py-3 px-3 text-[#0A0908]">{formatCurrency(attendu)}</td>
+                      <td className="py-3 px-3 text-[var(--text-primary)] font-medium">{p.lease?.tenant_name ?? '—'}</td>
+                      <td className="py-3 px-3 text-[var(--text-primary)]">{formatCurrency(attendu)}</td>
                       <td className="py-3 px-3">
                         {p.status === 'paid' ? <span className="text-[var(--success)] font-semibold">{formatCurrency(recu)}</span> :
                          p.status === 'partial' ? <span className="text-amber-400">{formatCurrency(recu)}</span> :
@@ -139,8 +139,8 @@ export default function RapprochementPage() {
               </tbody>
               <tfoot>
                 <tr className="border-t border-white/[0.10]">
-                  <td colSpan={2} className="py-2.5 px-3 text-xs font-semibold text-[#0A0908]">TOTAL</td>
-                  <td className="py-2.5 px-3 text-[#0A0908] font-bold">{formatCurrency(total_attendu)}</td>
+                  <td colSpan={2} className="py-2.5 px-3 text-xs font-semibold text-[var(--text-primary)]">TOTAL</td>
+                  <td className="py-2.5 px-3 text-[var(--text-primary)] font-bold">{formatCurrency(total_attendu)}</td>
                   <td className="py-2.5 px-3 text-[var(--success)] font-bold">{formatCurrency(total_recu)}</td>
                   <td className="py-2.5 px-3 font-bold" style={{ color: total_attendu - total_recu === 0 ? '#10B981' : '#EF4444' }}>{formatCurrency(total_attendu - total_recu)}</td>
                   <td colSpan={2} />

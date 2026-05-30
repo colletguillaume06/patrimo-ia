@@ -35,7 +35,7 @@ export function ProfileSCI({ property: p }: ProfileSCIProps) {
         <div className="flex items-start justify-between mb-6">
           <div>
             <ProfileBadge type="sci" />
-            <h2 className="font-display font-bold text-2xl text-[#0A0908] mt-2">{p.name}</h2>
+            <h2 className="font-display font-bold text-2xl text-[var(--text-primary)] mt-2">{p.name}</h2>
             {p.sci_name && <p className="text-cyan-400 text-sm font-medium">{p.sci_name}</p>}
             {p.sci_siren && <p className="text-slate-500 text-xs">SIREN : {p.sci_siren}</p>}
             <div className="mt-2"><NumeroFiscalBadge numero_fiscal={p.numero_fiscal ?? null} property_id={p.id} /></div>
@@ -48,7 +48,7 @@ export function ProfileSCI({ property: p }: ProfileSCIProps) {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'Résultat comptable', value: formatCurrency(resultat), color: resultat >= 0 ? 'text-[#0A0908]' : 'text-red-400' },
+            { label: 'Résultat comptable', value: formatCurrency(resultat), color: resultat >= 0 ? 'text-[var(--text-primary)]' : 'text-red-400' },
             { label: p.sci_regime === 'is' ? 'IS dû' : 'Impôt estimé', value: formatCurrency(simulation.is_du), color: 'text-amber-400' },
             { label: 'Dividendes disponibles', value: formatCurrency(simulation.dividendes_disponibles), color: 'text-[var(--success)]' },
             { label: 'Nb associés', value: `${p.associates.length}`, color: 'text-cyan-400' },
@@ -65,7 +65,7 @@ export function ProfileSCI({ property: p }: ProfileSCIProps) {
       <GlassCard>
         <div className="flex items-center gap-2 mb-4">
           <Users className="h-4 w-4 text-slate-400" />
-          <h3 className="font-display font-semibold text-[#0A0908]">Répartition des parts</h3>
+          <h3 className="font-display font-semibold text-[var(--text-primary)]">Répartition des parts</h3>
         </div>
 
         {p.associates.length === 0 ? (
@@ -79,7 +79,7 @@ export function ProfileSCI({ property: p }: ProfileSCIProps) {
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm text-slate-300">{assoc.name}</span>
                     <div className="flex items-center gap-3">
-                      <span className="text-sm font-semibold text-[#0A0908]">{formatCurrency(montant)}</span>
+                      <span className="text-sm font-semibold text-[var(--text-primary)]">{formatCurrency(montant)}</span>
                       <span className="text-xs text-cyan-400 font-medium w-12 text-right">{assoc.share_pct}%</span>
                     </div>
                   </div>
@@ -98,7 +98,7 @@ export function ProfileSCI({ property: p }: ProfileSCIProps) {
 
       {/* Alertes SCI */}
       <GlassCard>
-        <h3 className="font-display font-semibold text-[#0A0908] mb-4">Obligations SCI</h3>
+        <h3 className="font-display font-semibold text-[var(--text-primary)] mb-4">Obligations SCI</h3>
         <div className="space-y-2">
           {[
             { label: 'Déclaration 2072 (avant 2ème jour ouvré de mai)', urgent: new Date().getMonth() === 3 },

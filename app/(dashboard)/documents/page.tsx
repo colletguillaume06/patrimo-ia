@@ -97,7 +97,7 @@ export default function DocumentsPage() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-[#0A0908]">GED — Gestion documentaire</h1>
+          <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">GED — Gestion documentaire</h1>
           <p className="text-slate-400 text-sm mt-1">{documents.length} document{documents.length > 1 ? 's' : ''}</p>
         </div>
         <button onClick={() => setShowUpload(true)} className="flex items-center gap-2 h-10 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold transition-all">
@@ -110,15 +110,15 @@ export default function DocumentsPage() {
         <div className="relative flex-1 min-w-40">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
           <input type="text" placeholder="Rechercher..." value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full h-10 pl-9 pr-4 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none" />
+            className="w-full h-10 pl-9 pr-4 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
         </div>
-        <select value={propFilter} onChange={e => setPropFilter(e.target.value)} className="h-10 px-3 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
-          <option value="all" className="bg-[#111E35]">Tous les biens</option>
-          {properties.map(p => <option key={p.id} value={p.id} className="bg-[#111E35]">{p.name}</option>)}
+        <select value={propFilter} onChange={e => setPropFilter(e.target.value)} className="h-10 px-3 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+          <option value="all" className="bg-[var(--surface)]">Tous les biens</option>
+          {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
         </select>
-        <select value={catFilter} onChange={e => setCatFilter(e.target.value)} className="h-10 px-3 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
-          <option value="all" className="bg-[#111E35]">Toutes catégories</option>
-          {Object.entries(CATEGORIES).map(([k, v]) => <option key={k} value={k} className="bg-[#111E35]">{v.icon} {v.label}</option>)}
+        <select value={catFilter} onChange={e => setCatFilter(e.target.value)} className="h-10 px-3 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+          <option value="all" className="bg-[var(--surface)]">Toutes catégories</option>
+          {Object.entries(CATEGORIES).map(([k, v]) => <option key={k} value={k} className="bg-[var(--surface)]">{v.icon} {v.label}</option>)}
         </select>
       </div>
 
@@ -134,7 +134,7 @@ export default function DocumentsPage() {
         const catInfo = CATEGORIES[cat]
         return (
           <GlassCard key={cat}>
-            <h2 className="font-display font-semibold text-[#0A0908] mb-4 flex items-center gap-2">
+            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
               <span>{catInfo.icon}</span> {catInfo.label}
               <span className="text-xs text-slate-500 font-normal">({docs.length})</span>
             </h2>
@@ -143,7 +143,7 @@ export default function DocumentsPage() {
                 <div key={doc.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.03] transition-colors">
                   <FileText className="h-5 w-5 text-slate-500 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#0A0908] truncate">{doc.nom}</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">{doc.nom}</p>
                     <p className="text-xs text-slate-500">
                       {doc.property?.name && <span>{doc.property.name} · </span>}
                       {doc.annee_fiscale && <span>{doc.annee_fiscale} · </span>}
@@ -167,9 +167,9 @@ export default function DocumentsPage() {
       {showUpload && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowUpload(false)} />
-          <div className="relative w-full max-w-md bg-[#111E35] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
+          <div className="relative w-full max-w-md bg-[var(--surface)] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-display font-semibold text-[#0A0908]">Ajouter un document</h2>
+              <h2 className="font-display font-semibold text-[var(--text-primary)]">Ajouter un document</h2>
               <button onClick={() => setShowUpload(false)} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center">
                 <X className="h-4 w-4 text-slate-400" />
               </button>
@@ -186,21 +186,21 @@ export default function DocumentsPage() {
                   <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.csv" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) setFile(f) }} />
                 </div>
               </div>
-              <div><label className="block text-xs text-slate-400 mb-1">Nom du document</label><input type="text" placeholder={file?.name ?? 'Titre du document'} value={form.nom} onChange={e => setForm(f => ({ ...f, nom: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" /></div>
+              <div><label className="block text-xs text-slate-400 mb-1">Nom du document</label><input type="text" placeholder={file?.name ?? 'Titre du document'} value={form.nom} onChange={e => setForm(f => ({ ...f, nom: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" /></div>
               <div><label className="block text-xs text-slate-400 mb-1">Catégorie *</label>
-                <select value={form.categorie} onChange={e => setForm(f => ({ ...f, categorie: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
-                  {Object.entries(CATEGORIES).map(([k, v]) => <option key={k} value={k} className="bg-[#111E35]">{v.icon} {v.label}</option>)}
+                <select value={form.categorie} onChange={e => setForm(f => ({ ...f, categorie: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                  {Object.entries(CATEGORIES).map(([k, v]) => <option key={k} value={k} className="bg-[var(--surface)]">{v.icon} {v.label}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div><label className="block text-xs text-slate-400 mb-1">Bien</label>
-                  <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
-                    <option value="" className="bg-[#111E35]">Global</option>
-                    {properties.map(p => <option key={p.id} value={p.id} className="bg-[#111E35]">{p.name}</option>)}
+                  <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                    <option value="" className="bg-[var(--surface)]">Global</option>
+                    {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
                   </select>
                 </div>
                 <div><label className="block text-xs text-slate-400 mb-1">Année fiscale</label>
-                  <input type="number" placeholder="2026" value={form.annee_fiscale} onChange={e => setForm(f => ({ ...f, annee_fiscale: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none" />
+                  <input type="number" placeholder="2026" value={form.annee_fiscale} onChange={e => setForm(f => ({ ...f, annee_fiscale: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
               </div>
               <button type="submit" disabled={uploading || !file} className="w-full flex items-center justify-center gap-2 h-10 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-semibold disabled:opacity-50 transition-all">

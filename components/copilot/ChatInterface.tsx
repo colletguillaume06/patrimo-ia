@@ -47,14 +47,14 @@ export function ChatInterface({ initialMessages = [], propertyId, initialQuestio
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#0D1B2E] rounded-2xl border border-white/[0.06] overflow-hidden">
+    <div className="flex flex-col h-full bg-[var(--bg)] rounded-2xl border border-white/[0.06] overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-3 px-5 py-4 border-b border-white/[0.06]">
         <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500/30 to-cyan-400/20 border border-blue-500/30 flex items-center justify-center">
           <Sparkles className="h-4.5 w-4.5 text-blue-400" />
         </div>
         <div>
-          <p className="font-display font-semibold text-[#0A0908]">Propilot Copilot</p>
+          <p className="font-display font-semibold text-[var(--text-primary)]">Propilot Copilot</p>
           <p className="text-xs text-slate-500">Expert en immobilier et fiscalité française</p>
         </div>
         <div className="ml-auto flex items-center gap-1.5">
@@ -88,7 +88,7 @@ export function ChatInterface({ initialMessages = [], propertyId, initialQuestio
             <div className="h-16 w-16 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-4">
               <Sparkles className="h-8 w-8 text-blue-400" />
             </div>
-            <h3 className="font-display font-semibold text-[#0A0908] text-lg mb-2">Votre copilote immobilier</h3>
+            <h3 className="font-display font-semibold text-[var(--text-primary)] text-lg mb-2">Votre copilote immobilier</h3>
             <p className="text-slate-400 text-sm max-w-sm">
               Posez vos questions sur votre patrimoine, la fiscalité, vos loyers, ou demandez des analyses personnalisées.
             </p>
@@ -108,7 +108,7 @@ export function ChatInterface({ initialMessages = [], propertyId, initialQuestio
             onKeyDown={handleKey}
             placeholder="Posez une question sur votre patrimoine..."
             rows={1}
-            className="flex-1 bg-transparent text-sm text-[#0A0908] placeholder-slate-600 focus:outline-none resize-none max-h-32"
+            className="flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder-slate-600 focus:outline-none resize-none max-h-32"
             style={{ minHeight: '24px' }}
           />
           <button
@@ -116,7 +116,7 @@ export function ChatInterface({ initialMessages = [], propertyId, initialQuestio
             disabled={!input.trim() || isLoading}
             className="h-8 w-8 rounded-lg bg-blue-500 hover:bg-blue-400 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0 transition-all"
           >
-            <Send className="h-3.5 w-3.5 text-[#0A0908]" />
+            <Send className="h-3.5 w-3.5 text-[var(--text-primary)]" />
           </button>
         </div>
         <p className="text-xs text-slate-600 mt-2 text-center">

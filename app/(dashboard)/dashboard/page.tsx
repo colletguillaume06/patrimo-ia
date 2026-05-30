@@ -194,7 +194,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       <div>
-        <h1 className="font-display font-bold text-2xl text-[#0A0908]">Tableau de bord</h1>
+        <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Tableau de bord</h1>
         <p className="text-slate-400 text-sm mt-1">Bienvenue sur Propilot AI</p>
       </div>
 

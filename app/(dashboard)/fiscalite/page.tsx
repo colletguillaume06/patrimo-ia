@@ -74,7 +74,7 @@ function Accordion({ title, badge, children, defaultOpen = false }: {
       >
         <div className="flex items-center gap-3">
           {open ? <ChevronDown className="h-4 w-4 text-slate-400" /> : <ChevronRight className="h-4 w-4 text-slate-400" />}
-          <span className="font-display font-semibold text-[#0A0908]">{title}</span>
+          <span className="font-display font-semibold text-[var(--text-primary)]">{title}</span>
           {badge}
         </div>
       </button>
@@ -286,7 +286,7 @@ export default function FiscalitePage() {
       {/* ── En-tête + filtres ── */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display font-bold text-2xl text-[#0A0908]">Fiscalité</h1>
+          <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Fiscalité</h1>
           <p className="text-slate-400 text-sm mt-1">Simulations · Déclarations · Calendrier fiscal</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -295,7 +295,7 @@ export default function FiscalitePage() {
             {YEARS.map(y => (
               <button key={y} onClick={() => setYear(y)}
                 className={`h-9 px-3 rounded-lg text-sm font-medium transition-all ${
-                  year === y ? 'bg-blue-500 text-white' : 'bg-white/[0.05] border border-white/[0.08] text-slate-400 hover:text-[#0A0908]'
+                  year === y ? 'bg-blue-500 text-white' : 'bg-white/[0.05] border border-white/[0.08] text-slate-400 hover:text-[var(--text-primary)]'
                 }`}>
                 {y}
               </button>
@@ -303,16 +303,16 @@ export default function FiscalitePage() {
           </div>
           {/* Sélecteur bien */}
           <select value={selectedPropId} onChange={e => setSelectedPropId(e.target.value)}
-            className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none focus:border-blue-500/50 max-w-[180px]">
-            <option value="all" className="bg-[#111E35]">Tous les biens</option>
-            {properties.map(p => <option key={p.id} value={p.id} className="bg-[#111E35]">{p.name}</option>)}
+            className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50 max-w-[180px]">
+            <option value="all" className="bg-[var(--surface)]">Tous les biens</option>
+            {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
           </select>
           {/* TMI */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500">TMI</span>
             <select value={tmi} onChange={e => setTmi(Number(e.target.value))}
-              className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none">
-              {[11, 30, 41, 45].map(r => <option key={r} value={r} className="bg-[#111E35]">{r}%</option>)}
+              className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+              {[11, 30, 41, 45].map(r => <option key={r} value={r} className="bg-[var(--surface)]">{r}%</option>)}
             </select>
           </div>
         </div>
@@ -328,7 +328,7 @@ export default function FiscalitePage() {
         <>
           {/* ── BLOC 1 — Résumé par bien ── */}
           <GlassCard>
-            <h2 className="font-display font-semibold text-[#0A0908] mb-4">Résumé par bien — {year}</h2>
+            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Résumé par bien — {year}</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -342,7 +342,7 @@ export default function FiscalitePage() {
                   {filtered.map(d => (
                     <tr key={d.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
                       <td className="py-3 px-3">
-                        <p className="font-medium text-[#0A0908]">{d.name}</p>
+                        <p className="font-medium text-[var(--text-primary)]">{d.name}</p>
                         {d.sci_name && <p className="text-xs text-slate-500">{d.sci_name}</p>}
                       </td>
                       <td className="py-3 px-3 font-mono text-xs text-slate-500">
@@ -370,7 +370,7 @@ export default function FiscalitePage() {
                 </tbody>
                 <tfoot>
                   <tr className="border-t-2 border-white/[0.12] bg-white/[0.02]">
-                    <td className="py-3 px-3 font-bold text-[#0A0908]" colSpan={4}>TOTAL</td>
+                    <td className="py-3 px-3 font-bold text-[var(--text-primary)]" colSpan={4}>TOTAL</td>
                     <td className="py-3 px-3 font-bold text-[var(--success)]">{formatCurrency(totaux.revenus)}</td>
                     <td className="py-3 px-3 font-bold text-red-400">{formatCurrency(totaux.charges)}</td>
                     <td className="py-3 px-3 font-bold text-blue-400">{totaux.travaux > 0 ? formatCurrency(totaux.travaux) : '—'}</td>
@@ -389,7 +389,7 @@ export default function FiscalitePage() {
 
           {/* ── BLOC 2 — Ce que vous devez déclarer ── */}
           <div>
-            <h2 className="font-display font-semibold text-[#0A0908] mb-3">Ce que vous devez déclarer</h2>
+            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-3">Ce que vous devez déclarer</h2>
             <div className="space-y-3">
 
               {/* Formulaire 2042-C-PRO */}
@@ -522,7 +522,7 @@ export default function FiscalitePage() {
 
           {/* ── BLOC 3 — Calendrier fiscal ── */}
           <div>
-            <h2 className="font-display font-semibold text-[#0A0908] mb-3">Calendrier fiscal {year}</h2>
+            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-3">Calendrier fiscal {year}</h2>
             <GlassCard>
               <CalendrierFiscal hasSci={hasSci} hasLmnp={hasLmnp} hasFoncier={hasFoncier} year={year} />
             </GlassCard>
@@ -530,7 +530,7 @@ export default function FiscalitePage() {
 
           {/* Indices */}
           <GlassCard>
-            <h2 className="font-display font-semibold text-[#0A0908] mb-4">Indices de référence ({getQuarterLabel()})</h2>
+            <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Indices de référence ({getQuarterLabel()})</h2>
             <div className="grid grid-cols-3 gap-4">
               {[
                 { label: 'IRL (Loyers habitation)', value: IRL_CURRENT, color: 'text-blue-400' },

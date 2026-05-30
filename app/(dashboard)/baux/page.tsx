@@ -73,7 +73,7 @@ export default function BauxPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-[#0A0908]">Baux</h1>
+          <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Baux</h1>
           <p className="text-slate-400 text-sm mt-1">{leases.length} bail{leases.length > 1 ? 'x' : ''} enregistré{leases.length > 1 ? 's' : ''}</p>
         </div>
         <button
@@ -97,7 +97,7 @@ export default function BauxPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="text-sm font-semibold text-[#0A0908]">{lease.tenant_name}</p>
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">{lease.tenant_name}</p>
                       {lease.is_active ? (
                         <span className="flex items-center gap-1 text-xs text-[var(--success)] bg-[var(--success-bg)] border border-[var(--success)/20] px-2 py-0.5 rounded-full">
                           <CheckCircle2 className="h-3 w-3" /> Actif
@@ -108,7 +108,7 @@ export default function BauxPage() {
                     </div>
                     <p className="text-xs text-slate-500">{lease.property?.name} · {lease.property?.city}</p>
                     <div className="flex items-center gap-4 mt-2">
-                      <span className="text-sm font-semibold text-[#0A0908]">{formatCurrency(lease.monthly_rent)}/mois</span>
+                      <span className="text-sm font-semibold text-[var(--text-primary)]">{formatCurrency(lease.monthly_rent)}/mois</span>
                       <span className="text-xs text-slate-500">Début : {format(new Date(lease.start_date), 'dd/MM/yyyy')}</span>
                       {lease.end_date && (
                         <span className={`text-xs ${expiresoon ? 'text-amber-400' : 'text-slate-500'}`}>
@@ -169,11 +169,11 @@ export default function BauxPage() {
       {previewUrl && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setPreviewUrl(null)} />
-          <div className="relative w-full max-w-4xl h-[90vh] bg-[#111E35] border border-white/[0.08] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+          <div className="relative w-full max-w-4xl h-[90vh] bg-[var(--surface)] border border-white/[0.08] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
             <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06] flex-shrink-0">
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-blue-400" />
-                <p className="font-medium text-[#0A0908] text-sm">Bail PDF</p>
+                <p className="font-medium text-[var(--text-primary)] text-sm">Bail PDF</p>
               </div>
               <div className="flex items-center gap-2">
                 <a
@@ -211,9 +211,9 @@ export default function BauxPage() {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAdd(false)} />
-          <div className="relative w-full max-w-lg bg-[#111E35] border border-white/[0.08] rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[var(--surface)] border border-white/[0.08] rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-display font-semibold text-[#0A0908] text-lg">Nouveau bail</h2>
+              <h2 className="font-display font-semibold text-[var(--text-primary)] text-lg">Nouveau bail</h2>
               <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center">
                 <X className="h-4 w-4 text-slate-400" />
               </button>
@@ -226,11 +226,11 @@ export default function BauxPage() {
                   value={selectedProp}
                   onChange={e => setSelectedProp(e.target.value)}
                   required
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none focus:border-blue-500/50"
+                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50"
                 >
-                  <option value="" className="bg-[#111E35]">Sélectionner un bien</option>
+                  <option value="" className="bg-[var(--surface)]">Sélectionner un bien</option>
                   {properties.map(p => (
-                    <option key={p.id} value={p.id} className="bg-[#111E35]">{p.name}</option>
+                    <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>
                   ))}
                 </select>
               </div>
@@ -251,7 +251,7 @@ export default function BauxPage() {
                     value={(form as any)[key]}
                     onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
                     required={required}
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50"
+                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50"
                   />
                 </div>
               ))}
@@ -261,7 +261,7 @@ export default function BauxPage() {
                   <p className="text-xs font-medium text-slate-300">Indice de référence à la signature</p>
                   <div className="group relative">
                     <Info className="h-3.5 w-3.5 text-slate-600 cursor-help" />
-                    <div className="absolute bottom-5 left-0 w-64 px-3 py-2 bg-[#0D1B2E] border border-white/[0.10] rounded-lg text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-xl">
+                    <div className="absolute bottom-5 left-0 w-64 px-3 py-2 bg-[var(--bg)] border border-white/[0.10] rounded-lg text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-xl">
                       Ces informations figurent dans votre bail, clause d'indexation. Elles permettent le calcul exact de la révision annuelle.
                     </div>
                   </div>
@@ -272,11 +272,11 @@ export default function BauxPage() {
                     <select
                       value={form.irl_reference_indice}
                       onChange={e => setForm(f => ({ ...f, irl_reference_indice: e.target.value }))}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none focus:border-blue-500/50"
+                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50"
                     >
-                      <option value="irl" className="bg-[#111E35]">IRL — location nue/meublée</option>
-                      <option value="ilc" className="bg-[#111E35]">ILC — local commercial</option>
-                      <option value="ilat" className="bg-[#111E35]">ILAT — tertiaire</option>
+                      <option value="irl" className="bg-[var(--surface)]">IRL — location nue/meublée</option>
+                      <option value="ilc" className="bg-[var(--surface)]">ILC — local commercial</option>
+                      <option value="ilat" className="bg-[var(--surface)]">ILAT — tertiaire</option>
                     </select>
                   </div>
                   <div>
@@ -287,7 +287,7 @@ export default function BauxPage() {
                       placeholder="Ex : 141.36"
                       value={form.irl_reference_valeur}
                       onChange={e => setForm(f => ({ ...f, irl_reference_valeur: e.target.value }))}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm font-mono focus:outline-none focus:border-blue-500/50"
+                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm font-mono focus:outline-none focus:border-blue-500/50"
                     />
                   </div>
                   <div>
@@ -295,13 +295,13 @@ export default function BauxPage() {
                     <select
                       value={form.irl_reference_trimestre}
                       onChange={e => setForm(f => ({ ...f, irl_reference_trimestre: e.target.value }))}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] text-sm focus:outline-none focus:border-blue-500/50"
+                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50"
                     >
-                      <option value="" className="bg-[#111E35]">— Trimestre</option>
-                      <option value="1" className="bg-[#111E35]">T1 (janv.–mars)</option>
-                      <option value="2" className="bg-[#111E35]">T2 (avr.–juin)</option>
-                      <option value="3" className="bg-[#111E35]">T3 (juil.–sept.)</option>
-                      <option value="4" className="bg-[#111E35]">T4 (oct.–déc.)</option>
+                      <option value="" className="bg-[var(--surface)]">— Trimestre</option>
+                      <option value="1" className="bg-[var(--surface)]">T1 (janv.–mars)</option>
+                      <option value="2" className="bg-[var(--surface)]">T2 (avr.–juin)</option>
+                      <option value="3" className="bg-[var(--surface)]">T3 (juil.–sept.)</option>
+                      <option value="4" className="bg-[var(--surface)]">T4 (oct.–déc.)</option>
                     </select>
                   </div>
                   <div>
@@ -311,7 +311,7 @@ export default function BauxPage() {
                       placeholder="Ex : 2024"
                       value={form.irl_reference_annee}
                       onChange={e => setForm(f => ({ ...f, irl_reference_annee: e.target.value }))}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[#0A0908] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50"
+                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50"
                     />
                   </div>
                 </div>

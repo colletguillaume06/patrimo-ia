@@ -51,7 +51,7 @@ export function NotificationsPanel() {
         onClick={() => setOpen(!open)}
         className="relative h-9 w-9 rounded-lg bg-white/[0.04] border border-[#E5E2DB] flex items-center justify-center hover:bg-white/[0.07] transition-colors"
       >
-        <Bell className="h-4 w-4 text-[#1A1714]" />
+        <Bell className="h-4 w-4 text-[var(--text-secondary)]" />
         {count > 0 && (
           <span className="absolute -top-1 -right-1 h-4 min-w-4 px-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
             {count > 9 ? '9+' : count}
@@ -62,11 +62,11 @@ export function NotificationsPanel() {
       {open && (
         <div className="absolute right-0 top-11 w-80 bg-white border border-[#E5E2DB] rounded-2xl shadow-2xl z-50 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
-            <h3 className="font-display font-semibold text-[#0A0908] text-sm">
-              Alertes {count > 0 && <span className="text-[#3D3A36]">({count})</span>}
+            <h3 className="font-display font-semibold text-[var(--text-primary)] text-sm">
+              Alertes {count > 0 && <span className="text-[var(--text-muted)]">({count})</span>}
             </h3>
             <button onClick={() => setOpen(false)} className="h-6 w-6 rounded-md flex items-center justify-center hover:bg-[#F0EEE9]">
-              <X className="h-3.5 w-3.5 text-[#1A1714]" />
+              <X className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
             </button>
           </div>
 
@@ -80,8 +80,8 @@ export function NotificationsPanel() {
                 <div className="h-10 w-10 rounded-xl bg-[var(--success-bg)] flex items-center justify-center mb-3">
                   <Bell className="h-5 w-5 text-[var(--success)]" />
                 </div>
-                <p className="text-sm font-medium text-[#0A0908]">Tout est en ordre ✅</p>
-                <p className="text-xs text-[#3D3A36] mt-1">Aucune alerte en cours</p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">Tout est en ordre ✅</p>
+                <p className="text-xs text-[var(--text-muted)] mt-1">Aucune alerte en cours</p>
               </div>
             ) : (
               <div className="p-2 space-y-1">
@@ -94,8 +94,8 @@ export function NotificationsPanel() {
                     >
                       <div className={cn('h-2 w-2 rounded-full mt-1.5 flex-shrink-0', config.dot)} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-[#0A0908]">{alert.property_name}</p>
-                        <p className="text-xs text-[#1A1714] mt-0.5 line-clamp-2">{alert.message}</p>
+                        <p className="text-xs font-medium text-[var(--text-primary)]">{alert.property_name}</p>
+                        <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2">{alert.message}</p>
                         {alert.action_label && alert.action_href && (
                           <Link
                             href={alert.action_href}

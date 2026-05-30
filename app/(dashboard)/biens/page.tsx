@@ -57,7 +57,7 @@ export default function BiensPage() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-2xl text-[#0A0908]">Mes biens</h1>
+          <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Mes biens</h1>
           <p className="text-slate-400 text-sm mt-1">{biens.length} bien{biens.length > 1 ? 's' : ''} dans votre portefeuille</p>
         </div>
         <button
@@ -79,7 +79,7 @@ export default function BiensPage() {
           <div className="h-16 w-16 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-4">
             <Building2 className="h-8 w-8 text-blue-400" />
           </div>
-          <h2 className="font-display font-semibold text-xl text-[#0A0908] mb-2">Aucun bien</h2>
+          <h2 className="font-display font-semibold text-xl text-[var(--text-primary)] mb-2">Aucun bien</h2>
           <p className="text-slate-400 text-sm mb-6">Ajoutez votre premier bien pour commencer</p>
           <button
             onClick={() => setShowAdd(true)}

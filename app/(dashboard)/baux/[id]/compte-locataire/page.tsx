@@ -82,13 +82,13 @@ export default function CompteLocatairePage() {
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href={`/baux/${id}`} className="text-slate-400 hover:text-[#0A0908] text-sm flex items-center gap-1">
+          <Link href={`/baux/${id}`} className="text-slate-400 hover:text-[var(--text-primary)] text-sm flex items-center gap-1">
             <ChevronLeft className="h-4 w-4" /> {lease?.tenant_name}
           </Link>
           <span className="text-slate-600">/</span>
-          <h1 className="font-display font-bold text-xl text-[#0A0908]">Relevé de compte</h1>
+          <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Relevé de compte</h1>
         </div>
-        <button onClick={exportTxt} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-white/[0.06] border border-white/[0.08] text-slate-300 hover:text-[#0A0908] text-sm transition-all">
+        <button onClick={exportTxt} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-white/[0.06] border border-white/[0.08] text-slate-300 hover:text-[var(--text-primary)] text-sm transition-all">
           <Download className="h-4 w-4" /> Exporter
         </button>
       </div>
@@ -96,7 +96,7 @@ export default function CompteLocatairePage() {
       {/* KPIs */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total attendu', value: formatCurrency(total_attendu), color: 'text-[#0A0908]' },
+          { label: 'Total attendu', value: formatCurrency(total_attendu), color: 'text-[var(--text-primary)]' },
           { label: 'Total reçu', value: formatCurrency(total_recu), color: 'text-[var(--success)]' },
           { label: 'Solde global', value: formatCurrency(solde_global), color: solde_global <= 0 ? 'text-[var(--success)]' : 'text-red-400' },
         ].map(({ label, value, color }) => (
@@ -109,7 +109,7 @@ export default function CompteLocatairePage() {
 
       {/* Tableau complet */}
       <GlassCard>
-        <h2 className="font-display font-semibold text-[#0A0908] mb-4">
+        <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">
           Historique complet — {lease?.tenant_name}
           <span className="text-slate-500 font-normal text-sm ml-2">
             {lease?.property?.name ?? lease?.property?.address}
@@ -133,7 +133,7 @@ export default function CompteLocatairePage() {
                     <td className="py-2.5 px-3 text-left text-slate-300 whitespace-nowrap">
                       {format(new Date(r.due_date), 'MMMM yyyy', { locale: fr })}
                     </td>
-                    <td className="py-2.5 px-3 text-[#0A0908]">{formatCurrency(r.attendu)}</td>
+                    <td className="py-2.5 px-3 text-[var(--text-primary)]">{formatCurrency(r.attendu)}</td>
                     <td className="py-2.5 px-3">
                       {r.recu > 0
                         ? <span className={r.status === 'partial' ? 'text-amber-400' : 'text-[var(--success)]'}>{formatCurrency(r.recu)}</span>
@@ -165,8 +165,8 @@ export default function CompteLocatairePage() {
             </tbody>
             <tfoot>
               <tr className="border-t-2 border-white/[0.12] bg-white/[0.02] text-right">
-                <td className="py-3 px-3 text-left font-bold text-[#0A0908]">TOTAL</td>
-                <td className="py-3 px-3 font-bold text-[#0A0908]">{formatCurrency(total_attendu)}</td>
+                <td className="py-3 px-3 text-left font-bold text-[var(--text-primary)]">TOTAL</td>
+                <td className="py-3 px-3 font-bold text-[var(--text-primary)]">{formatCurrency(total_attendu)}</td>
                 <td className="py-3 px-3 font-bold text-[var(--success)]">{formatCurrency(total_recu)}</td>
                 <td className="py-3 px-3 font-bold" style={{ color: solde_global <= 0 ? '#10B981' : '#EF4444' }}>{formatCurrency(solde_global)}</td>
                 <td colSpan={2} />
