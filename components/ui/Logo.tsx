@@ -9,8 +9,8 @@ interface LogoProps {
 // Logo Patrimo : image originale ~1060x1060 avec marges, fond blanc
 // On affiche l'image seule sans texte doublé car le texte est dans l'image
 export function Logo({ size = 'md', showText = true, textColor = '#1E2140' }: LogoProps) {
-  const heights = { sm: 80, md: 100, lg: 130 }
-  const widths  = { sm: 280, md: 340, lg: 420 }
+  const heights = { sm: 36, md: 44, lg: 56 }
+  const widths  = { sm: 130, md: 160, lg: 200 }
   const textSizes = { sm: 'text-base', md: 'text-lg', lg: 'text-2xl' }
 
   return (

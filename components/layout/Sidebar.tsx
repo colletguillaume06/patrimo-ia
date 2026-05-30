@@ -98,7 +98,7 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
       style={{ background: 'var(--sidebar-bg)', borderRight: '1px solid var(--sidebar-border)' }}>
 
       {/* Logo */}
-      <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-subtle, var(--border))' }}>
+      <div className="px-4 py-2.5" style={{ borderBottom: '1px solid var(--border-subtle, var(--border))' }}>
         <Logo size="sm" textColor="var(--text-primary)" />
       </div>
 
