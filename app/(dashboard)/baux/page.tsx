@@ -7,7 +7,7 @@ import { UploadBail } from '@/components/baux/UploadBail'
 import { formatCurrency } from '@/lib/utils'
 import { format, differenceInMonths } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { FileText, Plus, X, CheckCircle2, Info } from 'lucide-react'
+import { FileText, Plus, X, CheckCircle2, Info, Eye, Download } from 'lucide-react'
 import { toast } from 'sonner'
 import { INDICES_IRL, INDICES_ILC, INDICES_ILAT, getIndicesList } from '@/lib/fiscal/indices'
 
@@ -16,6 +16,7 @@ export default function BauxPage() {
   const [properties, setProperties] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [selectedProp, setSelectedProp] = useState('')
   const [form, setForm] = useState({
     tenant_name: '', tenant_email: '', tenant_phone: '',
@@ -118,15 +119,24 @@ export default function BauxPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 ml-4">
-                    {lease.pdf_url && (
-                      <a
-                        href={lease.pdf_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10] transition-colors"
-                      >
-                        <FileText className="h-4 w-4 text-slate-400" />
-                      </a>
+                    {lease.pdf_url ? (
+                      <>
+                        <button
+                          onClick={() => setPreviewUrl(lease.pdf_url)}
+                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-400 text-xs font-medium transition-all"
+                        >
+                          <Eye className="h-3.5 w-3.5" /> Voir
+                        </button>
+                        <a
+                          href={lease.pdf_url}
+                          download
+                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.08] text-slate-300 text-xs font-medium transition-all"
+                        >
+                          <Download className="h-3.5 w-3.5" /> Télécharger
+                        </a>
+                      </>
+                    ) : (
+                      <span className="text-xs text-slate-600 italic">Pas de PDF</span>
                     )}
                   </div>
                 </div>
@@ -152,6 +162,49 @@ export default function BauxPage() {
               <p className="text-slate-400">Aucun bail enregistré</p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Modale de prévisualisation PDF */}
+      {previewUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setPreviewUrl(null)} />
+          <div className="relative w-full max-w-4xl h-[90vh] bg-[#111E35] border border-white/[0.08] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06] flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-blue-400" />
+                <p className="font-medium text-white text-sm">Bail PDF</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href={previewUrl}
+                  download
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-400 text-xs font-medium transition-all"
+                >
+                  <Download className="h-3.5 w-3.5" /> Télécharger
+                </a>
+                <a
+                  href={previewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.08] text-slate-300 text-xs font-medium transition-all"
+                >
+                  <Eye className="h-3.5 w-3.5" /> Ouvrir dans un onglet
+                </a>
+                <button
+                  onClick={() => setPreviewUrl(null)}
+                  className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10] transition-colors"
+                >
+                  <X className="h-4 w-4 text-slate-400" />
+                </button>
+              </div>
+            </div>
+            <iframe
+              src={previewUrl}
+              className="flex-1 w-full"
+              title="Bail PDF"
+            />
+          </div>
         </div>
       )}
 
