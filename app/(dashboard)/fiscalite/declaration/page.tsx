@@ -64,35 +64,35 @@ function CopyValue({ value, label }: { value: number; label?: string }) {
   )
 }
 
-// ─── Section accordéon ────────────────────────────────────────────────────
+// ─── Section accordéon — fond blanc ─────────────────────────────────────
 
 function Section({ title, icon, children, defaultOpen = false, badge }:
   { title: string; icon?: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean; badge?: string }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <div className="rounded-xl border overflow-hidden" style={{ borderColor: 'var(--border)' }}>
+    <div className="rounded-xl overflow-hidden shadow-sm" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)' }}>
       <button onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-5 py-4 transition-colors text-left"
-        style={{ background: open ? 'var(--bg-secondary)' : 'var(--bg-card)' }}>
+        style={{ background: open ? '#F8FAFC' : '#fff' }}>
         <div className="flex items-center gap-3">
           {icon}
-          <span className="font-display font-semibold text-base" style={{ color: 'var(--text-primary)' }}>
+          <span className="font-display font-semibold text-base" style={{ color: '#0F172A' }}>
             {title}
           </span>
           {badge && (
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
-              style={{ background: 'var(--accent)', color: '#fff' }}>
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full text-white"
+              style={{ background: '#1D4ED8' }}>
               {badge}
             </span>
           )}
         </div>
         {open
-          ? <ChevronDown className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} />
-          : <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} />
+          ? <ChevronDown className="h-4 w-4 flex-shrink-0" style={{ color: '#94A3B8' }} />
+          : <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: '#94A3B8' }} />
         }
       </button>
       {open && (
-        <div className="px-5 pb-5 pt-3" style={{ background: 'var(--bg-card)' }}>
+        <div className="px-5 pb-5 pt-2 border-t" style={{ background: '#fff', borderColor: 'rgba(0,0,0,0.06)' }}>
           {children}
         </div>
       )}
@@ -104,27 +104,28 @@ function Section({ title, icon, children, defaultOpen = false, badge }:
 
 function CaseLine({ c }: { c: CaseDeclaration }) {
   return (
-    <div className="flex items-start gap-4 py-3.5 border-b last:border-0"
-      style={{ borderColor: 'var(--border)' }}>
-      {/* Code case */}
-      <div className="flex-shrink-0 w-20">
-        <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-bold font-mono"
-          style={{ background: 'var(--accent)', color: '#fff' }}>
+    <div className="flex items-start gap-4 py-4 border-b last:border-0"
+      style={{ borderColor: 'rgba(0,0,0,0.06)' }}>
+      {/* Code case — badge bleu */}
+      <div className="flex-shrink-0 w-20 pt-0.5">
+        <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-bold font-mono text-white"
+          style={{ background: '#1D4ED8' }}>
           {c.code}
         </span>
       </div>
       {/* Label + note */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{c.label}</p>
+        <p className="text-sm font-semibold" style={{ color: '#0F172A' }}>{c.label}</p>
         {c.note && (
-          <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{c.note}</p>
+          <p className="text-xs mt-1 leading-relaxed" style={{ color: '#475569' }}>{c.note}</p>
         )}
         {!c.obligatoire && (
-          <span className="text-xs font-medium" style={{ color: 'var(--text-tertiary)' }}>Optionnel</span>
+          <span className="inline-block text-xs font-medium mt-1 px-2 py-0.5 rounded-full"
+            style={{ background: '#F1F5F9', color: '#64748B' }}>Optionnel</span>
         )}
       </div>
       {/* Valeur + copier */}
-      <div className="flex-shrink-0 flex items-center gap-2">
+      <div className="flex-shrink-0">
         <CopyValue value={c.value} />
       </div>
     </div>
@@ -159,41 +160,37 @@ function ChatFiscal({ context }: { context: string }) {
   }
 
   return (
-    <div className="flex flex-col h-[520px] rounded-xl border overflow-hidden"
-      style={{ borderColor: 'var(--border)', background: 'var(--bg-card)' }}>
+    <div className="flex flex-col h-[560px] rounded-xl overflow-hidden shadow-sm"
+      style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)' }}>
 
-      {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b"
-        style={{ borderColor: 'var(--border)', background: 'var(--bg-secondary)' }}>
-        <div className="h-8 w-8 rounded-lg flex items-center justify-center"
-          style={{ background: 'linear-gradient(135deg, var(--accent), #0891B2)' }}>
-          <Sparkles className="h-4 w-4 text-white" />
+      {/* Header bleu */}
+      <div className="flex items-center gap-3 px-5 py-4"
+        style={{ background: '#1D4ED8' }}>
+        <div className="h-9 w-9 rounded-xl flex items-center justify-center"
+          style={{ background: 'rgba(255,255,255,0.15)' }}>
+          <Sparkles className="h-5 w-5 text-white" />
         </div>
         <div>
-          <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-            Propilot — Assistant fiscal
-          </p>
-          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-            Spécialisé déclaration 2042, 2044, 2072, LMNP
-          </p>
+          <p className="text-sm font-semibold text-white">Propilot — Assistant fiscal</p>
+          <p className="text-xs text-white/70">Spécialisé 2042 · 2044 · 2072 · LMNP · SCI</p>
         </div>
         <div className="ml-auto flex items-center gap-1.5">
-          <div className="h-2 w-2 rounded-full bg-success-text" />
-          <span className="text-xs" style={{ color: 'var(--success-text)' }}>En ligne</span>
+          <div className="h-2 w-2 rounded-full bg-green-300" />
+          <span className="text-xs text-white/80">En ligne</span>
         </div>
       </div>
 
       {/* Suggestions */}
       {messages.length === 0 && (
-        <div className="px-4 py-3 border-b" style={{ borderColor: 'var(--border)' }}>
-          <p className="text-xs font-medium mb-2" style={{ color: 'var(--text-tertiary)' }}>
+        <div className="px-4 py-3" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)', background: '#F8FAFC' }}>
+          <p className="text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: '#64748B' }}>
             Questions fréquentes
           </p>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {SUGGESTED_FISCAL.map(q => (
               <button key={q} onClick={() => handleSend(q)}
-                className="text-xs px-2.5 py-1 rounded-full border transition-all hover:border-accent-text"
-                style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)', background: 'var(--bg-secondary)' }}>
+                className="text-xs px-3 py-1.5 rounded-full border transition-all hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700"
+                style={{ borderColor: 'rgba(0,0,0,0.12)', color: '#475569', background: '#fff' }}>
                 {q}
               </button>
             ))}
@@ -202,14 +199,18 @@ function ChatFiscal({ context }: { context: string }) {
       )}
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3"
+        style={{ background: '#F8FAFC' }}>
         {messages.length === 0 && (
-          <div className="text-center py-8">
-            <Bot className="h-10 w-10 mx-auto mb-3" style={{ color: 'var(--text-tertiary)' }} />
-            <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+          <div className="text-center py-10">
+            <div className="h-12 w-12 rounded-2xl flex items-center justify-center mx-auto mb-3"
+              style={{ background: '#EFF6FF' }}>
+              <Bot className="h-6 w-6" style={{ color: '#1D4ED8' }} />
+            </div>
+            <p className="text-sm font-semibold" style={{ color: '#0F172A' }}>
               Posez vos questions sur votre déclaration
             </p>
-            <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-xs mt-1" style={{ color: '#64748B' }}>
               Je connais votre situation fiscale et vos biens
             </p>
           </div>
@@ -218,14 +219,14 @@ function ChatFiscal({ context }: { context: string }) {
           <div key={msg.id} className={cn('flex gap-2', msg.role === 'user' ? 'justify-end' : 'justify-start')}>
             {msg.role === 'assistant' && (
               <div className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                style={{ background: 'var(--accent)', opacity: 0.9 }}>
+                style={{ background: '#1D4ED8' }}>
                 <Sparkles className="h-3.5 w-3.5 text-white" />
               </div>
             )}
-            <div className={cn('max-w-[85%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed', msg.role === 'user' ? 'rounded-tr-sm' : 'rounded-tl-sm')}
+            <div className={cn('max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed', msg.role === 'user' ? 'rounded-tr-sm' : 'rounded-tl-sm')}
               style={msg.role === 'user'
-                ? { background: 'var(--accent)', color: '#fff' }
-                : { background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border)' }
+                ? { background: '#1D4ED8', color: '#fff' }
+                : { background: '#fff', color: '#0F172A', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }
               }>
               {msg.content
                 ? msg.content.split('\n').map((line, i) => (
@@ -233,8 +234,8 @@ function ChatFiscal({ context }: { context: string }) {
                 ))
                 : <span className="flex gap-1 py-1">
                   {[0, 150, 300].map(d => (
-                    <span key={d} className="h-1.5 w-1.5 rounded-full animate-bounce"
-                      style={{ background: 'var(--text-tertiary)', animationDelay: `${d}ms` }} />
+                    <span key={d} className="h-1.5 w-1.5 rounded-full animate-bounce bg-blue-300"
+                      style={{ animationDelay: `${d}ms` }} />
                   ))}
                 </span>
               }
@@ -251,18 +252,18 @@ function ChatFiscal({ context }: { context: string }) {
       )}
 
       {/* Input */}
-      <div className="p-3 border-t" style={{ borderColor: 'var(--border)' }}>
-        <div className="flex items-end gap-2 px-3 py-2 rounded-xl border transition-all"
-          style={{ borderColor: 'var(--border)', background: 'var(--bg-secondary)' }}>
+      <div className="p-3" style={{ borderTop: '1px solid rgba(0,0,0,0.06)', background: '#fff' }}>
+        <div className="flex items-end gap-2 px-4 py-2.5 rounded-xl border transition-all focus-within:border-blue-400"
+          style={{ borderColor: 'rgba(0,0,0,0.12)', background: '#F8FAFC' }}>
           <textarea value={input} onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
             placeholder="Ex: Comment déclarer mon déficit LMNP ?"
             rows={1}
             className="flex-1 bg-transparent text-sm resize-none focus:outline-none"
-            style={{ color: 'var(--text-primary)', minHeight: '22px', maxHeight: '80px' }} />
+            style={{ color: '#0F172A', minHeight: '22px', maxHeight: '80px' }} />
           <button onClick={() => handleSend()} disabled={!input.trim() || isLoading}
-            className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 disabled:opacity-40 transition-all"
-            style={{ background: 'var(--accent)' }}>
+            className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0 disabled:opacity-40 transition-all hover:opacity-90"
+            style={{ background: '#1D4ED8' }}>
             <Send className="h-3.5 w-3.5 text-white" />
           </button>
         </div>
@@ -325,16 +326,16 @@ export default function DeclarationPage() {
       {/* En-tête */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>
+          <h1 className="font-display font-bold text-2xl" style={{ color: '#0F172A' }}>
             Aide à la déclaration
           </h1>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-sm mt-1" style={{ color: '#475569' }}>
             Montants pré-calculés depuis vos données · Cliquez sur une valeur pour la copier
           </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Revenus</span>
+            <span className="text-sm" style={{ color: '#475569' }}>Revenus</span>
             <select value={year} onChange={e => setYear(Number(e.target.value))}
               className="h-9 px-3 rounded-lg border text-sm focus:outline-none focus:border-accent"
               style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}>
@@ -342,7 +343,7 @@ export default function DeclarationPage() {
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>TMI</span>
+            <span className="text-sm" style={{ color: '#475569' }}>TMI</span>
             <select value={tmi} onChange={e => setTmi(Number(e.target.value))}
               className="h-9 px-3 rounded-lg border text-sm focus:outline-none focus:border-accent"
               style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}>
@@ -354,9 +355,9 @@ export default function DeclarationPage() {
 
       {/* Disclaimer */}
       <div className="flex items-start gap-3 p-4 rounded-xl border"
-        style={{ background: 'var(--info-bg)', borderColor: 'var(--info-border)' }}>
-        <Info className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: 'var(--info-text)' }} />
-        <p className="text-sm" style={{ color: 'var(--info-text)' }}>
+        style={{ background: '#EFF6FF', borderColor: '#93C5FD' }}>
+        <Info className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: '#1E40AF' }} />
+        <p className="text-sm" style={{ color: '#1E40AF' }}>
           Ces montants sont calculés automatiquement depuis vos données. Ils sont <strong>indicatifs</strong> — vérifiez avec votre expert-comptable avant de déposer. Liens officiels vers impots.gouv.fr fournis pour chaque formulaire.
         </p>
       </div>
@@ -368,28 +369,28 @@ export default function DeclarationPage() {
 
           {/* ── 2042 ── */}
           <Section title="Formulaire 2042" defaultOpen
-            icon={<BookOpen className="h-4 w-4" style={{ color: 'var(--accent-text)' }} />}
+            icon={<BookOpen className="h-4 w-4" style={{ color: '#1D4ED8' }} />}
             badge="Tout le monde">
             <div className="mb-4 pb-4 border-b" style={{ borderColor: 'var(--border)' }}>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              <p className="text-sm" style={{ color: '#475569' }}>
                 Déclaration principale de revenus — à déposer avant fin mai sur impots.gouv.fr.
               </p>
               <a href="https://www.impots.gouv.fr/portail/formulaire/2042/declaration-des-revenus" target="_blank"
                 className="inline-flex items-center gap-1 text-xs mt-1.5 hover:underline"
-                style={{ color: 'var(--accent-text)' }}>
+                style={{ color: '#1D4ED8' }}>
                 <ExternalLink className="h-3 w-3" /> Formulaire officiel 2042
               </a>
             </div>
-            <div className="p-3 rounded-lg mb-3" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-              <p className="text-xs font-semibold mb-2" style={{ color: 'var(--text-tertiary)' }}>VOTRE CHECKLIST 2042</p>
+            <div className="p-3 rounded-lg mb-3" style={{ background: '#F8FAFC', border: '1px solid rgba(0,0,0,0.08)' }}>
+              <p className="text-xs font-semibold mb-2" style={{ color: '#64748B' }}>VOTRE CHECKLIST 2042</p>
               {[
                 'Vos relevés de loyers perçus (quittances)',
                 'Attestation de taxe foncière',
                 'Relevés de charges de copropriété',
                 'Intérêts d\'emprunt (attestation banque)',
               ].map(item => (
-                <p key={item} className="text-xs flex items-center gap-2 mb-1" style={{ color: 'var(--text-secondary)' }}>
-                  <CheckCircle className="h-3 w-3 flex-shrink-0" style={{ color: 'var(--success-text)' }} /> {item}
+                <p key={item} className="text-xs flex items-center gap-2 mb-1" style={{ color: '#475569' }}>
+                  <CheckCircle className="h-3 w-3 flex-shrink-0" style={{ color: '#166534' }} /> {item}
                 </p>
               ))}
             </div>
@@ -398,15 +399,15 @@ export default function DeclarationPage() {
           {/* ── 2042-C-PRO (LMNP) ── */}
           {lmnpProps.length > 0 && (
             <Section title="2042-C-PRO — LMNP / LMP"
-              icon={<BookOpen className="h-4 w-4" style={{ color: 'var(--success-text)' }} />}
+              icon={<BookOpen className="h-4 w-4" style={{ color: '#166534' }} />}
               badge={`${lmnpProps.length} bien${lmnpProps.length > 1 ? 's' : ''}`}
               defaultOpen>
               <div className="mb-4">
-                <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
+                <p className="text-sm mb-2" style={{ color: '#475569' }}>
                   Revenus des locations meublées non professionnelles — annexe à joindre à votre 2042.
                 </p>
                 <a href="https://www.impots.gouv.fr/portail/formulaire/2042-c-pro/declaration-complementaire-des-revenus-des-professions-non-salariees" target="_blank"
-                  className="inline-flex items-center gap-1 text-xs hover:underline" style={{ color: 'var(--accent-text)' }}>
+                  className="inline-flex items-center gap-1 text-xs hover:underline" style={{ color: '#1D4ED8' }}>
                   <ExternalLink className="h-3 w-3" /> Notice 2042-C-PRO
                 </a>
               </div>
@@ -428,7 +429,7 @@ export default function DeclarationPage() {
                         <CaseLine c={{ code: '5QA', label: 'Recettes brutes perçues (pour info)', value: recettes, obligatoire: false, note: 'Sert au calcul du plafond des cotisations sociales' }} />
 
                         <div className="mt-3 p-3 rounded-lg text-xs"
-                          style={{ background: 'var(--warning-bg)', border: '1px solid var(--warning-border)', color: 'var(--warning-text)' }}>
+                          style={{ background: '#FFFBEB', border: '1px solid #FCD34D', color: '#92400E' }}>
                           <strong>⚠️ Régime réel :</strong> Vous devez également joindre la <strong>liasse 2033</strong> (bilan simplifié) ou avoir mandaté un expert-comptable (OGA). Sans adhésion à un OGA, une majoration de 25% s'applique sur vos bénéfices.
                         </div>
                       </>
@@ -446,14 +447,14 @@ export default function DeclarationPage() {
               })}
 
               {/* Pièges LMNP */}
-              <div className="mt-2 p-3 rounded-lg" style={{ background: 'var(--danger-bg)', border: '1px solid var(--danger-border)' }}>
-                <p className="text-xs font-semibold mb-1.5" style={{ color: 'var(--danger-text)' }}>🚨 Pièges courants LMNP</p>
+              <div className="mt-2 p-3 rounded-lg" style={{ background: '#FEF2F2', border: '1px solid #FCA5A5' }}>
+                <p className="text-xs font-semibold mb-1.5" style={{ color: '#991B1B' }}>🚨 Pièges courants LMNP</p>
                 {[
                   'Oublier de déclarer le résultat même si = 0€ (régime réel obligatoire)',
                   'Confondre recettes HT et TTC (LMNP = exonéré TVA en général)',
                   'Ne pas reporter le déficit des années précédentes (cases 5GA à 5JA)',
                 ].map(p => (
-                  <p key={p} className="text-xs mb-1" style={{ color: 'var(--danger-text)' }}>• {p}</p>
+                  <p key={p} className="text-xs mb-1" style={{ color: '#991B1B' }}>• {p}</p>
                 ))}
               </div>
             </Section>
@@ -462,15 +463,15 @@ export default function DeclarationPage() {
           {/* ── 2044 (Foncier nu) ── */}
           {nuProps.length > 0 && (
             <Section title="Formulaire 2044 — Revenus fonciers"
-              icon={<BookOpen className="h-4 w-4" style={{ color: 'var(--info-text)' }} />}
+              icon={<BookOpen className="h-4 w-4" style={{ color: '#1E40AF' }} />}
               badge={`${nuProps.length} bien${nuProps.length > 1 ? 's' : ''}`}>
               <div className="mb-4">
-                <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
+                <p className="text-sm mb-2" style={{ color: '#475569' }}>
                   Déclaration des revenus fonciers (location nue) — régime réel.
                   Si revenus totaux ≤ 15 000€, vous pouvez opter pour le micro-foncier (case 4BE sur la 2042).
                 </p>
                 <a href="https://www.impots.gouv.fr/portail/formulaire/2044/declaration-des-revenus-fonciers" target="_blank"
-                  className="inline-flex items-center gap-1 text-xs hover:underline" style={{ color: 'var(--accent-text)' }}>
+                  className="inline-flex items-center gap-1 text-xs hover:underline" style={{ color: '#1D4ED8' }}>
                   <ExternalLink className="h-3 w-3" /> Notice 2044
                 </a>
               </div>
@@ -499,15 +500,15 @@ export default function DeclarationPage() {
                 )
               })}
 
-              <div className="mt-2 p-3 rounded-lg" style={{ background: 'var(--danger-bg)', border: '1px solid var(--danger-border)' }}>
-                <p className="text-xs font-semibold mb-1.5" style={{ color: 'var(--danger-text)' }}>🚨 Pièges courants 2044</p>
+              <div className="mt-2 p-3 rounded-lg" style={{ background: '#FEF2F2', border: '1px solid #FCA5A5' }}>
+                <p className="text-xs font-semibold mb-1.5" style={{ color: '#991B1B' }}>🚨 Pièges courants 2044</p>
                 {[
                   'Déduire des travaux de construction/agrandissement (non déductibles — augmentent le prix de revient)',
                   'Oublier l\'attestation d\'intérêts de votre banque (IFU)',
                   'Ne pas reporter les déficits des années antérieures (cases 156 ou 570)',
                   'Dépasser le seuil micro-foncier 15 000€ sans s\'en apercevoir',
                 ].map(p => (
-                  <p key={p} className="text-xs mb-1" style={{ color: 'var(--danger-text)' }}>• {p}</p>
+                  <p key={p} className="text-xs mb-1" style={{ color: '#991B1B' }}>• {p}</p>
                 ))}
               </div>
             </Section>
@@ -519,12 +520,12 @@ export default function DeclarationPage() {
               icon={<BookOpen className="h-4 w-4" style={{ color: 'var(--warning-text)' }} />}
               badge={`${sciProps.length} SCI`}>
               <div className="mb-4">
-                <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
+                <p className="text-sm mb-2" style={{ color: '#475569' }}>
                   Déclaration de résultats de la SCI — à déposer avant le <strong>15 mai</strong> (ou le 2ème jour ouvré).
                   Chaque associé reporte sa quote-part sur sa 2044 personnelle.
                 </p>
                 <a href="https://www.impots.gouv.fr/portail/formulaire/2072/declaration-de-resultats-et-de-revenus-de-la-sci" target="_blank"
-                  className="inline-flex items-center gap-1 text-xs hover:underline" style={{ color: 'var(--accent-text)' }}>
+                  className="inline-flex items-center gap-1 text-xs hover:underline" style={{ color: '#1D4ED8' }}>
                   <ExternalLink className="h-3 w-3" /> Notice 2072
                 </a>
               </div>
@@ -549,7 +550,7 @@ export default function DeclarationPage() {
 
                     {prop.sci_regime !== 'is' && (prop.sci_associates ?? []).length > 0 && (
                       <div className="mt-3">
-                        <p className="text-xs font-medium mb-2" style={{ color: 'var(--text-tertiary)' }}>
+                        <p className="text-xs font-medium mb-2" style={{ color: '#64748B' }}>
                           QUOTE-PART PAR ASSOCIÉ — à reporter sur leur 2044 personnelle
                         </p>
                         {(prop.sci_associates ?? []).map((a: any) => (
@@ -587,7 +588,7 @@ export default function DeclarationPage() {
                     style={{ color: e.urgent ? 'var(--danger-text)' : 'var(--text-tertiary)' }}>
                     {e.date}
                   </span>
-                  <span className="text-sm flex-1" style={{ color: 'var(--text-primary)' }}>{e.label}</span>
+                  <span className="text-sm flex-1" style={{ color: '#0F172A' }}>{e.label}</span>
                   <span className="text-xs px-2 py-0.5 rounded-full"
                     style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>
                     {e.concerne}
@@ -602,10 +603,10 @@ export default function DeclarationPage() {
         {/* ── COLONNE DROITE : Chat IA ── */}
         <div className="space-y-4">
           <div>
-            <h2 className="font-display font-semibold text-base mb-1" style={{ color: 'var(--text-primary)' }}>
+            <h2 className="font-display font-semibold text-base mb-1" style={{ color: '#0F172A' }}>
               Assistant déclaration IA
             </h2>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-sm" style={{ color: '#475569' }}>
               Posez toutes vos questions — l'IA connaît votre situation et les formulaires fiscaux français.
             </p>
           </div>
@@ -613,7 +614,7 @@ export default function DeclarationPage() {
 
           {/* Ressources officielles */}
           <GlassCard>
-            <h3 className="font-semibold text-sm mb-3" style={{ color: 'var(--text-primary)' }}>
+            <h3 className="font-semibold text-sm mb-3" style={{ color: '#0F172A' }}>
               Ressources officielles
             </h3>
             <div className="space-y-2">
@@ -627,8 +628,8 @@ export default function DeclarationPage() {
                 <a key={r.url} href={r.url} target="_blank" rel="noopener noreferrer"
                   className="flex items-center justify-between p-2.5 rounded-lg border transition-all hover:border-accent group"
                   style={{ borderColor: 'var(--border)', background: 'var(--bg-secondary)' }}>
-                  <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{r.label}</span>
-                  <ExternalLink className="h-3.5 w-3.5 opacity-50 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--accent-text)' }} />
+                  <span className="text-sm" style={{ color: '#0F172A' }}>{r.label}</span>
+                  <ExternalLink className="h-3.5 w-3.5 opacity-50 group-hover:opacity-100 transition-opacity" style={{ color: '#1D4ED8' }} />
                 </a>
               ))}
             </div>
