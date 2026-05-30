@@ -11,20 +11,57 @@ import { calculateLmnpSimulation, calculateDepreciation } from '@/lib/fiscal/lmn
 import { calculateFoncierSimulation } from '@/lib/fiscal/foncier'
 import { calculateSciSimulation } from '@/lib/fiscal/sci'
 import { IRL_CURRENT, ILC_CURRENT, ILAT_CURRENT, getQuarterLabel } from '@/lib/fiscal/indices'
+import { format } from 'date-fns'
+import { Paperclip, CheckCircle2, XCircle } from 'lucide-react'
+
+const CAT_FISCALE_LABELS: Record<string, string> = {
+  entretien_reparation: 'Entretien / Réparation',
+  amelioration: 'Amélioration',
+  travaux_deductibles: 'Déductibles LMNP/BIC',
+  travaux_amortissables: 'Amortissables LMNP',
+  construction_agrandissement: 'Construction',
+}
+
+const DEPENSE_LABELS: Record<string, string> = {
+  interet: 'Intérêts d\'emprunt',
+  assurance: 'Assurance PNO',
+  assurance_gli: 'Assurance loyers impayés (GLI)',
+  taxe: 'Taxe foncière',
+  gestion: 'Frais de gestion',
+  comptabilite: 'Frais de comptabilité',
+  copropriete: 'Charges de copropriété',
+  procedure: 'Frais de procédure',
+  telecom: 'Télécommunications',
+  deplacement: 'Déplacements',
+  autre: 'Autre',
+}
 
 export default function FiscalitePage() {
   const [properties, setProperties] = useState<any[]>([])
+  const [expenses, setExpenses] = useState<any[]>([])
+  const [incidents, setIncidents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [tmi, setTmi] = useState(30)
   const supabase = createClient()
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase
-        .from('properties')
-        .select('*, leases(*), expenses(*), depreciation_plans(*)')
-        .order('created_at')
-      setProperties(data ?? [])
+      const now = new Date()
+      const year = now.getFullYear()
+      const [propRes, expRes, incRes] = await Promise.all([
+        supabase.from('properties').select('*, leases(*), expenses(*), depreciation_plans(*)').order('created_at'),
+        supabase.from('expenses')
+          .select('*, property:properties(name)')
+          .gte('date', `${year}-01-01`).lte('date', `${year}-12-31`)
+          .order('date', { ascending: false }),
+        supabase.from('incidents')
+          .select('*, property:properties(name)')
+          .gte('created_at', `${year}-01-01`).lte('created_at', `${year}-12-31`)
+          .order('date_travaux', { ascending: false }),
+      ])
+      setProperties(propRes.data ?? [])
+      setExpenses(expRes.data ?? [])
+      setIncidents(incRes.data ?? [])
       setLoading(false)
     }
     load()
@@ -156,6 +193,157 @@ export default function FiscalitePage() {
           )}
         </div>
       )}
+
+      {/* ── TABLEAU 1 : Autres dépenses ── */}
+      <GlassCard>
+        <h2 className="font-display font-semibold text-white mb-4">
+          Autres dépenses déductibles — {new Date().getFullYear()}
+        </h2>
+        {expenses.length === 0 ? (
+          <p className="text-sm text-slate-500 py-4 text-center">Aucune dépense enregistrée cette année</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-xs text-slate-500 border-b border-white/[0.06]">
+                  {['Date', 'Bien', 'Catégorie', 'Description', 'Montant', 'Déductible', 'Justificatif'].map(h => (
+                    <th key={h} className="text-left py-2 px-3 font-medium whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {expenses.map(exp => (
+                  <tr key={exp.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
+                    <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">
+                      {format(new Date(exp.date), 'dd/MM/yyyy')}
+                    </td>
+                    <td className="py-2.5 px-3 text-slate-300 max-w-[120px] truncate">
+                      {exp.property?.name ?? '—'}
+                    </td>
+                    <td className="py-2.5 px-3">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-slate-300">
+                        {DEPENSE_LABELS[exp.category] ?? exp.category}
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-3 text-slate-400 max-w-[180px] truncate">
+                      {exp.description ?? '—'}
+                    </td>
+                    <td className="py-2.5 px-3 text-white font-semibold whitespace-nowrap">
+                      {formatCurrency(exp.amount)}
+                    </td>
+                    <td className="py-2.5 px-3">
+                      {exp.fiscal_deductible
+                        ? <span className="flex items-center gap-1 text-green-400 text-xs"><CheckCircle2 className="h-3.5 w-3.5" /> Oui</span>
+                        : <span className="flex items-center gap-1 text-red-400 text-xs"><XCircle className="h-3.5 w-3.5" /> Non</span>
+                      }
+                    </td>
+                    <td className="py-2.5 px-3">
+                      {exp.receipt_url
+                        ? <a href={exp.receipt_url} target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center h-6 w-6 rounded bg-blue-400/10 border border-blue-400/20 hover:bg-blue-400/20 transition-colors">
+                            <Paperclip className="h-3 w-3 text-blue-400" />
+                          </a>
+                        : <span className="text-slate-700 text-xs">—</span>
+                      }
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="border-t border-white/[0.10]">
+                  <td colSpan={4} className="py-2.5 px-3 text-xs text-slate-500 font-medium">Total déductible</td>
+                  <td className="py-2.5 px-3 text-green-400 font-bold">
+                    {formatCurrency(expenses.filter(e => e.fiscal_deductible).reduce((s, e) => s + e.amount, 0))}
+                  </td>
+                  <td colSpan={2} />
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        )}
+      </GlassCard>
+
+      {/* ── TABLEAU 2 : Travaux ── */}
+      <GlassCard>
+        <h2 className="font-display font-semibold text-white mb-4">
+          Dépenses travaux — {new Date().getFullYear()}
+        </h2>
+        {incidents.length === 0 ? (
+          <p className="text-sm text-slate-500 py-4 text-center">Aucun travail enregistré cette année</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-xs text-slate-500 border-b border-white/[0.06]">
+                  {['Date', 'Bien', 'Entreprise', 'N° facture', 'Description', 'Coût', 'Catégorie fiscale', 'Facture'].map(h => (
+                    <th key={h} className="text-left py-2 px-3 font-medium whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {incidents.map(inc => {
+                  const cat = inc.categorie_fiscale ?? 'entretien_reparation'
+                  const isDeductible = ['entretien_reparation', 'travaux_deductibles'].includes(cat)
+                  const isAmortissable = ['travaux_amortissables', 'amelioration'].includes(cat)
+                  const catColor = isDeductible ? 'text-green-400 bg-green-400/10 border-green-400/20'
+                    : isAmortissable ? 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20'
+                    : 'text-red-400 bg-red-400/10 border-red-400/20'
+                  return (
+                    <tr key={inc.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
+                      <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">
+                        {inc.date_travaux ? format(new Date(inc.date_travaux), 'dd/MM/yyyy') : '—'}
+                      </td>
+                      <td className="py-2.5 px-3 text-slate-300 max-w-[100px] truncate">
+                        {inc.property?.name ?? '—'}
+                      </td>
+                      <td className="py-2.5 px-3 text-slate-400 max-w-[100px] truncate">
+                        {inc.nom_entreprise ?? '—'}
+                      </td>
+                      <td className="py-2.5 px-3 text-slate-500 font-mono text-xs">
+                        {inc.numero_facture ?? '—'}
+                      </td>
+                      <td className="py-2.5 px-3 text-slate-300 max-w-[160px] truncate">
+                        {inc.title}
+                      </td>
+                      <td className="py-2.5 px-3 whitespace-nowrap">
+                        <p className="text-white font-semibold">{formatCurrency(inc.cout_paye || 0)}</p>
+                        {!inc.est_paye && inc.cout_estime > 0 && (
+                          <p className="text-xs text-slate-600">est. {formatCurrency(inc.cout_estime)}</p>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3">
+                        <span className={`text-xs px-2 py-0.5 rounded-full border ${catColor}`}>
+                          {CAT_FISCALE_LABELS[cat] ?? cat}
+                        </span>
+                      </td>
+                      <td className="py-2.5 px-3">
+                        {inc.facture_url
+                          ? <a href={inc.facture_url} target="_blank" rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center h-6 w-6 rounded bg-blue-400/10 border border-blue-400/20 hover:bg-blue-400/20">
+                              <Paperclip className="h-3 w-3 text-blue-400" />
+                            </a>
+                          : <span className={`text-xs ${inc.est_paye ? 'text-red-400' : 'text-slate-700'}`}>
+                              {inc.est_paye ? '⚠' : '—'}
+                            </span>
+                        }
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+              <tfoot>
+                <tr className="border-t border-white/[0.10]">
+                  <td colSpan={5} className="py-2.5 px-3 text-xs text-slate-500 font-medium">Total payé</td>
+                  <td className="py-2.5 px-3 text-white font-bold">
+                    {formatCurrency(incidents.filter(i => i.est_paye).reduce((s, i) => s + (i.cout_paye || 0), 0))}
+                  </td>
+                  <td colSpan={2} />
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        )}
+      </GlassCard>
     </div>
   )
 }
