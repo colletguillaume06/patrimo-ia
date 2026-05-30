@@ -98,17 +98,8 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
       style={{ background: 'var(--sidebar-bg)', borderRight: '1px solid var(--sidebar-border)' }}>
 
       {/* Logo */}
-      <div className="px-5 py-5" style={{ borderBottom: '1px solid var(--border-subtle, var(--border))' }}>
-        <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-xl flex items-center justify-center shadow-sm"
-            style={{ background: 'linear-gradient(135deg, #1B4FD8, #0891B2)' }}>
-            <Sparkles className="h-4 w-4 text-white" />
-          </div>
-          <span className="font-display font-bold text-base tracking-tight"
-            style={{ color: 'var(--text-primary)' }}>
-            Propilot<span style={{ color: 'var(--accent)' }}> AI</span>
-          </span>
-        </div>
+      <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--border-subtle, var(--border))' }}>
+        <Logo size="sm" textColor="var(--text-primary)" />
       </div>
 
       {/* Nav principale */}
