@@ -17,7 +17,7 @@ export function AiCopilotWidget() {
         </div>
         <div>
           <h2 className="font-display font-semibold text-[var(--text-primary)] text-sm">Copilot IA</h2>
-          <p className="text-xs text-[var(--text-muted)]">Votre expert immobilier</p>
+          <p className="text-xs text-[var(--text-secondary)]">Votre expert immobilier</p>
         </div>
       </div>
 
@@ -28,11 +28,11 @@ export function AiCopilotWidget() {
             href={`/copilot?q=${encodeURIComponent(q)}`}
             className="flex items-center gap-2 p-2.5 rounded-lg bg-[#F8F7F4] hover:bg-bg-secondary border border-[var(--border-subtle)] hover:border-blue-500/20 transition-all group"
           >
-            <Bot className="h-3.5 w-3.5 text-[var(--text-muted)] group-hover:text-blue-400 flex-shrink-0 transition-colors" />
-            <span className="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] flex-1 transition-colors line-clamp-1">
+            <Bot className="h-3.5 w-3.5 text-[var(--text-secondary)] group-hover:text-blue-400 flex-shrink-0 transition-colors" />
+            <span className="text-xs text-[var(--text-secondary)] group-hover:text-[var(--text-secondary)] flex-1 transition-colors line-clamp-1">
               {q}
             </span>
-            <ArrowRight className="h-3 w-3 text-[var(--text-subtle)] group-hover:text-blue-400 flex-shrink-0 transition-colors" />
+            <ArrowRight className="h-3 w-3 text-[var(--text-tertiary)] group-hover:text-blue-400 flex-shrink-0 transition-colors" />
           </Link>
         ))}
       </div>

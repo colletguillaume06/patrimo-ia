@@ -63,7 +63,7 @@ export function NotificationsPanel() {
         <div className="absolute right-0 top-11 w-80 bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-2xl z-50 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
             <h3 className="font-display font-semibold text-[var(--text-primary)] text-sm">
-              Alertes {count > 0 && <span className="text-[var(--text-muted)]">({count})</span>}
+              Alertes {count > 0 && <span className="text-[var(--text-secondary)]">({count})</span>}
             </h3>
             <button onClick={() => setOpen(false)} className="h-6 w-6 rounded-md flex items-center justify-center hover:bg-[#F0EEE9]">
               <X className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
@@ -81,7 +81,7 @@ export function NotificationsPanel() {
                   <Bell className="h-5 w-5 text-[var(--success)]" />
                 </div>
                 <p className="text-sm font-medium text-[var(--text-primary)]">Tout est en ordre ✅</p>
-                <p className="text-xs text-[var(--text-muted)] mt-1">Aucune alerte en cours</p>
+                <p className="text-xs text-[var(--text-secondary)] mt-1">Aucune alerte en cours</p>
               </div>
             ) : (
               <div className="p-2 space-y-1">

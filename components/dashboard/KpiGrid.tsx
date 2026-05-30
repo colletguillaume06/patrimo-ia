@@ -55,7 +55,7 @@ export function KpiGrid({ metrics }: KpiGridProps) {
       glow: 'cyan' as const,
       trend: metrics.rendement_moyen >= 4 ? 'up' as const : 'neutral' as const,
       trendValue: metrics.rendement_moyen >= 6 ? 'excellent' : metrics.rendement_moyen >= 4 ? 'bon' : 'faible',
-      trendColor: metrics.rendement_moyen >= 4 ? 'text-[#0E7A4F]' : 'text-[var(--text-muted)]',
+      trendColor: metrics.rendement_moyen >= 4 ? 'text-[#0E7A4F]' : 'text-[var(--text-secondary)]',
     },
   ]
 
@@ -65,7 +65,7 @@ export function KpiGrid({ metrics }: KpiGridProps) {
         <GlassCard key={kpi.label} hover glow={kpi.glow} className="p-5 pt-6">
           <div className="flex items-start justify-between mb-3">
             {/* Label en uppercase petit */}
-            <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">
+            <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide">
               {kpi.label}
             </p>
             <div className={`h-8 w-8 rounded-lg ${kpi.iconBg} flex items-center justify-center`}>
@@ -85,8 +85,8 @@ export function KpiGrid({ metrics }: KpiGridProps) {
             <span className={`text-sm font-medium ${kpi.trendColor}`}>
               {kpi.trendValue}
             </span>
-            <span className="text-xs text-[var(--text-subtle)]">·</span>
-            <span className="text-xs text-[var(--text-muted)]">{kpi.sub}</span>
+            <span className="text-xs text-[var(--text-tertiary)]">·</span>
+            <span className="text-xs text-[var(--text-secondary)]">{kpi.sub}</span>
           </div>
         </GlassCard>
       ))}

@@ -28,7 +28,7 @@ export function ThemeToggle() {
       style={{
         background: 'var(--surface-2)',
         borderColor: 'var(--border)',
-        color: 'var(--text-muted)',
+        color: 'var(--text-secondary)',
       }}
       title={dark ? 'Passer en mode clair' : 'Passer en mode sombre'}
     >

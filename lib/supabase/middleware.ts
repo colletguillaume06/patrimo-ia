@@ -39,7 +39,12 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith('/copilot') ||
     pathname.startsWith('/exports') ||
     pathname.startsWith('/patrimoine') ||
-    pathname.startsWith('/onboarding')
+    pathname.startsWith('/onboarding') ||
+    pathname.startsWith('/contacts') ||
+    pathname.startsWith('/documents') ||
+    pathname.startsWith('/courriers') ||
+    pathname.startsWith('/emails') ||
+    pathname.startsWith('/parametres')
 
   // Routes protégées : redirect vers login si non connecté
   if (isDashboard && !user) {

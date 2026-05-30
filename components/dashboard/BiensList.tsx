@@ -27,8 +27,8 @@ export function BiensList({ biens }: BiensListProps) {
           href="/biens"
           className="flex flex-col items-center justify-center h-40 rounded-xl border-2 border-dashed border-[var(--border)] hover:border-blue-500/30 transition-colors group"
         >
-          <Plus className="h-8 w-8 text-[var(--text-subtle)] group-hover:text-blue-400 mb-2 transition-colors" />
-          <p className="text-sm text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]">Ajouter votre premier bien</p>
+          <Plus className="h-8 w-8 text-[var(--text-tertiary)] group-hover:text-blue-400 mb-2 transition-colors" />
+          <p className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-secondary)]">Ajouter votre premier bien</p>
         </Link>
       ) : (
         <div className="space-y-2">
@@ -46,7 +46,7 @@ export function BiensList({ biens }: BiensListProps) {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[var(--text-primary)] truncate">{bien.name}</p>
-                <p className="text-xs text-[var(--text-muted)] truncate">{bien.city ?? 'Ville non renseignée'}</p>
+                <p className="text-xs text-[var(--text-secondary)] truncate">{bien.city ?? 'Ville non renseignée'}</p>
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="text-sm font-semibold text-[var(--text-primary)]">
