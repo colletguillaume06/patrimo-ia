@@ -64,7 +64,7 @@ export function ProfileAirbnb({ property: p }: ProfileAirbnbProps) {
           <span className="text-slate-400">{totalNights} nuits utilisées</span>
           <span className="font-semibold text-[var(--text-primary)]">{nightsRemaining} restantes</span>
         </div>
-        <div className="h-3 bg-white/[0.06] rounded-full overflow-hidden">
+        <div className="h-3 bg-bg-secondary rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all ${
               pctUsed > 83 ? 'bg-red-500' : pctUsed > 66 ? 'bg-amber-400' : 'bg-green-400'

@@ -81,7 +81,7 @@ export default function PlusValuePage() {
           <div>
             <label className="block text-xs text-slate-400 mb-1">Bien (optionnel — pré-remplit les champs)</label>
             <select value={selectedId} onChange={e => setSelectedId(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+              className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
               <option value="" className="bg-[var(--surface)]">Saisie manuelle</option>
               {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
             </select>
@@ -97,7 +97,7 @@ export default function PlusValuePage() {
                 <label className="block text-xs text-slate-400 mb-1">{label}</label>
                 <input type={type} placeholder={placeholder} value={(form as any)[key]}
                   onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
               </div>
             ))}
           </div>
@@ -119,7 +119,7 @@ export default function PlusValuePage() {
             ) : (
               <input type="number" placeholder="Frais réels en €" value={form.frais_acquisition_montant}
                 onChange={e => setForm(f => ({ ...f, frais_acquisition_montant: e.target.value }))}
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
             )}
           </div>
 
@@ -128,7 +128,7 @@ export default function PlusValuePage() {
               <label className="block text-xs text-slate-400 mb-1">Travaux non déductibles (€) — saisis manuellement</label>
               <input type="number" placeholder="0" value={form.travaux_non_deductibles}
                 onChange={e => setForm(f => ({ ...f, travaux_non_deductibles: e.target.value }))}
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
               {travaux_nd > 0 && <p className="text-xs text-blue-400 mt-0.5">+ {formatCurrency(travaux_nd)} détectés automatiquement (construction)</p>}
             </div>
             {prop?.type === 'lmnp' && (
@@ -136,7 +136,7 @@ export default function PlusValuePage() {
                 <label className="block text-xs text-slate-400 mb-1">Amortissements cumulés pris (€)</label>
                 <input type="number" placeholder="0" value={form.amortissements_pris}
                   onChange={e => setForm(f => ({ ...f, amortissements_pris: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
               </div>
             )}
           </div>

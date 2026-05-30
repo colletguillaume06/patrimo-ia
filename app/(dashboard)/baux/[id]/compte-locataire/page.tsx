@@ -88,7 +88,7 @@ export default function CompteLocatairePage() {
           <span className="text-slate-600">/</span>
           <h1 className="font-display font-bold text-xl text-[var(--text-primary)]">Relevé de compte</h1>
         </div>
-        <button onClick={exportTxt} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-white/[0.06] border border-white/[0.08] text-slate-300 hover:text-[var(--text-primary)] text-sm transition-all">
+        <button onClick={exportTxt} className="flex items-center gap-2 h-9 px-4 rounded-xl bg-bg-secondary border border-white/[0.08] text-slate-300 hover:text-[var(--text-primary)] text-sm transition-all">
           <Download className="h-4 w-4" /> Exporter
         </button>
       </div>
@@ -164,7 +164,7 @@ export default function CompteLocatairePage() {
               })}
             </tbody>
             <tfoot>
-              <tr className="border-t-2 border-white/[0.12] bg-white/[0.02] text-right">
+              <tr className="border-t-2 border-border bg-white/[0.02] text-right">
                 <td className="py-3 px-3 text-left font-bold text-[var(--text-primary)]">TOTAL</td>
                 <td className="py-3 px-3 font-bold text-[var(--text-primary)]">{formatCurrency(total_attendu)}</td>
                 <td className="py-3 px-3 font-bold text-[var(--success)]">{formatCurrency(total_recu)}</td>

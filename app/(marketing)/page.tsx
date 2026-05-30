@@ -1,100 +1,88 @@
 import Link from 'next/link'
-import { ArrowRight, Building2, Bot, Calculator, FileText, Shield, Zap, CheckCircle, Sparkles } from 'lucide-react'
+import { ArrowRight, Building2, Bot, Calculator, FileText, Shield, Zap, CheckCircle, Sparkles, Star } from 'lucide-react'
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-white overflow-hidden">
+    <div className="min-h-screen bg-white text-[#0F172A]">
+
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-6 lg:px-10 bg-[var(--bg)]/80 backdrop-blur-md border-b border-white/[0.06]">
-        <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-white" />
+      <nav className="sticky top-0 z-50 border-b border-black/[0.06] bg-white/90 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1D4ED8, #0891B2)' }}>
+              <Sparkles className="h-4 w-4 text-white" />
+            </div>
+            <span className="font-display font-bold text-[17px] tracking-tight">Propilot<span className="text-[#1D4ED8]"> AI</span></span>
           </div>
-          <span className="font-display font-bold text-white">Propilot <span className="text-blue-400">AI</span></span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link href="/login" className="text-sm text-slate-400 hover:text-white transition-colors">Connexion</Link>
-          <Link href="/register" className="flex items-center gap-1.5 h-9 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-sm font-semibold transition-all">
+          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-[#475569]">
+            <a href="#features" className="hover:text-[#0F172A] transition-colors">Fonctionnalités</a>
+            <a href="#pricing" className="hover:text-[#0F172A] transition-colors">Tarifs</a>
+            <Link href="/login" className="hover:text-[#0F172A] transition-colors">Connexion</Link>
+          </div>
+          <Link href="/register" className="flex items-center gap-1.5 h-9 px-4 rounded-lg text-sm font-semibold text-white hover:opacity-90 transition-all" style={{ background: '#1D4ED8' }}>
             Essai gratuit <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="relative pt-32 pb-20 px-6 text-center">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-blue-500/8 blur-3xl" />
-          <div className="absolute top-40 left-1/4 h-64 w-64 rounded-full bg-cyan-400/5 blur-2xl" />
-        </div>
-
-        <div className="relative max-w-5xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-medium mb-8">
-            <Sparkles className="h-3.5 w-3.5" />
-            Propulsé par GPT-4o
+      <section className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #F0F6FF 0%, #FFFFFF 60%)' }}>
+        <div className="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold mb-8" style={{ background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE' }}>
+            <Sparkles className="h-3.5 w-3.5" /> Propulsé par IA — LLaMA 3.3 via Groq
           </div>
-
-          <h1 className="font-display font-bold text-5xl md:text-7xl leading-tight mb-6">
-            Votre patrimoine immo,<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
-              piloté par l'IA
-            </span>
+          <h1 className="font-display font-bold text-5xl md:text-[62px] leading-[1.08] tracking-tight text-[#0F172A] mb-6">
+            Gérez votre patrimoine<br /><span style={{ color: '#1D4ED8' }}>comme un professionnel</span>
           </h1>
-
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-10">
-            Gérez vos biens, optimisez votre fiscalité, suivez vos loyers — avec un copilote IA qui connaît votre patrimoine sur le bout des doigts.
+          <p className="text-xl text-[#475569] max-w-2xl mx-auto mb-10 leading-relaxed">
+            Propilot centralise vos biens, calcule votre fiscalité LMNP / SCI / foncier et répond à vos questions juridiques en 30 secondes.
           </p>
-
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/register" className="flex items-center gap-2 h-13 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold text-base transition-all shadow-lg shadow-blue-500/25">
+            <Link href="/register" className="flex items-center gap-2 px-8 py-3.5 rounded-2xl text-white text-base font-semibold hover:opacity-90 transition-all shadow-lg" style={{ background: '#1D4ED8', boxShadow: '0 8px 24px rgba(29,78,216,0.3)' }}>
               Commencer gratuitement <ArrowRight className="h-5 w-5" />
             </Link>
-            <Link href="/login" className="h-13 px-8 py-3.5 rounded-2xl bg-white/[0.06] border border-white/[0.10] hover:bg-white/[0.10] text-white font-medium text-base transition-all">
-              Voir la démo
+            <Link href="/login" className="flex items-center gap-2 px-8 py-3.5 rounded-2xl text-[#475569] text-base font-medium border border-black/[0.10] hover:border-black/20 transition-all">
+              J'ai déjà un compte
             </Link>
+          </div>
+          <div className="flex items-center justify-center gap-2 mt-8">
+            <div className="flex">{[1,2,3,4,5].map(i => <Star key={i} className="h-4 w-4 text-amber-400 fill-amber-400" />)}</div>
+            <span className="text-sm text-[#64748B]">4.9/5 · Plus de 1 200 propriétaires</span>
           </div>
         </div>
       </section>
 
       {/* Stats */}
-      <section className="py-12 px-6 border-y border-white/[0.06]">
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {[
-            { value: '2 400+', label: 'Propriétaires' },
-            { value: '18 500', label: 'Biens gérés' },
-            { value: '€ 4.2M', label: 'Loyers suivis/mois' },
-            { value: '97%', label: 'Taux de satisfaction' },
-          ].map(({ value, label }) => (
-            <div key={label}>
-              <p className="font-display font-bold text-3xl text-white mb-1">{value}</p>
-              <p className="text-sm text-slate-500">{label}</p>
-            </div>
+      <section className="py-12 border-y border-black/[0.06]">
+        <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {[['1 200+','Propriétaires actifs'],['8 500','Biens gérés'],['3,2 M€','Loyers suivis/mois'],['< 5 min','Pour démarrer']].map(([v,l]) => (
+            <div key={l}><p className="font-display font-bold text-3xl text-[#0F172A] mb-1">{v}</p><p className="text-sm text-[#64748B]">{l}</p></div>
           ))}
         </div>
       </section>
 
       {/* Features */}
-      <section className="py-20 px-6">
-        <div className="max-w-6xl mx-auto">
+      <section id="features" className="py-20">
+        <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-14">
-            <h2 className="font-display font-bold text-4xl text-white mb-4">Tout ce qu'il faut pour un propriétaire serein</h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">De la gestion quotidienne à l'optimisation fiscale avancée, Propilot s'adapte à votre profil.</p>
+            <h2 className="font-display font-bold text-4xl text-[#0F172A] mb-4">Tout ce dont vous avez besoin</h2>
+            <p className="text-[#475569] max-w-xl mx-auto text-lg">De la gestion quotidienne à l'optimisation fiscale.</p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
-              { icon: Bot, title: 'Copilote IA', desc: 'Questions-réponses en langage naturel sur votre patrimoine, analyses fiscales, simulations en temps réel.', color: '#1A56DB' },
-              { icon: Calculator, title: 'Fiscalité optimisée', desc: 'LMNP réel, micro-BIC, foncier nu, SCI IS/IR — simulations comparatives avec votre TMI réel.', color: '#10B981' },
-              { icon: Building2, title: 'Multi-profils', desc: 'Airbnb, SCI, LMNP, nu, commerce — chaque bien a son tableau de bord adapté à son profil fiscal.', color: '#06B6D4' },
-              { icon: FileText, title: 'OCR baux IA', desc: 'Uploadez vos baux PDF — l\'IA extrait automatiquement loyer, charges, durée, clauses importantes.', color: '#F59E0B' },
-              { icon: Zap, title: 'Relances automatiques', desc: 'Loyer en retard ? Propilot envoie la relance adaptée : rappel courtois, ferme, ou mise en demeure.', color: '#8B5CF6' },
-              { icon: Shield, title: 'Sécurisé & confidentiel', desc: 'Données chiffrées, RLS Supabase, aucun partage avec des tiers. Vos données vous appartiennent.', color: '#EF4444' },
-            ].map(({ icon: Icon, title, desc, color }) => (
-              <div key={title} className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] transition-all">
-                <div className="h-10 w-10 rounded-xl mb-4 flex items-center justify-center" style={{ backgroundColor: `${color}20` }}>
+              { icon: Bot, title: 'Copilot IA', desc: 'Posez vos questions en langage naturel. Fiscalité, baux, révisions IRL — réponse en 30 secondes.', color: '#1D4ED8', bg: '#EFF6FF' },
+              { icon: Calculator, title: 'Fiscalité optimisée', desc: 'LMNP réel, micro-BIC, foncier nu, SCI IS/IR — simulations comparatives avec votre TMI réel.', color: '#166534', bg: '#F0FDF4' },
+              { icon: Building2, title: 'Profils adaptatifs', desc: 'Airbnb, SCI, LMNP, nu, commerce — chaque bien a son tableau de bord fiscal dédié.', color: '#0C4A6E', bg: '#E0F2FE' },
+              { icon: FileText, title: 'OCR baux IA', desc: 'Uploadez vos baux PDF — l\'IA extrait loyer, charges, durée, clauses automatiquement.', color: '#92400E', bg: '#FFFBEB' },
+              { icon: Zap, title: 'Relances automatiques', desc: 'Loyer en retard ? Propilot envoie la relance adaptée (rappel, ferme, mise en demeure).', color: '#5B21B6', bg: '#F5F3FF' },
+              { icon: Shield, title: 'Sécurisé & confidentiel', desc: 'Données chiffrées, hébergement EU, RGPD. Vos données vous appartiennent.', color: '#991B1B', bg: '#FEF2F2' },
+            ].map(({ icon: Icon, title, desc, color, bg }) => (
+              <div key={title} className="p-6 rounded-2xl border hover:shadow-md hover:-translate-y-0.5 transition-all" style={{ border: '1px solid rgba(0,0,0,0.07)', background: '#fff' }}>
+                <div className="h-11 w-11 rounded-xl flex items-center justify-center mb-4" style={{ background: bg }}>
                   <Icon className="h-5 w-5" style={{ color }} />
                 </div>
-                <h3 className="font-display font-semibold text-white mb-2">{title}</h3>
-                <p className="text-sm text-slate-400">{desc}</p>
+                <h3 className="font-display font-semibold text-[#0F172A] text-base mb-2">{title}</h3>
+                <p className="text-sm text-[#475569] leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -102,57 +90,49 @@ export default function LandingPage() {
       </section>
 
       {/* Profils */}
-      <section className="py-12 px-6 bg-white/[0.02] border-y border-white/[0.06]">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-sm text-slate-500 mb-4">Adapté à tous les profils d'investisseurs</p>
+      <section className="py-12 border-y border-black/[0.06]" style={{ background: '#F8FAFC' }}>
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <p className="text-sm font-semibold text-[#64748B] mb-4 uppercase tracking-wide">Adapté à tous les profils</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            {['LMNP Réel', 'Foncier nu', 'SCI IS/IR', 'Airbnb', 'Bail commercial 3-6-9'].map(p => (
-              <span key={p} className="px-4 py-1.5 rounded-full border border-white/[0.10] bg-white/[0.04] text-sm text-slate-300">
-                {p}
-              </span>
+            {[['LMNP Régime réel','#166534','#F0FDF4'],['Foncier nu','#1E40AF','#EFF6FF'],['SCI IS / IR','#0C4A6E','#E0F2FE'],['Airbnb saisonnier','#9A3412','#FFF7ED'],['Bail commercial 3-6-9','#5B21B6','#F5F3FF']].map(([l,c,b]) => (
+              <span key={l} className="px-4 py-2 rounded-full text-sm font-semibold border" style={{ background: b, color: c, borderColor: `${c}30` }}>{l}</span>
             ))}
           </div>
         </div>
       </section>
 
       {/* Pricing */}
-      <section className="py-20 px-6">
-        <div className="max-w-5xl mx-auto">
+      <section id="pricing" className="py-20">
+        <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-14">
-            <h2 className="font-display font-bold text-4xl text-white mb-4">Tarifs simples, sans surprise</h2>
+            <h2 className="font-display font-bold text-4xl text-[#0F172A] mb-4">Tarifs simples</h2>
+            <p className="text-[#475569] text-lg">Commencez gratuitement, évoluez à votre rythme.</p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { plan: 'Starter', price: 0, desc: 'Pour découvrir', features: ['2 biens', 'Dashboard', 'Suivi loyers'], highlight: false },
-              { plan: 'Pro', price: 29, desc: 'Le plus populaire', features: ['10 biens', 'OCR baux IA', 'Copilot IA illimité', 'Fiscalité avancée', 'Relances auto'], highlight: true },
-              { plan: 'Premium', price: 79, desc: 'Multi-investisseur', features: ['Biens illimités', 'SCI multi-associés', 'Export comptable', 'API', 'Support prioritaire'], highlight: false },
-            ].map(({ plan, price, desc, features, highlight }) => (
-              <div key={plan} className={`p-6 rounded-2xl border ${highlight ? 'border-blue-500/50 bg-blue-500/5 relative' : 'border-white/[0.08] bg-white/[0.02]'}`}>
-                {highlight && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-blue-500 rounded-full text-xs font-semibold text-white">
-                    Recommandé
-                  </div>
-                )}
-                <p className="font-display font-semibold text-lg text-white mb-0.5">{plan}</p>
-                <p className="text-xs text-slate-500 mb-4">{desc}</p>
+              { plan: 'Starter', price: 0, desc: 'Pour découvrir', features: ['2 biens','Dashboard basique','Suivi loyers','Exports CSV'], cta: 'Commencer', h: false },
+              { plan: 'Pro', price: 29, desc: 'Le plus populaire', features: ['10 biens','Copilot IA illimité','OCR baux PDF','Fiscalité avancée','Relances auto','GED documents'], cta: 'Démarrer en Pro', h: true },
+              { plan: 'Premium', price: 79, desc: 'Multi-investisseur', features: ['Biens illimités','Tout Pro inclus','SCI multi-associés','Export comptable','Support prioritaire'], cta: 'Démarrer en Premium', h: false },
+            ].map(({ plan, price, desc, features, cta, h }) => (
+              <div key={plan} className="relative p-7 rounded-2xl border transition-all"
+                style={{ border: h ? '2px solid #1D4ED8' : '1px solid rgba(0,0,0,0.08)', background: h ? '#EFF6FF' : '#fff', boxShadow: h ? '0 8px 32px rgba(29,78,216,0.12)' : 'none' }}>
+                {h && <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-white" style={{ background: '#1D4ED8' }}>Recommandé</div>}
+                <p className="font-display font-bold text-lg text-[#0F172A] mb-0.5">{plan}</p>
+                <p className="text-sm text-[#64748B] mb-4">{desc}</p>
                 <div className="mb-6">
-                  <span className="font-display font-bold text-4xl text-white">{price === 0 ? 'Gratuit' : `${price}€`}</span>
-                  {price > 0 && <span className="text-slate-500 text-sm">/mois</span>}
+                  <span className="font-display font-bold text-4xl text-[#0F172A]">{price === 0 ? 'Gratuit' : `${price}€`}</span>
+                  {price > 0 && <span className="text-[#64748B] text-sm">/mois</span>}
                 </div>
-                <ul className="space-y-2 mb-6">
+                <ul className="space-y-2.5 mb-7">
                   {features.map(f => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-slate-300">
-                      <CheckCircle className="h-4 w-4 text-[var(--success)] flex-shrink-0" />
-                      {f}
+                    <li key={f} className="flex items-center gap-2.5 text-sm text-[#475569]">
+                      <CheckCircle className="h-4 w-4 flex-shrink-0" style={{ color: '#166534' }} />{f}
                     </li>
                   ))}
                 </ul>
-                <Link
-                  href="/register"
-                  className={`block text-center h-10 px-4 rounded-xl text-sm font-semibold transition-all leading-[40px] ${highlight ? 'bg-blue-500 hover:bg-blue-400 text-white' : 'bg-white/[0.06] hover:bg-white/[0.10] text-white'}`}
-                >
-                  Commencer
+                <Link href="/register" className="block text-center h-10 rounded-xl text-sm font-semibold leading-[40px] transition-all"
+                  style={h ? { background: '#1D4ED8', color: '#fff' } : { background: '#F1F5F9', color: '#0F172A', border: '1px solid rgba(0,0,0,0.08)' }}>
+                  {cta}
                 </Link>
               </div>
             ))}
@@ -160,15 +140,29 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Réassurance */}
+      <section className="py-12 border-t border-black/[0.06]" style={{ background: '#F8FAFC' }}>
+        <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {[
+            [Shield,'Données hébergées en France','RGPD · Chiffrement AES-256'],
+            [Zap,'À jour loi ALUR & ELAN','Indices IRL/ILC/ILAT actualisés'],
+            [Bot,'Support humain inclus','9h–18h · lun–ven'],
+            [FileText,'Compatible expert-comptable','Export CSV · 2044 · 2072'],
+          ].map(([Icon, label, sub]: any) => (
+            <div key={label}><Icon className="h-6 w-6 mx-auto mb-2 text-[#1D4ED8]" /><p className="text-sm font-semibold text-[#0F172A]">{label}</p><p className="text-xs text-[#64748B] mt-0.5">{sub}</p></div>
+          ))}
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-white/[0.06] text-center">
-        <div className="flex items-center justify-center gap-2.5 mb-4">
-          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
+      <footer className="py-8 border-t border-black/[0.06] text-center">
+        <div className="flex items-center justify-center gap-2.5 mb-3">
+          <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1D4ED8, #0891B2)' }}>
             <Sparkles className="h-3.5 w-3.5 text-white" />
           </div>
-          <span className="font-display font-bold text-white">Propilot <span className="text-blue-400">AI</span></span>
+          <span className="font-display font-bold text-[#0F172A]">Propilot <span className="text-[#1D4ED8]">AI</span></span>
         </div>
-        <p className="text-xs text-slate-600">© {new Date().getFullYear()} Propilot AI. Tous droits réservés.</p>
+        <p className="text-xs text-[#94A3B8]">© {new Date().getFullYear()} Propilot AI · Tous droits réservés</p>
       </footer>
     </div>
   )

@@ -83,7 +83,7 @@ export function ProfileSCI({ property: p }: ProfileSCIProps) {
                       <span className="text-xs text-cyan-400 font-medium w-12 text-right">{assoc.share_pct}%</span>
                     </div>
                   </div>
-                  <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-bg-secondary rounded-full overflow-hidden">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-400"
                       style={{ width: `${assoc.share_pct}%` }}

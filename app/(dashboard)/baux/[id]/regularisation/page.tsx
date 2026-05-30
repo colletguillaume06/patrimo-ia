@@ -129,13 +129,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées
             <div>
               <label className="block text-xs text-slate-400 mb-1">Année de régularisation</label>
               <input type="number" value={form.annee} onChange={e => setForm(f => ({ ...f, annee: e.target.value }))}
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
             </div>
             <div>
               <label className="block text-xs text-slate-400 mb-1">Charges réelles de l'année (€)</label>
               <input type="number" step="0.01" placeholder="0" value={form.charges_reelles}
                 onChange={e => setForm(f => ({ ...f, charges_reelles: e.target.value }))}
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
+                className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
             </div>
           </div>
 
@@ -161,7 +161,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées
           )}
 
           <button onClick={handleCopy} disabled={charges_reelles === 0}
-            className="flex items-center gap-2 h-9 px-5 rounded-lg bg-white/[0.06] border border-white/[0.10] text-slate-300 hover:text-[var(--text-primary)] text-sm transition-all disabled:opacity-40">
+            className="flex items-center gap-2 h-9 px-5 rounded-lg bg-bg-secondary border border-border text-slate-300 hover:text-[var(--text-primary)] text-sm transition-all disabled:opacity-40">
             {copied ? <><CheckCircle className="h-4 w-4 text-[var(--success)]" /> Copié !</> : <><Copy className="h-4 w-4" /> Générer courrier de régularisation</>}
           </button>
         </GlassCard>

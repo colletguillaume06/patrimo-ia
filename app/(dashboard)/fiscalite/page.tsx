@@ -54,7 +54,7 @@ function CopyButton({ value }: { value: number }) {
   return (
     <button
       onClick={handleCopy}
-      className="inline-flex items-center gap-1 h-6 px-2 rounded-md bg-white/[0.06] hover:bg-blue-500/15 border border-white/[0.08] hover:border-blue-500/30 text-xs text-slate-400 hover:text-blue-400 transition-all"
+      className="inline-flex items-center gap-1 h-6 px-2 rounded-md bg-bg-secondary hover:bg-blue-500/15 border border-white/[0.08] hover:border-blue-500/30 text-xs text-slate-400 hover:text-blue-400 transition-all"
     >
       {copied ? <CheckCircle className="h-3 w-3 text-[var(--success)]" /> : <Copy className="h-3 w-3" />}
       <span className="font-mono">{value.toFixed(2)} €</span>
@@ -303,7 +303,7 @@ export default function FiscalitePage() {
           </div>
           {/* Sélecteur bien */}
           <select value={selectedPropId} onChange={e => setSelectedPropId(e.target.value)}
-            className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50 max-w-[180px]">
+            className="h-9 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50 max-w-[180px]">
             <option value="all" className="bg-[var(--surface)]">Tous les biens</option>
             {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
           </select>
@@ -311,7 +311,7 @@ export default function FiscalitePage() {
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500">TMI</span>
             <select value={tmi} onChange={e => setTmi(Number(e.target.value))}
-              className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+              className="h-9 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
               {[11, 30, 41, 45].map(r => <option key={r} value={r} className="bg-[var(--surface)]">{r}%</option>)}
             </select>
           </div>
@@ -369,7 +369,7 @@ export default function FiscalitePage() {
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="border-t-2 border-white/[0.12] bg-white/[0.02]">
+                  <tr className="border-t-2 border-border bg-white/[0.02]">
                     <td className="py-3 px-3 font-bold text-[var(--text-primary)]" colSpan={4}>TOTAL</td>
                     <td className="py-3 px-3 font-bold text-[var(--success)]">{formatCurrency(totaux.revenus)}</td>
                     <td className="py-3 px-3 font-bold text-red-400">{formatCurrency(totaux.charges)}</td>

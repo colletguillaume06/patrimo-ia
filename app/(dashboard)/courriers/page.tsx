@@ -90,7 +90,7 @@ export default function CourriersPage() {
                   <div>
                     <label className="block text-xs text-slate-400 mb-1">Bien</label>
                     <select value={selectedProp} onChange={e => setSelectedProp(e.target.value)}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                      className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                       <option value="" className="bg-[var(--surface)]">— Sélectionner</option>
                       {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
                     </select>
@@ -98,7 +98,7 @@ export default function CourriersPage() {
                   <div>
                     <label className="block text-xs text-slate-400 mb-1">Bail / Locataire</label>
                     <select value={selectedLease} onChange={e => setSelectedLease(e.target.value)}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                      className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                       <option value="" className="bg-[var(--surface)]">— Sélectionner</option>
                       {leases.map(l => <option key={l.id} value={l.id} className="bg-[var(--surface)]">{l.tenant_name}</option>)}
                     </select>
@@ -106,7 +106,7 @@ export default function CourriersPage() {
                   <div>
                     <label className="block text-xs text-slate-400 mb-1">Votre nom (bailleur)</label>
                     <input type="text" value={data.bailleur_nom ?? ''} onChange={e => setData(d => ({ ...d, bailleur_nom: e.target.value }))}
-                      className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                      className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                   </div>
                 </div>
 

@@ -111,7 +111,7 @@ export default function CopropriétéPage() {
                 <label className="block text-xs text-slate-400 mb-1">{label}</label>
                 <input type={type} placeholder={placeholder} value={(syndicForm as any)[key]}
                   onChange={e => setSyndicForm(f => ({ ...f, [key]: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
               </div>
             ))}
           </div>
@@ -151,21 +151,21 @@ export default function CopropriétéPage() {
           <div className="relative w-full max-w-md bg-[var(--surface)] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-display font-semibold text-[var(--text-primary)]">Appel de fonds</h2>
-              <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center"><X className="h-4 w-4 text-slate-400" /></button>
+              <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg bg-bg-secondary flex items-center justify-center"><X className="h-4 w-4 text-slate-400" /></button>
             </div>
             <form onSubmit={addAppel} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-xs text-slate-400 mb-1">Date *</label><input type="date" value={appelForm.date_appel} onChange={e => setAppelForm(f => ({ ...f, date_appel: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" /></div>
-                <div><label className="block text-xs text-slate-400 mb-1">Montant (€) *</label><input type="number" value={appelForm.montant} onChange={e => setAppelForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" /></div>
+                <div><label className="block text-xs text-slate-400 mb-1">Date *</label><input type="date" value={appelForm.date_appel} onChange={e => setAppelForm(f => ({ ...f, date_appel: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" /></div>
+                <div><label className="block text-xs text-slate-400 mb-1">Montant (€) *</label><input type="number" value={appelForm.montant} onChange={e => setAppelForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" /></div>
               </div>
               <div><label className="block text-xs text-slate-400 mb-1">Type</label>
-                <select value={appelForm.type} onChange={e => setAppelForm(f => ({ ...f, type: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                <select value={appelForm.type} onChange={e => setAppelForm(f => ({ ...f, type: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                   <option value="charges_courantes" className="bg-[var(--surface)]">Charges courantes</option>
                   <option value="travaux_votes" className="bg-[var(--surface)]">Travaux votés</option>
                   <option value="fonds_travaux" className="bg-[var(--surface)]">Fonds travaux</option>
                 </select>
               </div>
-              <div><label className="block text-xs text-slate-400 mb-1">Description</label><input type="text" value={appelForm.description} onChange={e => setAppelForm(f => ({ ...f, description: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" /></div>
+              <div><label className="block text-xs text-slate-400 mb-1">Description</label><input type="text" value={appelForm.description} onChange={e => setAppelForm(f => ({ ...f, description: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" /></div>
               <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50">Ajouter</button>
             </form>
           </div>

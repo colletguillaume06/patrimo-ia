@@ -217,7 +217,7 @@ export default function PatrimoinePage() {
                 <div className={`rounded-xl p-3 ${est?.valeur_estimee ? 'bg-blue-500/5 border border-blue-500/15' : 'bg-white/[0.03]'}`}>
                   <p className="text-xs text-slate-500 mb-1">Valeur marché estimée</p>
                   {est?.loading ? (
-                    <div className="h-6 w-24 bg-white/[0.06] rounded animate-pulse" />
+                    <div className="h-6 w-24 bg-bg-secondary rounded animate-pulse" />
                   ) : est?.valeur_estimee ? (
                     <>
                       <p className="text-base font-bold text-blue-400">{formatCurrency(est.valeur_estimee)}</p>
@@ -256,7 +256,7 @@ export default function PatrimoinePage() {
                 <div className={`rounded-xl p-3 ${est?.loyer_marche_mensuel ? 'bg-amber-500/5 border border-amber-500/15' : 'bg-white/[0.03]'}`}>
                   <p className="text-xs text-slate-500 mb-1">Loyer marché estimé</p>
                   {est?.loading ? (
-                    <div className="h-6 w-20 bg-white/[0.06] rounded animate-pulse" />
+                    <div className="h-6 w-20 bg-bg-secondary rounded animate-pulse" />
                   ) : est?.loyer_marche_mensuel ? (
                     <>
                       <p className="text-base font-bold text-amber-400">{formatCurrency(est.loyer_marche_mensuel)}/mois</p>

@@ -57,7 +57,7 @@ export default function LoginPage() {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              className="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all"
+              className="w-full h-11 px-4 rounded-xl bg-bg-secondary border border-border text-white placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all"
             />
             <input
               type="password"
@@ -65,7 +65,7 @@ export default function LoginPage() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              className="w-full h-11 px-4 rounded-xl bg-white/[0.06] border border-white/[0.10] text-white placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all"
+              className="w-full h-11 px-4 rounded-xl bg-bg-secondary border border-border text-white placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all"
             />
             <button
               type="submit"

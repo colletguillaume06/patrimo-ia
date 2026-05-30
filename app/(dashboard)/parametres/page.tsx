@@ -45,7 +45,7 @@ export default function ParametresPage() {
           <div>
             <label className="block text-xs text-slate-400 mb-1">Nom complet</label>
             <input type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))}
-              className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+              className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
           </div>
 
           <div className="pt-3 border-t border-white/[0.06]">
@@ -59,7 +59,7 @@ export default function ParametresPage() {
                 <label className="block text-xs text-slate-400 mb-1">{label}</label>
                 <input type="text" placeholder={placeholder} value={(form as any)[key]}
                   onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none font-mono" />
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none font-mono" />
               </div>
             ))}
           </div>

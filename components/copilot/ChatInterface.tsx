@@ -108,7 +108,7 @@ export function ChatInterface({ initialMessages = [], propertyId, initialQuestio
             onKeyDown={handleKey}
             placeholder="Posez une question sur votre patrimoine..."
             rows={1}
-            className="flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder-slate-600 focus:outline-none resize-none max-h-32"
+            className="flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder:text-text-tertiary focus:outline-none resize-none max-h-32"
             style={{ minHeight: '24px' }}
           />
           <button

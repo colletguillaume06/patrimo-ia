@@ -132,12 +132,12 @@ export default function SciCcaPage() {
           <div className="relative w-full max-w-md bg-[var(--surface)] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-display font-semibold text-[var(--text-primary)]">Nouvelle opération CCA</h2>
-              <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center"><X className="h-4 w-4 text-slate-400" /></button>
+              <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg bg-bg-secondary flex items-center justify-center"><X className="h-4 w-4 text-slate-400" /></button>
             </div>
             <form onSubmit={handleAdd} className="space-y-3">
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Associé *</label>
-                <select value={form.associe_id} onChange={e => setForm(f => ({ ...f, associe_id: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                <select value={form.associe_id} onChange={e => setForm(f => ({ ...f, associe_id: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                   <option value="" className="bg-[var(--surface)]">— Sélectionner</option>
                   {associates.map(a => <option key={a.id} value={a.id} className="bg-[var(--surface)]">{a.name} ({a.share_pct}%)</option>)}
                 </select>
@@ -145,7 +145,7 @@ export default function SciCcaPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Type *</label>
-                  <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                  <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                     <option value="avance" className="bg-[var(--surface)]">Avance</option>
                     <option value="remboursement" className="bg-[var(--surface)]">Remboursement</option>
                     <option value="interets" className="bg-[var(--surface)]">Intérêts</option>
@@ -153,15 +153,15 @@ export default function SciCcaPage() {
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Montant (€) *</label>
-                  <input type="number" value={form.montant} onChange={e => setForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                  <input type="number" value={form.montant} onChange={e => setForm(f => ({ ...f, montant: e.target.value }))} required className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Date</label>
-                  <input type="date" value={form.date_operation} onChange={e => setForm(f => ({ ...f, date_operation: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                  <input type="date" value={form.date_operation} onChange={e => setForm(f => ({ ...f, date_operation: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Motif</label>
-                  <input type="text" value={form.motif} onChange={e => setForm(f => ({ ...f, motif: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                  <input type="text" value={form.motif} onChange={e => setForm(f => ({ ...f, motif: e.target.value }))} className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
                 </div>
               </div>
               <button type="submit" disabled={saving} className="w-full h-10 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold disabled:opacity-50">Enregistrer</button>

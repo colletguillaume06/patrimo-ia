@@ -75,12 +75,12 @@ export default function FiscalPage() {
           <div className="flex items-center gap-2">
             <label className="text-xs text-slate-400">TMI :</label>
             <select value={tmi} onChange={e => setTmi(Number(e.target.value))}
-              className="h-9 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+              className="h-9 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
               {[11, 30, 41, 45].map(r => <option key={r} value={r} className="bg-[var(--surface)]">{r}%</option>)}
             </select>
           </div>
           <button onClick={handleExport}
-            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-white/[0.06] border border-white/[0.08] text-slate-300 hover:text-[var(--text-primary)] text-sm transition-all">
+            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-bg-secondary border border-white/[0.08] text-slate-300 hover:text-[var(--text-primary)] text-sm transition-all">
             <Download className="h-4 w-4" /> Export CSV
           </button>
         </div>

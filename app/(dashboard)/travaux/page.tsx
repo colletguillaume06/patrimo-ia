@@ -99,7 +99,7 @@ function CategorieTooltip({ cat }: { cat: CategorieFiscale }) {
   return (
     <div className="group relative inline-flex">
       <Info className="h-3.5 w-3.5 text-slate-600 cursor-help" />
-      <div className="absolute bottom-5 left-0 w-72 px-3 py-2.5 bg-[var(--bg)] border border-white/[0.10] rounded-xl text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-2xl">
+      <div className="absolute bottom-5 left-0 w-72 px-3 py-2.5 bg-[var(--bg)] border border-border rounded-xl text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-2xl">
         <p className="font-medium mb-1" style={{ color: cfg.color.replace('text-', '') }}>{cfg.label}</p>
         <p className="leading-relaxed">{cfg.tooltip}</p>
         <p className={`mt-1.5 font-medium ${cfg.deductible === 'oui' ? 'text-[var(--success)]' : cfg.deductible === 'partiel' ? 'text-amber-400' : 'text-red-400'}`}>
@@ -432,7 +432,7 @@ export default function TravauxPage() {
                 <h2 className="font-display font-semibold text-[var(--text-primary)]">Nouveau ticket travaux</h2>
               </div>
               <button onClick={() => { setShowAdd(false); setForm(FORM_INITIAL); setPendingFile(null) }}
-                className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10]">
+                className="h-8 w-8 rounded-lg bg-bg-secondary flex items-center justify-center hover:bg-bg-secondary">
                 <X className="h-4 w-4 text-slate-400" />
               </button>
             </div>
@@ -444,7 +444,7 @@ export default function TravauxPage() {
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Bien concerné *</label>
                   <select value={form.property_id} onChange={e => set('property_id', e.target.value)} required
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50">
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50">
                     <option value="" className="bg-[var(--surface)]">Sélectionner un bien</option>
                     {properties.map(p => <option key={p.id} value={p.id} className="bg-[var(--surface)]">{p.name}</option>)}
                   </select>
@@ -452,7 +452,7 @@ export default function TravauxPage() {
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Statut</label>
                   <select value={form.status} onChange={e => set('status', e.target.value)}
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                     <option value="open" className="bg-[var(--surface)]">Planifié</option>
                     <option value="in_progress" className="bg-[var(--surface)]">En cours</option>
                     <option value="resolved" className="bg-[var(--surface)]">Terminé</option>
@@ -465,17 +465,17 @@ export default function TravauxPage() {
                 <div className="col-span-2">
                   <label className="block text-xs text-slate-400 mb-1">Titre des travaux *</label>
                   <input type="text" value={form.title} onChange={e => set('title', e.target.value)} required
-                    placeholder="Ex : Remplacement chaudière" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="Ex : Remplacement chaudière" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Date des travaux</label>
                   <input type="date" value={form.date_travaux} onChange={e => set('date_travaux', e.target.value)}
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50" />
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Entreprise / Artisan</label>
                   <input type="text" value={form.nom_entreprise} onChange={e => set('nom_entreprise', e.target.value)}
-                    placeholder="Ex : Plomberie Dupont" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="Ex : Plomberie Dupont" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
               </div>
 
@@ -483,7 +483,7 @@ export default function TravauxPage() {
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Description</label>
                 <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2}
-                  placeholder="Détails des travaux, problème constaté..." className="w-full px-3 py-2 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none resize-none focus:border-blue-500/50" />
+                  placeholder="Détails des travaux, problème constaté..." className="w-full px-3 py-2 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none resize-none focus:border-blue-500/50" />
               </div>
 
               {/* Montants */}
@@ -491,24 +491,24 @@ export default function TravauxPage() {
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Coût estimé (€)</label>
                   <input type="number" step="0.01" value={form.cout_estime} onChange={e => set('cout_estime', e.target.value)}
-                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Coût payé (€)</label>
                   <input type="number" step="0.01" value={form.cout_paye} onChange={e => set('cout_paye', e.target.value)}
-                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="0" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">N° facture</label>
                   <input type="text" value={form.numero_facture} onChange={e => set('numero_facture', e.target.value)}
-                    placeholder="FAC-2026-001" className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none focus:border-blue-500/50" />
+                    placeholder="FAC-2026-001" className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50" />
                 </div>
               </div>
 
               {/* Toggle payé */}
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => set('est_paye', !form.est_paye)}
-                  className={cn('h-6 w-11 rounded-full transition-colors relative flex-shrink-0', form.est_paye ? 'bg-green-500' : 'bg-white/[0.10]')}>
+                  className={cn('h-6 w-11 rounded-full transition-colors relative flex-shrink-0', form.est_paye ? 'bg-green-500' : 'bg-bg-secondary')}>
                   <div className={cn('absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform', form.est_paye ? 'translate-x-5' : 'translate-x-0.5')} />
                 </button>
                 <span className="text-sm text-slate-300">Facture payée</span>
@@ -554,7 +554,7 @@ export default function TravauxPage() {
                   onClick={() => fileRef.current?.click()}
                   className={cn(
                     'flex items-center gap-3 p-3 rounded-xl border border-dashed cursor-pointer transition-all',
-                    pendingFile ? 'border-green-400/30 bg-green-400/5' : 'border-white/[0.10] hover:border-blue-400/30 hover:bg-blue-400/5'
+                    pendingFile ? 'border-green-400/30 bg-green-400/5' : 'border-border hover:border-blue-400/30 hover:bg-blue-400/5'
                   )}
                 >
                   {pendingFile ? (
@@ -565,7 +565,7 @@ export default function TravauxPage() {
                         <p className="text-xs text-slate-500">{(pendingFile.size / 1024).toFixed(0)} KB</p>
                       </div>
                       <button type="button" onClick={e => { e.stopPropagation(); setPendingFile(null) }}
-                        className="h-6 w-6 rounded flex items-center justify-center hover:bg-white/[0.10]">
+                        className="h-6 w-6 rounded flex items-center justify-center hover:bg-bg-secondary">
                         <X className="h-3.5 w-3.5 text-slate-400" />
                       </button>
                     </>
@@ -583,7 +583,7 @@ export default function TravauxPage() {
               {/* Actions */}
               <div className="flex gap-3 pt-2 border-t border-white/[0.06]">
                 <button type="button" onClick={() => { setShowAdd(false); setForm(FORM_INITIAL); setPendingFile(null) }}
-                  className="flex-1 h-10 rounded-lg border border-white/[0.10] text-slate-400 hover:text-[var(--text-primary)] text-sm transition-all">
+                  className="flex-1 h-10 rounded-lg border border-border text-slate-400 hover:text-[var(--text-primary)] text-sm transition-all">
                   Annuler
                 </button>
                 <button type="submit" disabled={saving}

@@ -69,10 +69,10 @@ export default function RegisterPage() {
   }
 
   const inputClass = (field: keyof FormErrors) =>
-    `w-full h-11 px-4 rounded-xl bg-white/[0.06] border text-white placeholder-slate-600 text-sm focus:outline-none transition-all ${
+    `w-full h-11 px-4 rounded-xl bg-bg-secondary border text-white placeholder:text-text-tertiary text-sm focus:outline-none transition-all ${
       errors[field]
         ? 'border-red-500/60 focus:border-red-500'
-        : 'border-white/[0.10] focus:border-blue-500/50'
+        : 'border-border focus:border-blue-500/50'
     }`
 
   return (

@@ -37,7 +37,7 @@ export function AmortissementTable({ plans }: AmortissementTableProps) {
                   <span className="text-xs text-slate-500 ml-2">{plan.duration_years} ans</span>
                 </div>
               </div>
-              <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+              <div className="h-1.5 bg-bg-secondary rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all"
                   style={{ width: `${progress}%` }}

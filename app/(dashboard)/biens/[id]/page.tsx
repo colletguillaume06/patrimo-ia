@@ -6,6 +6,7 @@ import { ProfileSCI } from '@/components/biens/profiles/ProfileSCI'
 import { ProfileAirbnb } from '@/components/biens/profiles/ProfileAirbnb'
 import { ProfileCommerce } from '@/components/biens/profiles/ProfileCommerce'
 import Link from 'next/link'
+import { TabNav } from '@/components/ui/TabNav'
 import { ChevronLeft, Stethoscope, CreditCard, Building, Users, Wrench } from 'lucide-react'
 
 interface Props {
@@ -63,12 +64,12 @@ export default async function BienDetailPage({ params }: Props) {
 
   // Onglets disponibles selon le type
   const tabs = [
-    { href: `/biens/${id}`, label: 'Vue d\'ensemble', icon: null, always: true },
-    { href: `/biens/${id}/diagnostics`, label: 'Diagnostics', icon: Stethoscope, always: true },
-    { href: `/biens/${id}/financement`, label: 'Financement', icon: CreditCard, always: !!property.loan_monthly },
-    { href: `/biens/${id}/copropriete`, label: 'Copropriété', icon: Building, always: false },
-    { href: `/biens/${id}/sci-cca`, label: 'Comptes courants', icon: Users, always: property.type === 'sci' },
-  ].filter(t => t.always !== false || t.always)
+    { href: `/biens/${id}`, label: "Vue d'ensemble" },
+    { href: `/biens/${id}/diagnostics`, label: 'Diagnostics', icon: Stethoscope },
+    ...(property.loan_monthly ? [{ href: `/biens/${id}/financement`, label: 'Financement', icon: CreditCard }] : []),
+    ...(property.type === 'sci' ? [{ href: `/biens/${id}/sci-cca`, label: 'Comptes courants', icon: Users }] : []),
+    { href: `/travaux`, label: 'Travaux', icon: Wrench },
+  ]
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -79,27 +80,7 @@ export default async function BienDetailPage({ params }: Props) {
         <ChevronLeft className="h-4 w-4" /> Retour à mes biens
       </Link>
 
-      {/* Onglets de navigation */}
-      <div className="flex gap-1 p-1 rounded-xl overflow-x-auto"
-        style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-        {tabs.map(tab => (
-          <Link key={tab.href} href={tab.href}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all"
-            style={{
-              background: 'transparent',
-              color: 'var(--text-secondary)',
-            }}>
-            {tab.icon && <tab.icon className="h-3.5 w-3.5 flex-shrink-0" />}
-            {tab.label}
-          </Link>
-        ))}
-        {/* Lien travaux pour ce bien */}
-        <Link href={`/travaux`}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all"
-          style={{ color: 'var(--text-secondary)' }}>
-          <Wrench className="h-3.5 w-3.5" /> Travaux
-        </Link>
-      </div>
+      <TabNav tabs={tabs} />
 
       {property.type === 'lmnp' && <ProfileLMNP property={enriched} />}
       {property.type === 'nu' && <ProfileNu property={enriched} />}

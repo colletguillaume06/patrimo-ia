@@ -17,6 +17,7 @@ import {
   getStatutDepotGarantie, getStatutAssurance, getStatutReconduction
 } from '@/lib/bail'
 import Link from 'next/link'
+import { TabNav } from '@/components/ui/TabNav'
 
 const ASSURANCE_CONFIG = {
   valide: { label: 'Valide', color: 'text-[var(--success)]', bg: 'bg-[var(--success-bg)]', border: 'border-[var(--success)/20]' },
@@ -162,22 +163,11 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
         <ChevronLeft className="h-4 w-4" /> Retour aux baux
       </Link>
 
-      {/* Onglets bail */}
-      <div className="flex gap-1 p-1 rounded-xl overflow-x-auto"
-        style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
-        {[
-          { href: `/baux/${id}`, label: 'Bail & garanties', icon: Shield },
-          { href: `/baux/${id}/compte-locataire`, label: 'Relevé de compte', icon: BarChart2 },
-          { href: `/baux/${id}/regularisation`, label: 'Régularisation charges', icon: RefreshCw },
-        ].map(tab => (
-          <Link key={tab.href} href={tab.href}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all"
-            style={{ color: 'var(--text-secondary)' }}>
-            <tab.icon className="h-3.5 w-3.5 flex-shrink-0" />
-            {tab.label}
-          </Link>
-        ))}
-      </div>
+      <TabNav tabs={[
+        { href: `/baux/${id}`, label: 'Bail & garanties', icon: Shield },
+        { href: `/baux/${id}/compte-locataire`, label: 'Relevé de compte', icon: BarChart2 },
+        { href: `/baux/${id}/regularisation`, label: 'Régularisation charges', icon: RefreshCw },
+      ]} />
 
       {/* Header */}
       <GlassCard className="p-5">
@@ -244,13 +234,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                 <label className="block text-xs text-slate-400 mb-1">Date état des lieux de sortie</label>
                 <input type="date" value={dgForm.etat_lieux_sortie_date}
                   onChange={e => setDgForm(f => ({ ...f, etat_lieux_sortie_date: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Date restitution effective</label>
                 <input type="date" value={dgForm.depot_garantie_restitue_le}
                   onChange={e => setDgForm(f => ({ ...f, depot_garantie_restitue_le: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
               </div>
             </div>
             <label className="flex items-center gap-2 cursor-pointer">
@@ -269,13 +259,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                 <label className="block text-xs text-slate-400 mb-1">Montant retenu (€)</label>
                 <input type="number" value={dgForm.depot_garantie_montant_retenu}
                   onChange={e => setDgForm(f => ({ ...f, depot_garantie_montant_retenu: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Motif de la retenue</label>
                 <input type="text" placeholder="Ex: Dégradation peinture" value={dgForm.depot_garantie_motif_retenu}
                   onChange={e => setDgForm(f => ({ ...f, depot_garantie_motif_retenu: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
               </div>
             </div>
             <div className="flex gap-3">
@@ -289,7 +279,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                 toast.success('Courrier de restitution copié !')
                 setShowCourrier(true)
               }}
-                className="flex-1 h-9 rounded-lg bg-white/[0.06] border border-white/[0.10] text-slate-300 text-sm hover:text-[var(--text-primary)] transition-all flex items-center justify-center gap-2">
+                className="flex-1 h-9 rounded-lg bg-bg-secondary border border-border text-slate-300 text-sm hover:text-[var(--text-primary)] transition-all flex items-center justify-center gap-2">
                 <Copy className="h-3.5 w-3.5" /> Générer courrier restitution
               </button>
             </div>
@@ -347,13 +337,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                   <label className="block text-xs text-slate-400 mb-1">{label}</label>
                   <input type={type} placeholder={placeholder} value={(garantForm as any)[key]}
                     onChange={e => setGarantForm(f => ({ ...f, [key]: e.target.value }))}
-                    className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
                 </div>
               ))}
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Type de caution</label>
                 <select value={garantForm.caution_type} onChange={e => setGarantForm(f => ({ ...f, caution_type: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none">
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
                   <option value="solidaire" className="bg-[var(--surface)]">Solidaire</option>
                   <option value="simple" className="bg-[var(--surface)]">Simple</option>
                   <option value="bancaire" className="bg-[var(--surface)]">Bancaire</option>
@@ -365,7 +355,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
               <label className="block text-xs text-slate-400 mb-1">Adresse complète</label>
               <input type="text" placeholder="12 rue de la Paix, 75001 Paris" value={garantForm.garant_adresse}
                 onChange={e => setGarantForm(f => ({ ...f, garant_adresse: e.target.value }))}
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
+                className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
             </div>
             <button onClick={saveGarant} disabled={saving}
               className="w-full h-9 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all disabled:opacity-50">
@@ -415,13 +405,13 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
                 <label className="block text-xs text-slate-400 mb-1">Compagnie</label>
                 <input type="text" placeholder="MAIF, Groupama..." value={assuranceForm.assurance_locataire_compagnie}
                   onChange={e => setAssuranceForm(f => ({ ...f, assurance_locataire_compagnie: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Date d'expiration</label>
                 <input type="date" value={assuranceForm.assurance_locataire_expiration}
                   onChange={e => setAssuranceForm(f => ({ ...f, assurance_locataire_expiration: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
               </div>
             </div>
             <button onClick={saveAssurance} disabled={saving}

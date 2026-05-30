@@ -65,9 +65,9 @@ export default function RapprochementPage() {
 
       {/* Sélecteur mois */}
       <div className="flex items-center gap-3">
-        <button onClick={() => setSelectedMonth(m => subMonths(m, 1))} className="h-9 w-9 rounded-lg bg-white/[0.06] border border-white/[0.08] flex items-center justify-center hover:bg-white/[0.10]"><ChevronLeft className="h-4 w-4 text-slate-400" /></button>
+        <button onClick={() => setSelectedMonth(m => subMonths(m, 1))} className="h-9 w-9 rounded-lg bg-bg-secondary border border-white/[0.08] flex items-center justify-center hover:bg-bg-secondary"><ChevronLeft className="h-4 w-4 text-slate-400" /></button>
         <span className="font-display font-semibold text-[var(--text-primary)] capitalize min-w-36 text-center">{moisLabel}</span>
-        <button onClick={() => setSelectedMonth(m => subMonths(m, -1))} className="h-9 w-9 rounded-lg bg-white/[0.06] border border-white/[0.08] flex items-center justify-center hover:bg-white/[0.10]"><ChevronRight className="h-4 w-4 text-slate-400" /></button>
+        <button onClick={() => setSelectedMonth(m => subMonths(m, -1))} className="h-9 w-9 rounded-lg bg-bg-secondary border border-white/[0.08] flex items-center justify-center hover:bg-bg-secondary"><ChevronRight className="h-4 w-4 text-slate-400" /></button>
       </div>
 
       {/* Résumé */}
@@ -138,7 +138,7 @@ export default function RapprochementPage() {
                 })}
               </tbody>
               <tfoot>
-                <tr className="border-t border-white/[0.10]">
+                <tr className="border-t border-border">
                   <td colSpan={2} className="py-2.5 px-3 text-xs font-semibold text-[var(--text-primary)]">TOTAL</td>
                   <td className="py-2.5 px-3 text-[var(--text-primary)] font-bold">{formatCurrency(total_attendu)}</td>
                   <td className="py-2.5 px-3 text-[var(--success)] font-bold">{formatCurrency(total_recu)}</td>

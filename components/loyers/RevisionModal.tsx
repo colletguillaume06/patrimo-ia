@@ -153,7 +153,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
             <TrendingUp className="h-4 w-4 text-[var(--success)]" />
             <h2 className="font-display font-semibold text-[var(--text-primary)]">Révision de loyer</h2>
           </div>
-          <button onClick={onClose} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10]">
+          <button onClick={onClose} className="h-8 w-8 rounded-lg bg-bg-secondary flex items-center justify-center hover:bg-bg-secondary">
             <X className="h-4 w-4 text-slate-400" />
           </button>
         </div>
@@ -186,7 +186,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
                 value={ancienIndice}
                 onChange={e => setAncienIndice(e.target.value)}
                 required
-                className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm font-mono focus:outline-none focus:border-blue-500/50"
+                className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm font-mono focus:outline-none focus:border-blue-500/50"
               />
               {!hasRef && (
                 <p className="text-xs text-slate-600 mt-1">
@@ -233,7 +233,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
             <label className="flex items-center gap-3 cursor-pointer">
               <div
                 onClick={() => setNotify(!notify)}
-                className={`h-5 w-9 rounded-full transition-colors relative flex-shrink-0 ${notify ? 'bg-blue-500' : 'bg-white/[0.10]'}`}
+                className={`h-5 w-9 rounded-full transition-colors relative flex-shrink-0 ${notify ? 'bg-blue-500' : 'bg-bg-secondary'}`}
               >
                 <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${notify ? 'translate-x-4' : 'translate-x-0.5'}`} />
               </div>
@@ -248,7 +248,7 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
                 type="button"
                 onClick={() => setShowLettre(true)}
                 disabled={!calcul}
-                className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] text-slate-300 text-sm font-medium transition-all disabled:opacity-40"
+                className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-bg-secondary hover:bg-bg-secondary border border-border text-slate-300 text-sm font-medium transition-all disabled:opacity-40"
               >
                 <FileText className="h-4 w-4" /> Lettre de révision
               </button>

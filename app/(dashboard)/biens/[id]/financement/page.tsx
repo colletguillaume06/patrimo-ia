@@ -116,7 +116,7 @@ export default function FinancementPage() {
                 <label className="block text-xs text-slate-400 mb-1">{label}</label>
                 <input type={type} step={step} placeholder={placeholder} value={(form as any)[key]} required={required}
                   onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg bg-white/[0.06] border border-white/[0.10] text-[var(--text-primary)] placeholder-slate-600 text-sm focus:outline-none" />
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
               </div>
             ))}
           </div>
@@ -168,9 +168,9 @@ export default function FinancementPage() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-display font-semibold text-[var(--text-primary)]">Tableau d'amortissement</h3>
               <div className="flex items-center gap-2 text-xs text-slate-400">
-                <button disabled={page === 0} onClick={() => setPage(p => p - 1)} className="h-7 w-7 rounded-lg bg-white/[0.06] flex items-center justify-center disabled:opacity-30 hover:bg-white/[0.10]"><ChevronLeft className="h-4 w-4" /></button>
+                <button disabled={page === 0} onClick={() => setPage(p => p - 1)} className="h-7 w-7 rounded-lg bg-bg-secondary flex items-center justify-center disabled:opacity-30 hover:bg-bg-secondary"><ChevronLeft className="h-4 w-4" /></button>
                 <span>{page + 1} / {totalPages}</span>
-                <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} className="h-7 w-7 rounded-lg bg-white/[0.06] flex items-center justify-center disabled:opacity-30 hover:bg-white/[0.10]"><ChevronDown className="h-4 w-4" /></button>
+                <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} className="h-7 w-7 rounded-lg bg-bg-secondary flex items-center justify-center disabled:opacity-30 hover:bg-bg-secondary"><ChevronDown className="h-4 w-4" /></button>
               </div>
             </div>
             <div className="overflow-x-auto">

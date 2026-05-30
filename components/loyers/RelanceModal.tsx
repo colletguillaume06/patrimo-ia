@@ -44,7 +44,7 @@ export function RelanceModal({ payment, onClose, onSuccess }: RelanceModalProps)
       <div className="relative w-full max-w-md bg-[var(--surface)] border border-white/[0.08] rounded-2xl p-6 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
           <h2 className="font-display font-semibold text-[var(--text-primary)]">Envoyer une relance</h2>
-          <button onClick={onClose} className="h-8 w-8 rounded-lg bg-white/[0.06] flex items-center justify-center hover:bg-white/[0.10]">
+          <button onClick={onClose} className="h-8 w-8 rounded-lg bg-bg-secondary flex items-center justify-center hover:bg-bg-secondary">
             <X className="h-4 w-4 text-slate-400" />
           </button>
         </div>
@@ -74,7 +74,7 @@ export function RelanceModal({ payment, onClose, onSuccess }: RelanceModalProps)
         </div>
 
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 h-10 rounded-lg border border-white/[0.10] text-slate-400 hover:text-[var(--text-primary)] text-sm transition-all">
+          <button onClick={onClose} className="flex-1 h-10 rounded-lg border border-border text-slate-400 hover:text-[var(--text-primary)] text-sm transition-all">
             Annuler
           </button>
           <button
