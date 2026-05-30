@@ -31,6 +31,7 @@ const nav = [
 ]
 
 const navSecondary = [
+  { href: '/emails', label: 'Emails', icon: Mail },
   { href: '/contacts', label: 'Contacts', icon: Users },
   { href: '/documents', label: 'Documents', icon: FolderOpen },
   { href: '/courriers', label: 'Courriers', icon: Mail },
