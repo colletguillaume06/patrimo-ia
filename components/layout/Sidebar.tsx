@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import {
   LayoutDashboard, Building2, Banknote, FileText,
-  Wrench, Download, ChevronRight, Sparkles, TrendingUp,
+  Wrench, Download, ChevronRight, Sparkles, TrendingUp, Landmark,
   BarChart3, Users, FolderOpen, Mail, Settings, BookOpen,
   FlaskConical, Loader2
 } from 'lucide-react'
@@ -24,6 +24,7 @@ const nav = [
   { href: '/biens', label: 'Mes biens', icon: Building2 },
   { href: '/patrimoine', label: 'Patrimoine', icon: TrendingUp },
   { href: '/loyers', label: 'Loyers', icon: Banknote },
+  { href: '/rapprochement', label: 'Rapprochement bancaire', icon: Landmark },
   { href: '/baux', label: 'Baux', icon: FileText },
   { href: '/travaux', label: 'Travaux', icon: Wrench },
   { href: '/fiscal', label: 'Déclaration', icon: BarChart3 },
