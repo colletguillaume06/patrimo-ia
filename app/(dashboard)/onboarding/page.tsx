@@ -1,5 +1,6 @@
 'use client'
 import Image from 'next/image'
+import { Logo } from '@/components/layout/Logo'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -138,14 +139,8 @@ export default function OnboardingPage() {
       <div className="w-full max-w-4xl">
 
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2.5 mb-8">
-          <div className="h-10 w-10 rounded-xl flex items-center justify-center shadow-sm"
-            style={{ background: 'linear-gradient(135deg, #1B4FD8, #0891B2)' }}>
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
-          <span className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>
-            Propilot <span style={{ color: 'var(--accent)' }}>AI</span>
-          </span>
+        <div className="flex items-center justify-center mb-8">
+          <Logo size="md" linkTo="/" />
         </div>
 
         {/* Stepper */}
@@ -380,7 +375,7 @@ export default function OnboardingPage() {
                   <Bot className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">Assistant Propilot</p>
+                  <p className="text-sm font-semibold text-white">Assistant Patrimo IA</p>
                   <p className="text-xs text-white/70">Je vous guide étape par étape</p>
                 </div>
               </div>

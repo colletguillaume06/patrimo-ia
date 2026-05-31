@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { LogoStatic } from '@/components/layout/Logo'
 import Link from 'next/link'
 import { ArrowRight, Building2, Bot, Calculator, FileText, Shield, Zap, CheckCircle, Sparkles, Star } from 'lucide-react'
 
@@ -10,8 +10,7 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-50 border-b border-black/[0.06] bg-white/90 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <Image src="/logo-patrimo.png" alt="Patrimo" width={32} height={32} className="object-contain" />
-            <span className="font-display font-bold text-[17px] tracking-tight text-[#1E2140]">Patrimo</span>
+            <LogoStatic variant="dark" size="sm" />
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-[#475569]">
             <a href="#features" className="hover:text-[#0F172A] transition-colors">Fonctionnalités</a>
@@ -34,7 +33,7 @@ export default function LandingPage() {
             Gérez votre patrimoine<br /><span style={{ color: '#1D4ED8' }}>comme un professionnel</span>
           </h1>
           <p className="text-xl text-[#475569] max-w-2xl mx-auto mb-10 leading-relaxed">
-            Patrimo centralise vos biens, calcule votre fiscalité LMNP / SCI / foncier et répond à vos questions juridiques en 30 secondes.
+            Patrimo IA centralise vos biens, calcule votre fiscalité LMNP / SCI / foncier et répond à vos questions juridiques en 30 secondes.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/register" className="flex items-center gap-2 px-8 py-3.5 rounded-2xl text-white text-base font-semibold hover:opacity-90 transition-all shadow-lg" style={{ background: '#1D4ED8', boxShadow: '0 8px 24px rgba(29,78,216,0.3)' }}>
@@ -73,7 +72,7 @@ export default function LandingPage() {
               { icon: Calculator, title: 'Fiscalité optimisée', desc: 'LMNP réel, micro-BIC, foncier nu, SCI IS/IR — simulations comparatives avec votre TMI réel.', color: '#166534', bg: '#F0FDF4' },
               { icon: Building2, title: 'Profils adaptatifs', desc: 'Airbnb, SCI, LMNP, nu, commerce — chaque bien a son tableau de bord fiscal dédié.', color: '#0C4A6E', bg: '#E0F2FE' },
               { icon: FileText, title: 'OCR baux IA', desc: 'Uploadez vos baux PDF — l\'IA extrait loyer, charges, durée, clauses automatiquement.', color: '#92400E', bg: '#FFFBEB' },
-              { icon: Zap, title: 'Relances automatiques', desc: 'Loyer en retard ? Patrimo envoie la relance adaptée (rappel, ferme, mise en demeure).', color: '#5B21B6', bg: '#F5F3FF' },
+              { icon: Zap, title: 'Relances automatiques', desc: 'Loyer en retard ? Patrimo IA envoie la relance adaptée (rappel, ferme, mise en demeure).', color: '#5B21B6', bg: '#F5F3FF' },
               { icon: Shield, title: 'Sécurisé & confidentiel', desc: 'Données chiffrées, hébergement EU, RGPD. Vos données vous appartiennent.', color: '#991B1B', bg: '#FEF2F2' },
             ].map(({ icon: Icon, title, desc, color, bg }) => (
               <div key={title} className="p-6 rounded-2xl border hover:shadow-md hover:-translate-y-0.5 transition-all" style={{ border: '1px solid rgba(0,0,0,0.07)', background: '#fff' }}>
@@ -156,8 +155,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-8 border-t border-black/[0.06] text-center">
         <div className="flex items-center justify-center gap-2.5 mb-3">
-          <Image src="/logo-patrimo.png" alt="Patrimo" width={28} height={28} className="object-contain" />
-          <span className="font-display font-bold text-[#1E2140]">Patrimo</span>
+          <LogoStatic variant="dark" size="sm" />
         </div>
         <p className="text-xs text-[#94A3B8]">© {new Date().getFullYear()} Patrimo · Tous droits réservés</p>
       </footer>

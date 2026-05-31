@@ -87,7 +87,7 @@ export default function RegisterPage() {
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           <span className="font-display font-bold text-2xl text-white">
-            Propilot <span className="text-blue-400">AI</span>
+            Patrimo <span style={{ color: '#1D4ED8' }}>IA</span>
           </span>
         </div>
 

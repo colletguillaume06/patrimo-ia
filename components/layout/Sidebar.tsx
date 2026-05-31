@@ -10,7 +10,7 @@ import {
   FlaskConical, Loader2
 } from 'lucide-react'
 import { cn, getInitials } from '@/lib/utils'
-import { Logo } from '@/components/ui/Logo'
+import { Logo } from '@/components/layout/Logo'
 import { toast } from 'sonner'
 import type { Profile } from '@/types'
 
@@ -98,8 +98,8 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
       style={{ background: 'var(--sidebar-bg)', borderRight: '1px solid var(--sidebar-border)' }}>
 
       {/* Logo */}
-      <div className="px-4 py-2.5" style={{ borderBottom: '1px solid var(--border-subtle, var(--border))' }}>
-        <Logo size="sm" textColor="var(--text-primary)" />
+      <div className="px-4 pb-4 pt-3" style={{ borderBottom: '1px solid var(--border)' }}>
+        <Logo size="sm" linkTo="/dashboard" />
       </div>
 
       {/* Nav principale */}
@@ -186,7 +186,7 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
             boxShadow: '0 4px 12px rgba(27,79,216,0.25)',
           }}>
           <Sparkles className="h-[18px] w-[18px]" />
-          Demander à Propilot
+          Demander à Patrimo
         </Link>
       </div>
 
