@@ -6,7 +6,7 @@ import { useCopilot } from '@/hooks/useCopilot'
 import { toast } from 'sonner'
 import {
   Mail, Sparkles, Send, Copy, CheckCircle, ChevronRight,
-  Banknote, FileText, Wrench, Shield, Star, Edit3, RefreshCw, Bot
+  Banknote, FileText, Wrench, Shield, Star, Edit3, RefreshCw, Bot, Upload, FolderOpen, X
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/lib/utils'
@@ -396,6 +396,9 @@ export default function EmailsPage() {
   const [sending, setSending] = useState(false)
   const [leases, setLeases] = useState<any[]>([])
   const [selectedLease, setSelectedLease] = useState('')
+  const [customTemplates, setCustomTemplates] = useState<Template[]>([])
+  const [showImportModal, setShowImportModal] = useState(false)
+  const fileImportRef = useRef<HTMLInputElement>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -449,7 +452,36 @@ export default function EmailsPage() {
     else toast.error('Erreur envoi — vérifiez la clé Resend')
   }
 
-  const filteredTpls = TEMPLATES.filter(t => t.category === selectedCat)
+  const filteredTpls = [
+    ...TEMPLATES.filter(t => t.category === selectedCat),
+    ...customTemplates.filter(t => t.category === selectedCat),
+  ]
+
+  const handleImportFile = (file: File) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const content = e.target?.result as string
+      const name = file.name.replace(/\.(txt|html|htm)$/, '')
+      const newTpl: Template = {
+        id: 'custom-' + Date.now(),
+        label: name,
+        subject: name,
+        category: selectedCat,
+        vars: [],
+        body: content,
+      }
+      setCustomTemplates(prev => [...prev, newTpl])
+      selectTemplate(newTpl)
+      toast.success(`Modèle "${name}" importé`)
+    }
+    reader.readAsText(file)
+  }
+
+  const deleteCustomTpl = (id: string) => {
+    setCustomTemplates(prev => prev.filter(t => t.id !== id))
+    if (selectedTpl.id === id) selectTemplate(TEMPLATES[0])
+    toast.success('Modèle supprimé')
+  }
 
   return (
     <div className="max-w-7xl mx-auto h-[calc(100vh-56px)] flex flex-col gap-0 -mt-6 -mx-6 overflow-hidden">
@@ -512,10 +544,44 @@ export default function EmailsPage() {
                 <Mail className="h-4 w-4 flex-shrink-0" style={{ color: selectedTpl.id === tpl.id ? '#1D4ED8' : 'var(--text-tertiary)' }} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{tpl.label}</p>
+                  {tpl.id.startsWith('custom-') && (
+                    <span className="text-xs px-1.5 py-0.5 rounded-full font-medium" style={{ background: '#EFF6FF', color: '#1D4ED8' }}>
+                      Perso
+                    </span>
+                  )}
                 </div>
-                {selectedTpl.id === tpl.id && <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#1D4ED8' }} />}
+                {tpl.id.startsWith('custom-') && (
+                  <button
+                    onClick={e => { e.stopPropagation(); deleteCustomTpl(tpl.id) }}
+                    className="h-5 w-5 rounded flex items-center justify-center hover:bg-red-100 transition-colors flex-shrink-0"
+                    style={{ color: '#B91C1C' }}>
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+                {selectedTpl.id === tpl.id && !tpl.id.startsWith('custom-') && <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#1D4ED8' }} />}
               </button>
             ))}
+          </div>
+
+          {/* Bouton importer */}
+          <div className="p-3 border-t" style={{ borderColor: 'var(--border)' }}>
+            <button
+              onClick={() => fileImportRef.current?.click()}
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all border border-dashed hover:opacity-80"
+              style={{ borderColor: '#1D4ED8', color: '#1D4ED8', background: '#EFF6FF' }}>
+              <Upload className="h-4 w-4" />
+              Importer mon modèle
+            </button>
+            <input
+              ref={fileImportRef}
+              type="file"
+              accept=".txt,.html,.htm"
+              className="hidden"
+              onChange={e => { const f = e.target.files?.[0]; if (f) handleImportFile(f); e.target.value = '' }}
+            />
+            <p className="text-xs mt-1.5 text-center" style={{ color: 'var(--text-tertiary)' }}>
+              .txt · .html · Max 500 Ko
+            </p>
           </div>
         </div>
 
