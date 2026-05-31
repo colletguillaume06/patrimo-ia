@@ -55,9 +55,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${syne.variable} ${dmSans.variable} ${dmMono.variable}`}>
-      <body className="min-h-screen bg-bg-primary text-[var(--text-primary)] antialiased">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange={false}>
+    <html
+      lang="fr"
+      className={`${syne.variable} ${dmSans.variable} ${dmMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-screen antialiased" suppressHydrationWarning>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
           {children}
           <Toaster theme="system" position="top-right" />
         </ThemeProvider>
