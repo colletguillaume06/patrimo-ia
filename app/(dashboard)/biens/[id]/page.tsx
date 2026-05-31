@@ -65,10 +65,10 @@ export default async function BienDetailPage({ params }: Props) {
   // Onglets disponibles selon le type
   const tabs = [
     { href: `/biens/${id}`, label: "Vue d'ensemble" },
-    { href: `/biens/${id}/diagnostics`, label: 'Diagnostics', icon: Stethoscope },
-    ...(property.loan_monthly ? [{ href: `/biens/${id}/financement`, label: 'Financement', icon: CreditCard }] : []),
-    ...(property.type === 'sci' ? [{ href: `/biens/${id}/sci-cca`, label: 'Comptes courants', icon: Users }] : []),
-    { href: `/travaux`, label: 'Travaux', icon: Wrench },
+    { href: `/biens/${id}/diagnostics`, label: 'Diagnostics', icon: 'Stethoscope' },
+    ...(property.loan_monthly ? [{ href: `/biens/${id}/financement`, label: 'Financement', icon: 'CreditCard' }] : []),
+    ...(property.type === 'sci' ? [{ href: `/biens/${id}/sci-cca`, label: 'Comptes courants', icon: 'Users' }] : []),
+    { href: `/travaux`, label: 'Travaux', icon: 'Wrench' },
   ]
 
   return (

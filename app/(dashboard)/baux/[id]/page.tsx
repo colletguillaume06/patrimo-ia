@@ -164,9 +164,9 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
       </Link>
 
       <TabNav tabs={[
-        { href: `/baux/${id}`, label: 'Bail & garanties', icon: Shield },
-        { href: `/baux/${id}/compte-locataire`, label: 'Relevé de compte', icon: BarChart2 },
-        { href: `/baux/${id}/regularisation`, label: 'Régularisation charges', icon: RefreshCw },
+        { href: `/baux/${id}`, label: 'Bail & garanties', icon: 'Shield' },
+        { href: `/baux/${id}/compte-locataire`, label: 'Relevé de compte', icon: 'BarChart2' },
+        { href: `/baux/${id}/regularisation`, label: 'Régularisation charges', icon: 'RefreshCw' },
       ]} />
 
       {/* Header */}
