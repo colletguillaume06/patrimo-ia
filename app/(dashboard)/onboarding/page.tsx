@@ -1,6 +1,7 @@
 'use client'
 import Image from 'next/image'
 import { Logo } from '@/components/layout/Logo'
+import { toast } from 'sonner'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -115,6 +116,21 @@ export default function OnboardingPage() {
     if (step === 2) return nbBiens !== null && typesBiens.length > 0
     if (step === 3) return tmi !== null
     return true
+  }
+
+  const handleNext = () => {
+    if (step === 1) {
+      if (prenom.trim().length < 2) { toast.error('Entrez votre prénom'); return }
+      if (!objectif) { toast.error('Sélectionnez votre profil'); return }
+    }
+    if (step === 2) {
+      if (!nbBiens) { toast.error('Sélectionnez le nombre de biens'); return }
+      if (typesBiens.length === 0) { toast.error('Sélectionnez au moins un type de bien'); return }
+    }
+    if (step === 3) {
+      if (!tmi) { toast.error('Sélectionnez votre tranche marginale'); return }
+    }
+    setStep(s => s + 1)
   }
 
   const handleFinish = async () => {
@@ -356,9 +372,9 @@ export default function OnboardingPage() {
                     <ArrowLeft className="h-4 w-4" /> Retour
                   </button>
                 )}
-                <button onClick={() => setStep(s => s + 1)} disabled={!canNext()}
-                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl text-white text-sm font-semibold transition-all disabled:opacity-40"
-                  style={{ background: canNext() ? 'var(--accent)' : 'var(--text-tertiary)' }}>
+                <button onClick={handleNext}
+                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl text-white text-sm font-semibold transition-all hover:opacity-90"
+                  style={{ background: '#1D4ED8' }}>
                   {step === 3 ? 'Voir le récap' : 'Continuer'} <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
