@@ -54,7 +54,7 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
               <p className={cn('text-sm font-semibold', config.color)}>
                 {alert.property_name}
               </p>
-              <p className="text-sm text-[var(--text-secondary)] mt-0.5">{alert.message}</p>
+              <p className="text-sm font-medium mt-0.5" style={{ color: '#7F1D1D' }}>{alert.message}</p>
             </div>
             {alert.action_label && alert.action_href && (
               <Link href={alert.action_href}
@@ -79,8 +79,8 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
               )}>
                 <Icon className={cn('h-4 w-4 mt-0.5 flex-shrink-0', config.color)} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[var(--text-primary)]">{alert.property_name}</p>
-                  <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2">{alert.message}</p>
+                  <p className="text-sm font-semibold" style={{ color: '#1E293B' }}>{alert.property_name}</p>
+                  <p className="text-xs mt-0.5 line-clamp-2" style={{ color: '#334155' }}>{alert.message}</p>
                   {alert.action_label && alert.action_href && (
                     <Link href={alert.action_href}
                       className={cn('mt-1.5 flex items-center gap-1 text-xs font-medium', config.color)}>
