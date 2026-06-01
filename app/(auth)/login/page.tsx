@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import { Sparkles, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import { LogoStatic } from '@/components/layout/Logo'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -31,13 +32,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
 
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2.5 mb-8">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
-          <span className="font-display font-bold text-2xl text-[#0F172A]">
-            Patrimo <span style={{ color: '#1D4ED8' }}>IA</span>
-          </span>
+        <div className="flex items-center justify-center mb-8">
+          <LogoStatic variant="dark" size="md" />
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
