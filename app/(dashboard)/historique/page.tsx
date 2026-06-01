@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { toast } from 'sonner'
-import { Download, Upload, CheckCircle, FileText, Building2, Banknote, Receipt, Loader2, AlertCircle, ChevronRight, Sparkles } from 'lucide-react'
+import { Download, Upload, CheckCircle, FileText, Building2, Banknote, Receipt, Loader2, AlertCircle, ChevronRight, Sparkles, Wrench } from 'lucide-react'
 import Link from 'next/link'
 
 export default function HistoriquePage() {
@@ -97,21 +97,18 @@ export default function HistoriquePage() {
         </h2>
         <div className="space-y-3">
           {[
-            {
-              icon: Building2, color: '#1D4ED8', bg: '#EFF6FF',
-              title: 'Onglet Biens',
-              items: ['Nom, adresse, ville du bien', 'Type (LMNP, nu, SCI...)', 'Surface, prix d\'achat, année d\'achat', 'Loyer mensuel et charges actuels'],
-            },
-            {
-              icon: Banknote, color: '#059669', bg: '#F0FDF4',
-              title: 'Onglet Loyers',
-              items: ['Total loyers encaissés par bien et par année', 'Nombre de mois vacants', 'Nom du locataire'],
-            },
-            {
-              icon: Receipt, color: '#7C3AED', bg: '#F5F3FF',
-              title: 'Onglet Dépenses',
-              items: ['Charges de copropriété', 'Travaux (déductibles ou amortissables)', 'Assurances, taxe foncière, frais de gestion'],
-            },
+            { icon: Building2, color: '#1D4ED8', bg: '#EFF6FF', title: '1 · Biens',
+              items: ['Adresse, surface, nb pièces, DPE', 'Prix d\'achat, taxe foncière, assurance', 'Détails du prêt (banque, taux, durée)', 'Syndic et charges de copropriété'] },
+            { icon: FileText, color: '#0891B2', bg: '#E0F7FF', title: '2 · Baux',
+              items: ['Nom, email, téléphone du locataire', 'Loyer, charges, dépôt de garantie', 'Dates début/fin, indice IRL', 'Garant éventuel'] },
+            { icon: Banknote, color: '#059669', bg: '#F0FDF4', title: '3 · Loyers',
+              items: ['Total encaissé par an et par bien', 'Mois de vacance locative', 'Génère l\'historique des paiements mensuel par mensuel'] },
+            { icon: Receipt, color: '#7C3AED', bg: '#F5F3FF', title: '4 · Dépenses',
+              items: ['Charges, assurances, taxe foncière', 'Travaux déductibles ou amortissables', 'Frais de gestion, comptabilité'] },
+            { icon: Wrench, color: '#D97706', bg: '#FFFBEB', title: '5 · Travaux',
+              items: ['Titre, description, entreprise', 'Montant estimé et payé', 'Statut (planifié / en cours / terminé)', 'Catégorie fiscale'] },
+            { icon: CheckCircle, color: '#BE185D', bg: '#FDF2F8', title: '6 · Diagnostics',
+              items: ['DPE (classe A à G)', 'Amiante, plomb, électricité, gaz', 'Dates réalisation et expiration', 'Cabinet diagnostiqueur'] },
           ].map(({ icon: Icon, color, bg, title, items }) => (
             <div key={title} className="flex gap-4 p-4 rounded-xl" style={{ background: 'var(--bg-secondary)' }}>
               <div className="h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: bg }}>
@@ -187,9 +184,12 @@ export default function HistoriquePage() {
           </h2>
           <div className="grid grid-cols-3 gap-3 mb-4">
             {[
-              { label: 'Biens créés', value: result.results.biens, color: '#1D4ED8' },
-              { label: 'Paiements importés', value: result.results.loyers, color: '#059669' },
-              { label: 'Dépenses importées', value: result.results.depenses, color: '#7C3AED' },
+              { label: 'Biens', value: result.results.biens, color: '#1D4ED8' },
+              { label: 'Baux', value: result.results.baux, color: '#0891B2' },
+              { label: 'Paiements', value: result.results.loyers, color: '#059669' },
+              { label: 'Dépenses', value: result.results.depenses, color: '#7C3AED' },
+              { label: 'Travaux', value: result.results.travaux, color: '#D97706' },
+              { label: 'Diagnostics', value: result.results.diagnostics, color: '#BE185D' },
             ].map(({ label, value, color }) => (
               <div key={label} className="text-center p-3 rounded-xl" style={{ background: 'var(--bg-secondary)' }}>
                 <p className="text-2xl font-bold font-mono" style={{ color }}>{value}</p>
