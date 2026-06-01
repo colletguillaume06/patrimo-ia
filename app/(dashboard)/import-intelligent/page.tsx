@@ -72,10 +72,12 @@ export default function ImportIntelligentPage() {
   const [dragging, setDragging] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
+  const ACCEPTED_EXTS = ['pdf', 'xlsx', 'xls', 'csv', 'txt', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'ofx', 'qfx', 'xml']
+
   const addFiles = (newFiles: FileList | File[]) => {
     const arr = Array.from(newFiles).filter(f => {
       const ext = f.name.split('.').pop()?.toLowerCase()
-      return ['pdf', 'xlsx', 'xls', 'csv'].includes(ext ?? '')
+      return ACCEPTED_EXTS.includes(ext ?? '')
     })
     setFiles(prev => {
       const names = new Set(prev.map(f => f.name))
@@ -188,10 +190,13 @@ export default function ImportIntelligentPage() {
               ou cliquez pour sélectionner — PDF, Excel, CSV
             </p>
             <p className="text-xs mt-3 px-6 text-center" style={{ color: 'var(--text-tertiary)' }}>
+              PDF · Excel · CSV · Word · Images (JPG/PNG) · OFX · TXT · XML
+            </p>
+            <p className="text-xs mt-1 px-6 text-center" style={{ color: 'var(--text-tertiary)' }}>
               Baux · Diagnostics · Taxe foncière · Assurances · Actes de vente · Factures · Relevés bancaires
             </p>
           </div>
-          <input ref={fileRef} type="file" multiple accept=".pdf,.xlsx,.xls,.csv" className="hidden"
+          <input ref={fileRef} type="file" multiple accept=".pdf,.xlsx,.xls,.csv,.txt,.doc,.docx,.jpg,.jpeg,.png,.ofx,.qfx,.xml" className="hidden"
             onChange={e => { if (e.target.files) addFiles(e.target.files); e.target.value = '' }} />
 
           {files.length > 0 && (

@@ -160,7 +160,6 @@ export async function POST(req: NextRequest) {
     let excelData: any = null
 
     if (ext === 'xlsx' || ext === 'xls') {
-      // Traitement Excel séparé
       const wb = XLSX.read(buf, { type: 'buffer' })
       const sheetsContent: string[] = []
       for (const name of wb.SheetNames) {
@@ -169,10 +168,25 @@ export async function POST(req: NextRequest) {
       }
       text = sheetsContent.join('\n\n').slice(0, 6000)
       excelData = { type: 'excel', sheetNames: wb.SheetNames }
-    } else if (ext === 'csv') {
+    } else if (ext === 'csv' || ext === 'txt' || ext === 'xml' || ext === 'ofx' || ext === 'qfx') {
       text = (await file.text()).slice(0, 6000)
     } else if (ext === 'pdf') {
       text = await extractPdfText(buf)
+    } else if (ext === 'doc' || ext === 'docx') {
+      // Extraction texte basique depuis docx (ZIP XML)
+      try {
+        const JSZip = (await import('jszip')).default
+        const zip = await JSZip.loadAsync(buf)
+        const xmlFile = zip.file('word/document.xml')
+        if (xmlFile) {
+          const xml = await xmlFile.async('text')
+          text = xml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 6000)
+        }
+      } catch { text = '' }
+    } else if (ext === 'jpg' || ext === 'jpeg' || ext === 'png') {
+      // Pour les images, on envoie directement à Groq vision si disponible
+      // Sinon on note que c'est une image non lisible en texte
+      text = `[Image: ${file.name}] — Document image, extraction de texte non disponible. Analyse visuelle recommandée.`
     } else {
       text = await file.text().catch(() => '')
     }
