@@ -19,25 +19,46 @@ interface SidebarProps {
   latePaymentsCount?: number
 }
 
-const nav = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/biens', label: 'Mes biens', icon: Building2 },
-  { href: '/patrimoine', label: 'Patrimoine', icon: TrendingUp },
-  { href: '/loyers', label: 'Loyers', icon: Banknote },
-  { href: '/rapprochement', label: 'Rapprochement bancaire', icon: Landmark },
-  { href: '/baux', label: 'Baux', icon: FileText },
-  { href: '/travaux', label: 'Travaux', icon: Wrench },
-  { href: '/fiscal', label: 'Déclaration', icon: BarChart3 },
-  { href: '/fiscalite/declaration', label: 'Aide déclaration', icon: BookOpen },
-  { href: '/exports', label: 'Exports', icon: Download },
-]
-
-const navSecondary = [
-  { href: '/emails', label: 'Emails', icon: Mail },
-  { href: '/contacts', label: 'Contacts', icon: Users },
-  { href: '/documents', label: 'Documents', icon: FolderOpen },
-  { href: '/courriers', label: 'Courriers', icon: Mail },
-  { href: '/parametres', label: 'Paramètres', icon: Settings },
+const navGroups = [
+  {
+    label: '🏠 Mon patrimoine',
+    items: [
+      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: false },
+      { href: '/biens', label: 'Mes biens', icon: Building2, badge: false },
+      { href: '/patrimoine', label: 'Valorisation', icon: TrendingUp, badge: false },
+    ],
+  },
+  {
+    label: '💰 Gestion locative',
+    items: [
+      { href: '/loyers', label: 'Loyers', icon: Banknote, badge: true },
+      { href: '/baux', label: 'Baux', icon: FileText, badge: false },
+      { href: '/rapprochement', label: 'Rapprochement', icon: Landmark, badge: false },
+    ],
+  },
+  {
+    label: '🔧 Charges & travaux',
+    items: [
+      { href: '/travaux', label: 'Travaux', icon: Wrench, badge: false },
+      { href: '/exports', label: 'Exports', icon: Download, badge: false },
+    ],
+  },
+  {
+    label: '📊 Fiscalité',
+    items: [
+      { href: '/fiscal', label: 'Déclaration', icon: BarChart3, badge: false },
+      { href: '/fiscalite/declaration', label: 'Aide déclaration', icon: BookOpen, badge: false },
+    ],
+  },
+  {
+    label: '📁 Outils',
+    items: [
+      { href: '/emails', label: 'Emails', icon: Mail, badge: false },
+      { href: '/contacts', label: 'Contacts', icon: Users, badge: false },
+      { href: '/documents', label: 'Documents', icon: FolderOpen, badge: false },
+      { href: '/courriers', label: 'Courriers', icon: Mail, badge: false },
+    ],
+  },
 ]
 
 const planLabels: Record<string, string> = { starter: 'Starter', pro: 'Pro', premium: 'Premium ✦' }
@@ -114,43 +135,52 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
       </div>
 
       {/* Nav principale */}
-      <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
-        {nav.map(({ href, label, icon: Icon }) => {
-          const active = isActive(href)
-          return (
-            <Link key={href} href={href}
-              className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150"
-              style={{
-                background: active ? 'var(--brand-light, #EEF3FF)' : 'transparent',
-                color: active ? 'var(--accent)' : 'var(--text-secondary)',
-              }}>
-              <Icon className="h-[18px] w-[18px] flex-shrink-0" />
-              <span className="flex-1">{label}</span>
-              {href === '/loyers' && latePaymentsCount > 0 && (
-                <span className="h-5 min-w-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center px-1">
-                  {latePaymentsCount}
-                </span>
-              )}
-            </Link>
-          )
-        })}
+      <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-4">
+        {navGroups.map(group => (
+          <div key={group.label}>
+            {/* Titre groupe */}
+            <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest"
+              style={{ color: 'var(--text-tertiary)' }}>
+              {group.label}
+            </p>
+            <div className="space-y-0.5">
+              {group.items.map(({ href, label, icon: Icon, badge }) => {
+                const active = isActive(href)
+                return (
+                  <Link key={href} href={href}
+                    className="group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150"
+                    style={{
+                      background: active ? 'var(--brand-light, #EEF3FF)' : 'transparent',
+                      color: active ? 'var(--accent)' : 'var(--text-secondary)',
+                    }}>
+                    <Icon className="h-[16px] w-[16px] flex-shrink-0" />
+                    <span className="flex-1">{label}</span>
+                    {badge && latePaymentsCount > 0 && (
+                      <span className="h-4.5 min-w-4.5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                        {latePaymentsCount}
+                      </span>
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        ))}
 
-        <div className="my-2" style={{ borderTop: '1px solid var(--border)' }} />
-
-        {navSecondary.map(({ href, label, icon: Icon }) => {
-          const active = isActive(href)
-          return (
-            <Link key={href} href={href}
+        {/* Paramètres */}
+        <div>
+          <div className="space-y-0.5">
+            <Link href="/parametres"
               className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150"
               style={{
-                background: active ? 'var(--brand-light, #EEF3FF)' : 'transparent',
-                color: active ? 'var(--accent)' : 'var(--text-tertiary)',
+                background: isActive('/parametres') ? 'var(--brand-light, #EEF3FF)' : 'transparent',
+                color: isActive('/parametres') ? 'var(--accent)' : 'var(--text-tertiary)',
               }}>
-              <Icon className="h-4 w-4 flex-shrink-0" />
-              {label}
+              <Settings className="h-4 w-4 flex-shrink-0" />
+              Paramètres
             </Link>
-          )
-        })}
+          </div>
+        </div>
 
         {/* ── Mode démo ── */}
         <div className="mt-2 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
