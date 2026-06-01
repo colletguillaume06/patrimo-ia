@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Building2, Banknote, FileText,
   Wrench, Download, ChevronRight, Sparkles, TrendingUp, Landmark,
   BarChart3, Users, FolderOpen, Mail, Settings, BookOpen,
-  FlaskConical, Loader2, LogOut
+  FlaskConical, Loader2, LogOut, Brain
 } from 'lucide-react'
 import { cn, getInitials } from '@/lib/utils'
 import { Logo } from '@/components/layout/Logo'
@@ -57,6 +57,7 @@ const navGroups = [
       { href: '/documents', label: 'Documents', icon: FolderOpen, badge: false },
       { href: '/courriers', label: 'Courriers', icon: Mail, badge: false },
       { href: '/historique', label: 'Import historique', icon: Download, badge: false },
+      { href: '/import-intelligent', label: 'Import IA', icon: Brain, badge: false },
     ],
   },
 ]
