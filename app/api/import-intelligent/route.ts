@@ -19,11 +19,12 @@ function detectFileType(filename: string, ext: string): string {
   if (ext === 'xlsx' || ext === 'xls' || ext === 'csv') return 'excel'
   if (name.includes('bail') || name.includes('contrat') || name.includes('location')) return 'bail'
   if (name.includes('dpe') || name.includes('diagnostic') || name.includes('diag')) return 'diagnostic'
-  if (name.includes('taxe') || name.includes('foncier') || name.includes('avis')) return 'taxe_fonciere'
   if (name.includes('assur') || name.includes('police')) return 'assurance'
-  if (name.includes('releve') || name.includes('compte') || name.includes('bancaire') || ext === 'csv') return 'releve_bancaire'
+  if (name.includes('releve') || name.includes('compte') || name.includes('bancaire')) return 'releve_bancaire'
   if (name.includes('acte') || name.includes('vente') || name.includes('notaire')) return 'acte_vente'
   if (name.includes('facture') || name.includes('devis') || name.includes('travaux')) return 'facture_travaux'
+  if (name.includes('declaration') || name.includes('déclaration') || name.includes('impot') || name.includes('impôt') || name.includes('2042') || name.includes('2044') || name.includes('2072') || name.includes('avis_imposition') || name.includes('avis imposition') || name.includes('dgfip') || name.includes('cerfa')) return 'declaration_impots'
+  if (name.includes('taxe') || name.includes('foncier') || name.includes('avis')) return 'taxe_fonciere'
   return 'document_general'
 }
 
@@ -99,6 +100,49 @@ async function analyseDocument(text: string, fileType: string, filename: string)
   ],
   "periode": { "debut": null, "fin": null },
   "confiance": "haute|moyenne|faible"
+}`,
+
+    declaration_impots: `Tu es un expert-comptable français spécialisé en fiscalité immobilière. Analyse ce document fiscal (avis d'imposition, déclaration 2042/2044/2072 ou tout document DGFiP) et extrais TOUTES les informations importantes pour un propriétaire bailleur.
+
+Réponds UNIQUEMENT en JSON valide:
+{
+  "type_document": "declaration_impots",
+  "type_formulaire": "avis_imposition|2042|2042_c_pro|2044|2044_spe|2072|autre",
+  "annee_revenus": null,
+  "declarant": { "nom": null, "prenom": null, "adresse": null, "numero_fiscal": null },
+  "revenus_fonciers": {
+    "revenus_bruts": null,
+    "charges_deductibles": null,
+    "deficit_foncier": null,
+    "revenu_net_foncier": null,
+    "cases_2044": { "case_110": null, "case_230": null }
+  },
+  "revenus_lmnp_bic": {
+    "revenus_bruts": null,
+    "charges": null,
+    "amortissements": null,
+    "resultat_net": null,
+    "regime": "reel|micro_bic|null"
+  },
+  "sci": {
+    "resultat": null,
+    "is_du": null,
+    "dividendes": null
+  },
+  "impots": {
+    "revenu_fiscal_reference": null,
+    "revenu_net_global": null,
+    "impot_brut": null,
+    "impot_net_paye": null,
+    "tmi_pourcent": null,
+    "prelevement_source": null,
+    "contributions_sociales": null
+  },
+  "biens_declares": [
+    { "adresse": null, "loyers_bruts": null, "charges": null }
+  ],
+  "confiance": "haute|moyenne|faible",
+  "notes": "observations importantes ou points d'attention"
 }`,
 
     document_general: `Analyse ce document immobilier français et extrais toutes les informations utiles pour un propriétaire bailleur. Réponds UNIQUEMENT en JSON valide:

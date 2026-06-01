@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
 
   const { documents } = await req.json()
-  const results = { biens: 0, baux: 0, travaux: 0, diagnostics: 0, depenses: 0, transactions: 0, errors: [] as string[] }
+  const results = { biens: 0, baux: 0, travaux: 0, diagnostics: 0, depenses: 0, transactions: 0, declarations: 0, errors: [] as string[] }
   const bienMap: Record<string, string> = {}
 
   // Récupérer biens existants
@@ -200,6 +200,55 @@ export async function POST(req: NextRequest) {
         else results.errors.push(`Travaux: ${error.message}`)
       }
 
+      // ── DÉCLARATION FISCALE ──
+      else if (a.type_document === 'declaration_impots') {
+        const annee = Number(a.annee_revenus) || new Date().getFullYear() - 1
+
+        const { error } = await supabase.from('declarations_fiscales').insert({
+          user_id: user.id,
+          annee,
+          type: a.type_formulaire || 'autre',
+          revenus_fonciers: parseNum(a.revenus_fonciers?.revenus_bruts) || null,
+          charges_deductibles: parseNum(a.revenus_fonciers?.charges_deductibles) || null,
+          deficit_foncier: parseNum(a.revenus_fonciers?.deficit_foncier) || null,
+          revenu_net_global: parseNum(a.impots?.revenu_net_global) || null,
+          impots_payes: parseNum(a.impots?.impot_net_paye) || null,
+          tmi: parseNum(a.impots?.tmi_pourcent) || null,
+          revenu_bic_lmnp: parseNum(a.revenus_lmnp_bic?.revenus_bruts) || null,
+          amortissements: parseNum(a.revenus_lmnp_bic?.amortissements) || null,
+          resultat_sci: parseNum(a.sci?.resultat) || null,
+          donnees_brutes: a,
+        })
+
+        if (error) {
+          results.errors.push(`Déclaration ${annee}: ${error.message}`)
+        } else {
+          results.declarations++
+
+          // Créer aussi les dépenses par bien si disponibles
+          if (a.biens_declares?.length > 0) {
+            for (const bien of a.biens_declares) {
+              if (!bien.adresse) continue
+              const nomBien = doc.nom_bien || bien.adresse
+              const propId = await getOrCreate(nomBien, { address: bien.adresse })
+              if (!propId) continue
+
+              if (parseNum(bien.charges) > 0) {
+                await supabase.from('expenses').insert({
+                  property_id: propId,
+                  amount: parseNum(bien.charges),
+                  date: `${annee}-12-31`,
+                  category: 'charges',
+                  description: `Charges déductibles ${annee} (déclaration 2044)`,
+                  deductible: true,
+                })
+                results.depenses++
+              }
+            }
+          }
+        }
+      }
+
       // ── RELEVÉ BANCAIRE ──
       else if (a.type_document === 'releve_bancaire') {
         const credits = (a.transactions || []).filter((t: any) => t.type === 'credit' && parseNum(t.montant) > 0)
@@ -223,6 +272,6 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     success: true,
     results,
-    message: `Import terminé : ${results.biens} biens, ${results.baux} baux, ${results.diagnostics} diagnostics, ${results.travaux} travaux, ${results.depenses} dépenses, ${results.transactions} transactions`,
+    message: `Import terminé : ${results.biens} biens, ${results.baux} baux, ${results.declarations} déclarations, ${results.diagnostics} diagnostics, ${results.travaux} travaux, ${results.depenses} dépenses, ${results.transactions} transactions`,
   })
 }
