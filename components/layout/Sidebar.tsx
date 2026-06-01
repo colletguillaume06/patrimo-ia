@@ -29,10 +29,11 @@ const navGroups = [
     ],
   },
   {
-    label: 'Gestion locative',
+    label: 'Gestion des locations',
     items: [
-      { href: '/loyers', label: 'Loyers', icon: Banknote, badge: true },
+      { href: '/locataires', label: 'Locataires', icon: Users, badge: false },
       { href: '/baux', label: 'Baux', icon: FileText, badge: false },
+      { href: '/loyers', label: 'Loyers', icon: Banknote, badge: true },
     ],
   },
   {
