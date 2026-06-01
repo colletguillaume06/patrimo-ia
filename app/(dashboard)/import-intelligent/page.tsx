@@ -259,6 +259,7 @@ export default function ImportIntelligentPage() {
             const confiance = r.analyse?.confiance ? CONFIANCE_STYLE[r.analyse.confiance] : null
             const expanded = expandedIdx === idx
             const entries = r.analyse ? flattenAnalyse(r.analyse) : []
+            const isTabular = r.needsMapping && r.excelData
 
             return (
               <GlassCard key={r.filename}>
@@ -305,8 +306,111 @@ export default function ImportIntelligentPage() {
                   </div>
                 )}
 
-                {/* Champ : Nom du bien */}
-                {r.actif && (
+                {/* Fichier tabular : explication IA + mapping colonnes */}
+                {isTabular && r.actif && (
+                  <div className="mt-3 space-y-3">
+                    {/* Explication IA */}
+                    {r.analyse?.explication && (
+                      <div className="p-3 rounded-xl flex items-start gap-2"
+                        style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+                        <Sparkles className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-semibold text-blue-800">
+                            Type détecté : {r.analyse.type_detecte || 'inconnu'}
+                          </p>
+                          <p className="text-xs text-blue-600 mt-0.5">{r.analyse.explication}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Aperçu des données */}
+                    {Object.entries(r.excelData.sheets ?? {}).map(([sheetName, sheet]: [string, any]) => (
+                      <div key={sheetName}>
+                        <p className="text-xs font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>
+                          Aperçu — {sheetName}
+                        </p>
+                        <div className="overflow-x-auto rounded-lg border" style={{ borderColor: 'var(--border)' }}>
+                          <table className="text-xs w-full">
+                            <thead style={{ background: 'var(--bg-secondary)' }}>
+                              <tr>
+                                {sheet.headers.map((h: string) => (
+                                  <th key={h} className="text-left py-1.5 px-2 font-medium whitespace-nowrap"
+                                    style={{ color: 'var(--text-tertiary)' }}>{h}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {sheet.rows.slice(0, 4).map((row: any[], i: number) => (
+                                <tr key={i} style={{ borderTop: '1px solid var(--border)' }}>
+                                  {sheet.headers.map((_: string, j: number) => (
+                                    <td key={j} className="py-1.5 px-2 whitespace-nowrap"
+                                      style={{ color: 'var(--text-secondary)' }}>{String(row[j] ?? '')}</td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* Mapping colonnes */}
+                        <div className="mt-3 p-3 rounded-xl" style={{ background: 'var(--bg-secondary)' }}>
+                          <p className="text-xs font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
+                            Correspondance des colonnes
+                          </p>
+                          <div className="grid grid-cols-2 gap-2">
+                            {[
+                              { key: 'nom_bien', label: 'Nom du bien' },
+                              { key: 'annee', label: 'Année' },
+                              { key: 'montant', label: 'Montant (€)' },
+                              { key: 'date', label: 'Date' },
+                              { key: 'description', label: 'Description' },
+                              { key: 'locataire', label: 'Locataire' },
+                              { key: 'categorie', label: 'Catégorie' },
+                            ].map(({ key, label }) => {
+                              const suggested = r.analyse?.mapping_suggere?.[key]
+                              const currentVal = r[`col_${key}`] ?? suggested ?? ''
+                              return (
+                                <div key={key} className="flex items-center gap-2">
+                                  <span className="text-[10px] w-24 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }}>{label}</span>
+                                  <select value={currentVal}
+                                    onChange={e => updateResult(idx, `col_${key}`, e.target.value)}
+                                    className="flex-1 h-7 px-2 rounded text-xs focus:outline-none"
+                                    style={{
+                                      background: 'var(--bg-card)',
+                                      border: `1px solid ${currentVal ? '#1D4ED8' : 'var(--border)'}`,
+                                      color: 'var(--text-primary)'
+                                    }}>
+                                    <option value="">— Non mappé</option>
+                                    {sheet.headers.map((h: string) => (
+                                      <option key={h} value={h}>{h}</option>
+                                    ))}
+                                  </select>
+                                </div>
+                              )
+                            })}
+                          </div>
+                          {/* Type de données */}
+                          <div className="mt-2 flex items-center gap-2">
+                            <span className="text-[10px] w-24 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }}>Type données</span>
+                            <select value={r.col_type ?? r.analyse?.type_detecte ?? 'loyers'}
+                              onChange={e => updateResult(idx, 'col_type', e.target.value)}
+                              className="flex-1 h-7 px-2 rounded text-xs focus:outline-none"
+                              style={{ background: 'var(--bg-card)', border: '1px solid #1D4ED8', color: 'var(--text-primary)' }}>
+                              <option value="loyers">Loyers / Revenus</option>
+                              <option value="depenses">Dépenses / Charges</option>
+                              <option value="travaux">Travaux</option>
+                              <option value="transactions_bancaires">Transactions bancaires</option>
+                              <option value="biens">Biens immobiliers</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Champ : Nom du bien (pour PDFs) */}
+                {!isTabular && r.actif && (
                   <div className="flex items-center gap-2 mb-2">
                     <Building2 className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} />
                     <label className="text-xs font-medium flex-shrink-0" style={{ color: 'var(--text-secondary)' }}>
@@ -316,15 +420,15 @@ export default function ImportIntelligentPage() {
                       type="text"
                       value={r.nom_bien}
                       onChange={e => updateResult(idx, 'nom_bien', e.target.value)}
-                      placeholder="Ex: Appartement Lyon 3 (doit correspondre à un bien existant ou sera créé)"
+                      placeholder="Ex: Appartement Lyon 3"
                       className="flex-1 h-8 px-2 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
                       style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
                     />
                   </div>
                 )}
 
-                {/* Données extraites */}
-                {expanded && entries.length > 0 && (
+                {/* Données extraites (PDFs) */}
+                {!isTabular && expanded && entries.length > 0 && (
                   <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--border)' }}>
                     <p className="text-xs font-semibold mb-2 flex items-center gap-1.5"
                       style={{ color: 'var(--text-tertiary)' }}>

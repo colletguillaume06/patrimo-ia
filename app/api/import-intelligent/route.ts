@@ -161,14 +161,27 @@ export async function POST(req: NextRequest) {
 
     if (ext === 'xlsx' || ext === 'xls') {
       const wb = XLSX.read(buf, { type: 'buffer' })
+      const sheetsPreview: any = {}
       const sheetsContent: string[] = []
       for (const name of wb.SheetNames) {
-        const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { defval: '' }) as any[]
-        sheetsContent.push(`Onglet "${name}":\n${rows.slice(0, 10).map(r => JSON.stringify(r)).join('\n')}`)
+        const raw = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: '' }) as any[][]
+        const headers = raw[0]?.map(String) ?? []
+        const rows = raw.slice(1, 6)
+        sheetsPreview[name] = { headers, rows }
+        sheetsContent.push(`Onglet "${name}":\nEn-têtes: ${headers.join(' | ')}\n${rows.map(r => r.join(' | ')).join('\n')}`)
       }
       text = sheetsContent.join('\n\n').slice(0, 6000)
-      excelData = { type: 'excel', sheetNames: wb.SheetNames }
-    } else if (ext === 'csv' || ext === 'txt' || ext === 'xml' || ext === 'ofx' || ext === 'qfx') {
+      excelData = { type: 'excel', sheetNames: wb.SheetNames, sheets: sheetsPreview }
+    } else if (ext === 'csv') {
+      // Pour les CSV : parser les colonnes et afficher le mapping
+      const csvText = (await file.text()).slice(0, 6000)
+      const lines = csvText.split('\n').filter(l => l.trim())
+      const sep = lines[0]?.includes(';') ? ';' : ','
+      const headers = lines[0]?.split(sep).map(h => h.trim().replace(/"/g, '')) ?? []
+      const rows = lines.slice(1, 6).map(l => l.split(sep).map(c => c.trim().replace(/"/g, '')))
+      excelData = { type: 'csv', sheets: { [file.name]: { headers, rows } }, sheetNames: [file.name] }
+      text = `Fichier CSV:\nEn-têtes: ${headers.join(' | ')}\n${rows.map(r => r.join(' | ')).join('\n')}`
+    } else if (ext === 'txt' || ext === 'xml' || ext === 'ofx' || ext === 'qfx') {
       text = (await file.text()).slice(0, 6000)
     } else if (ext === 'pdf') {
       text = await extractPdfText(buf)
@@ -193,6 +206,61 @@ export async function POST(req: NextRequest) {
 
     if (!text.trim()) {
       results.push({ filename: file.name, fileType, erreur: 'Impossible de lire le contenu du fichier', confiance: 'faible' })
+      continue
+    }
+
+    // Pour Excel/CSV → retourner directement les colonnes pour mapping manuel
+    if (excelData && (ext === 'xlsx' || ext === 'xls' || ext === 'csv')) {
+      // Quand même demander à l'IA de proposer un mapping des colonnes
+      let mappingIA: any = null
+      try {
+        const { default: OpenAI } = await import('openai')
+        const openai = new OpenAI({ apiKey: process.env.GEMINI_API_KEY, baseURL: 'https://api.groq.com/openai/v1' })
+        const completion = await openai.chat.completions.create({
+          model: 'llama-3.3-70b-versatile',
+          messages: [{
+            role: 'user',
+            content: `Voici un fichier tabular immobilier. Propose un mapping des colonnes vers les champs Patrimo IA.
+${text}
+
+Réponds UNIQUEMENT en JSON:
+{
+  "type_detect": "loyers|depenses|travaux|baux|biens|transactions_bancaires|mixte",
+  "confiance": "haute|moyenne|faible",
+  "mapping_suggere": {
+    "nom_bien": "nom exact colonne ou null",
+    "annee": "nom exact colonne ou null",
+    "montant": "nom exact colonne ou null",
+    "date": "nom exact colonne ou null",
+    "description": "nom exact colonne ou null",
+    "locataire": "nom exact colonne ou null",
+    "categorie": "nom exact colonne ou null"
+  },
+  "explication": "courte explication de ce que contient ce fichier"
+}`
+          }],
+          temperature: 0.1,
+          max_tokens: 800,
+        })
+        const raw = completion.choices[0]?.message?.content ?? ''
+        mappingIA = JSON.parse(raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim())
+      } catch { mappingIA = null }
+
+      results.push({
+        filename: file.name,
+        fileType: 'excel',
+        size: file.size,
+        needsMapping: true,
+        excelData,
+        mappingIA,
+        analyse: {
+          type_document: 'excel',
+          confiance: mappingIA?.confiance ?? 'moyenne',
+          type_detecte: mappingIA?.type_detect ?? 'inconnu',
+          explication: mappingIA?.explication ?? 'Fichier tabular — mappez les colonnes ci-dessous',
+          mapping_suggere: mappingIA?.mapping_suggere ?? {},
+        },
+      })
       continue
     }
 
