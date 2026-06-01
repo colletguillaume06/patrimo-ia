@@ -69,129 +69,96 @@ export default function RegisterPage() {
   }
 
   const inputClass = (field: keyof FormErrors) =>
-    `w-full h-11 px-4 rounded-xl bg-bg-secondary border text-white placeholder:text-text-tertiary text-sm focus:outline-none transition-all ${
+    `w-full h-11 px-4 rounded-xl border text-[#0F172A] placeholder:text-slate-400 text-sm focus:outline-none transition-all bg-white ${
       errors[field]
-        ? 'border-red-500/60 focus:border-red-500'
-        : 'border-border focus:border-blue-500/50'
+        ? 'border-red-400 focus:border-red-500'
+        : 'border-slate-200 focus:border-blue-500'
     }`
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center p-4">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl" />
-      </div>
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
 
-      <div className="w-full max-w-md relative">
+        {/* Logo */}
         <div className="flex items-center justify-center gap-2.5 mb-8">
           <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
-          <span className="font-display font-bold text-2xl text-white">
+          <span className="font-display font-bold text-2xl text-[#0F172A]">
             Patrimo <span style={{ color: '#1D4ED8' }}>IA</span>
           </span>
         </div>
 
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-8">
-          <h1 className="font-display font-semibold text-xl text-white text-center mb-1">
+        <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+          <h1 className="font-display font-semibold text-xl text-[#0F172A] text-center mb-1">
             Créer un compte
           </h1>
-          <p className="text-slate-400 text-sm text-center mb-6">
+          <p className="text-slate-500 text-sm text-center mb-6">
             Commencez gratuitement, sans carte bancaire
           </p>
 
           {errors.global && (
-            <div className="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400">
+            <div className="mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600">
               {errors.global}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-3" noValidate>
-            {/* Nom */}
             <div>
-              <input
-                type="text"
-                placeholder="Votre nom complet"
-                value={form.full_name}
-                onChange={set('full_name')}
-                className={inputClass('full_name')}
-              />
-              {errors.full_name && <p className="mt-1 text-xs text-red-400">{errors.full_name}</p>}
+              <input type="text" placeholder="Votre nom complet" value={form.full_name}
+                onChange={set('full_name')} className={inputClass('full_name')} />
+              {errors.full_name && <p className="mt-1 text-xs text-red-500">{errors.full_name}</p>}
             </div>
 
-            {/* Email */}
             <div>
-              <input
-                type="email"
-                placeholder="votre@email.fr"
-                value={form.email}
-                onChange={set('email')}
-                className={inputClass('email')}
-              />
+              <input type="email" placeholder="votre@email.fr" value={form.email}
+                onChange={set('email')} className={inputClass('email')} />
               {errors.email && (
-                <p className="mt-1 text-xs text-red-400">
+                <p className="mt-1 text-xs text-red-500">
                   {errors.email}{' '}
                   {errors.email.includes('déjà utilisé') && (
-                    <Link href="/login" className="underline hover:text-red-300">Se connecter →</Link>
+                    <Link href="/login" className="underline hover:text-red-400">Se connecter →</Link>
                   )}
                 </p>
               )}
             </div>
 
-            {/* Mot de passe */}
             <div>
               <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Mot de passe (8 caractères min.)"
-                  value={form.password}
-                  onChange={set('password')}
-                  className={`${inputClass('password')} pr-11`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
-                >
+                <input type={showPassword ? 'text' : 'password'}
+                  placeholder="Mot de passe (8 caractères min.)" value={form.password}
+                  onChange={set('password')} className={`${inputClass('password')} pr-11`} />
+                <button type="button" onClick={() => setShowPassword(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password}</p>}
+              {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
             </div>
 
-            {/* Confirmation */}
             <div>
               <div className="relative">
-                <input
-                  type={showConfirm ? 'text' : 'password'}
-                  placeholder="Confirmer le mot de passe"
-                  value={form.confirm}
-                  onChange={set('confirm')}
-                  className={`${inputClass('confirm')} pr-11`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirm(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
-                >
+                <input type={showConfirm ? 'text' : 'password'}
+                  placeholder="Confirmer le mot de passe" value={form.confirm}
+                  onChange={set('confirm')} className={`${inputClass('confirm')} pr-11`} />
+                <button type="button" onClick={() => setShowConfirm(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
                   {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {errors.confirm && <p className="mt-1 text-xs text-red-400">{errors.confirm}</p>}
+              {errors.confirm && <p className="mt-1 text-xs text-red-500">{errors.confirm}</p>}
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-blue-500 hover:bg-blue-400 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all mt-1"
-            >
+            <button type="submit" disabled={loading}
+              className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all mt-1">
               {loading ? 'Création...' : 'Créer mon compte'}
               {!loading && <ArrowRight className="h-4 w-4" />}
             </button>
           </form>
 
-          <p className="text-center text-xs text-slate-600 mt-6">
+          <p className="text-center text-sm text-slate-500 mt-6">
             Déjà un compte ?{' '}
-            <Link href="/login" className="text-blue-400 hover:text-blue-300">
+            <Link href="/login" className="text-[#1D4ED8] hover:text-[#1E40AF] font-medium">
               Se connecter
             </Link>
           </p>

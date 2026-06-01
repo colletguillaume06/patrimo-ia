@@ -27,26 +27,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center p-4">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full bg-blue-500/5 blur-3xl" />
-      </div>
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
 
-      <div className="w-full max-w-md relative">
+        {/* Logo */}
         <div className="flex items-center justify-center gap-2.5 mb-8">
           <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
-          <span className="font-display font-bold text-2xl text-white">
+          <span className="font-display font-bold text-2xl text-[#0F172A]">
             Patrimo <span style={{ color: '#1D4ED8' }}>IA</span>
           </span>
         </div>
 
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-8">
-          <h1 className="font-display font-semibold text-xl text-white text-center mb-1">
+        <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+          <h1 className="font-display font-semibold text-xl text-[#0F172A] text-center mb-1">
             Connexion
           </h1>
-          <p className="text-slate-400 text-sm text-center mb-6">
+          <p className="text-slate-500 text-sm text-center mb-6">
             Accédez à votre tableau de bord immobilier
           </p>
 
@@ -57,7 +55,7 @@ export default function LoginPage() {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              className="w-full h-11 px-4 rounded-xl bg-bg-secondary border border-border text-white placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all"
+              className="w-full h-11 px-4 rounded-xl bg-white border border-slate-200 text-[#0F172A] placeholder:text-slate-400 text-sm focus:outline-none focus:border-blue-500 transition-all"
             />
             <input
               type="password"
@@ -65,26 +63,21 @@ export default function LoginPage() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              className="w-full h-11 px-4 rounded-xl bg-bg-secondary border border-border text-white placeholder:text-text-tertiary text-sm focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.08] transition-all"
+              className="w-full h-11 px-4 rounded-xl bg-white border border-slate-200 text-[#0F172A] placeholder:text-slate-400 text-sm focus:outline-none focus:border-blue-500 transition-all"
             />
             <button
               type="submit"
               disabled={loading || !email || !password}
-              className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-blue-500 hover:bg-blue-400 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all"
+              className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all"
             >
               {loading ? 'Connexion...' : 'Se connecter'}
               {!loading && <ArrowRight className="h-4 w-4" />}
             </button>
           </form>
 
-          <div className="mt-4 p-3 rounded-lg bg-blue-500/5 border border-blue-500/20 text-center">
-            <p className="text-xs text-slate-400">Compte de test :</p>
-            <p className="text-xs text-blue-400 font-mono mt-0.5">admin@propilot.ai / propilot2025</p>
-          </div>
-
-          <p className="text-center text-xs text-slate-600 mt-4">
+          <p className="text-center text-sm text-slate-500 mt-6">
             Pas encore de compte ?{' '}
-            <Link href="/register" className="text-blue-400 hover:text-blue-300">
+            <Link href="/register" className="text-[#1D4ED8] hover:text-[#1E40AF] font-medium">
               Créer un compte
             </Link>
           </p>
