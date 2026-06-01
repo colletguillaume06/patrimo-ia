@@ -35,6 +35,8 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
     surface_m2: '',
     purchase_price: '',
     purchase_year: '',
+    monthly_rent: '',
+    tenant_name: '',
     monthly_charges: '',
     property_tax: '',
     insurance_annual: '',
@@ -51,7 +53,7 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { toast.error('Non connecté'); return }
 
-    const { error } = await supabase.from('properties').insert({
+    const { data, error } = await supabase.from('properties').insert({
       user_id: user.id,
       type: form.type,
       name: form.name,
@@ -67,12 +69,23 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
       loan_monthly: Number(form.loan_monthly) || 0,
       numero_fiscal: form.numero_fiscal || null,
       sci_capital_parts: form.type === 'sci' ? (Number(form.sci_capital_parts) || 1000) : null,
-    })
+    }).select('id').single()
 
     setLoading(false)
     if (error) {
       toast.error('Erreur : ' + error.message)
     } else {
+      // Créer un bail si loyer renseigné
+      if (form.monthly_rent && data) {
+        await supabase.from('leases').insert({
+          property_id: (data as any).id,
+          tenant_name: form.tenant_name || 'Locataire',
+          monthly_rent: Number(form.monthly_rent),
+          monthly_charges: Number(form.monthly_charges) || 0,
+          start_date: new Date().toISOString().split('T')[0],
+          is_active: true,
+        })
+      }
       toast.success('Bien ajouté avec succès !')
       router.refresh()
       onClose()
@@ -125,6 +138,8 @@ export function AddBienModal({ onClose }: AddBienModalProps) {
               { key: 'surface_m2', label: 'Surface (m²)', placeholder: '28', type: 'number' },
               { key: 'purchase_price', label: "Prix d'acquisition (€)", placeholder: '185000', type: 'number' },
               { key: 'purchase_year', label: "Année d'achat", placeholder: '2020', type: 'number' },
+              { key: 'monthly_rent', label: 'Loyer mensuel HC (€)', placeholder: '850', type: 'number' },
+              { key: 'tenant_name', label: 'Nom du locataire', placeholder: 'Martin Sophie' },
               { key: 'monthly_charges', label: 'Charges mensuelles (€)', placeholder: '120', type: 'number' },
               { key: 'property_tax', label: 'Taxe foncière annuelle (€)', placeholder: '800', type: 'number' },
               { key: 'insurance_annual', label: 'Assurance annuelle (€)', placeholder: '350', type: 'number' },

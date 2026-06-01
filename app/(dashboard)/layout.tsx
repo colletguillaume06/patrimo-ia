@@ -16,6 +16,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .eq('id', user.id)
     .single()
 
+  // Rediriger vers l'onboarding si pas encore fait
+  // (sauf si on est déjà sur /onboarding)
+  if (profile && !(profile as any).onboarding_done) {
+    // La vérification se fait côté page pour éviter la boucle
+  }
+
   const { count: lateCount } = await supabase
     .from('payments')
     .select('id', { count: 'exact', head: true })

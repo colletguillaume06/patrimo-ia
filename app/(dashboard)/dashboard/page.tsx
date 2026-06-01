@@ -14,6 +14,10 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  // Rediriger vers l'onboarding si pas encore fait
+  const { data: profile } = await supabase.from('profiles').select('onboarding_done').eq('id', user.id).single()
+  if (profile && !(profile as any).onboarding_done) redirect('/onboarding')
+
   const [
     { data: properties },
     { data: payments },
