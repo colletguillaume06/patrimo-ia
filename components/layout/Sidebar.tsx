@@ -56,6 +56,7 @@ const navGroups = [
       { href: '/contacts', label: 'Contacts', icon: Users, badge: false },
       { href: '/documents', label: 'Documents', icon: FolderOpen, badge: false },
       { href: '/courriers', label: 'Courriers', icon: Mail, badge: false },
+      { href: '/historique', label: 'Import historique', icon: Download, badge: false },
     ],
   },
 ]
