@@ -69,6 +69,19 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
   const [loadingDemo, setLoadingDemo] = useState(false)
   const [loadingLogout, setLoadingLogout] = useState(false)
 
+  // Groupes ouverts par défaut : celui qui contient la page active
+  const defaultOpen = navGroups.reduce((acc, g) => {
+    const hasActive = g.items.some(item =>
+      pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+    )
+    acc[g.label] = hasActive
+    return acc
+  }, {} as Record<string, boolean>)
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(defaultOpen)
+
+  const toggleGroup = (label: string) =>
+    setOpenGroups(prev => ({ ...prev, [label]: !prev[label] }))
+
   const handleLogout = async () => {
     setLoadingLogout(true)
     const { createClient } = await import('@/lib/supabase/client')
@@ -135,37 +148,55 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
       </div>
 
       {/* Nav principale */}
-      <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-4">
-        {navGroups.map(group => (
-          <div key={group.label}>
-            {/* Titre groupe */}
-            <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest"
-              style={{ color: 'var(--text-tertiary)' }}>
-              {group.label}
-            </p>
-            <div className="space-y-0.5">
-              {group.items.map(({ href, label, icon: Icon, badge }) => {
-                const active = isActive(href)
-                return (
-                  <Link key={href} href={href}
-                    className="group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150"
-                    style={{
-                      background: active ? 'var(--brand-light, #EEF3FF)' : 'transparent',
-                      color: active ? 'var(--accent)' : 'var(--text-secondary)',
-                    }}>
-                    <Icon className="h-[16px] w-[16px] flex-shrink-0" />
-                    <span className="flex-1">{label}</span>
-                    {badge && latePaymentsCount > 0 && (
-                      <span className="h-4.5 min-w-4.5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
-                        {latePaymentsCount}
-                      </span>
-                    )}
-                  </Link>
-                )
-              })}
+      <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-1">
+        {navGroups.map(group => {
+          const isOpen = !!openGroups[group.label]
+          const hasActiveChild = group.items.some(item => isActive(item.href))
+          return (
+            <div key={group.label}>
+              {/* En-tête cliquable du groupe */}
+              <button
+                onClick={() => toggleGroup(group.label)}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold uppercase tracking-widest transition-all duration-150 hover:opacity-80"
+                style={{
+                  color: hasActiveChild ? 'var(--accent)' : 'var(--text-tertiary)',
+                  background: hasActiveChild && !isOpen ? 'var(--brand-light, #EEF3FF)' : 'transparent',
+                }}
+              >
+                <span>{group.label}</span>
+                <ChevronRight
+                  className="h-3 w-3 flex-shrink-0 transition-transform duration-200"
+                  style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
+                />
+              </button>
+
+              {/* Items (visible si ouvert) */}
+              {isOpen && (
+                <div className="mt-0.5 ml-2 space-y-0.5">
+                  {group.items.map(({ href, label, icon: Icon, badge }) => {
+                    const active = isActive(href)
+                    return (
+                      <Link key={href} href={href}
+                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150"
+                        style={{
+                          background: active ? 'var(--brand-light, #EEF3FF)' : 'transparent',
+                          color: active ? 'var(--accent)' : 'var(--text-secondary)',
+                        }}>
+                        <Icon className="h-[15px] w-[15px] flex-shrink-0" />
+                        <span className="flex-1">{label}</span>
+                        {badge && latePaymentsCount > 0 && (
+                          <span className="h-4 min-w-4 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-1">
+                            {latePaymentsCount}
+                          </span>
+                        )}
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          )
+        })}
 
         {/* Paramètres */}
         <div>
