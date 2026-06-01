@@ -21,7 +21,7 @@ interface SidebarProps {
 
 const navGroups = [
   {
-    label: '🏠 Mon patrimoine',
+    label: 'Mon patrimoine',
     items: [
       { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: false },
       { href: '/biens', label: 'Mes biens', icon: Building2, badge: false },
@@ -29,7 +29,7 @@ const navGroups = [
     ],
   },
   {
-    label: '💰 Gestion locative',
+    label: 'Gestion locative',
     items: [
       { href: '/loyers', label: 'Loyers', icon: Banknote, badge: true },
       { href: '/baux', label: 'Baux', icon: FileText, badge: false },
@@ -37,21 +37,21 @@ const navGroups = [
     ],
   },
   {
-    label: '🔧 Charges & travaux',
+    label: 'Charges & travaux',
     items: [
       { href: '/travaux', label: 'Travaux', icon: Wrench, badge: false },
       { href: '/exports', label: 'Exports', icon: Download, badge: false },
     ],
   },
   {
-    label: '📊 Fiscalité',
+    label: 'Fiscalité',
     items: [
       { href: '/fiscal', label: 'Déclaration', icon: BarChart3, badge: false },
       { href: '/fiscalite/declaration', label: 'Aide déclaration', icon: BookOpen, badge: false },
     ],
   },
   {
-    label: '📁 Outils',
+    label: 'Outils',
     items: [
       { href: '/emails', label: 'Emails', icon: Mail, badge: false },
       { href: '/contacts', label: 'Contacts', icon: Users, badge: false },
@@ -157,13 +157,13 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
               {/* En-tête cliquable du groupe */}
               <button
                 onClick={() => toggleGroup(group.label)}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold uppercase tracking-widest transition-all duration-150 hover:opacity-80"
+                className="w-full flex items-center justify-between px-3 py-1.5 rounded-xl transition-all duration-150 hover:opacity-80"
                 style={{
                   color: hasActiveChild ? 'var(--accent)' : 'var(--text-tertiary)',
                   background: hasActiveChild && !isOpen ? 'var(--brand-light, #EEF3FF)' : 'transparent',
                 }}
               >
-                <span>{group.label}</span>
+                <span className="text-[11px] font-semibold uppercase tracking-wider whitespace-nowrap">{group.label}</span>
                 <ChevronRight
                   className="h-3 w-3 flex-shrink-0 transition-transform duration-200"
                   style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
