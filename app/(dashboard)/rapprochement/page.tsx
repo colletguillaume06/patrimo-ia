@@ -1,299 +1,231 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { formatCurrency } from '@/lib/utils'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { toast } from 'sonner'
-import {
-  Building2, RefreshCw, CheckCircle2, AlertTriangle,
-  Loader2, Search, Link2, Unlink, ChevronLeft, Landmark
-} from 'lucide-react'
-import Link from 'next/link'
-
-interface Institution {
-  id: string
-  name: string
-  logo: string
-  countries: string[]
-}
+import { Upload, CheckCircle2, XCircle, Plus, X, FileText, Loader2 } from 'lucide-react'
 
 export default function RapprochementPage() {
-  const searchParams = useSearchParams()
-  const [connection, setConnection] = useState<any>(null)
   const [transactions, setTransactions] = useState<any[]>([])
-  const [institutions, setInstitutions] = useState<Institution[]>([])
+  const [payments, setPayments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [syncing, setSyncing] = useState(false)
-  const [connecting, setConnecting] = useState(false)
-  const [showBanks, setShowBanks] = useState(false)
-  const [search, setSearch] = useState('')
-  const [syncResult, setSyncResult] = useState<any>(null)
+  const [showAdd, setShowAdd] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [importing, setImporting] = useState(false)
+  const [form, setForm] = useState({ date: '', libelle: '', montant: '' })
+  const fileRef = useRef<HTMLInputElement>(null)
   const supabase = createClient()
 
-  useEffect(() => {
-    if (searchParams.get('connected') === '1') toast.success('Banque connectée avec succès !')
-    if (searchParams.get('error')) toast.error('Erreur connexion : ' + searchParams.get('error'))
-    load()
-  }, [])
-
   const load = async () => {
-    setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-
-    const [connRes, txRes] = await Promise.all([
-      supabase.from('banking_connections').select('*').eq('user_id', user.id).eq('status', 'active').single(),
-      supabase.from('banking_transactions').select('*').eq('user_id', user.id).order('date', { ascending: false }).limit(50),
+    const [tRes, pRes] = await Promise.all([
+      supabase.from('rapprochement_transactions').select('*').order('date', { ascending: false }),
+      supabase.from('payments').select('*, lease:leases(tenant_name, property:properties(name))').eq('status', 'pending'),
     ])
-
-    setConnection(connRes.data)
-    setTransactions(txRes.data ?? [])
+    setTransactions(tRes.data ?? [])
+    setPayments(pRes.data ?? [])
     setLoading(false)
   }
 
-  const loadInstitutions = async () => {
-    if (institutions.length > 0) { setShowBanks(true); return }
-    const res = await fetch('/api/banking/institutions?country=fr')
-    if (res.ok) { setInstitutions(await res.json()); setShowBanks(true) }
-    else toast.error('Nordigen non configuré — ajoutez vos clés API dans .env.local')
+  useEffect(() => { load() }, [])
+
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault(); setSaving(true)
+    await supabase.from('rapprochement_transactions').insert({ date: form.date, libelle: form.libelle, montant: Number(form.montant), statut: 'non_rapproché' })
+    setSaving(false); toast.success('Transaction ajoutée'); setShowAdd(false)
+    setForm({ date: '', libelle: '', montant: '' }); load()
   }
 
-  const connectBank = async (institutionId: string) => {
-    setConnecting(true)
-    try {
-      const res = await fetch('/api/banking/connect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ institution_id: institutionId }),
-      })
-      const data = await res.json()
-      if (res.ok) {
-        window.location.href = data.link
-      } else {
-        toast.error(data.error)
-      }
-    } finally {
-      setConnecting(false)
+  const handleCSV = async (file: File) => {
+    setImporting(true)
+    const text = await file.text()
+    const lines = text.split('\n').filter(l => l.trim())
+    const inserts: any[] = []
+    for (const line of lines.slice(1)) {
+      const cols = line.split(/[;,]/).map(c => c.trim().replace(/"/g, ''))
+      if (cols.length < 3) continue
+      const [dateRaw, libelle, montantRaw] = cols
+      const montant = parseFloat(montantRaw.replace(',', '.'))
+      if (isNaN(montant) || !libelle) continue
+      let date = dateRaw
+      if (dateRaw.includes('/')) { const [d, m, y] = dateRaw.split('/'); date = `${y}-${m}-${d}` }
+      inserts.push({ date, libelle, montant, statut: 'non_rapproché' })
     }
+    if (inserts.length === 0) { toast.error('Aucune ligne valide. Format : Date;Libellé;Montant'); setImporting(false); return }
+    await supabase.from('rapprochement_transactions').insert(inserts)
+    setImporting(false); toast.success(`${inserts.length} transactions importées`); load()
   }
 
-  const sync = async () => {
-    setSyncing(true)
-    setSyncResult(null)
-    try {
-      const res = await fetch('/api/banking/sync', { method: 'POST' })
-      const data = await res.json()
-      if (res.ok) {
-        setSyncResult(data)
-        toast.success(data.message)
-        load()
-      } else {
-        toast.error(data.error)
-      }
-    } finally {
-      setSyncing(false)
-    }
+  const handleRapprocher = async (txId: string, paymentId: string) => {
+    await Promise.all([
+      supabase.from('rapprochement_transactions').update({ statut: 'rapproché', payment_id: paymentId }).eq('id', txId),
+      supabase.from('payments').update({ status: 'paid', paid_date: new Date().toISOString() }).eq('id', paymentId),
+    ])
+    toast.success('Loyer rapproché et marqué comme reçu ✓'); load()
   }
 
-  const manualMatch = async (txId: string, paymentId: string) => {
-    await supabase.from('banking_transactions').update({ matched_payment_id: paymentId, match_status: 'matched' }).eq('id', txId)
-    await supabase.from('payments').update({ status: 'paid', paid_date: new Date().toISOString().split('T')[0] }).eq('id', paymentId)
-    toast.success('Rapprochement effectué')
-    load()
+  const handleIgnorer = async (txId: string) => {
+    await supabase.from('rapprochement_transactions').update({ statut: 'ignoré' }).eq('id', txId); load()
   }
 
-  const filteredBanks = institutions.filter(i =>
-    i.name.toLowerCase().includes(search.toLowerCase())
-  )
+  const nonRapprochees = transactions.filter(t => t.statut === 'non_rapproché')
+  const rapprochees = transactions.filter(t => t.statut === 'rapproché')
+  const total = transactions.reduce((s, t) => s + t.montant, 0)
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link href="/loyers" className="text-sm flex items-center gap-1" style={{ color: 'var(--text-tertiary)' }}>
-            <ChevronLeft className="h-4 w-4" /> Loyers
-          </Link>
-          <span style={{ color: 'var(--border)' }}>/</span>
-          <h1 className="font-display font-bold text-xl" style={{ color: 'var(--text-primary)' }}>
-            Rapprochement bancaire
-          </h1>
+        <div>
+          <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>Rapprochement bancaire</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Importez votre relevé CSV ou saisissez les transactions manuellement</p>
         </div>
-        {connection && (
-          <button onClick={sync} disabled={syncing}
-            className="flex items-center gap-2 h-9 px-4 rounded-xl text-white text-sm font-semibold disabled:opacity-50 transition-all"
-            style={{ background: '#1D4ED8' }}>
-            {syncing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-            {syncing ? 'Synchronisation...' : 'Synchroniser maintenant'}
+        <div className="flex gap-2">
+          <button onClick={() => fileRef.current?.click()} disabled={importing}
+            className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold border transition-all"
+            style={{ borderColor: 'var(--accent)', color: 'var(--accent)', background: 'var(--brand-light, #EEF3FF)' }}>
+            {importing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+            Importer CSV
           </button>
-        )}
+          <button onClick={() => setShowAdd(true)}
+            className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white"
+            style={{ background: '#1D4ED8' }}>
+            <Plus className="h-4 w-4" /> Saisie manuelle
+          </button>
+        </div>
+        <input ref={fileRef} type="file" accept=".csv,.txt" className="hidden"
+          onChange={e => { const f = e.target.files?.[0]; if (f) handleCSV(f); e.target.value = '' }} />
       </div>
 
-      {/* Résultat sync */}
-      {syncResult && (
-        <GlassCard glow="green" className="p-4">
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="h-5 w-5 text-success-text" />
-            <div>
-              <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
-                Synchronisation terminée
-              </p>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                {syncResult.transactions_importees} transactions · {syncResult.loyers_rapproches} loyers rapprochés automatiquement
-              </p>
-            </div>
-          </div>
-        </GlassCard>
-      )}
+      <div className="p-3 rounded-xl text-sm flex items-start gap-3"
+        style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1E40AF' }}>
+        <FileText className="h-4 w-4 flex-shrink-0 mt-0.5" />
+        <div>
+          <p className="font-semibold mb-0.5">Format CSV attendu</p>
+          <p className="text-xs font-mono">Date;Libellé;Montant &nbsp;→&nbsp; ex: 01/06/2026;VIR MARTIN SOPHIE;950</p>
+          <p className="text-xs mt-1">Compatible BNP, Crédit Agricole, Boursorama, Société Générale, LCL…</p>
+        </div>
+      </div>
 
-      {/* Connexion bancaire */}
-      {!connection ? (
-        <GlassCard>
-          <div className="text-center py-8">
-            <div className="h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
-              style={{ background: '#EFF6FF' }}>
-              <Landmark className="h-8 w-8" style={{ color: '#1D4ED8' }} />
-            </div>
-            <h2 className="font-display font-bold text-xl mb-2" style={{ color: 'var(--text-primary)' }}>
-              Connectez votre banque
-            </h2>
-            <p className="text-sm mb-2 max-w-md mx-auto" style={{ color: 'var(--text-secondary)' }}>
-              Via Open Banking (PSD2) — connexion sécurisée, lecture seule.
-              Patrimo détecte automatiquement les loyers reçus.
-            </p>
-            <p className="text-xs mb-6" style={{ color: 'var(--text-tertiary)' }}>
-              🔒 Accès lecture seule · Données chiffrées · RGPD · 2 300+ banques européennes
-            </p>
-            <button onClick={loadInstitutions} disabled={connecting}
-              className="flex items-center gap-2 h-11 px-6 rounded-xl text-white font-semibold mx-auto disabled:opacity-50"
-              style={{ background: '#1D4ED8' }}>
-              {connecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
-              Connecter ma banque
-            </button>
-          </div>
-        </GlassCard>
-      ) : (
-        <GlassCard className="p-4">
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: '#EFF6FF' }}>
-              <Landmark className="h-5 w-5" style={{ color: '#1D4ED8' }} />
-            </div>
-            <div className="flex-1">
-              <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>
-                {connection.institution_name ?? connection.institution_id}
-              </p>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                {connection.iban ?? 'IBAN en cours de récupération'}
-              </p>
-              {connection.last_sync_at && (
-                <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                  Dernière sync : {format(new Date(connection.last_sync_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
-                </p>
-              )}
-            </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
-              style={{ background: '#E8F7F0', color: '#166534' }}>
-              ✓ Connectée
-            </span>
-          </div>
-        </GlassCard>
-      )}
+      <div className="grid grid-cols-3 gap-4">
+        {[
+          { label: 'Total importé', value: formatCurrency(total), color: 'var(--text-primary)' },
+          { label: 'À rapprocher', value: String(nonRapprochees.length), color: '#F59E0B' },
+          { label: 'Rapprochées', value: String(rapprochees.length), color: 'var(--success)' },
+        ].map(({ label, value, color }) => (
+          <GlassCard key={label} className="p-4">
+            <p className="text-sm font-medium mb-1" style={{ color: 'var(--text-secondary)' }}>{label}</p>
+            <p className="text-xl font-bold font-mono" style={{ color }}>{value}</p>
+          </GlassCard>
+        ))}
+      </div>
 
-      {/* Sélection de banque */}
-      {showBanks && !connection && (
+      {nonRapprochees.length > 0 && (
         <GlassCard>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: 'var(--text-tertiary)' }} />
-              <input type="text" placeholder="Rechercher votre banque..." value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full h-10 pl-9 pr-4 rounded-xl text-sm focus:outline-none"
-                style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-80 overflow-y-auto">
-            {filteredBanks.map(inst => (
-              <button key={inst.id} onClick={() => connectBank(inst.id)} disabled={connecting}
-                className="flex items-center gap-3 p-3 rounded-xl border text-left transition-all hover:shadow-sm hover:-translate-y-0.5 disabled:opacity-50"
-                style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
-                {inst.logo
-                  ? <img src={inst.logo} alt={inst.name} className="h-8 w-8 object-contain rounded-lg" />
-                  : <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ background: '#EFF6FF' }}>
-                      <Building2 className="h-4 w-4" style={{ color: '#1D4ED8' }} />
+          <h2 className="font-display font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>À rapprocher ({nonRapprochees.length})</h2>
+          <div className="space-y-3">
+            {nonRapprochees.map(tx => (
+              <div key={tx.id} className="p-4 rounded-xl border" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{tx.libelle}</p>
+                    <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{format(new Date(tx.date), 'dd MMMM yyyy', { locale: fr })}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-base font-bold font-mono" style={{ color: 'var(--success)' }}>+{formatCurrency(tx.montant)}</p>
+                    <button onClick={() => handleIgnorer(tx.id)} title="Ignorer"
+                      className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors">
+                      <XCircle className="h-4 w-4 text-red-400" />
+                    </button>
+                  </div>
+                </div>
+                {payments.length > 0 && (
+                  <div>
+                    <p className="text-xs font-medium mb-2" style={{ color: 'var(--text-tertiary)' }}>Associer à un loyer :</p>
+                    <div className="flex flex-wrap gap-2">
+                      {payments.map(p => (
+                        <button key={p.id} onClick={() => handleRapprocher(tx.id, p.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all hover:shadow-sm"
+                          style={{ borderColor: 'var(--accent)', color: 'var(--accent)', background: 'var(--brand-light, #EEF3FF)' }}>
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          {p.lease?.tenant_name} — {p.lease?.property?.name} — {formatCurrency(p.amount)}
+                        </button>
+                      ))}
                     </div>
-                }
-                <span className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>{inst.name}</span>
-              </button>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </GlassCard>
       )}
 
-      {/* Transactions */}
-      {connection && (
+      {rapprochees.length > 0 && (
         <GlassCard>
-          <h2 className="font-display font-semibold text-base mb-4" style={{ color: 'var(--text-primary)' }}>
-            Transactions récentes
-          </h2>
-          {loading ? (
-            <div className="space-y-2">{[1,2,3].map(i => <div key={i} className="h-12 rounded-lg animate-pulse" style={{ background: 'var(--bg-secondary)' }} />)}</div>
-          ) : transactions.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                Aucune transaction — cliquez sur "Synchroniser" pour importer
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-xs font-semibold border-b" style={{ color: 'var(--text-tertiary)', borderColor: 'var(--border)' }}>
-                    {['Date','Description','Montant','Statut'].map(h =>
-                      <th key={h} className="text-left py-2.5 px-3">{h}</th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {transactions.map(tx => (
-                    <tr key={tx.id} className="border-b" style={{ borderColor: 'var(--border)' }}>
-                      <td className="py-3 px-3 whitespace-nowrap" style={{ color: 'var(--text-tertiary)' }}>
-                        {format(new Date(tx.date), 'dd/MM/yy')}
-                      </td>
-                      <td className="py-3 px-3 max-w-[200px] truncate" style={{ color: 'var(--text-secondary)' }}>
-                        {tx.debtor_name ?? tx.description ?? '—'}
-                      </td>
-                      <td className="py-3 px-3 font-semibold font-mono whitespace-nowrap" style={{ color: '#166534' }}>
-                        +{formatCurrency(tx.amount)}
-                      </td>
-                      <td className="py-3 px-3">
-                        {tx.match_status === 'matched' ? (
-                          <span className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full"
-                            style={{ background: '#E8F7F0', color: '#166534' }}>
-                            <CheckCircle2 className="h-3 w-3" /> Rapproché
-                          </span>
-                        ) : (
-                          <span className="text-xs font-medium px-2 py-0.5 rounded-full"
-                            style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
-                            Non rapproché
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <h2 className="font-display font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Rapprochées ✓ ({rapprochees.length})</h2>
+          <div className="space-y-2">
+            {rapprochees.map(tx => (
+              <div key={tx.id} className="flex items-center justify-between py-2.5 px-3 rounded-xl" style={{ background: 'var(--bg-secondary)' }}>
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--success)' }} />
+                  <div>
+                    <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{tx.libelle}</p>
+                    <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{format(new Date(tx.date), 'dd/MM/yyyy')}</p>
+                  </div>
+                </div>
+                <p className="text-sm font-semibold font-mono" style={{ color: 'var(--success)' }}>+{formatCurrency(tx.montant)}</p>
+              </div>
+            ))}
+          </div>
         </GlassCard>
       )}
 
-      {/* Info */}
-      <div className="p-4 rounded-xl text-sm text-center" style={{ background: 'var(--bg-secondary)', color: 'var(--text-tertiary)' }}>
-        🔒 Connexion Open Banking PSD2 via GoCardless Bank Account Data · Accès lecture seule · Gratuit jusqu'à 50 connexions
-      </div>
+      {transactions.length === 0 && !loading && (
+        <GlassCard>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <Upload className="h-10 w-10 mb-3" style={{ color: 'var(--text-tertiary)' }} />
+            <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>Aucune transaction</p>
+            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Importez votre relevé CSV ou saisissez une transaction manuellement</p>
+          </div>
+        </GlassCard>
+      )}
+
+      {showAdd && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAdd(false)} />
+          <div className="relative w-full max-w-md rounded-2xl p-6 shadow-2xl"
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-display font-semibold" style={{ color: 'var(--text-primary)' }}>Saisie manuelle</h2>
+              <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--bg-secondary)' }}>
+                <X className="h-4 w-4" style={{ color: 'var(--text-tertiary)' }} />
+              </button>
+            </div>
+            <form onSubmit={handleAdd} className="space-y-3">
+              {[
+                { key: 'date', label: 'Date *', type: 'date' },
+                { key: 'libelle', label: 'Libellé *', type: 'text', placeholder: 'VIR MARTIN SOPHIE' },
+                { key: 'montant', label: 'Montant (€) *', type: 'number', placeholder: '950' },
+              ].map(({ key, label, type, placeholder }: any) => (
+                <div key={key}>
+                  <label className="block text-sm font-semibold mb-1.5" style={{ color: 'var(--text-primary)' }}>{label}</label>
+                  <input type={type} placeholder={placeholder} value={(form as any)[key]}
+                    onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} required
+                    className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none"
+                    style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
+                </div>
+              ))}
+              <button type="submit" disabled={saving}
+                className="w-full h-10 rounded-lg text-white text-sm font-semibold disabled:opacity-50"
+                style={{ background: '#1D4ED8' }}>
+                {saving ? 'Enregistrement...' : 'Ajouter'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

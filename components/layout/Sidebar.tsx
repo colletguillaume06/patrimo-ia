@@ -33,7 +33,6 @@ const navGroups = [
     items: [
       { href: '/loyers', label: 'Loyers', icon: Banknote, badge: true },
       { href: '/baux', label: 'Baux', icon: FileText, badge: false },
-      { href: '/rapprochement', label: 'Rapprochement', icon: Landmark, badge: false },
     ],
   },
   {
