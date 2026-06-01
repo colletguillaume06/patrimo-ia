@@ -127,23 +127,20 @@ export default function LocatairesPage() {
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAdd(false)} />
-          <div className="relative w-full max-w-lg rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
-            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+          <div className="relative w-full max-w-lg rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto bg-white border border-slate-200">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-display font-semibold text-lg" style={{ color: 'var(--text-primary)' }}>
+              <h2 className="font-display font-semibold text-lg text-[#0F172A]">
                 Nouvelle fiche locataire
               </h2>
-              <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg flex items-center justify-center"
-                style={{ background: 'var(--bg-secondary)' }}>
-                <X className="h-4 w-4" style={{ color: 'var(--text-tertiary)' }} />
+              <button onClick={() => setShowAdd(false)} className="h-8 w-8 rounded-lg flex items-center justify-center bg-slate-100 hover:bg-slate-200">
+                <X className="h-4 w-4 text-slate-500" />
               </button>
             </div>
 
             <form onSubmit={handleAdd} className="space-y-4">
               {/* Infos locataire */}
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-1.5"
-                  style={{ color: 'var(--text-tertiary)' }}>
+                <p className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-1.5 text-slate-400">
                   <User className="h-3.5 w-3.5" /> Informations locataire
                 </p>
                 <div className="space-y-3">
@@ -154,11 +151,10 @@ export default function LocatairesPage() {
                     { key: 'address_before', label: 'Adresse précédente', placeholder: '5 rue Hugo, Paris' },
                   ].map(({ key, label, placeholder, type = 'text', required }) => (
                     <div key={key}>
-                      <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-primary)' }}>{label}</label>
+                      <label className="block text-sm font-medium mb-1.5 text-[#0F172A]">{label}</label>
                       <input type={type} placeholder={placeholder} value={(form as any)[key]} required={required}
                         onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                        className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
-                        style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
+                        className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-slate-50 border border-slate-200 text-[#0F172A] placeholder:text-slate-400" />
                     </div>
                   ))}
                 </div>
@@ -166,8 +162,7 @@ export default function LocatairesPage() {
 
               {/* Garant */}
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-1.5"
-                  style={{ color: 'var(--text-tertiary)' }}>
+                <p className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-1.5 text-slate-400">
                   <Shield className="h-3.5 w-3.5" /> Garant (optionnel)
                 </p>
                 <div className="space-y-3">
@@ -177,11 +172,10 @@ export default function LocatairesPage() {
                     { key: 'guarantor_email', label: 'Email garant', placeholder: 'pierre.martin@email.com', type: 'email' },
                   ].map(({ key, label, placeholder, type = 'text' }) => (
                     <div key={key}>
-                      <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-primary)' }}>{label}</label>
+                      <label className="block text-sm font-medium mb-1.5 text-[#0F172A]">{label}</label>
                       <input type={type} placeholder={placeholder} value={(form as any)[key]}
                         onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                        className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
-                        style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
+                        className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-slate-50 border border-slate-200 text-[#0F172A] placeholder:text-slate-400" />
                     </div>
                   ))}
                 </div>
@@ -189,11 +183,10 @@ export default function LocatairesPage() {
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-primary)' }}>Notes</label>
+                <label className="block text-sm font-medium mb-1.5 text-[#0F172A]">Notes</label>
                 <textarea placeholder="Observations, remarques..." value={form.notes}
                   onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-                  className="w-full h-20 px-3 py-2 rounded-lg text-sm resize-none focus:outline-none focus:ring-1 focus:ring-blue-400"
-                  style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }} />
+                  className="w-full h-20 px-3 py-2 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 bg-slate-50 border border-slate-200 text-[#0F172A] placeholder:text-slate-400" />
               </div>
 
               <button type="submit" disabled={saving}
