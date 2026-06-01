@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Building2, Banknote, FileText,
   Wrench, Download, ChevronRight, Sparkles, TrendingUp, Landmark,
   BarChart3, Users, FolderOpen, Mail, Settings, BookOpen,
-  FlaskConical, Loader2
+  FlaskConical, Loader2, LogOut
 } from 'lucide-react'
 import { cn, getInitials } from '@/lib/utils'
 import { Logo } from '@/components/layout/Logo'
@@ -46,6 +46,16 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [loadingDemo, setLoadingDemo] = useState(false)
+  const [loadingLogout, setLoadingLogout] = useState(false)
+
+  const handleLogout = async () => {
+    setLoadingLogout(true)
+    const { createClient } = await import('@/lib/supabase/client')
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
   const isDemo = (profile as any)?.demo_mode === true
 
   const isActive = (href: string) =>
@@ -208,7 +218,17 @@ export function Sidebar({ profile, latePaymentsCount = 0 }: SidebarProps) {
               {planLabels[profile?.plan ?? 'starter']}
             </p>
           </div>
-          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} />
+          <button
+            onClick={handleLogout}
+            disabled={loadingLogout}
+            title="Se déconnecter"
+            className="p-1 rounded-lg transition-colors hover:bg-red-50 disabled:opacity-60"
+          >
+            {loadingLogout
+              ? <Loader2 className="h-3.5 w-3.5 animate-spin text-red-400" />
+              : <LogOut className="h-3.5 w-3.5 text-red-400" />
+            }
+          </button>
         </div>
       </div>
     </aside>
