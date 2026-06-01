@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { toast } from 'sonner'
-import { Download, Upload, CheckCircle, FileText, Building2, Banknote, Receipt, Loader2, AlertCircle, ChevronRight } from 'lucide-react'
+import { Download, Upload, CheckCircle, FileText, Building2, Banknote, Receipt, Loader2, AlertCircle, ChevronRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
 export default function HistoriquePage() {
@@ -45,6 +45,30 @@ export default function HistoriquePage() {
         <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
           Rattrapez vos données des 2 dernières années en quelques minutes
         </p>
+      </div>
+
+      {/* Carte analyse IA */}
+      <Link href="/historique/analyse"
+        className="flex items-center gap-4 p-5 rounded-2xl border transition-all hover:-translate-y-0.5 hover:shadow-lg"
+        style={{ background: 'linear-gradient(135deg, #0F172A, #1E3A5F)', borderColor: '#1D4ED8' }}>
+        <div className="h-12 w-12 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{ background: 'rgba(29,78,216,0.3)' }}>
+          <Sparkles className="h-6 w-6 text-blue-300" />
+        </div>
+        <div className="flex-1">
+          <p className="font-display font-bold text-white">Analyse IA — Mon propre fichier Excel</p>
+          <p className="text-sm text-blue-200 mt-0.5">
+            Importez n'importe quel tableau Excel — l'IA détecte automatiquement les colonnes
+          </p>
+        </div>
+        <ChevronRight className="h-5 w-5 text-blue-300 flex-shrink-0" />
+      </Link>
+
+      {/* Séparateur */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
+        <span className="text-xs font-medium" style={{ color: 'var(--text-tertiary)' }}>ou utilisez notre template</span>
+        <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
       </div>
 
       {/* Étapes */}
