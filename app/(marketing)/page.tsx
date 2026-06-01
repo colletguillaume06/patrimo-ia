@@ -1,6 +1,6 @@
 import { LogoStatic } from '@/components/layout/Logo'
 import Link from 'next/link'
-import { ArrowRight, Building2, Bot, Calculator, FileText, Shield, Zap, CheckCircle, Sparkles, Star } from 'lucide-react'
+import { ArrowRight, Building2, Bot, Calculator, FileText, Shield, Zap, CheckCircle, Sparkles, Star, BarChart3, Banknote } from 'lucide-react'
 
 export default function LandingPage() {
   return (
@@ -62,18 +62,48 @@ export default function LandingPage() {
       {/* Features */}
       <section id="features" className="py-20">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center mb-14">
-            <h2 className="font-display font-bold text-4xl text-[#0F172A] mb-4">Tout ce dont vous avez besoin</h2>
-            <p className="text-[#475569] max-w-xl mx-auto text-lg">De la gestion quotidienne à l'optimisation fiscale.</p>
+            <div className="text-center mb-14">
+            <h2 className="font-display font-bold text-4xl text-[#0F172A] mb-4">Un accompagnement complet</h2>
+            <p className="text-[#475569] max-w-2xl mx-auto text-lg">De la création du bail à la déclaration d'impôts — Patrimo IA vous accompagne à chaque étape de votre gestion immobilière.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
-              { icon: Bot, title: 'Copilot IA', desc: 'Posez vos questions en langage naturel. Fiscalité, baux, révisions IRL — réponse en 30 secondes.', color: '#1D4ED8', bg: '#EFF6FF' },
-              { icon: Calculator, title: 'Fiscalité optimisée', desc: 'LMNP réel, micro-BIC, foncier nu, SCI IS/IR — simulations comparatives avec votre TMI réel.', color: '#166534', bg: '#F0FDF4' },
-              { icon: Building2, title: 'Profils adaptatifs', desc: 'Airbnb, SCI, LMNP, nu, commerce — chaque bien a son tableau de bord fiscal dédié.', color: '#0C4A6E', bg: '#E0F2FE' },
-              { icon: FileText, title: 'OCR baux IA', desc: 'Uploadez vos baux PDF — l\'IA extrait loyer, charges, durée, clauses automatiquement.', color: '#92400E', bg: '#FFFBEB' },
-              { icon: Zap, title: 'Relances automatiques', desc: 'Loyer en retard ? Patrimo IA envoie la relance adaptée (rappel, ferme, mise en demeure).', color: '#5B21B6', bg: '#F5F3FF' },
-              { icon: Shield, title: 'Sécurisé & confidentiel', desc: 'Données chiffrées, hébergement EU, RGPD. Vos données vous appartiennent.', color: '#991B1B', bg: '#FEF2F2' },
+              {
+                icon: FileText,
+                title: 'Création & gestion des baux',
+                desc: 'Générez vos baux conformes en 2 minutes (meublé, nu, commercial, mobilité). Importez vos contrats existants — l\'IA extrait locataire, loyer et clauses automatiquement.',
+                color: '#1D4ED8', bg: '#EFF6FF'
+              },
+              {
+                icon: Building2,
+                title: 'Visibilité complète sur vos biens',
+                desc: 'Tableau de bord par bien : rendement, cashflow, vacance, travaux, diagnostics, financement — tout au même endroit, en temps réel.',
+                color: '#0C4A6E', bg: '#E0F2FE'
+              },
+              {
+                icon: Banknote,
+                title: 'Suivi des loyers simplifié',
+                desc: 'Encaissements, retards, relances automatiques. Rapprochement bancaire en un clic depuis votre relevé CSV. Zéro oubli, zéro retard.',
+                color: '#166534', bg: '#F0FDF4'
+              },
+              {
+                icon: BarChart3,
+                title: 'Préparation aux déclarations',
+                desc: 'Vos données organisées pour la 2044, 2042-C-PRO et 2072. Importez votre déclaration N-1 — l\'IA analyse et prépare votre dossier fiscal.',
+                color: '#7C3AED', bg: '#F5F3FF'
+              },
+              {
+                icon: Bot,
+                title: 'Conseiller IA disponible 24h/24',
+                desc: 'Posez vos questions en langage naturel : révision IRL, régime fiscal, déficit foncier, amortissements LMNP — réponse en 30 secondes.',
+                color: '#0891B2', bg: '#E0F7FF'
+              },
+              {
+                icon: Shield,
+                title: 'Vos données restent les vôtres',
+                desc: 'Hébergement en Europe, chiffrement bout-en-bout, conforme RGPD. Exportez tout à tout moment pour votre expert-comptable.',
+                color: '#991B1B', bg: '#FEF2F2'
+              },
             ].map(({ icon: Icon, title, desc, color, bg }) => (
               <div key={title} className="p-6 rounded-2xl border hover:shadow-md hover:-translate-y-0.5 transition-all" style={{ border: '1px solid rgba(0,0,0,0.07)', background: '#fff' }}>
                 <div className="h-11 w-11 rounded-xl flex items-center justify-center mb-4" style={{ background: bg }}>
