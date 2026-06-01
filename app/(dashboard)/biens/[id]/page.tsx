@@ -68,6 +68,7 @@ export default async function BienDetailPage({ params }: Props) {
     { href: `/biens/${id}/diagnostics`, label: 'Diagnostics', icon: 'Stethoscope' },
     ...(property.loan_monthly ? [{ href: `/biens/${id}/financement`, label: 'Financement', icon: 'CreditCard' }] : []),
     ...(property.type === 'sci' ? [{ href: `/biens/${id}/sci-cca`, label: 'Comptes courants', icon: 'Users' }] : []),
+    { href: `/biens/${id}/copropriete`, label: 'Copropriété', icon: 'Building' },
     { href: `/travaux`, label: 'Travaux', icon: 'Wrench' },
   ]
 
