@@ -5,9 +5,11 @@ import * as XLSX from 'xlsx'
 // ── Extraction texte PDF ──
 async function extractPdfText(buf: ArrayBuffer): Promise<string> {
   try {
-    const pdfParse = (await import('pdf-parse')).default
-    const data = await pdfParse(Buffer.from(buf))
-    return data.text.slice(0, 8000) // Limiter pour le prompt IA
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfParse = require('pdf-parse')
+    const fn = pdfParse.default ?? pdfParse
+    const data = await fn(Buffer.from(buf))
+    return data.text.slice(0, 8000)
   } catch {
     return ''
   }
