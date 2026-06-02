@@ -300,24 +300,10 @@ export async function POST(req: NextRequest) {
         const anthropicKey = process.env.ANTHROPIC_API_KEY
         if (!anthropicKey) throw new Error('ANTHROPIC_API_KEY non configurée')
 
-        // Compresser sans réduire les dimensions — garder la lisibilité du texte
-        // Limite Anthropic base64 : 5MB = ~3.75MB fichier
-        const mimeType = 'image/jpeg'
-        const sharp = (await import('sharp')).default
-        // Essai 1 : qualité 85, dimensions originales
-        let compressed = await sharp(Buffer.from(buf)).jpeg({ quality: 85 }).toBuffer()
-        // Si encore trop grand, réduire progressivement
-        if (compressed.byteLength > 3.5 * 1024 * 1024) {
-          compressed = await sharp(Buffer.from(buf)).jpeg({ quality: 70 }).toBuffer()
-        }
-        if (compressed.byteLength > 3.5 * 1024 * 1024) {
-          compressed = await sharp(Buffer.from(buf))
-            .resize(2400, 2400, { fit: 'inside', withoutEnlargement: true })
-            .jpeg({ quality: 75 })
-            .toBuffer()
-        }
-        const base64 = compressed.toString('base64')
-        console.log(`Image : ${Math.round(buf.byteLength/1024)}KB → ${Math.round(compressed.byteLength/1024)}KB`)
+        // Pas de compression — image originale pour meilleure lisibilité
+        const mimeType = ext === 'png' ? 'image/png' : 'image/jpeg'
+        const base64 = Buffer.from(buf).toString('base64')
+        console.log(`Image originale : ${Math.round(buf.byteLength/1024)}KB`)
 
         // Appel Claude via Anthropic SDK
         const Anthropic = (await import('@anthropic-ai/sdk')).default
