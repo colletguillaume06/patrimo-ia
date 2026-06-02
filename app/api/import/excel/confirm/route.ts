@@ -35,6 +35,11 @@ export async function POST(request: NextRequest) {
     let baux_crees = 0
     let paiements_crees = 0
 
+    console.log('\n\n🔴 CONFIRM IMPORT - reçu:', biens.length, 'biens')
+    biens.forEach((b: any, i: number) => {
+      console.log(`  Bien ${i}: ${b.bien?.name} | bail.tenant_name="${b.bail?.tenant_name}" | bail.monthly_rent=${b.bail?.monthly_rent}`)
+    })
+
     for (const item of biens) {
       try {
         const bienData = item.bien
@@ -111,9 +116,8 @@ export async function POST(request: NextRequest) {
             leaseId = existingLease.id
             await supabase.from('leases').update({
               monthly_rent: cleanAmount(bailData.monthly_rent),
-              monthly_charges: cleanAmount(bailData.monthly_charges),
+              charges: cleanAmount(bailData.monthly_charges || bailData.charges) || 0,
               deposit: cleanAmount(bailData.deposit) || null,
-              irl_index: cleanAmount(bailData.irl_index) || null,
             }).eq('id', leaseId)
           } else {
             const startDate = cleanDate(bailData.start_date) || `${new Date().getFullYear()}-01-01`
@@ -125,12 +129,11 @@ export async function POST(request: NextRequest) {
                 tenant_email: bailData.tenant_email || null,
                 tenant_phone: bailData.tenant_phone || null,
                 monthly_rent: cleanAmount(bailData.monthly_rent),
-                monthly_charges: cleanAmount(bailData.monthly_charges) || 0,
+                charges: cleanAmount(bailData.monthly_charges || bailData.charges) || 0,
                 deposit: cleanAmount(bailData.deposit) || null,
                 start_date: startDate,
-                end_date: cleanDate(bailData.end_date),
+                end_date: cleanDate(bailData.end_date) || null,
                 is_active: true,
-                irl_index: cleanAmount(bailData.irl_index) || null,
               })
               .select('id')
               .single()
@@ -138,6 +141,10 @@ export async function POST(request: NextRequest) {
             if (!leaseError && newLease) {
               leaseId = newLease.id
               baux_crees++
+              console.log(`  ✅ Bail créé pour ${bailData.tenant_name}`)
+            } else if (leaseError) {
+              console.error(`  ❌ ERREUR BAIL "${bailData.tenant_name}":`, leaseError.message, leaseError.details)
+              results.push({ bien_nom: bienData.name, property_id: propertyId, lease_id: null, nb_paiements: 0, statut: 'erreur', erreur: `Bail: ${leaseError.message}` })
             }
           }
         }

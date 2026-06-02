@@ -235,9 +235,9 @@ Retourne le JSON structuré demandé.`,
           leaseId = existingLease.id
           await supabase.from('leases').update({
             monthly_rent: cleanAmount(bailData.monthly_rent),
-            monthly_charges: cleanAmount(bailData.monthly_charges),
+            charges: cleanAmount(bailData.monthly_charges) || 0,
             deposit: cleanAmount(bailData.deposit) || null,
-            irl_index: cleanAmount(bailData.irl_index) || null,
+            
           }).eq('id', leaseId)
         } else {
           const startDate = cleanDate(bailData.start_date) || `${new Date().getFullYear()}-01-01`
@@ -249,12 +249,12 @@ Retourne le JSON structuré demandé.`,
               tenant_email: bailData.tenant_email || null,
               tenant_phone: bailData.tenant_phone || null,
               monthly_rent: cleanAmount(bailData.monthly_rent),
-              monthly_charges: cleanAmount(bailData.monthly_charges) || 0,
+              charges: cleanAmount(bailData.monthly_charges) || 0,
               deposit: cleanAmount(bailData.deposit) || null,
               start_date: startDate,
               end_date: cleanDate(bailData.end_date),
               is_active: true,
-              irl_index: cleanAmount(bailData.irl_index) || null,
+              
             })
             .select('id')
             .single()
