@@ -214,38 +214,42 @@ export default function LocataireDetailPage() {
           )}
         </GlassCard>
 
-        {/* Bail associé */}
+        {/* Tous les baux */}
         <GlassCard>
-          <h2 className="font-display font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-            <FileText className="h-4 w-4" /> Bail associé
+          <h2 className="font-display font-semibold mb-4 flex items-center justify-between" style={{ color: 'var(--text-primary)' }}>
+            <span className="flex items-center gap-2"><FileText className="h-4 w-4" /> Baux ({tenant.leases?.length || 0})</span>
+            <Link href="/baux" className="text-xs px-2 py-1 rounded-lg"
+              style={{ background: '#EFF6FF', color: '#1D4ED8' }}>
+              + Nouveau bail
+            </Link>
           </h2>
-          {activeLease ? (
+          {tenant.leases?.length > 0 ? (
             <div className="space-y-2">
-              {[
-                { label: 'Bien', value: activeLease.property?.name ?? '—' },
-                { label: 'Loyer HC', value: formatCurrency(activeLease.monthly_rent) },
-                { label: 'Charges', value: formatCurrency(activeLease.monthly_charges ?? 0) },
-                { label: 'Dépôt', value: formatCurrency(activeLease.deposit ?? 0) },
-                { label: 'Début', value: activeLease.start_date ? format(new Date(activeLease.start_date), 'd MMM yyyy', { locale: fr }) : '—' },
-              ].map(({ label, value }) => (
-                <div key={label} className="flex justify-between py-1.5 px-3 rounded-lg" style={{ background: 'var(--bg-secondary)' }}>
-                  <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{label}</span>
-                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{value}</span>
+              {tenant.leases.map((lease: any) => (
+                <div key={lease.id} className="p-3 rounded-xl" style={{ background: 'var(--bg-secondary)', border: `1px solid ${lease.is_active ? '#86EFAC' : 'var(--border)'}` }}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <Building2 className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} />
+                      <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                        {lease.property?.name || '—'}
+                      </span>
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${lease.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+                      {lease.is_active ? 'Actif' : 'Terminé'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs" style={{ color: 'var(--text-secondary)' }}>
+                    <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{formatCurrency(lease.monthly_rent)}/mois</span>
+                    {lease.start_date && <span>Depuis {format(new Date(lease.start_date), 'd MMM yyyy', { locale: fr })}</span>}
+                    {lease.deposit > 0 && <span>Dépôt {formatCurrency(lease.deposit)}</span>}
+                  </div>
                 </div>
               ))}
-              <Link href="/baux" className="flex items-center justify-center gap-2 mt-2 h-8 rounded-lg text-xs font-medium border"
-                style={{ borderColor: '#1D4ED8', color: '#1D4ED8', background: '#EFF6FF' }}>
-                <FileText className="h-3.5 w-3.5" /> Voir dans les baux
-              </Link>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
-                Aucun bail actif pour ce locataire
-              </p>
-              <Link href="/baux"
-                className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white"
-                style={{ background: '#1D4ED8' }}>
+              <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>Aucun bail pour ce locataire</p>
+              <Link href="/baux" className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white" style={{ background: '#1D4ED8' }}>
                 <Plus className="h-4 w-4" /> Créer un bail
               </Link>
             </div>
