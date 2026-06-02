@@ -262,6 +262,8 @@ export default function ImportIntelligentPage() {
             const expanded = expandedIdx === idx
             const entries = r.analyse ? flattenAnalyse(r.analyse) : []
             const isTabular = r.needsMapping && r.excelData
+            const isMultiBiens = r.isImage && r.analyse?.biens?.length > 0
+            const isImageFailed = r.isImage && (!r.analyse?.biens || r.analyse?.biens?.length === 0)
 
             return (
               <GlassCard key={r.filename}>
@@ -411,8 +413,37 @@ export default function ImportIntelligentPage() {
                   </div>
                 )}
 
-                {/* Champ : Nom du bien (pour PDFs) */}
-                {!isTabular && r.actif && (
+                {/* Image multi-biens : liste des biens détectés */}
+                {isMultiBiens && r.actif && (
+                  <div className="mt-3 p-3 rounded-xl" style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+                    <p className="text-xs font-semibold text-blue-800 mb-2 flex items-center gap-1.5">
+                      <Sparkles className="h-3.5 w-3.5" />
+                      {r.analyse.biens.length} bien(s) détecté(s) — seront créés automatiquement
+                    </p>
+                    <div className="space-y-1">
+                      {r.analyse.biens.map((b: any, i: number) => (
+                        <div key={i} className="flex items-center gap-2 text-xs" style={{ color: '#1E40AF' }}>
+                          <span className="font-semibold">•</span>
+                          <span className="font-semibold">{b.nom || b.adresse || `Bien ${i+1}`}</span>
+                          {b.locataire && <span className="text-blue-500">— {b.locataire}</span>}
+                          {b.loyer_mensuel && <span className="text-blue-500">— {b.loyer_mensuel}€/mois</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Image échouée : message d'erreur détaillé */}
+                {isImageFailed && r.erreur && (
+                  <div className="mt-2 p-3 rounded-xl" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
+                    <p className="text-xs font-semibold text-red-700 mb-1">Analyse image échouée</p>
+                    <p className="text-xs text-red-600">{r.analyse?.erreur_detail || r.erreur}</p>
+                    <p className="text-xs text-red-500 mt-1">Conseil : réduisez la taille de l'image ou convertissez en PDF</p>
+                  </div>
+                )}
+
+                {/* Champ : Nom du bien (pour PDFs simples uniquement) */}
+                {!isTabular && !isMultiBiens && !isImageFailed && !r.isImage && r.actif && (
                   <div className="flex items-center gap-2 mb-2">
                     <Building2 className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} />
                     <label className="text-xs font-medium flex-shrink-0" style={{ color: 'var(--text-secondary)' }}>

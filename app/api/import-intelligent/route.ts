@@ -373,14 +373,15 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide:
         })
         continue
       } catch (err: any) {
-        console.error('Vision error:', err.message)
-        // Fallback : retourner une erreur explicite
+        const errMsg = err?.message || String(err)
+        console.error('Vision error:', errMsg)
         results.push({
           filename: file.name,
           fileType: 'image',
           size: file.size,
-          erreur: `Erreur analyse image : ${err.message}`,
-          analyse: { type_document: 'image', confiance: 'faible' },
+          erreur: `Analyse image échouée : ${errMsg}`,
+          analyse: { type_document: 'image', confiance: 'faible', erreur_detail: errMsg },
+          isImage: true,
         })
         continue
       }
