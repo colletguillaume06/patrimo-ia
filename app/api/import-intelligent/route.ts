@@ -317,31 +317,48 @@ export async function POST(req: NextRequest) {
             role: 'user',
             content: [
               { type: 'image', source: { type: 'base64', media_type: mimeType as any, data: base64 } },
-              { type: 'text', text: `Analyse ce document immobilier français. Lis TOUS les chiffres visibles dans chaque cellule.
-Pour chaque bien : lis le loyer mensuel principal, toutes les lignes mensuelles (janvier à décembre) avec les montants exacts, les cautions, indices IRL, numéros fiscaux, et toutes les dépenses avec leurs montants.
+              { type: 'text', text: `Tu es un expert-comptable français. Analyse ce tableau Excel de suivi locatif.
+
+Ce type de tableau a une structure précise :
+- LIGNE 1 (en-tête) : noms des biens (une colonne par bien)
+- LIGNES 2-8 (méta-données) : pour chaque bien, plusieurs lignes contenant le NOM DU LOCATAIRE ou de la société, la DATE DU BAIL, le montant CAUTION (ex: "CAUTION 850"), l'INDICE IRL/ICC/IRLC et sa valeur (ex: "IRL 2T2020 130.57"), le NUMÉRO FISCAL (ex: "n° fiscal 061481310130")
+- LIGNE LOYER MENSUEL : montant de base du loyer
+- LIGNES JANVIER-DÉCEMBRE : paiements mensuels par bien
+
+INSTRUCTIONS :
+1. Pour chaque colonne-bien, lis les LIGNES D'EN-TÊTE pour extraire : nom locataire, date bail, caution, IRL/ICC avec valeur, n°fiscal
+2. Lis le loyer mensuel de base (souvent répété sur chaque ligne mois)
+3. Lis les 12 lignes mensuelles (loyer + notes éventuelles)
+4. Note les dépenses ponctuelles (assurances "Macif", "Generali", syndic, etc.)
+5. Note les totaux annuels en bas
+
 Retourne UNIQUEMENT ce JSON sans markdown :
 {
-  "type_document": "tableau_loyers|ifi|bail|diagnostic|facture_travaux|taxe_fonciere|assurance|releve_bancaire|declaration_impots|autre",
-  "type_detecte": "description de ce que tu vois",
+  "type_document": "tableau_loyers",
+  "type_detecte": "description du tableau",
   "annee": null,
   "biens": [
     {
-      "nom": null,
-      "adresse": null,
+      "nom": "nom exact de la colonne bien",
       "type": "lmnp|nu|sci|airbnb|commerce",
-      "locataire": null,
-      "date_entree": null,
-      "loyer_mensuel": null,
-      "charges_mensuelles": null,
-      "depot_garantie": null,
-      "indice_irl": null,
-      "numero_fiscal": null,
-      "loyers_annuel_total": null,
-      "paiements_mensuels": [{"mois": null, "loyer": null, "notes": null}],
-      "depenses": [{"description": null, "montant": null, "categorie": null}]
+      "locataire": "nom complet du locataire ou société visible dans l'en-tête",
+      "date_entree": "date de début du bail en YYYY-MM-DD",
+      "loyer_mensuel": 0,
+      "charges_mensuelles": 0,
+      "depot_garantie": 0,
+      "indice_irl": "valeur numérique de l'indice (ex: 130.57)",
+      "trimestre_irl": "ex: 2T2020",
+      "numero_fiscal": "numéro fiscal exact",
+      "loyers_annuel_total": 0,
+      "paiements_mensuels": [
+        {"mois": "janvier", "loyer": 0, "notes": null}
+      ],
+      "depenses": [
+        {"description": "Macif", "montant": 0, "mois": "mars", "categorie": "assurance"}
+      ]
     }
   ],
-  "total_loyers_annuel": null,
+  "total_loyers_annuel": 0,
   "confiance": "haute|moyenne|faible",
   "notes": null
 }` }
