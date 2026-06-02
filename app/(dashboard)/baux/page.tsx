@@ -115,13 +115,19 @@ export default function BauxPage() {
                       )}
                     </div>
                     <p className="text-xs text-slate-500">{lease.property?.name} · {lease.property?.city}</p>
-                    <div className="flex items-center gap-4 mt-2">
+                    <div className="flex items-center gap-4 mt-2 flex-wrap">
                       <span className="text-sm font-semibold text-[var(--text-primary)]">{formatCurrency(lease.monthly_rent)}/mois</span>
                       <span className="text-xs text-slate-500">Début : {format(new Date(lease.start_date), 'dd/MM/yyyy')}</span>
                       {lease.end_date && (
                         <span className={`text-xs ${expiresoon ? 'text-amber-400' : 'text-slate-500'}`}>
                           Fin : {format(new Date(lease.end_date), 'dd/MM/yyyy')}
                           {expiresoon && ` (dans ${monthsLeft} mois)`}
+                        </span>
+                      )}
+                      {lease.irl_reference_valeur && (
+                        <span className="text-xs px-2 py-0.5 rounded-full font-medium"
+                          style={{ background: '#EFF6FF', color: '#1D4ED8' }}>
+                          {lease.irl_reference_indice?.toUpperCase() || 'IRL'} {lease.irl_reference_trimestre ? `${lease.irl_reference_trimestre}T` : ''}{lease.irl_reference_annee} = {lease.irl_reference_valeur}
                         </span>
                       )}
                     </div>
