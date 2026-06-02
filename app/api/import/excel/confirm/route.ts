@@ -41,12 +41,17 @@ export async function POST(request: NextRequest) {
         if (!bienData?.name) continue
 
         // A — Créer ou retrouver le bien
-        const { data: existingProp } = await supabase
-          .from('properties')
-          .select('id')
-          .eq('user_id', user.id)
-          .ilike('name', bienData.name)
-          .maybeSingle()
+        // Priorité : ID explicitement choisi par l'utilisateur dans le PreviewEditor
+        const forcedId = item.existing_property_id || null
+
+        let existingProp: any = null
+        if (forcedId) {
+          const { data } = await supabase.from('properties').select('id').eq('id', forcedId).eq('user_id', user.id).single()
+          existingProp = data
+        } else {
+          const { data } = await supabase.from('properties').select('id').eq('user_id', user.id).ilike('name', bienData.name).maybeSingle()
+          existingProp = data
+        }
 
         let propertyId: string
 

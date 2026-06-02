@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { ChevronDown, ChevronRight, Plus, Trash2, AlertCircle, CheckCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ChevronDown, ChevronRight, Plus, Trash2, AlertCircle, CheckCircle, Link2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 import { BienEditor } from './BienEditor'
 import { BailEditor } from './BailEditor'
 import { PaiementsTable } from './PaiementsTable'
@@ -34,9 +35,16 @@ function Section({ title, children, defaultOpen = true }: { title: string; child
 export function PreviewEditor({ data, onConfirm, onCancel }: PreviewEditorProps) {
   const [editedData, setEditedData] = useState<any>(() => ({
     ...data,
-    biens: (data.biens || []).map((b: any) => ({ ...b })),
+    biens: (data.biens || []).map((b: any) => ({ ...b, existing_property_id: null })),
   }))
   const [activeTab, setActiveTab] = useState(0)
+  const [existingBiens, setExistingBiens] = useState<any[]>([])
+  const supabase = createClient()
+
+  useEffect(() => {
+    supabase.from('properties').select('id, name, type, city').order('name')
+      .then(r => setExistingBiens(r.data ?? []))
+  }, [])
 
   const biens = editedData.biens || []
 
@@ -133,6 +141,47 @@ export function PreviewEditor({ data, onConfirm, onCancel }: PreviewEditorProps)
       {/* Active bien content */}
       {biens[activeTab] && (
         <div className="space-y-3">
+
+          {/* Lier à un bien existant */}
+          {existingBiens.length > 0 && (
+            <div className="p-3 rounded-xl flex items-center gap-3"
+              style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+              <Link2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-xs font-semibold text-blue-800 mb-1">
+                  Lier à un bien existant (optionnel)
+                </p>
+                <select
+                  value={biens[activeTab].existing_property_id || ''}
+                  onChange={e => {
+                    const selected = existingBiens.find(b => b.id === e.target.value)
+                    const next = biens.map((b: any, idx: number) => idx === activeTab
+                      ? {
+                          ...b,
+                          existing_property_id: e.target.value || null,
+                          bien: selected ? { ...b.bien, name: selected.name, type: selected.type, city: selected.city } : b.bien,
+                        }
+                      : b)
+                    setEditedData({ ...editedData, biens: next })
+                  }}
+                  className="w-full h-8 px-2 rounded-lg text-xs focus:outline-none"
+                  style={{ background: 'white', border: '1px solid #93C5FD', color: '#1E40AF' }}>
+                  <option value="">— Créer un nouveau bien</option>
+                  {existingBiens.map(b => (
+                    <option key={b.id} value={b.id}>
+                      {b.name} {b.city ? `(${b.city})` : ''}
+                    </option>
+                  ))}
+                </select>
+                {biens[activeTab].existing_property_id && (
+                  <p className="text-xs text-blue-600 mt-1">
+                    ✓ Les données seront ajoutées à ce bien existant — aucun doublon créé
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
           <Section title="🏠 Informations du bien">
             <BienEditor
               bien={biens[activeTab].bien}
