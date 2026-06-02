@@ -323,57 +323,26 @@ export async function POST(req: NextRequest) {
         const Anthropic = (await import('@anthropic-ai/sdk')).default
         const client = new Anthropic({ apiKey: anthropicKey })
 
-        // ÉTAPE 1 : OCR exhaustif colonne par colonne
-        const ocrMessage = await client.messages.create({
+        // Analyse directe — Claude lit l'image librement puis structure
+        const message = await client.messages.create({
           model: 'claude-sonnet-4-5',
           max_tokens: 8000,
           messages: [{
             role: 'user',
             content: [
               { type: 'image', source: { type: 'base64', media_type: mimeType as any, data: base64 } },
-              { type: 'text', text: `Tu es un expert OCR. Lis INTÉGRALEMENT ce tableau immobilier français.
-
-INSTRUCTIONS STRICTES :
-1. Lis chaque colonne de gauche à droite
-2. Pour chaque bien (colonne), extrais :
-   - Le nom exact du bien (en-tête de colonne)
-   - Le nom du locataire ou de la société
-   - La date d'entrée dans les lieux
-   - Le montant de la caution
-   - L'indice IRL/ICC/ILC et son trimestre
-   - Le numéro fiscal
-   - Le loyer mensuel (montant principal)
-   - Les charges mensuelles
-   - Les 12 loyers mensuels (janvier à décembre) avec leurs montants exacts
-   - Toutes les dépenses notées (assurances, syndic, taxes foncières...)
-   - Le total annuel
-3. Note les textes barrés, les annotations manuscrites, les couleurs
-4. Lis les totaux en bas du tableau
-
-Transcris TOUT, colonne par colonne, avec les montants exacts.` }
-            ]
-          }]
-        })
-
-        const ocrText = ocrMessage.content[0]?.type === 'text' ? ocrMessage.content[0].text : ''
-        console.log('OCR:', ocrText.slice(0, 800))
-
-        // ÉTAPE 2 : Structuration en JSON à partir du texte lu
-        const visionPrompt = `Tu es un expert-comptable français. Voici la transcription d'un document immobilier français :
-
-${ocrText}
-
-Extrais les informations et retourne UNIQUEMENT ce JSON valide sans markdown :
+              { type: 'text', text: `Analyse ce document immobilier français et extrais toutes les informations visibles.
+Retourne UNIQUEMENT ce JSON sans markdown :
 {
   "type_document": "tableau_loyers|ifi|bail|diagnostic|facture_travaux|taxe_fonciere|assurance|releve_bancaire|declaration_impots|autre",
-  "type_detecte": "description precise du document",
+  "type_detecte": "description de ce que tu vois",
   "annee": null,
   "biens": [
     {
-      "nom": "nom exact du bien tel qu'écrit dans le document",
+      "nom": null,
       "adresse": null,
       "type": "lmnp|nu|sci|airbnb|commerce",
-      "locataire": "nom exact du locataire",
+      "locataire": null,
       "date_entree": null,
       "loyer_mensuel": null,
       "charges_mensuelles": null,
@@ -381,25 +350,15 @@ Extrais les informations et retourne UNIQUEMENT ce JSON valide sans markdown :
       "indice_irl": null,
       "numero_fiscal": null,
       "loyers_annuel_total": null,
-      "paiements_mensuels": [
-        {"mois": "janvier", "loyer": null, "notes": null}
-      ],
-      "depenses": [
-        {"description": null, "montant": null, "categorie": "assurance|syndic|taxe_fonciere|travaux|autre"}
-      ]
+      "paiements_mensuels": [{"mois": null, "loyer": null, "notes": null}],
+      "depenses": [{"description": null, "montant": null, "categorie": null}]
     }
   ],
   "total_loyers_annuel": null,
   "confiance": "haute|moyenne|faible",
   "notes": null
-}
-
-        const message = await client.messages.create({
-          model: 'claude-sonnet-4-5',
-          max_tokens: 4000,
-          messages: [{
-            role: 'user',
-            content: [{ type: 'text', text: visionPrompt }]
+}` }
+            ]
           }]
         })
 
