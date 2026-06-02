@@ -317,7 +317,8 @@ export async function POST(req: NextRequest) {
             role: 'user',
             content: [
               { type: 'image', source: { type: 'base64', media_type: mimeType as any, data: base64 } },
-              { type: 'text', text: `Analyse ce document immobilier français et extrais toutes les informations visibles.
+              { type: 'text', text: `Analyse ce document immobilier français. Lis TOUS les chiffres visibles dans chaque cellule.
+Pour chaque bien : lis le loyer mensuel principal, toutes les lignes mensuelles (janvier à décembre) avec les montants exacts, les cautions, indices IRL, numéros fiscaux, et toutes les dépenses avec leurs montants.
 Retourne UNIQUEMENT ce JSON sans markdown :
 {
   "type_document": "tableau_loyers|ifi|bail|diagnostic|facture_travaux|taxe_fonciere|assurance|releve_bancaire|declaration_impots|autre",
