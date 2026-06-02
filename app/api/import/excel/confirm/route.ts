@@ -100,11 +100,45 @@ export async function POST(request: NextRequest) {
           propertyId = newProp.id
         }
 
-        // B — Créer ou mettre à jour le bail
+        // B — Créer la fiche locataire puis le bail
         let leaseId: string | null = null
         const bailData = item.bail
 
         if (bailData?.tenant_name) {
+
+          // B1 — Créer ou retrouver la fiche locataire (tenants table)
+          const { data: existingTenant } = await supabase
+            .from('tenants')
+            .select('id')
+            .eq('user_id', user.id)
+            .ilike('full_name', bailData.tenant_name)
+            .maybeSingle()
+
+          let tenantId: string | null = null
+          if (existingTenant) {
+            tenantId = existingTenant.id
+            // Compléter les infos manquantes
+            const tenantUpdates: any = {}
+            if (bailData.tenant_email) tenantUpdates.email = bailData.tenant_email
+            if (bailData.tenant_phone) tenantUpdates.phone = bailData.tenant_phone
+            if (Object.keys(tenantUpdates).length > 0) {
+              await supabase.from('tenants').update(tenantUpdates).eq('id', tenantId)
+            }
+          } else {
+            const { data: newTenant } = await supabase
+              .from('tenants')
+              .insert({
+                user_id: user.id,
+                full_name: bailData.tenant_name,
+                email: bailData.tenant_email || null,
+                phone: bailData.tenant_phone || null,
+              })
+              .select('id')
+              .single()
+            tenantId = newTenant?.id || null
+          }
+
+          // B2 — Créer ou mettre à jour le bail
           const { data: existingLease } = await supabase
             .from('leases')
             .select('id')
@@ -118,6 +152,7 @@ export async function POST(request: NextRequest) {
               monthly_rent: cleanAmount(bailData.monthly_rent),
               charges: cleanAmount(bailData.monthly_charges || bailData.charges) || 0,
               deposit: cleanAmount(bailData.deposit) || null,
+              tenant_id: tenantId,
             }).eq('id', leaseId)
           } else {
             const startDate = cleanDate(bailData.start_date) || `${new Date().getFullYear()}-01-01`
@@ -128,6 +163,7 @@ export async function POST(request: NextRequest) {
                 tenant_name: bailData.tenant_name,
                 tenant_email: bailData.tenant_email || null,
                 tenant_phone: bailData.tenant_phone || null,
+                tenant_id: tenantId,
                 monthly_rent: cleanAmount(bailData.monthly_rent),
                 charges: cleanAmount(bailData.monthly_charges || bailData.charges) || 0,
                 deposit: cleanAmount(bailData.deposit) || null,
@@ -141,9 +177,8 @@ export async function POST(request: NextRequest) {
             if (!leaseError && newLease) {
               leaseId = newLease.id
               baux_crees++
-              console.log(`  ✅ Bail créé pour ${bailData.tenant_name}`)
             } else if (leaseError) {
-              console.error(`  ❌ ERREUR BAIL "${bailData.tenant_name}":`, leaseError.message, leaseError.details)
+              console.error(`❌ BAIL "${bailData.tenant_name}":`, leaseError.message)
               results.push({ bien_nom: bienData.name, property_id: propertyId, lease_id: null, nb_paiements: 0, statut: 'erreur', erreur: `Bail: ${leaseError.message}` })
             }
           }
