@@ -323,25 +323,40 @@ export async function POST(req: NextRequest) {
         const Anthropic = (await import('@anthropic-ai/sdk')).default
         const client = new Anthropic({ apiKey: anthropicKey })
 
-        // ÉTAPE 1 : Lecture OCR libre de tout le texte visible
+        // ÉTAPE 1 : OCR exhaustif colonne par colonne
         const ocrMessage = await client.messages.create({
           model: 'claude-sonnet-4-5',
-          max_tokens: 4000,
+          max_tokens: 8000,
           messages: [{
             role: 'user',
             content: [
               { type: 'image', source: { type: 'base64', media_type: mimeType as any, data: base64 } },
-              { type: 'text', text: `Lis et transcris TOUT le texte visible dans cette image de document immobilier français.
-Lis chaque colonne, chaque ligne, chaque cellule du tableau.
-Lis les en-têtes de colonnes, les noms de biens, les locataires, les montants, les dates, les numéros fiscaux, les indices IRL.
-Transcris EXACTEMENT ce que tu vois, rien n'est trop petit ou trop insignifiant.
-Organise ta réponse colonne par colonne.` }
+              { type: 'text', text: `Tu es un expert OCR. Lis INTÉGRALEMENT ce tableau immobilier français.
+
+INSTRUCTIONS STRICTES :
+1. Lis chaque colonne de gauche à droite
+2. Pour chaque bien (colonne), extrais :
+   - Le nom exact du bien (en-tête de colonne)
+   - Le nom du locataire ou de la société
+   - La date d'entrée dans les lieux
+   - Le montant de la caution
+   - L'indice IRL/ICC/ILC et son trimestre
+   - Le numéro fiscal
+   - Le loyer mensuel (montant principal)
+   - Les charges mensuelles
+   - Les 12 loyers mensuels (janvier à décembre) avec leurs montants exacts
+   - Toutes les dépenses notées (assurances, syndic, taxes foncières...)
+   - Le total annuel
+3. Note les textes barrés, les annotations manuscrites, les couleurs
+4. Lis les totaux en bas du tableau
+
+Transcris TOUT, colonne par colonne, avec les montants exacts.` }
             ]
           }]
         })
 
         const ocrText = ocrMessage.content[0]?.type === 'text' ? ocrMessage.content[0].text : ''
-        console.log('OCR result:', ocrText.slice(0, 500))
+        console.log('OCR:', ocrText.slice(0, 800))
 
         // ÉTAPE 2 : Structuration en JSON à partir du texte lu
         const visionPrompt = `Tu es un expert-comptable français. Voici la transcription d'un document immobilier français :
