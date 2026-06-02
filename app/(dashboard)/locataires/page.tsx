@@ -21,7 +21,8 @@ export default function LocatairesPage() {
 
   const handleSeed = async () => {
     setSeeding(true)
-    const res = await fetch('/api/tenants/seed', { method: 'POST' })
+    // Utilise le setup complet (biens + locataires + baux liés)
+    const res = await fetch('/api/setup/complete', { method: 'POST' })
     const data = await res.json()
     setSeeding(false)
     if (data.success) {
@@ -82,14 +83,12 @@ export default function LocatairesPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          {tenants.length === 0 && (
-            <button onClick={handleSeed} disabled={seeding}
-              className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold border disabled:opacity-50"
-              style={{ borderColor: '#7C3AED', color: '#7C3AED', background: '#F5F3FF' }}>
-              {seeding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              Importer mes locataires
-            </button>
-          )}
+          <button onClick={handleSeed} disabled={seeding}
+            className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold border disabled:opacity-50"
+            style={{ borderColor: '#7C3AED', color: '#7C3AED', background: '#F5F3FF' }}>
+            {seeding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+            {tenants.length === 0 ? 'Importer mes locataires' : 'Compléter les fiches'}
+          </button>
           <button onClick={() => setShowAdd(true)}
             className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white"
             style={{ background: '#1D4ED8' }}>
