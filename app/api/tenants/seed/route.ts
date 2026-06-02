@@ -1,56 +1,129 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-const TENANTS_DATA = [
-  // ── LOGEMENTS NUS ──
+// Données extraites des 2 photos de tableaux Excel
+const DATA = [
+  // ── PAGE 1 — LOGEMENTS NUS ──
   {
-    full_name: 'SARL Les Gourmandises',
-    email: null,
-    phone: null,
-    notes: 'Locataire commercial — MAG TOU — bail depuis 01/06/2016 — Caution 850€ — IRLC 4T2015=108.41 — N°fiscal 061480117476',
+    tenant: {
+      full_name: 'SARL Les Gourmandises',
+      notes: 'Locataire commercial — N°fiscal bien 061480117476',
+    },
+    bien_name: 'MAG TOU',
+    bail: {
+      monthly_rent: 929,
+      charges: 0,
+      deposit: 850,
+      start_date: '2016-06-01',
+      is_active: true,
+      indexation_index: 'irlc',
+    },
   },
   {
-    full_name: 'LE FOURNIL VENCOIS',
-    email: null,
-    phone: null,
-    notes: 'Locataire commercial — mag TUBY — Syndic CMS — bail comm 10/10/2019 — Caution 1420€ — IRLC 2T2019=115.21 — N°fiscal 061570941965 — N°fiscal parking lot34 061570948724',
+    tenant: {
+      full_name: 'LE FOURNIL VENCOIS',
+      notes: 'Locataire commercial — Syndic CMS — N°fiscal 061570941965 — N°fiscal parking lot34 061570948724',
+    },
+    bien_name: 'mag TUBY',
+    bail: {
+      monthly_rent: 1624,
+      charges: 60,
+      deposit: 1420,
+      start_date: '2019-10-10',
+      is_active: true,
+      indexation_index: 'irlc',
+    },
   },
   {
-    full_name: 'MONTOYA Delecroix',
-    email: null,
-    phone: null,
-    notes: 'Locataire — courtil — bail 01/08/2020 — Caution 800€ — IRL 2T2020=130.57 — N°fiscal 061481310130',
+    tenant: {
+      full_name: 'MONTOYA Delecroix',
+      notes: 'N°fiscal 061481310130',
+    },
+    bien_name: 'courtil',
+    bail: {
+      monthly_rent: 860,
+      charges: 0,
+      deposit: 800,
+      start_date: '2020-08-01',
+      is_active: true,
+      indexation_index: 'irl',
+    },
   },
   {
-    full_name: 'ANA Alexio',
-    email: null,
-    phone: null,
-    notes: 'Locataire — Cours château 1 — depuis 01/10/1996 — Caution 760€ — ICC 1erT=1036 — N°fiscal 061480117453',
+    tenant: {
+      full_name: 'ANA Alexio',
+      notes: 'Locataire depuis 1996 — N°fiscal 061480117453 — ICC 1erT=1036',
+    },
+    bien_name: 'Cours château 1',
+    bail: {
+      monthly_rent: 510,
+      charges: 0,
+      deposit: 760,
+      start_date: '1996-10-01',
+      is_active: true,
+      indexation_index: 'icc',
+    },
   },
-  // ── LOGEMENTS LMNP ──
+  // ── PAGE 2 — LOGEMENTS LMNP ──
   {
-    full_name: 'LEPROVOST Ching',
-    email: null,
-    phone: null,
-    notes: 'Locataire LMNP — Studio 2ème Le Village 5211 Le Château — entrée 01/02/2022 — Caution 1320€ (2×660€ espèces) — IRL 4T2021=132.62 — N°fiscal 061480117677',
+    tenant: {
+      full_name: 'LEPROVOST Ching',
+      notes: 'N°fiscal 061480117677 — Caution 2×660€ espèces — IRL 4T2021=132.62',
+    },
+    bien_name: 'Studio 2ème « Le village 5211 » Le Chateau',
+    bail: {
+      monthly_rent: 660,
+      charges: 0,
+      deposit: 1320,
+      start_date: '2022-02-01',
+      is_active: true,
+      indexation_index: 'irl',
+    },
   },
   {
-    full_name: 'ROSA Cynthia',
-    email: null,
-    phone: null,
-    notes: 'Locataire LMNP — Le Président — entrée 01/09/2023 — Caution 1420€ (710×2) — IRL 2T2023=140.59 — Syndic Martel — N°fiscal 061570792702 — N°fiscal garage lot151 061570792681',
+    tenant: {
+      full_name: 'ROSA Cynthia',
+      notes: 'N°fiscal 061570792702 — N°fiscal garage lot151 061570792681 — Syndic Martel — IRL 2T2023=140.59',
+    },
+    bien_name: 'LE PRESIDENT',
+    bail: {
+      monthly_rent: 710,
+      charges: 100,
+      deposit: 1420,
+      start_date: '2023-09-01',
+      is_active: true,
+      indexation_index: 'irl',
+    },
   },
   {
-    full_name: 'MONTOYA INFANTOLINO',
-    email: null,
-    phone: null,
-    notes: 'Locataire LMNP — Moulin Meublé — entrée 01/08/2021 — Caution 1110€ — IRL 1T2021=130.69 / 4T2023=142.06 — N°fiscal 061481098892 — Loyer révisé en août 2024',
+    tenant: {
+      full_name: 'MONTOYA INFANTOLINO',
+      notes: 'N°fiscal 061481098892 — IRL 1T2021=130.69 / révisé 4T2023=142.06 — Loyer révisé en août 2024',
+    },
+    bien_name: 'Moulin Meuble',
+    bail: {
+      monthly_rent: 1177,
+      charges: 10,
+      deposit: 1110,
+      start_date: '2021-08-01',
+      is_active: true,
+      indexation_index: 'irl',
+    },
   },
   {
-    full_name: 'FULCONIS Amandine',
-    email: null,
-    phone: null,
-    notes: 'Locataire LMNP — Courtil bis — entrée 10/02/2024 — Caution 980€ — IRL 4T2023=142.06 — N°fiscal 061481326455',
+    tenant: {
+      full_name: 'FULCONIS Amandine',
+      notes: 'N°fiscal 061481326455 — IRL 4T2023=142.06',
+    },
+    bien_name: 'COURTIL bis',
+    bail: {
+      monthly_rent: 980,
+      charges: 10,
+      deposit: 980,
+      start_date: '2024-02-10',
+      is_active: true,
+      indexation_index: 'irl',
+    },
   },
 ]
 
@@ -59,52 +132,82 @@ export async function POST() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
 
-  const results = { crees: 0, existants: 0, errors: [] as string[] }
+  const results = { locataires: 0, baux: 0, lies: 0, errors: [] as string[] }
 
-  for (const t of TENANTS_DATA) {
-    // Vérifier si existe déjà
-    const { data: existing } = await supabase
-      .from('tenants')
-      .select('id')
-      .eq('user_id', user.id)
-      .ilike('full_name', t.full_name)
-      .maybeSingle()
+  for (const item of DATA) {
+    try {
+      // ── 1. Créer ou retrouver le locataire ──
+      const { data: existingTenant } = await supabase
+        .from('tenants')
+        .select('id')
+        .eq('user_id', user.id)
+        .ilike('full_name', item.tenant.full_name)
+        .maybeSingle()
 
-    if (existing) {
-      results.existants++
-      continue
-    }
+      let tenantId: string
+      if (existingTenant) {
+        tenantId = existingTenant.id
+        await supabase.from('tenants').update(item.tenant).eq('id', tenantId)
+      } else {
+        const { data: newTenant, error } = await supabase
+          .from('tenants')
+          .insert({ user_id: user.id, ...item.tenant })
+          .select('id').single()
+        if (error) { results.errors.push(`Locataire ${item.tenant.full_name}: ${error.message}`); continue }
+        tenantId = newTenant.id
+        results.locataires++
+      }
 
-    const { error } = await supabase.from('tenants').insert({
-      user_id: user.id,
-      ...t,
-    })
+      // ── 2. Trouver le bien correspondant ──
+      const { data: property } = await supabase
+        .from('properties')
+        .select('id')
+        .eq('user_id', user.id)
+        .ilike('name', item.bien_name)
+        .maybeSingle()
 
-    if (error) {
-      results.errors.push(`${t.full_name}: ${error.message}`)
-    } else {
-      results.crees++
-    }
-  }
+      if (!property) {
+        results.errors.push(`Bien "${item.bien_name}" non trouvé — créez-le d'abord`)
+        continue
+      }
 
-  // Lier automatiquement les baux existants à ces nouveaux locataires
-  const { data: tenants } = await supabase.from('tenants').select('id, full_name').eq('user_id', user.id)
-  let liens = 0
-  for (const tenant of (tenants ?? [])) {
-    const { data: leases } = await supabase
-      .from('leases')
-      .select('id')
-      .ilike('tenant_name', tenant.full_name)
-      .is('tenant_id', null)
-    for (const lease of (leases ?? [])) {
-      await supabase.from('leases').update({ tenant_id: tenant.id }).eq('id', lease.id)
-      liens++
+      // ── 3. Créer ou mettre à jour le bail ──
+      const { data: existingLease } = await supabase
+        .from('leases')
+        .select('id')
+        .eq('property_id', property.id)
+        .ilike('tenant_name', item.tenant.full_name)
+        .maybeSingle()
+
+      if (existingLease) {
+        await supabase.from('leases').update({
+          ...item.bail,
+          tenant_id: tenantId,
+          tenant_name: item.tenant.full_name,
+        }).eq('id', existingLease.id)
+        results.lies++
+      } else {
+        const { error } = await supabase.from('leases').insert({
+          property_id: property.id,
+          tenant_id: tenantId,
+          tenant_name: item.tenant.full_name,
+          ...item.bail,
+        })
+        if (error) {
+          results.errors.push(`Bail ${item.tenant.full_name}: ${error.message}`)
+        } else {
+          results.baux++
+        }
+      }
+
+    } catch (err: any) {
+      results.errors.push(`${item.tenant.full_name}: ${err.message}`)
     }
   }
 
   return NextResponse.json({
     success: true,
-    message: `${results.crees} fiches créées, ${results.existants} déjà existantes, ${liens} baux liés`,
+    message: `${results.locataires} locataires créés, ${results.baux} baux créés, ${results.lies} baux mis à jour`,
     ...results,
   })
 }
