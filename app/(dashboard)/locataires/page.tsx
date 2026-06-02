@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { toast } from 'sonner'
-import { Users, Phone, Mail, ChevronRight, Plus, X, Shield, User } from 'lucide-react'
+import { Users, Phone, Mail, ChevronRight, Plus, X, Shield, User, Sparkles, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
 const FORM_INIT = {
@@ -17,6 +17,20 @@ export default function LocatairesPage() {
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [seeding, setSeeding] = useState(false)
+
+  const handleSeed = async () => {
+    setSeeding(true)
+    const res = await fetch('/api/tenants/seed', { method: 'POST' })
+    const data = await res.json()
+    setSeeding(false)
+    if (data.success) {
+      toast.success(data.message)
+      load()
+    } else {
+      toast.error(data.error || 'Erreur')
+    }
+  }
   const [form, setForm] = useState(FORM_INIT)
   const supabase = createClient()
 
@@ -67,11 +81,21 @@ export default function LocatairesPage() {
             {tenants.length} fiche(s) locataire
           </p>
         </div>
-        <button onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white"
-          style={{ background: '#1D4ED8' }}>
-          <Plus className="h-4 w-4" /> Nouveau locataire
-        </button>
+        <div className="flex gap-2">
+          {tenants.length === 0 && (
+            <button onClick={handleSeed} disabled={seeding}
+              className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold border disabled:opacity-50"
+              style={{ borderColor: '#7C3AED', color: '#7C3AED', background: '#F5F3FF' }}>
+              {seeding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              Importer mes locataires
+            </button>
+          )}
+          <button onClick={() => setShowAdd(true)}
+            className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white"
+            style={{ background: '#1D4ED8' }}>
+            <Plus className="h-4 w-4" /> Nouveau locataire
+          </button>
+        </div>
       </div>
 
       {loading ? (
