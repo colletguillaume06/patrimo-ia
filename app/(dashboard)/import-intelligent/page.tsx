@@ -129,7 +129,61 @@ export default function ImportIntelligentPage() {
       // Conversion mois texte → numéro
       const moisMap: Record<string, number> = { janvier:1, février:2, fevrier:2, mars:3, avril:4, mai:5, juin:6, juillet:7, août:8, aout:8, septembre:9, octobre:10, novembre:11, décembre:12, decembre:12 }
 
-      const annee = tableauResults[0]?.analyse?.annee || new Date().getFullYear()
+      const now = new Date()
+      const anneeEnCours = now.getFullYear()
+      const anneePrecedente = anneeEnCours - 1
+      const moisEnCours = now.getMonth() + 1 // 1=janvier, 6=juin...
+
+      // Génère les paiements pour l'année précédente (12 mois) + année en cours (jusqu'au mois actuel)
+      const genererPaiements = (b: any) => {
+        const loyer = toNum(b.loyer_mensuel || b.monthly_rent) || 0
+        const paiementsExtraits = b.paiements_mensuels || []
+        const paiementsMap: Record<string, any> = {}
+
+        // Indexer les paiements extraits par IA par clé "YYYY-MM"
+        paiementsExtraits.forEach((p: any) => {
+          const moisNum = moisMap[p.mois?.toLowerCase()] || 0
+          if (!moisNum) return
+          // Chercher dans quelle année ce mois correspond (depuis annee extraite ou annee en cours)
+          const anneeP = Number(tableauResults[0]?.analyse?.annee || anneeEnCours)
+          const key = `${anneeP}-${String(moisNum).padStart(2,'0')}`
+          paiementsMap[key] = { montant: toNum(p.loyer || p.amount), notes: p.notes }
+        })
+
+        const result: any[] = []
+
+        // Année précédente : janvier → décembre
+        for (let m = 1; m <= 12; m++) {
+          const key = `${anneePrecedente}-${String(m).padStart(2,'0')}`
+          const extrait = paiementsMap[key]
+          const montant = extrait?.montant ?? loyer
+          result.push({
+            mois: `${key}`,
+            amount: montant || loyer,
+            due_date: `${key}-01`,
+            paid_date: montant > 0 ? `${key}-05` : null,
+            status: montant > 0 ? 'paid' : 'pending',
+            note: extrait?.notes || null,
+          })
+        }
+
+        // Année en cours : janvier → mois actuel
+        for (let m = 1; m <= moisEnCours; m++) {
+          const key = `${anneeEnCours}-${String(m).padStart(2,'0')}`
+          const extrait = paiementsMap[key]
+          const montant = extrait?.montant ?? loyer
+          result.push({
+            mois: `${key}`,
+            amount: montant || loyer,
+            due_date: `${key}-01`,
+            paid_date: montant > 0 ? `${key}-05` : null,
+            status: montant > 0 ? 'paid' : 'pending',
+            note: extrait?.notes || null,
+          })
+        }
+
+        return result
+      }
 
       const allBiens = tableauResults.flatMap((r: any) =>
         (r.analyse.biens || []).map((b: any) => ({
@@ -159,19 +213,7 @@ export default function ImportIntelligentPage() {
             irl_index: toNum(b.indice_irl || b.irl_index),
             guarantor_name: b.garant || null,
           },
-          paiements: (b.paiements_mensuels || [])
-            .filter((p: any) => p.loyer || p.amount)
-            .map((p: any) => {
-              const moisNum = moisMap[p.mois?.toLowerCase()] || 1
-              return {
-                mois: p.mois,
-                amount: toNum(p.loyer || p.amount) || 0,
-                due_date: `${annee}-${String(moisNum).padStart(2,'0')}-01`,
-                paid_date: p.loyer > 0 ? `${annee}-${String(moisNum).padStart(2,'0')}-05` : null,
-                status: p.loyer > 0 ? 'paid' : 'pending',
-                note: p.notes || null,
-              }
-            }),
+          paiements: genererPaiements(b),
         }))
       )
       if (allBiens.length > 0) {
