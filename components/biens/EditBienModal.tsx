@@ -87,29 +87,57 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
       })
   }, [propertyId])
 
+  const [existingTenants, setExistingTenants] = useState<any[]>([])
+  const [tenantMode, setTenantMode] = useState<'existing' | 'new'>('existing')
+
+  useEffect(() => {
+    supabase.from('tenants').select('id, full_name, email, phone').order('full_name')
+      .then(r => setExistingTenants(r.data ?? []))
+  }, [])
+
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }))
   const setL = (k: string, v: any) => setLeaseForm((f: any) => ({ ...f, [k]: v }))
+
+  const handleSelectTenant = (tenantId: string) => {
+    const t = existingTenants.find(x => x.id === tenantId)
+    if (t) {
+      setL('tenant_name', t.full_name)
+      setL('tenant_email', t.email || '')
+      setL('tenant_phone', t.phone || '')
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
 
-    // Sauvegarder le bail si présent
-    if (leaseId && leaseForm.tenant_name) {
-      await supabase.from('leases').update({
+    // Sauvegarder le bail (mise à jour ou création)
+    if (leaseForm.tenant_name) {
+      const leaseData = {
+        property_id: propertyId,
         tenant_name: leaseForm.tenant_name,
         tenant_email: leaseForm.tenant_email || null,
         tenant_phone: leaseForm.tenant_phone || null,
         monthly_rent: Number(leaseForm.monthly_rent) || 0,
         charges: Number(leaseForm.charges) || 0,
         deposit: leaseForm.deposit !== '' ? Number(leaseForm.deposit) : null,
-        start_date: leaseForm.start_date || null,
+        start_date: leaseForm.start_date || new Date().toISOString().split('T')[0],
         end_date: leaseForm.end_date || null,
+        is_active: true,
         indexation_index: leaseForm.indexation_index || 'irl',
         irl_reference_valeur: leaseForm.irl_reference_valeur !== '' ? Number(leaseForm.irl_reference_valeur) : null,
         irl_reference_trimestre: leaseForm.irl_reference_trimestre !== '' ? Number(leaseForm.irl_reference_trimestre) : null,
         irl_reference_annee: leaseForm.irl_reference_annee !== '' ? Number(leaseForm.irl_reference_annee) : null,
-      }).eq('id', leaseId)
+      }
+
+      if (leaseId) {
+        const { error } = await supabase.from('leases').update(leaseData).eq('id', leaseId)
+        if (error) { toast.error('Erreur bail : ' + error.message); setSaving(false); return }
+      } else {
+        const { data: newLease, error } = await supabase.from('leases').insert(leaseData).select('id').single()
+        if (error) { toast.error('Erreur création bail : ' + error.message); setSaving(false); return }
+        setLeaseId(newLease.id)
+      }
     }
 
     const { error } = await supabase.from('properties').update({
@@ -254,26 +282,46 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
           {/* SECTION 2 — Bail & loyer */}
           {activeSection === 'bail' && (
             <>
-              {!leaseId && (
-                <div className="p-3 rounded-xl text-sm" style={{ background: '#FFFBEB', border: '1px solid #FCD34D', color: '#92400E' }}>
-                  Aucun bail actif — remplissez les champs pour en créer un
+              {/* Sélecteur locataire existant / nouveau */}
+              <div className="p-3 rounded-xl" style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+                <p className="text-xs font-semibold text-blue-800 mb-2">Locataire</p>
+                <div className="flex gap-2 mb-3">
+                  <button type="button" onClick={() => setTenantMode('existing')}
+                    className="flex-1 h-8 rounded-lg text-xs font-semibold transition-all"
+                    style={{ background: tenantMode === 'existing' ? '#1D4ED8' : 'white', color: tenantMode === 'existing' ? 'white' : '#1D4ED8', border: '1px solid #1D4ED8' }}>
+                    Locataire existant
+                  </button>
+                  <button type="button" onClick={() => setTenantMode('new')}
+                    className="flex-1 h-8 rounded-lg text-xs font-semibold transition-all"
+                    style={{ background: tenantMode === 'new' ? '#1D4ED8' : 'white', color: tenantMode === 'new' ? 'white' : '#1D4ED8', border: '1px solid #1D4ED8' }}>
+                    Nouveau locataire
+                  </button>
                 </div>
-              )}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="col-span-2">
-                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Nom du locataire *</label>
-                  <input value={leaseForm.tenant_name || ''} onChange={e => setL('tenant_name', e.target.value)} className={inputClass} placeholder="Martin Sophie" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Email</label>
-                  <input type="email" value={leaseForm.tenant_email || ''} onChange={e => setL('tenant_email', e.target.value)} className={inputClass} />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Téléphone</label>
-                  <input value={leaseForm.tenant_phone || ''} onChange={e => setL('tenant_phone', e.target.value)} className={inputClass} />
-                </div>
+
+                {tenantMode === 'existing' ? (
+                  <select onChange={e => handleSelectTenant(e.target.value)} defaultValue=""
+                    className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none bg-white border border-slate-200 text-[#0F172A]">
+                    <option value="">— Sélectionner un locataire —</option>
+                    {existingTenants.map(t => (
+                      <option key={t.id} value={t.id}>{t.full_name}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="space-y-2">
+                    <input value={leaseForm.tenant_name || ''} onChange={e => setL('tenant_name', e.target.value)}
+                      className={inputClass} placeholder="Nom complet *" />
+                    <div className="grid grid-cols-2 gap-2">
+                      <input type="email" value={leaseForm.tenant_email || ''} onChange={e => setL('tenant_email', e.target.value)}
+                        className={inputClass} placeholder="Email" />
+                      <input value={leaseForm.tenant_phone || ''} onChange={e => setL('tenant_phone', e.target.value)}
+                        className={inputClass} placeholder="Téléphone" />
+                    </div>
+                  </div>
+                )}
+
+                {leaseForm.tenant_name && (
+                  <p className="text-xs text-blue-700 mt-2">✓ {leaseForm.tenant_name}</p>
+                )}
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div>
