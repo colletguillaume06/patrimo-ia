@@ -4,14 +4,26 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { BienCard } from '@/components/biens/BienCard'
 import { AddBienModal } from '@/components/biens/AddBienModal'
-import { Plus, Building2 } from 'lucide-react'
+import { Plus, Building2, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import type { PropertyWithMetrics } from '@/types'
 
 export default function BiensPage() {
   const [biens, setBiens] = useState<PropertyWithMetrics[]>([])
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const supabase = createClient()
+
+  const handleDelete = async (id: string, nom: string) => {
+    if (!confirm(`Supprimer "${nom}" et toutes ses données (baux, loyers, dépenses) ? Cette action est irréversible.`)) return
+    setDeletingId(id)
+    const { error } = await supabase.from('properties').delete().eq('id', id)
+    setDeletingId(null)
+    if (error) { toast.error(error.message); return }
+    toast.success(`"${nom}" supprimé`)
+    setBiens(prev => prev.filter(b => b.id !== id))
+  }
 
   useEffect(() => {
     const loadBiens = async () => {
@@ -130,7 +142,23 @@ export default function BiensPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {biens.map(bien => <BienCard key={bien.id} bien={bien} />)}
+          {biens.map(bien => (
+            <div key={bien.id} className="relative group">
+              <BienCard bien={bien} />
+              <button
+                onClick={() => handleDelete(bien.id, bien.name)}
+                disabled={deletingId === bien.id}
+                className="absolute top-3 right-3 h-8 w-8 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 z-10"
+                style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}
+                title="Supprimer ce bien"
+              >
+                {deletingId === bien.id
+                  ? <span className="animate-spin text-red-500 text-xs">⟳</span>
+                  : <Trash2 className="h-3.5 w-3.5 text-red-500" />
+                }
+              </button>
+            </div>
+          ))}
         </div>
       )}
 
