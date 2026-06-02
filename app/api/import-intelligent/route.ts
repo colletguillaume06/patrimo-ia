@@ -348,7 +348,7 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide s
         })
 
         const completion = await openrouter.chat.completions.create({
-          model: 'qwen/qwen-2.5-vl-7b-instruct:free',
+          model: 'google/gemma-4-31b-it:free',
           messages: [{
             role: 'user',
             content: [
