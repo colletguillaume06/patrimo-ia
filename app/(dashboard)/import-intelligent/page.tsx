@@ -19,6 +19,7 @@ const DOC_TYPES: Record<string, { label: string, color: string, bg: string, icon
   facture_travaux:{ label: 'Facture / Devis',      color: '#BE185D', bg: '#FDF2F8', icon: Wrench,    extensions: ['pdf'] },
   releve_bancaire:{ label: 'Relevé bancaire',      color: '#166534', bg: '#F0FDF4', icon: FileText,  extensions: ['pdf','csv'] },
   excel:          { label: 'Tableau Excel',        color: '#1D4ED8', bg: '#EFF6FF', icon: FileText,  extensions: ['xlsx','xls','csv'] },
+  ifi:              { label: 'Formulaire IFI',      color: '#7C3AED', bg: '#F5F3FF', icon: Building2, extensions: ['pdf', 'jpg', 'jpeg', 'png'] },
   declaration_impots:{ label: 'Déclaration fiscale', color: '#DC2626', bg: '#FEF2F2', icon: FileText, extensions: ['pdf'] },
   document_general:{ label: 'Autre document',     color: '#6B7280', bg: '#F9FAFB', icon: FileText,  extensions: ['pdf'] },
 }

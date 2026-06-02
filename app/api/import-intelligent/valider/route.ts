@@ -200,6 +200,48 @@ export async function POST(req: NextRequest) {
         else results.errors.push(`Travaux: ${error.message}`)
       }
 
+      // ── FORMULAIRE IFI ──
+      else if (a.type_document === 'ifi') {
+        const biens = a.biens ?? []
+        for (const bien of biens) {
+          if (!bien.adresse && !bien.valeur_declaree) continue
+          const nomBien = doc.nom_bien || bien.adresse || 'Bien IFI importé'
+          const adresse = bien.adresse || ''
+          const ville = bien.ville || ''
+
+          if (bienMap[nomBien]) {
+            // Mettre à jour le bien existant avec les infos IFI
+            await supabase.from('properties').update({
+              address: adresse || undefined,
+              city: ville || undefined,
+              surface_m2: parseNum(bien.surface_m2) || undefined,
+              nb_pieces: parseNum(bien.nb_pieces) || undefined,
+              purchase_price: parseNum(bien.prix_acquisition) || undefined,
+            }).eq('id', bienMap[nomBien])
+          } else {
+            const { data, error } = await supabase.from('properties').insert({
+              user_id: user.id,
+              name: nomBien,
+              address: adresse,
+              city: ville,
+              postal_code: bien.code_postal || '',
+              type: bien.type_patrimo || 'nu',
+              surface_m2: parseNum(bien.surface_m2) || null,
+              nb_pieces: parseNum(bien.nb_pieces) || null,
+              purchase_price: parseNum(bien.prix_acquisition) || null,
+              purchase_year: bien.date_acquisition ? new Date(parseDate(bien.date_acquisition) || '').getFullYear() || null : null,
+              monthly_charges: 0,
+              loan_monthly: 0,
+              property_tax: 0,
+              insurance_annual: 0,
+            }).select('id').single()
+            if (error) { results.errors.push(`IFI bien "${nomBien}": ${error.message}`); continue }
+            bienMap[nomBien] = data.id
+            results.biens++
+          }
+        }
+      }
+
       // ── DÉCLARATION FISCALE ──
       else if (a.type_document === 'declaration_impots') {
         const annee = Number(a.annee_revenus) || new Date().getFullYear() - 1

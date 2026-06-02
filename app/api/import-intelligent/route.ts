@@ -25,6 +25,7 @@ function detectFileType(filename: string, ext: string): string {
   if (name.includes('releve') || name.includes('compte') || name.includes('bancaire')) return 'releve_bancaire'
   if (name.includes('acte') || name.includes('vente') || name.includes('notaire')) return 'acte_vente'
   if (name.includes('facture') || name.includes('devis') || name.includes('travaux')) return 'facture_travaux'
+  if (name.includes('ifi') || name.includes('fortune') || name.includes('annexe') || name.includes('patrimoine') || name.includes('2042-ifi') || name.includes('2042ifi')) return 'ifi'
   if (name.includes('declaration') || name.includes('déclaration') || name.includes('impot') || name.includes('impôt') || name.includes('2042') || name.includes('2044') || name.includes('2072') || name.includes('avis_imposition') || name.includes('avis imposition') || name.includes('dgfip') || name.includes('cerfa')) return 'declaration_impots'
   if (name.includes('taxe') || name.includes('foncier') || name.includes('avis')) return 'taxe_fonciere'
   return 'document_general'
@@ -104,6 +105,40 @@ async function analyseDocument(text: string, fileType: string, filename: string)
   "confiance": "haute|moyenne|faible"
 }`,
 
+    ifi: `Tu es un expert-comptable français spécialisé en IFI (Impôt sur la Fortune Immobilière). Analyse ce document IFI (formulaire 2042-IFI, annexe biens détenus, état du patrimoine immobilier) et extrais TOUS les biens immobiliers listés avec leurs caractéristiques.
+
+Réponds UNIQUEMENT en JSON valide:
+{
+  "type_document": "ifi",
+  "type_formulaire": "2042_ifi|annexe_biens|etat_patrimoine|autre",
+  "annee": null,
+  "declarant": { "nom": null, "prenom": null, "adresse": null, "numero_fiscal": null },
+  "biens": [
+    {
+      "adresse": null,
+      "ville": null,
+      "code_postal": null,
+      "nature": "immeuble_bati|immeuble_non_bati|parts_sci|usufruit|autre",
+      "nature_detail": null,
+      "pleine_propriete": null,
+      "fraction_detention": null,
+      "bien_mixte": null,
+      "fraction_taxable_pourcent": null,
+      "date_acquisition": null,
+      "prix_acquisition": null,
+      "surface_m2": null,
+      "surface_terrain_m2": null,
+      "nb_pieces": null,
+      "valeur_declaree": null,
+      "case_formulaire": null,
+      "type_patrimo": "lmnp|nu|sci|airbnb|commerce|residence_principale|autre"
+    }
+  ],
+  "valeur_totale_declaree": null,
+  "confiance": "haute|moyenne|faible",
+  "notes": "observations importantes"
+}`,
+
     declaration_impots: `Tu es un expert-comptable français spécialisé en fiscalité immobilière. Analyse ce document fiscal (avis d'imposition, déclaration 2042/2044/2072 ou tout document DGFiP) et extrais TOUTES les informations importantes pour un propriétaire bailleur.
 
 Réponds UNIQUEMENT en JSON valide:
@@ -147,12 +182,29 @@ Réponds UNIQUEMENT en JSON valide:
   "notes": "observations importantes ou points d'attention"
 }`,
 
-    document_general: `Analyse ce document immobilier français et extrais toutes les informations utiles pour un propriétaire bailleur. Réponds UNIQUEMENT en JSON valide:
+    document_general: `Tu es un expert-comptable français. Analyse ce document et détermine d'abord son type, puis extrais toutes les informations utiles pour un propriétaire immobilier.
+
+Types possibles à détecter : bail, diagnostic, taxe_fonciere, assurance, acte_vente, facture_travaux, releve_bancaire, declaration_impots, ifi, quittance, compromis_vente, offre_achat, autre.
+
+Si c'est un document IFI ou déclaration de patrimoine, extrais CHAQUE bien immobilier listé avec : adresse, surface, nb pièces, date acquisition, valeur déclarée.
+
+Réponds UNIQUEMENT en JSON valide:
 {
-  "type_document": "inconnu",
-  "type_detecte": "description du type de document détecté",
+  "type_document": "type_detecte",
+  "type_detecte": "description precise du document",
+  "biens": [
+    {
+      "adresse": null,
+      "surface_m2": null,
+      "nb_pieces": null,
+      "date_acquisition": null,
+      "valeur_declaree": null,
+      "prix_acquisition": null,
+      "nature": null
+    }
+  ],
   "informations": {},
-  "confiance": "faible"
+  "confiance": "haute|moyenne|faible"
 }`,
   }
 
