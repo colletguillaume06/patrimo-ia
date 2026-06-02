@@ -348,7 +348,7 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide:
 }`
 
         const completion = await openai.chat.completions.create({
-          model: 'llama-3.2-90b-vision-preview',
+          model: 'meta-llama/llama-4-maverick-17b-128e-instruct',
           messages: [{
             role: 'user',
             content: [
