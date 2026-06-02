@@ -300,19 +300,16 @@ export async function POST(req: NextRequest) {
         const anthropicKey = process.env.ANTHROPIC_API_KEY
         if (!anthropicKey) throw new Error('ANTHROPIC_API_KEY non configurée')
 
-        // Redimensionner l'image si > 4MB pour respecter la limite Anthropic (5MB)
+        // Toujours compresser l'image — base64 est 33% plus grand que l'original
+        // Limite Anthropic : 5MB base64 = ~3.75MB fichier original
         const mimeType = 'image/jpeg'
-        let base64: string
-        if (buf.byteLength > 4 * 1024 * 1024) {
-          const sharp = (await import('sharp')).default
-          const compressed = await sharp(Buffer.from(buf))
-            .resize(2000, 2000, { fit: 'inside', withoutEnlargement: true })
-            .jpeg({ quality: 75 })
-            .toBuffer()
-          base64 = compressed.toString('base64')
-        } else {
-          base64 = Buffer.from(buf).toString('base64')
-        }
+        const sharp = (await import('sharp')).default
+        const compressed = await sharp(Buffer.from(buf))
+          .resize(1600, 1600, { fit: 'inside', withoutEnlargement: true })
+          .jpeg({ quality: 70 })
+          .toBuffer()
+        const base64 = compressed.toString('base64')
+        console.log(`Image compressée : ${buf.byteLength} → ${compressed.byteLength} octets`)
 
         const visionPrompt = `Tu es un expert-comptable français spécialisé en immobilier. Analyse cette image qui est un document immobilier français (tableau de suivi locatif, formulaire fiscal, bail, facture, etc.).
 
@@ -356,7 +353,7 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide s
         const client = new Anthropic({ apiKey: anthropicKey })
 
         const message = await client.messages.create({
-          model: 'claude-3-5-haiku-20251001',
+          model: 'claude-haiku-4-5',
           max_tokens: 4000,
           messages: [{
             role: 'user',
