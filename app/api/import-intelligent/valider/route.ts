@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
 
   const { documents } = await req.json()
-  const results = { biens: 0, baux: 0, travaux: 0, diagnostics: 0, depenses: 0, transactions: 0, declarations: 0, errors: [] as string[] }
+  const results = { biens: 0, baux: 0, loyers: 0, travaux: 0, diagnostics: 0, depenses: 0, transactions: 0, declarations: 0, errors: [] as string[] }
   const bienMap: Record<string, string> = {}
 
   // Récupérer biens existants
@@ -198,6 +198,94 @@ export async function POST(req: NextRequest) {
         })
         if (!error) results.travaux++
         else results.errors.push(`Travaux: ${error.message}`)
+      }
+
+      // ── TABLEAU LOYERS IMAGE (photo d'un tableau Excel perso) ──
+      else if (a.type_document === 'tableau_loyers' || (doc.isImage && a.biens?.length > 0 && a.type_document !== 'ifi')) {
+        for (const bien of (a.biens ?? [])) {
+          if (!bien.nom && !bien.adresse) continue
+          const nomBien = bien.nom || bien.adresse || 'Bien importé'
+          const propId = await getOrCreate(nomBien, {
+            address: bien.adresse || '',
+            city: '',
+            type: bien.type || 'nu',
+            surface_m2: parseNum(bien.surface_m2) || null,
+          })
+          if (!propId) continue
+
+          // Créer le bail si locataire présent
+          if (bien.locataire && parseNum(bien.loyer_mensuel) > 0) {
+            let leaseId: string | null = null
+            const { data: ex } = await supabase.from('leases').select('id').eq('property_id', propId).eq('tenant_name', bien.locataire).single()
+            if (ex) {
+              leaseId = ex.id
+            } else {
+              const { data: nl } = await supabase.from('leases').insert({
+                property_id: propId,
+                tenant_name: bien.locataire,
+                monthly_rent: parseNum(bien.loyer_mensuel),
+                monthly_charges: parseNum(bien.charges_mensuelles) || 0,
+                deposit: parseNum(bien.depot_garantie) || null,
+                start_date: parseDate(bien.date_entree) || new Date().toISOString().split('T')[0],
+                is_active: true,
+                irl_index: parseNum(bien.indice_irl) || null,
+              }).select('id').single()
+              leaseId = nl?.id ?? null
+              if (nl) results.baux++
+            }
+
+            // Créer les paiements mensuels si disponibles
+            if (leaseId && bien.paiements_mensuels?.length > 0) {
+              const annee = Number(a.annee) || new Date().getFullYear()
+              const moisMap: Record<string, number> = { janvier:1,fevrier:2,mars:3,avril:4,mai:5,juin:6,juillet:7,aout:8,septembre:9,octobre:10,novembre:11,decembre:12 }
+              const payments = bien.paiements_mensuels
+                .filter((p: any) => p.loyer && parseNum(p.loyer) > 0)
+                .map((p: any) => ({
+                  lease_id: leaseId,
+                  amount: parseNum(p.loyer),
+                  due_date: `${annee}-${String(moisMap[p.mois?.toLowerCase()] || 1).padStart(2,'0')}-01`,
+                  paid_date: `${annee}-${String(moisMap[p.mois?.toLowerCase()] || 1).padStart(2,'0')}-05`,
+                  status: 'paid',
+                  notes: p.notes || `Historique ${annee}`,
+                }))
+              if (payments.length > 0) {
+                const { error } = await supabase.from('payments').insert(payments)
+                if (!error) results.loyers += payments.length
+              }
+            } else if (leaseId && parseNum(bien.loyers_annuel_total) > 0) {
+              // Sinon créer 12 paiements mensuels depuis le total annuel
+              const annee = Number(a.annee) || new Date().getFullYear()
+              const mensuel = Math.round(parseNum(bien.loyers_annuel_total) / 12)
+              const payments = Array.from({ length: 12 }, (_, i) => ({
+                lease_id: leaseId,
+                amount: mensuel,
+                due_date: `${annee}-${String(i + 1).padStart(2,'0')}-01`,
+                paid_date: `${annee}-${String(i + 1).padStart(2,'0')}-05`,
+                status: 'paid',
+                notes: `Historique ${annee}`,
+              }))
+              const { error } = await supabase.from('payments').insert(payments)
+              if (!error) results.loyers += 12
+            }
+          }
+
+          // Créer les dépenses si présentes
+          if (bien.depenses?.length > 0) {
+            for (const dep of bien.depenses) {
+              if (!parseNum(dep.montant)) continue
+              const annee = Number(a.annee) || new Date().getFullYear()
+              await supabase.from('expenses').insert({
+                property_id: propId,
+                amount: parseNum(dep.montant),
+                date: parseDate(dep.date) || `${annee}-06-15`,
+                category: dep.categorie || 'charges',
+                description: dep.description || dep.categorie || 'Dépense importée',
+                deductible: true,
+              })
+              results.depenses++
+            }
+          }
+        }
       }
 
       // ── FORMULAIRE IFI ──

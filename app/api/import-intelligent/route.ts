@@ -295,9 +295,81 @@ export async function POST(req: NextRequest) {
         }
       } catch { text = '' }
     } else if (ext === 'jpg' || ext === 'jpeg' || ext === 'png') {
-      // Pour les images, on envoie directement à Groq vision si disponible
-      // Sinon on note que c'est une image non lisible en texte
-      text = `[Image: ${file.name}] — Document image, extraction de texte non disponible. Analyse visuelle recommandée.`
+      // Utiliser le modèle vision Groq pour analyser les images directement
+      try {
+        const base64 = Buffer.from(buf).toString('base64')
+        const mimeType = ext === 'png' ? 'image/png' : 'image/jpeg'
+        const { default: OpenAI } = await import('openai')
+        const openai = new OpenAI({ apiKey: process.env.GEMINI_API_KEY, baseURL: 'https://api.groq.com/openai/v1' })
+
+        const visionPrompt = `Tu es un expert-comptable français spécialisé en immobilier. Analyse cette image qui est un document immobilier français (tableau de suivi locatif, formulaire fiscal, bail, facture, etc.).
+
+Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide:
+{
+  "type_document": "tableau_loyers|ifi|bail|diagnostic|facture_travaux|taxe_fonciere|assurance|releve_bancaire|declaration_impots|autre",
+  "type_detecte": "description precise de ce que tu vois",
+  "annee": null,
+  "biens": [
+    {
+      "nom": "nom ou identifiant du bien",
+      "adresse": null,
+      "type": "lmnp|nu|sci|airbnb|commerce",
+      "locataire": null,
+      "date_entree": null,
+      "loyer_mensuel": null,
+      "charges_mensuelles": null,
+      "depot_garantie": null,
+      "indice_irl": null,
+      "trimestre_irl": null,
+      "numero_fiscal": null,
+      "surface_m2": null,
+      "nb_pieces": null,
+      "date_acquisition": null,
+      "prix_acquisition": null,
+      "valeur_declaree": null,
+      "loyers_annuel_total": null,
+      "paiements_mensuels": [
+        {"mois": "janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre", "loyer": null, "charges": null, "notes": null}
+      ],
+      "depenses": [
+        {"description": null, "montant": null, "date": null, "categorie": "assurance|syndic|taxe_fonciere|travaux|autre"}
+      ]
+    }
+  ],
+  "declarant": {"nom": null, "prenom": null},
+  "total_loyers_annuel": null,
+  "confiance": "haute|moyenne|faible",
+  "notes": "autres informations importantes visibles"
+}`
+
+        const completion = await openai.chat.completions.create({
+          model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'text', text: visionPrompt },
+              { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } }
+            ]
+          }],
+          temperature: 0.1,
+          max_tokens: 3000,
+        })
+
+        const raw = completion.choices[0]?.message?.content ?? ''
+        const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+        const visionResult = JSON.parse(cleaned)
+
+        results.push({
+          filename: file.name,
+          fileType: visionResult.type_document || 'image',
+          size: file.size,
+          analyse: { ...visionResult, confiance: visionResult.confiance || 'moyenne' },
+          isImage: true,
+        })
+        continue
+      } catch (err: any) {
+        text = `[Image: ${file.name}] — Erreur analyse vision: ${err.message}`
+      }
     } else {
       text = await file.text().catch(() => '')
     }
