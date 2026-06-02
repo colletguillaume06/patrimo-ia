@@ -340,28 +340,17 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide s
   "notes": null
 }`
 
-        // Appel API Gemini 1.5 Flash (gratuit)
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{
-                parts: [
-                  { text: visionPrompt },
-                  { inline_data: { mime_type: mimeType, data: base64 } }
-                ]
-              }],
-              generationConfig: { temperature: 0.1, maxOutputTokens: 3000 }
-            })
-          }
-        )
+        // Utiliser le SDK officiel Google Generative AI
+        const { GoogleGenerativeAI } = await import('@google/generative-ai')
+        const genAI = new GoogleGenerativeAI(geminiKey)
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
 
-        const geminiData = await res.json()
-        if (!res.ok) throw new Error(geminiData.error?.message || `Gemini error ${res.status}`)
+        const result = await model.generateContent([
+          visionPrompt,
+          { inlineData: { mimeType, data: base64 } }
+        ])
 
-        const raw = geminiData.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
+        const raw = result.response.text()
         const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
         const visionResult = JSON.parse(cleaned)
 
