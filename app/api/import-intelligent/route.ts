@@ -299,9 +299,8 @@ export async function POST(req: NextRequest) {
       try {
         const base64 = Buffer.from(buf).toString('base64')
         const mimeType = ext === 'png' ? 'image/png' : 'image/jpeg'
-        const geminiKey = process.env.GEMINI_VISION_KEY
-
-        if (!geminiKey) throw new Error('GEMINI_VISION_KEY non configurée')
+        const anthropicKey = process.env.ANTHROPIC_API_KEY
+        if (!anthropicKey) throw new Error('ANTHROPIC_API_KEY non configurée')
 
         const visionPrompt = `Tu es un expert-comptable français spécialisé en immobilier. Analyse cette image qui est un document immobilier français (tableau de suivi locatif, formulaire fiscal, bail, facture, etc.).
 
@@ -340,27 +339,26 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide s
   "notes": null
 }`
 
-        // Appel via OpenRouter (compatible OpenAI) avec modèle Gemini vision gratuit
-        const { default: OpenAI } = await import('openai')
-        const openrouter = new OpenAI({
-          apiKey: geminiKey,
-          baseURL: 'https://openrouter.ai/api/v1',
-        })
+        // Appel Claude 3.5 Haiku via Anthropic SDK (meilleure qualité vision)
+        const Anthropic = (await import('@anthropic-ai/sdk')).default
+        const client = new Anthropic({ apiKey: anthropicKey })
 
-        const completion = await openrouter.chat.completions.create({
-          model: 'nvidia/nemotron-nano-12b-v2-vl:free',
+        const message = await client.messages.create({
+          model: 'claude-3-5-haiku-20241022',
+          max_tokens: 4000,
           messages: [{
             role: 'user',
             content: [
-              { type: 'text', text: visionPrompt },
-              { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } }
+              {
+                type: 'image',
+                source: { type: 'base64', media_type: mimeType as any, data: base64 }
+              },
+              { type: 'text', text: visionPrompt }
             ]
-          }],
-          temperature: 0.1,
-          max_tokens: 3000,
+          }]
         })
 
-        const raw = completion.choices[0]?.message?.content ?? ''
+        const raw = message.content[0]?.type === 'text' ? message.content[0].text : ''
         const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
         const visionResult = JSON.parse(cleaned)
 
