@@ -297,7 +297,12 @@ export async function POST(req: NextRequest) {
     } else if (ext === 'jpg' || ext === 'jpeg' || ext === 'png') {
       // Utiliser le modèle vision Groq pour analyser les images directement
       try {
-        const base64 = Buffer.from(buf).toString('base64')
+        // Limiter la taille de l'image à 4MB max pour Groq
+        let imgBuf = buf
+        if (buf.byteLength > 4 * 1024 * 1024) {
+          imgBuf = buf.slice(0, 4 * 1024 * 1024)
+        }
+        const base64 = Buffer.from(imgBuf).toString('base64')
         const mimeType = ext === 'png' ? 'image/png' : 'image/jpeg'
         const { default: OpenAI } = await import('openai')
         const openai = new OpenAI({ apiKey: process.env.GEMINI_API_KEY, baseURL: 'https://api.groq.com/openai/v1' })
@@ -343,7 +348,7 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide:
 }`
 
         const completion = await openai.chat.completions.create({
-          model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+          model: 'llama-3.2-90b-vision-preview',
           messages: [{
             role: 'user',
             content: [
@@ -368,7 +373,16 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide:
         })
         continue
       } catch (err: any) {
-        text = `[Image: ${file.name}] — Erreur analyse vision: ${err.message}`
+        console.error('Vision error:', err.message)
+        // Fallback : retourner une erreur explicite
+        results.push({
+          filename: file.name,
+          fileType: 'image',
+          size: file.size,
+          erreur: `Erreur analyse image : ${err.message}`,
+          analyse: { type_document: 'image', confiance: 'faible' },
+        })
+        continue
       }
     } else {
       text = await file.text().catch(() => '')
