@@ -1,6 +1,19 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+// Biens sans locataire (créés seuls)
+const BIENS_SEULS = [
+  {
+    name: 'FOUR', type: 'nu',
+    monthly_charges: 0, loan_monthly: 0, property_tax: 0, insurance_annual: 0,
+    notes_bail: { monthly_rent: 875, charges: 0, deposit: 800, indexation_index: 'irl' },
+  },
+  {
+    name: 'IGLOO', type: 'airbnb',
+    monthly_charges: 0, loan_monthly: 0, property_tax: 0, insurance_annual: 0,
+  },
+]
+
 // Données complètes extraites des photos — LOGEMENTS NUS 2024
 const SETUP_DATA = [
   {
@@ -233,6 +246,27 @@ export async function POST() {
 
     } catch (err: any) {
       results.errors.push(`${item.bien.name}: ${err.message}`)
+    }
+  }
+
+  // ── Biens sans locataire (FOUR, IGLOO) ──
+  for (const bien of BIENS_SEULS) {
+    const { data: existing } = await supabase
+      .from('properties').select('id').eq('user_id', user.id)
+      .ilike('name', bien.name).maybeSingle()
+
+    if (!existing) {
+      const { error } = await supabase.from('properties').insert({
+        user_id: user.id,
+        name: bien.name, type: bien.type,
+        monthly_charges: bien.monthly_charges,
+        loan_monthly: 0, property_tax: 0, insurance_annual: 0,
+      })
+      if (!error) results.biens++
+      else results.errors.push(`${bien.name}: ${error.message}`)
+    } else {
+      await supabase.from('properties').update({ type: bien.type }).eq('id', existing.id)
+      results.updates++
     }
   }
 
