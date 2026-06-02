@@ -300,16 +300,24 @@ export async function POST(req: NextRequest) {
         const anthropicKey = process.env.ANTHROPIC_API_KEY
         if (!anthropicKey) throw new Error('ANTHROPIC_API_KEY non configurée')
 
-        // Toujours compresser l'image — base64 est 33% plus grand que l'original
-        // Limite Anthropic : 5MB base64 = ~3.75MB fichier original
+        // Compresser sans réduire les dimensions — garder la lisibilité du texte
+        // Limite Anthropic base64 : 5MB = ~3.75MB fichier
         const mimeType = 'image/jpeg'
         const sharp = (await import('sharp')).default
-        const compressed = await sharp(Buffer.from(buf))
-          .resize(1600, 1600, { fit: 'inside', withoutEnlargement: true })
-          .jpeg({ quality: 70 })
-          .toBuffer()
+        // Essai 1 : qualité 85, dimensions originales
+        let compressed = await sharp(Buffer.from(buf)).jpeg({ quality: 85 }).toBuffer()
+        // Si encore trop grand, réduire progressivement
+        if (compressed.byteLength > 3.5 * 1024 * 1024) {
+          compressed = await sharp(Buffer.from(buf)).jpeg({ quality: 70 }).toBuffer()
+        }
+        if (compressed.byteLength > 3.5 * 1024 * 1024) {
+          compressed = await sharp(Buffer.from(buf))
+            .resize(2400, 2400, { fit: 'inside', withoutEnlargement: true })
+            .jpeg({ quality: 75 })
+            .toBuffer()
+        }
         const base64 = compressed.toString('base64')
-        console.log(`Image compressée : ${buf.byteLength} → ${compressed.byteLength} octets`)
+        console.log(`Image : ${Math.round(buf.byteLength/1024)}KB → ${Math.round(compressed.byteLength/1024)}KB`)
 
         const visionPrompt = `Tu es un expert-comptable français spécialisé en immobilier. Analyse cette image qui est un document immobilier français (tableau de suivi locatif, formulaire fiscal, bail, facture, etc.).
 
