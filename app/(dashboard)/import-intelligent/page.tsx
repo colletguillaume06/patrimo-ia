@@ -123,35 +123,55 @@ export default function ImportIntelligentPage() {
     )
     if (tableauResults.length > 0) {
       // Fusionner tous les biens détectés en un seul jeu de données pour PreviewEditor
+      // Fonction de nettoyage des montants
+      const toNum = (v: any) => v ? parseFloat(String(v).replace(/[^\d.,]/g,'').replace(',','.')) || null : null
+
+      // Conversion mois texte → numéro
+      const moisMap: Record<string, number> = { janvier:1, février:2, fevrier:2, mars:3, avril:4, mai:5, juin:6, juillet:7, août:8, aout:8, septembre:9, octobre:10, novembre:11, décembre:12, decembre:12 }
+
+      const annee = tableauResults[0]?.analyse?.annee || new Date().getFullYear()
+
       const allBiens = tableauResults.flatMap((r: any) =>
         (r.analyse.biens || []).map((b: any) => ({
           bien: {
-            name: b.nom || b.name || '',
+            name: b.nom || b.name || b.adresse || '',
             type: b.type || 'nu',
-            address: b.adresse || '',
-            city: b.ville || '',
+            address: b.adresse || b.address || '',
+            city: b.ville || b.city || '',
+            postal_code: b.code_postal || b.postal_code || null,
+            surface_m2: toNum(b.surface_m2),
+            purchase_price: toNum(b.prix_acquisition || b.purchase_price || b.valeur_declaree),
+            purchase_year: b.date_acquisition ? new Date(b.date_acquisition).getFullYear() : (b.purchase_year || null),
+            monthly_charges: toNum(b.charges_mensuelles || b.monthly_charges) || 0,
+            property_tax: toNum(b.taxe_fonciere || b.property_tax),
+            insurance_annual: toNum(b.assurance || b.insurance_annual),
             numero_fiscal: b.numero_fiscal || null,
-            monthly_charges: b.charges_mensuelles || 0,
-            property_tax: null, purchase_price: null, surface_m2: null,
           },
           bail: {
-            tenant_name: b.locataire || '',
-            tenant_email: null, tenant_phone: null,
-            monthly_rent: b.loyer_mensuel || 0,
-            monthly_charges: b.charges_mensuelles || 0,
-            deposit: b.depot_garantie || null,
-            start_date: b.date_entree || null,
-            end_date: null,
-            irl_index: b.indice_irl || null,
+            tenant_name: b.locataire || b.tenant_name || '',
+            tenant_email: b.email_locataire || null,
+            tenant_phone: b.telephone_locataire || null,
+            monthly_rent: toNum(b.loyer_mensuel || b.monthly_rent) || 0,
+            monthly_charges: toNum(b.charges_mensuelles || b.charges) || 0,
+            deposit: toNum(b.depot_garantie || b.caution || b.deposit),
+            start_date: b.date_entree || b.start_date || null,
+            end_date: b.date_fin || b.end_date || null,
+            irl_index: toNum(b.indice_irl || b.irl_index),
+            guarantor_name: b.garant || null,
           },
-          paiements: (b.paiements_mensuels || []).map((p: any) => ({
-            mois: p.mois,
-            amount: p.loyer || 0,
-            due_date: null,
-            paid_date: null,
-            status: 'paid',
-            note: p.notes || null,
-          })),
+          paiements: (b.paiements_mensuels || [])
+            .filter((p: any) => p.loyer || p.amount)
+            .map((p: any) => {
+              const moisNum = moisMap[p.mois?.toLowerCase()] || 1
+              return {
+                mois: p.mois,
+                amount: toNum(p.loyer || p.amount) || 0,
+                due_date: `${annee}-${String(moisNum).padStart(2,'0')}-01`,
+                paid_date: p.loyer > 0 ? `${annee}-${String(moisNum).padStart(2,'0')}-05` : null,
+                status: p.loyer > 0 ? 'paid' : 'pending',
+                note: p.notes || null,
+              }
+            }),
         }))
       )
       if (allBiens.length > 0) {
