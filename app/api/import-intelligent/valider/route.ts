@@ -61,8 +61,96 @@ export async function POST(req: NextRequest) {
     const a = doc.analyse
 
     try {
+      // ── TABLEAU LOYERS / IMAGE AVEC BIENS ──
+      if (a.type_document === 'tableau_loyers' || (doc.isImage && a.biens?.length > 0)) {
+        for (const bien of (a.biens ?? [])) {
+          if (!bien.nom) continue
+          const nomBien = bien.nom
+
+          // Créer ou mettre à jour le bien avec toutes les infos disponibles
+          const propId = await getOrCreate(nomBien, {
+            address: bien.adresse || '',
+            city: bien.ville || '',
+            type: bien.type || 'nu',
+            surface_m2: parseNum(bien.surface_m2) || null,
+            numero_fiscal: bien.numero_fiscal || null,
+          })
+          if (!propId) continue
+
+          // Mettre à jour le numero_fiscal si présent
+          if (bien.numero_fiscal) {
+            await supabase.from('properties').update({ numero_fiscal: bien.numero_fiscal }).eq('id', propId)
+          }
+
+          // Créer le bail si locataire présent
+          if (bien.locataire && parseNum(bien.loyer_mensuel) > 0) {
+            // Vérifier si bail existe déjà
+            const { data: existingLease } = await supabase
+              .from('leases')
+              .select('id')
+              .eq('property_id', propId)
+              .eq('tenant_name', bien.locataire)
+              .single()
+
+            if (!existingLease) {
+              const { error: leaseError } = await supabase.from('leases').insert({
+                property_id: propId,
+                tenant_name: bien.locataire,
+                monthly_rent: parseNum(bien.loyer_mensuel),
+                monthly_charges: parseNum(bien.charges_mensuelles) || 0,
+                deposit: parseNum(bien.depot_garantie) || null,
+                start_date: parseDate(bien.date_entree) || `${Number(a.annee) || new Date().getFullYear()}-01-01`,
+                is_active: true,
+                irl_index: parseNum(bien.indice_irl) || null,
+              })
+              if (!leaseError) results.baux++
+              else results.errors.push(`Bail "${nomBien}": ${leaseError.message}`)
+            }
+          }
+
+          // Créer les paiements mensuels si présents
+          if (bien.paiements_mensuels?.length > 0 && bien.locataire) {
+            const { data: lease } = await supabase.from('leases').select('id').eq('property_id', propId).single()
+            if (lease) {
+              const annee = Number(a.annee) || new Date().getFullYear()
+              const moisMap: Record<string, number> = { janvier:1, février:2, fevrier:2, mars:3, avril:4, mai:5, juin:6, juillet:7, août:8, aout:8, septembre:9, octobre:10, novembre:11, décembre:12, decembre:12 }
+              const payments = bien.paiements_mensuels
+                .filter((p: any) => p.loyer && parseNum(p.loyer) > 0)
+                .map((p: any) => ({
+                  lease_id: lease.id,
+                  amount: parseNum(p.loyer),
+                  due_date: `${annee}-${String(moisMap[p.mois?.toLowerCase()] || 1).padStart(2,'0')}-01`,
+                  paid_date: `${annee}-${String(moisMap[p.mois?.toLowerCase()] || 1).padStart(2,'0')}-05`,
+                  status: 'paid',
+                  notes: p.notes || `Historique ${annee}`,
+                }))
+              if (payments.length > 0) {
+                const { error: payError } = await supabase.from('payments').insert(payments)
+                if (!payError) results.loyers += payments.length
+              }
+            }
+          }
+
+          // Créer les dépenses si présentes
+          if (bien.depenses?.length > 0) {
+            for (const dep of bien.depenses) {
+              if (!parseNum(dep.montant)) continue
+              await supabase.from('expenses').insert({
+                property_id: propId,
+                amount: parseNum(dep.montant),
+                date: `${Number(a.annee) || new Date().getFullYear()}-06-15`,
+                category: dep.categorie || 'charges',
+                description: dep.description || dep.categorie || 'Dépense importée',
+                deductible: true,
+              })
+              results.depenses++
+            }
+          }
+        }
+      }
+
       // ── BAIL ──
-      if (a.type_document === 'bail') {
+      else if (a.type_document === 'bail') {
         const adresse = a.bien?.adresse || 'Bien importé'
         const nomBien = doc.nom_bien || adresse
         const propId = await getOrCreate(nomBien, {
