@@ -46,8 +46,7 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
             city: data.city || '',
             postal_code: data.postal_code || '',
             surface_m2: data.surface_m2 ?? '',
-            nb_pieces: data.nb_pieces ?? '',
-            purchase_price: data.purchase_price ?? '',
+                  purchase_price: data.purchase_price ?? '',
             purchase_year: data.purchase_year ?? '',
             monthly_charges: data.monthly_charges ?? 0,
             property_tax: data.property_tax ?? 0,
@@ -79,7 +78,6 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
       city: form.city || null,
       postal_code: form.postal_code || null,
       surface_m2: form.surface_m2 !== '' ? Number(form.surface_m2) : null,
-      nb_pieces: form.nb_pieces !== '' ? Number(form.nb_pieces) : null,
       purchase_price: form.purchase_price !== '' ? Number(form.purchase_price) : null,
       purchase_year: form.purchase_year !== '' ? Number(form.purchase_year) : null,
       monthly_charges: Number(form.monthly_charges) || 0,
@@ -196,10 +194,6 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
                 <div>
                   <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Surface (m²)</label>
                   <input type="number" value={form.surface_m2} onChange={e => set('surface_m2', e.target.value)} className={inputClass} placeholder="65" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Nb pièces</label>
-                  <input type="number" value={form.nb_pieces} onChange={e => set('nb_pieces', e.target.value)} className={inputClass} placeholder="3" />
                 </div>
               </div>
 
