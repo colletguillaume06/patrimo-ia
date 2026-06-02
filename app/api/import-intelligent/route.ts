@@ -340,32 +340,27 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide s
   "notes": null
 }`
 
-        // Appel Gemini avec Bearer token (clés AQ. de Google AI Studio)
-        const res = await fetch(
-          'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${geminiKey}`,
-              'x-goog-user-project': '982085188914',
-            },
-            body: JSON.stringify({
-              contents: [{
-                parts: [
-                  { text: visionPrompt },
-                  { inline_data: { mime_type: mimeType, data: base64 } }
-                ]
-              }],
-              generationConfig: { temperature: 0.1, maxOutputTokens: 3000 }
-            })
-          }
-        )
+        // Appel via OpenRouter (compatible OpenAI) avec modèle Gemini vision gratuit
+        const { default: OpenAI } = await import('openai')
+        const openrouter = new OpenAI({
+          apiKey: geminiKey,
+          baseURL: 'https://openrouter.ai/api/v1',
+        })
 
-        const geminiData = await res.json()
-        if (!res.ok) throw new Error(geminiData.error?.message || `Gemini ${res.status}`)
+        const completion = await openrouter.chat.completions.create({
+          model: 'google/gemini-2.0-flash-exp:free',
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'text', text: visionPrompt },
+              { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } }
+            ]
+          }],
+          temperature: 0.1,
+          max_tokens: 3000,
+        })
 
-        const raw = geminiData.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
+        const raw = completion.choices[0]?.message?.content ?? ''
         const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
         const visionResult = JSON.parse(cleaned)
 
