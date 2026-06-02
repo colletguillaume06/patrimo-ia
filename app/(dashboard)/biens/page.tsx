@@ -4,16 +4,14 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { BienCard } from '@/components/biens/BienCard'
 import { AddBienModal } from '@/components/biens/AddBienModal'
-import { Plus, Building2, Trash2, FileImage } from 'lucide-react'
+import { Plus, Building2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { ImportExcelModal } from '@/components/import/ImportExcelModal'
 import type { PropertyWithMetrics } from '@/types'
 
 export default function BiensPage() {
   const [biens, setBiens] = useState<PropertyWithMetrics[]>([])
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
-  const [showImport, setShowImport] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const supabase = createClient()
 
@@ -114,17 +112,10 @@ export default function BiensPage() {
           <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Mes biens</h1>
           <p className="text-slate-400 text-sm mt-1">{biens.length} bien{biens.length > 1 ? 's' : ''} dans votre portefeuille</p>
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => setShowImport(true)}
-            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold border transition-all"
-            style={{ borderColor: '#1D4ED8', color: '#1D4ED8', background: '#EFF6FF' }}>
-            <FileImage className="h-4 w-4" /> Importer photo Excel
-          </button>
-          <button onClick={() => setShowAdd(true)}
-            className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all">
-            <Plus className="h-4 w-4" /> Ajouter un bien
-          </button>
-        </div>
+        <button onClick={() => setShowAdd(true)}
+          className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all">
+          <Plus className="h-4 w-4" /> Ajouter un bien
+        </button>
       </div>
 
       {loading ? (
@@ -170,7 +161,6 @@ export default function BiensPage() {
       )}
 
       {showAdd && <AddBienModal onClose={() => setShowAdd(false)} />}
-      {showImport && <ImportExcelModal onClose={() => { setShowImport(false); }} />}
     </div>
   )
 }

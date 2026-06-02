@@ -8,6 +8,7 @@ import {
   Building2, Users, Wrench, AlertCircle, ChevronRight, X, Eye, EyeOff, Edit3
 } from 'lucide-react'
 import Link from 'next/link'
+import { PreviewEditor } from '@/components/import/PreviewEditor'
 
 // ── Types de documents reconnus ──
 const DOC_TYPES: Record<string, { label: string, color: string, bg: string, icon: any, extensions: string[] }> = {
@@ -70,6 +71,8 @@ export default function ImportIntelligentPage() {
   const [importing, setImporting] = useState(false)
   const [results, setResults] = useState<any[]>([])
   const [imported, setImported] = useState<any>(null)
+  // Pour les images avec tableaux locatifs → prévisualisation avant import
+  const [previewData, setPreviewData] = useState<any>(null)
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null)
   const [dragging, setDragging] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -113,8 +116,84 @@ export default function ImportIntelligentPage() {
       actif: !r.erreur,
       nom_bien: r.analyse?.bien?.adresse || '',
     }))
+
+    // Si résultat = images avec tableau locatif → PreviewEditor
+    const tableauResults = enriched.filter((r: any) =>
+      r.isImage && r.analyse?.biens?.length > 0
+    )
+    if (tableauResults.length > 0) {
+      // Fusionner tous les biens détectés en un seul jeu de données pour PreviewEditor
+      const allBiens = tableauResults.flatMap((r: any) =>
+        (r.analyse.biens || []).map((b: any) => ({
+          bien: {
+            name: b.nom || b.name || '',
+            type: b.type || 'nu',
+            address: b.adresse || '',
+            city: b.ville || '',
+            numero_fiscal: b.numero_fiscal || null,
+            monthly_charges: b.charges_mensuelles || 0,
+            property_tax: null, purchase_price: null, surface_m2: null,
+          },
+          bail: {
+            tenant_name: b.locataire || '',
+            tenant_email: null, tenant_phone: null,
+            monthly_rent: b.loyer_mensuel || 0,
+            monthly_charges: b.charges_mensuelles || 0,
+            deposit: b.depot_garantie || null,
+            start_date: b.date_entree || null,
+            end_date: null,
+            irl_index: b.indice_irl || null,
+          },
+          paiements: (b.paiements_mensuels || []).map((p: any) => ({
+            mois: p.mois,
+            amount: p.loyer || 0,
+            due_date: null,
+            paid_date: null,
+            status: 'paid',
+            note: p.notes || null,
+          })),
+        }))
+      )
+      if (allBiens.length > 0) {
+        setPreviewData({
+          biens: allBiens,
+          nb_biens: allBiens.length,
+          avertissements: tableauResults[0]?.analyse?.notes ? [tableauResults[0].analyse.notes] : [],
+        })
+        setAnalysing(false)
+        return
+      }
+    }
+
     setResults(enriched)
     toast.success(`${enriched.length} fichier(s) analysés`)
+  }
+
+  // Import depuis PreviewEditor (tableaux locatifs)
+  const handleConfirmPreview = async (editedData: any) => {
+    setImporting(true)
+    const res = await fetch('/api/import/excel/confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ biens: editedData.biens }),
+    })
+    const data = await res.json()
+    setImporting(false)
+    setPreviewData(null)
+    if (res.ok) {
+      setImported({
+        results: {
+          biens: data.biens_importes, baux: data.baux_crees,
+          loyers: data.paiements_crees, depenses: 0,
+          diagnostics: 0, travaux: 0, transactions: 0,
+          errors: data.details?.filter((d: any) => d.statut === 'erreur').map((d: any) => d.erreur) || [],
+        },
+        message: `${data.biens_importes} biens, ${data.baux_crees} baux, ${data.paiements_crees} paiements importés`,
+      })
+      toast.success(data.biens_importes + ' biens importés avec succès')
+    } else {
+      toast.error(data.error)
+    }
   }
 
   const handleImport = async () => {
@@ -132,6 +211,19 @@ export default function ImportIntelligentPage() {
 
   const updateResult = (idx: number, key: string, val: any) => {
     setResults(prev => prev.map((r, i) => i === idx ? { ...r, [key]: val } : r))
+  }
+
+  // PreviewEditor pour tableaux locatifs (images)
+  if (previewData) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <PreviewEditor
+          data={previewData}
+          onConfirm={handleConfirmPreview}
+          onCancel={() => { setPreviewData(null); setFiles([]) }}
+        />
+      </div>
+    )
   }
 
   return (
