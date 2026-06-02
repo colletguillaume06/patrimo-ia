@@ -21,11 +21,24 @@ export default function LocatairesPage() {
   const supabase = createClient()
 
   const load = async () => {
-    const { data } = await supabase
+    const { data: tenantsData } = await supabase
       .from('tenants')
-      .select(`*, leases(id, is_active, monthly_rent, property:properties(name))`)
+      .select(`*, leases(id, is_active, monthly_rent, charges, property:properties(id, name, type, city))`)
       .order('created_at', { ascending: false })
-    setTenants(data ?? [])
+
+    // Pour chaque locataire sans bail lié par tenant_id, chercher par nom
+    const enriched = await Promise.all((tenantsData ?? []).map(async (t: any) => {
+      if (!t.leases || t.leases.length === 0) {
+        const { data: byName } = await supabase
+          .from('leases')
+          .select('id, is_active, monthly_rent, charges, property:properties(id, name, type, city)')
+          .ilike('tenant_name', t.full_name)
+        return { ...t, leases: byName ?? [] }
+      }
+      return t
+    }))
+
+    setTenants(enriched)
     setLoading(false)
   }
 

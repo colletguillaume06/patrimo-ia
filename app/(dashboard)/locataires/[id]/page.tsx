@@ -29,8 +29,8 @@ export default function LocataireDetailPage() {
       .select(`
         *,
         leases(
-          id, is_active, monthly_rent, monthly_charges, deposit, start_date, end_date,
-          property:properties(id, name, address, city),
+          id, is_active, monthly_rent, charges, deposit, start_date, end_date,
+          property:properties(id, name, address, city, type),
           payments(id, status, amount, due_date)
         )
       `)
