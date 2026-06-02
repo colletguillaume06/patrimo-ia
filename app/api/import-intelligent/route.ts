@@ -319,29 +319,52 @@ export async function POST(req: NextRequest) {
         const base64 = compressed.toString('base64')
         console.log(`Image : ${Math.round(buf.byteLength/1024)}KB → ${Math.round(compressed.byteLength/1024)}KB`)
 
-        const visionPrompt = `Tu es un expert-comptable français spécialisé en immobilier. Analyse cette image qui est un document immobilier français (tableau de suivi locatif, formulaire fiscal, bail, facture, etc.).
+        // Appel Claude via Anthropic SDK
+        const Anthropic = (await import('@anthropic-ai/sdk')).default
+        const client = new Anthropic({ apiKey: anthropicKey })
 
-Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide sans markdown:
+        // ÉTAPE 1 : Lecture OCR libre de tout le texte visible
+        const ocrMessage = await client.messages.create({
+          model: 'claude-sonnet-4-5',
+          max_tokens: 4000,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'base64', media_type: mimeType as any, data: base64 } },
+              { type: 'text', text: `Lis et transcris TOUT le texte visible dans cette image de document immobilier français.
+Lis chaque colonne, chaque ligne, chaque cellule du tableau.
+Lis les en-têtes de colonnes, les noms de biens, les locataires, les montants, les dates, les numéros fiscaux, les indices IRL.
+Transcris EXACTEMENT ce que tu vois, rien n'est trop petit ou trop insignifiant.
+Organise ta réponse colonne par colonne.` }
+            ]
+          }]
+        })
+
+        const ocrText = ocrMessage.content[0]?.type === 'text' ? ocrMessage.content[0].text : ''
+        console.log('OCR result:', ocrText.slice(0, 500))
+
+        // ÉTAPE 2 : Structuration en JSON à partir du texte lu
+        const visionPrompt = `Tu es un expert-comptable français. Voici la transcription d'un document immobilier français :
+
+${ocrText}
+
+Extrais les informations et retourne UNIQUEMENT ce JSON valide sans markdown :
 {
   "type_document": "tableau_loyers|ifi|bail|diagnostic|facture_travaux|taxe_fonciere|assurance|releve_bancaire|declaration_impots|autre",
-  "type_detecte": "description precise de ce que tu vois",
+  "type_detecte": "description precise du document",
   "annee": null,
   "biens": [
     {
-      "nom": "nom ou identifiant du bien visible dans le document",
+      "nom": "nom exact du bien tel qu'écrit dans le document",
       "adresse": null,
       "type": "lmnp|nu|sci|airbnb|commerce",
-      "locataire": null,
+      "locataire": "nom exact du locataire",
       "date_entree": null,
       "loyer_mensuel": null,
       "charges_mensuelles": null,
       "depot_garantie": null,
       "indice_irl": null,
       "numero_fiscal": null,
-      "surface_m2": null,
-      "nb_pieces": null,
-      "date_acquisition": null,
-      "valeur_declaree": null,
       "loyers_annuel_total": null,
       "paiements_mensuels": [
         {"mois": "janvier", "loyer": null, "notes": null}
@@ -354,24 +377,14 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide s
   "total_loyers_annuel": null,
   "confiance": "haute|moyenne|faible",
   "notes": null
-}`
-
-        // Appel Claude 3.5 Haiku via Anthropic SDK (meilleure qualité vision)
-        const Anthropic = (await import('@anthropic-ai/sdk')).default
-        const client = new Anthropic({ apiKey: anthropicKey })
+}
 
         const message = await client.messages.create({
           model: 'claude-sonnet-4-5',
           max_tokens: 4000,
           messages: [{
             role: 'user',
-            content: [
-              {
-                type: 'image',
-                source: { type: 'base64', media_type: mimeType as any, data: base64 }
-              },
-              { type: 'text', text: visionPrompt }
-            ]
+            content: [{ type: 'text', text: visionPrompt }]
           }]
         })
 
