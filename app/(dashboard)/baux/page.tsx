@@ -7,13 +7,25 @@ import { UploadBail } from '@/components/baux/UploadBail'
 import { formatCurrency } from '@/lib/utils'
 import { format, differenceInMonths } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { FileText, Plus, X, CheckCircle2, Info, Eye, Download } from 'lucide-react'
+import { FileText, Plus, X, CheckCircle2, Info, Eye, Download, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { INDICES_IRL, INDICES_ILC, INDICES_ILAT, getIndicesList } from '@/lib/fiscal/indices'
 
 export default function BauxPage() {
   const [leases, setLeases] = useState<any[]>([])
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Supprimer le bail de "${name}" ? Tous les paiements associés seront supprimés.`)) return
+    setDeletingId(id)
+    const { error } = await supabase.from('leases').delete().eq('id', id)
+    setDeletingId(null)
+    if (error) { toast.error(error.message); return }
+    toast.success('Bail supprimé')
+    setLeases(prev => prev.filter(l => l.id !== id))
+  }
+
   const [properties, setProperties] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
@@ -133,6 +145,17 @@ export default function BauxPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 ml-4">
+                    <button
+                      onClick={() => handleDelete(lease.id, lease.tenant_name)}
+                      disabled={deletingId === lease.id}
+                      className="h-8 w-8 rounded-lg flex items-center justify-center transition-colors hover:bg-red-500/10 disabled:opacity-50"
+                      title="Supprimer ce bail"
+                    >
+                      {deletingId === lease.id
+                        ? <span className="text-red-400 text-xs animate-spin">⟳</span>
+                        : <Trash2 className="h-3.5 w-3.5 text-red-400" />
+                      }
+                    </button>
                     {lease.pdf_url ? (
                       <>
                         <button
