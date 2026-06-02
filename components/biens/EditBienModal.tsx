@@ -22,9 +22,10 @@ interface EditBienModalProps {
 }
 
 const SECTIONS = [
-  { key: 'infos', label: '📍 Informations générales' },
+  { key: 'infos', label: '📍 Infos générales' },
+  { key: 'bail', label: '📄 Bail & loyer' },
   { key: 'finances', label: '💰 Finances' },
-  { key: 'pret', label: '🏦 Prêt immobilier' },
+  { key: 'pret', label: '🏦 Prêt' },
 ]
 
 export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
@@ -34,12 +35,16 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
   const [saving, setSaving] = useState(false)
   const [activeSection, setActiveSection] = useState('infos')
   const [form, setForm] = useState<any>({})
+  const [leaseId, setLeaseId] = useState<string | null>(null)
+  const [leaseForm, setLeaseForm] = useState<any>({})
 
   useEffect(() => {
-    supabase.from('properties').select('*').eq('id', propertyId).single()
-      .then(({ data }) => {
-        if (data) {
-          setForm({
+    Promise.all([
+      supabase.from('properties').select('*').eq('id', propertyId).single(),
+      supabase.from('leases').select('*').eq('property_id', propertyId).eq('is_active', true).maybeSingle(),
+    ]).then(([{ data }, { data: lease }]) => {
+      if (data) {
+        setForm({
             name: data.name || '',
             type: data.type || 'nu',
             address: data.address || '',
@@ -61,15 +66,51 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
             pret_assurance_mensuelle: data.pret_assurance_mensuelle ?? 0,
           })
         }
+        if (lease) {
+          setLeaseId(lease.id)
+          setLeaseForm({
+            tenant_name: lease.tenant_name || '',
+            tenant_email: lease.tenant_email || '',
+            tenant_phone: lease.tenant_phone || '',
+            monthly_rent: lease.monthly_rent ?? '',
+            charges: lease.charges ?? 0,
+            deposit: lease.deposit ?? '',
+            start_date: lease.start_date || '',
+            end_date: lease.end_date || '',
+            indexation_index: lease.indexation_index || 'irl',
+            irl_reference_valeur: lease.irl_reference_valeur ?? '',
+            irl_reference_trimestre: lease.irl_reference_trimestre ?? '',
+            irl_reference_annee: lease.irl_reference_annee ?? '',
+          })
+        }
         setLoading(false)
       })
   }, [propertyId])
 
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }))
+  const setL = (k: string, v: any) => setLeaseForm((f: any) => ({ ...f, [k]: v }))
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
+
+    // Sauvegarder le bail si présent
+    if (leaseId && leaseForm.tenant_name) {
+      await supabase.from('leases').update({
+        tenant_name: leaseForm.tenant_name,
+        tenant_email: leaseForm.tenant_email || null,
+        tenant_phone: leaseForm.tenant_phone || null,
+        monthly_rent: Number(leaseForm.monthly_rent) || 0,
+        charges: Number(leaseForm.charges) || 0,
+        deposit: leaseForm.deposit !== '' ? Number(leaseForm.deposit) : null,
+        start_date: leaseForm.start_date || null,
+        end_date: leaseForm.end_date || null,
+        indexation_index: leaseForm.indexation_index || 'irl',
+        irl_reference_valeur: leaseForm.irl_reference_valeur !== '' ? Number(leaseForm.irl_reference_valeur) : null,
+        irl_reference_trimestre: leaseForm.irl_reference_trimestre !== '' ? Number(leaseForm.irl_reference_trimestre) : null,
+        irl_reference_annee: leaseForm.irl_reference_annee !== '' ? Number(leaseForm.irl_reference_annee) : null,
+      }).eq('id', leaseId)
+    }
 
     const { error } = await supabase.from('properties').update({
       name: form.name,
@@ -210,7 +251,89 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
             </>
           )}
 
-          {/* SECTION 2 — Finances */}
+          {/* SECTION 2 — Bail & loyer */}
+          {activeSection === 'bail' && (
+            <>
+              {!leaseId && (
+                <div className="p-3 rounded-xl text-sm" style={{ background: '#FFFBEB', border: '1px solid #FCD34D', color: '#92400E' }}>
+                  Aucun bail actif — remplissez les champs pour en créer un
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2">
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Nom du locataire *</label>
+                  <input value={leaseForm.tenant_name || ''} onChange={e => setL('tenant_name', e.target.value)} className={inputClass} placeholder="Martin Sophie" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Email</label>
+                  <input type="email" value={leaseForm.tenant_email || ''} onChange={e => setL('tenant_email', e.target.value)} className={inputClass} />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Téléphone</label>
+                  <input value={leaseForm.tenant_phone || ''} onChange={e => setL('tenant_phone', e.target.value)} className={inputClass} />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Loyer mensuel HC (€) *</label>
+                  <input type="number" value={leaseForm.monthly_rent || ''} onChange={e => setL('monthly_rent', e.target.value)} className={inputClass} placeholder="850" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Charges (€)</label>
+                  <input type="number" value={leaseForm.charges || ''} onChange={e => setL('charges', e.target.value)} className={inputClass} placeholder="0" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Dépôt de garantie (€)</label>
+                  <input type="number" value={leaseForm.deposit || ''} onChange={e => setL('deposit', e.target.value)} className={inputClass} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Date de début *</label>
+                  <input type="date" value={leaseForm.start_date || ''} onChange={e => setL('start_date', e.target.value)} className={inputClass} />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Date de fin</label>
+                  <input type="date" value={leaseForm.end_date || ''} onChange={e => setL('end_date', e.target.value)} className={inputClass} />
+                </div>
+              </div>
+              <div className="grid grid-cols-4 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Indice</label>
+                  <select value={leaseForm.indexation_index || 'irl'} onChange={e => setL('indexation_index', e.target.value)}
+                    className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none bg-white border border-slate-200 text-[#0F172A]">
+                    <option value="irl">IRL</option>
+                    <option value="irlc">IRLC</option>
+                    <option value="ilat">ILAT</option>
+                    <option value="icc">ICC</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Valeur indice</label>
+                  <input type="number" step="0.01" value={leaseForm.irl_reference_valeur || ''} onChange={e => setL('irl_reference_valeur', e.target.value)} className={inputClass} placeholder="130.57" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Trimestre</label>
+                  <select value={leaseForm.irl_reference_trimestre || ''} onChange={e => setL('irl_reference_trimestre', e.target.value)}
+                    className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none bg-white border border-slate-200 text-[#0F172A]">
+                    <option value="">—</option>
+                    <option value="1">T1</option>
+                    <option value="2">T2</option>
+                    <option value="3">T3</option>
+                    <option value="4">T4</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Année</label>
+                  <input type="number" value={leaseForm.irl_reference_annee || ''} onChange={e => setL('irl_reference_annee', e.target.value)} className={inputClass} placeholder="2024" />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* SECTION 3 — Finances */}
           {activeSection === 'finances' && (
             <>
               <div className="grid grid-cols-2 gap-3">
