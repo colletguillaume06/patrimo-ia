@@ -297,26 +297,22 @@ export async function POST(req: NextRequest) {
     } else if (ext === 'jpg' || ext === 'jpeg' || ext === 'png') {
       // Utiliser le modèle vision Groq pour analyser les images directement
       try {
-        // Limiter la taille de l'image à 4MB max pour Groq
-        let imgBuf = buf
-        if (buf.byteLength > 4 * 1024 * 1024) {
-          imgBuf = buf.slice(0, 4 * 1024 * 1024)
-        }
-        const base64 = Buffer.from(imgBuf).toString('base64')
+        const base64 = Buffer.from(buf).toString('base64')
         const mimeType = ext === 'png' ? 'image/png' : 'image/jpeg'
-        const { default: OpenAI } = await import('openai')
-        const openai = new OpenAI({ apiKey: process.env.GEMINI_API_KEY, baseURL: 'https://api.groq.com/openai/v1' })
+        const geminiKey = process.env.GEMINI_VISION_KEY
+
+        if (!geminiKey) throw new Error('GEMINI_VISION_KEY non configurée')
 
         const visionPrompt = `Tu es un expert-comptable français spécialisé en immobilier. Analyse cette image qui est un document immobilier français (tableau de suivi locatif, formulaire fiscal, bail, facture, etc.).
 
-Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide:
+Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide sans markdown:
 {
   "type_document": "tableau_loyers|ifi|bail|diagnostic|facture_travaux|taxe_fonciere|assurance|releve_bancaire|declaration_impots|autre",
   "type_detecte": "description precise de ce que tu vois",
   "annee": null,
   "biens": [
     {
-      "nom": "nom ou identifiant du bien",
+      "nom": "nom ou identifiant du bien visible dans le document",
       "adresse": null,
       "type": "lmnp|nu|sci|airbnb|commerce",
       "locataire": null,
@@ -325,50 +321,55 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide:
       "charges_mensuelles": null,
       "depot_garantie": null,
       "indice_irl": null,
-      "trimestre_irl": null,
       "numero_fiscal": null,
       "surface_m2": null,
       "nb_pieces": null,
       "date_acquisition": null,
-      "prix_acquisition": null,
       "valeur_declaree": null,
       "loyers_annuel_total": null,
       "paiements_mensuels": [
-        {"mois": "janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre", "loyer": null, "charges": null, "notes": null}
+        {"mois": "janvier", "loyer": null, "notes": null}
       ],
       "depenses": [
-        {"description": null, "montant": null, "date": null, "categorie": "assurance|syndic|taxe_fonciere|travaux|autre"}
+        {"description": null, "montant": null, "categorie": "assurance|syndic|taxe_fonciere|travaux|autre"}
       ]
     }
   ],
-  "declarant": {"nom": null, "prenom": null},
   "total_loyers_annuel": null,
   "confiance": "haute|moyenne|faible",
-  "notes": "autres informations importantes visibles"
+  "notes": null
 }`
 
-        const completion = await openai.chat.completions.create({
-          model: 'meta-llama/llama-4-maverick-17b-128e-instruct',
-          messages: [{
-            role: 'user',
-            content: [
-              { type: 'text', text: visionPrompt },
-              { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } }
-            ]
-          }],
-          temperature: 0.1,
-          max_tokens: 3000,
-        })
+        // Appel API Gemini 1.5 Flash (gratuit)
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [
+                  { text: visionPrompt },
+                  { inline_data: { mime_type: mimeType, data: base64 } }
+                ]
+              }],
+              generationConfig: { temperature: 0.1, maxOutputTokens: 3000 }
+            })
+          }
+        )
 
-        const raw = completion.choices[0]?.message?.content ?? ''
+        const geminiData = await res.json()
+        if (!res.ok) throw new Error(geminiData.error?.message || `Gemini error ${res.status}`)
+
+        const raw = geminiData.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
         const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
         const visionResult = JSON.parse(cleaned)
 
         results.push({
           filename: file.name,
-          fileType: visionResult.type_document || 'image',
+          fileType: visionResult.type_document || 'tableau_loyers',
           size: file.size,
-          analyse: { ...visionResult, confiance: visionResult.confiance || 'moyenne' },
+          analyse: { ...visionResult, confiance: visionResult.confiance || 'haute' },
           isImage: true,
         })
         continue
