@@ -8,6 +8,7 @@ import { ProfileCommerce } from '@/components/biens/profiles/ProfileCommerce'
 import Link from 'next/link'
 import { TabNav } from '@/components/ui/TabNav'
 import { ChevronLeft, Stethoscope, CreditCard, Building, Users, Wrench } from 'lucide-react'
+import { EditBienButton } from '@/components/biens/EditBienButton'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -74,12 +75,15 @@ export default async function BienDetailPage({ params }: Props) {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      {/* Breadcrumb */}
-      <Link href="/biens"
-        className="inline-flex items-center gap-1.5 text-sm transition-colors"
-        style={{ color: 'var(--text-tertiary)' }}>
-        <ChevronLeft className="h-4 w-4" /> Retour à mes biens
-      </Link>
+      {/* Breadcrumb + bouton modifier */}
+      <div className="flex items-center justify-between">
+        <Link href="/biens"
+          className="inline-flex items-center gap-1.5 text-sm transition-colors"
+          style={{ color: 'var(--text-tertiary)' }}>
+          <ChevronLeft className="h-4 w-4" /> Retour à mes biens
+        </Link>
+        <EditBienButton propertyId={id} />
+      </div>
 
       <TabNav tabs={tabs} />
 
