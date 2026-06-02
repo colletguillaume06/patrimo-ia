@@ -348,7 +348,7 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide s
         })
 
         const completion = await openrouter.chat.completions.create({
-          model: 'google/gemma-4-31b-it:free',
+          model: 'nvidia/nemotron-nano-12b-v2-vl:free',
           messages: [{
             role: 'user',
             content: [
