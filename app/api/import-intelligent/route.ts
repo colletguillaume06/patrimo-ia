@@ -340,17 +340,32 @@ Extrais TOUTES les informations visibles et retourne UNIQUEMENT ce JSON valide s
   "notes": null
 }`
 
-        // Utiliser le SDK officiel Google Generative AI
-        const { GoogleGenerativeAI } = await import('@google/generative-ai')
-        const genAI = new GoogleGenerativeAI(geminiKey)
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+        // Appel Gemini avec Bearer token (clés AQ. de Google AI Studio)
+        const res = await fetch(
+          'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${geminiKey}`,
+              'x-goog-user-project': '982085188914',
+            },
+            body: JSON.stringify({
+              contents: [{
+                parts: [
+                  { text: visionPrompt },
+                  { inline_data: { mime_type: mimeType, data: base64 } }
+                ]
+              }],
+              generationConfig: { temperature: 0.1, maxOutputTokens: 3000 }
+            })
+          }
+        )
 
-        const result = await model.generateContent([
-          visionPrompt,
-          { inlineData: { mimeType, data: base64 } }
-        ])
+        const geminiData = await res.json()
+        if (!res.ok) throw new Error(geminiData.error?.message || `Gemini ${res.status}`)
 
-        const raw = result.response.text()
+        const raw = geminiData.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
         const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
         const visionResult = JSON.parse(cleaned)
 
