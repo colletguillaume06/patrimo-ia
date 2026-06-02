@@ -161,13 +161,13 @@ export default function ImportIntelligentPage() {
             mois: `${key}`,
             amount: montant || loyer,
             due_date: `${key}-01`,
-            paid_date: montant > 0 ? `${key}-05` : null,
-            status: montant > 0 ? 'paid' : 'pending',
+            paid_date: `${key}-05`,
+            status: 'paid', // Historique = tout déjà encaissé
             note: extrait?.notes || null,
           })
         }
 
-        // Année en cours : janvier → mois actuel
+        // Année en cours : janvier → mois actuel (déjà encaissés)
         for (let m = 1; m <= moisEnCours; m++) {
           const key = `${anneeEnCours}-${String(m).padStart(2,'0')}`
           const extrait = paiementsMap[key]
@@ -176,8 +176,8 @@ export default function ImportIntelligentPage() {
             mois: `${key}`,
             amount: montant || loyer,
             due_date: `${key}-01`,
-            paid_date: montant > 0 ? `${key}-05` : null,
-            status: montant > 0 ? 'paid' : 'pending',
+            paid_date: `${key}-05`,
+            status: 'paid', // Historique = tout déjà encaissé
             note: extrait?.notes || null,
           })
         }
