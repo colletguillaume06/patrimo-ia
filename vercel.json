@@ -20,6 +20,10 @@
     {
       "path": "/api/cron/rapport-hebdo",
       "schedule": "0 8 * * 1"
+    },
+    {
+      "path": "/api/cron/alertes-email",
+      "schedule": "0 9 * * *"
     }
   ]
 }

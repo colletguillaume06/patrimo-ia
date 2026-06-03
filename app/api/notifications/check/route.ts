@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
   const { data: properties } = await service
     .from('properties')
-    .select('*, leases(*, payments(*))')
+    .select('*, leases(*, payments(*)), diagnostics(*)')
     .eq('user_id', user.id)
 
   for (const prop of properties ?? []) {
@@ -70,6 +70,27 @@ export async function GET(req: NextRequest) {
           severity: 'low',
           action_label: 'Calculer la révision',
           action_href: '/loyers',
+        })
+      }
+    }
+
+    // ── Diagnostics expirant ──
+    for (const diag of (prop.diagnostics ?? [])) {
+      if (!diag.date_expiration) continue
+      const daysUntilExpiry = differenceInDays(new Date(diag.date_expiration), now)
+      if (daysUntilExpiry <= 90 && daysUntilExpiry >= 0) {
+        const typeLabel: Record<string, string> = {
+          dpe: 'DPE', amiante: 'Amiante', plomb: 'Plomb',
+          electricite: 'Électricité', gaz: 'Gaz', erp: 'ERP',
+        }
+        alerts.push({
+          type: 'diagnostic_expire',
+          property_id: prop.id,
+          property_name: prop.name,
+          message: `${typeLabel[diag.type] || diag.type} expire dans ${daysUntilExpiry} jours — ${prop.name}`,
+          severity: daysUntilExpiry <= 30 ? 'high' : 'medium',
+          action_label: 'Voir les diagnostics',
+          action_href: `/biens/${prop.id}/diagnostics`,
         })
       }
     }
