@@ -53,6 +53,16 @@ export default function LoyersPage() {
     }
   }
 
+  const now = new Date()
+  const moisEnCours = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+
+  // Paiements du mois en cours
+  const paiementsMois = payments.filter(p => p.due_date?.startsWith(moisEnCours))
+  const totalAttenduMois = paiementsMois.reduce((s, p) => s + p.amount, 0)
+  const totalEncaisseMois = paiementsMois.filter(p => p.status === 'paid').reduce((s, p) => s + p.amount, 0)
+  const totalRestantMois = totalAttenduMois - totalEncaisseMois
+  const pctEncaisse = totalAttenduMois > 0 ? Math.round((totalEncaisseMois / totalAttenduMois) * 100) : 0
+
   const stats = {
     total: payments.reduce((s, p) => s + p.amount, 0),
     paid: payments.filter(p => p.status === 'paid').reduce((s, p) => s + p.amount, 0),
@@ -74,12 +84,74 @@ export default function LoyersPage() {
         </Link>
       </div>
 
+      {/* Récapitulatif mois en cours */}
+      <GlassCard className="p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="font-display font-bold text-lg" style={{ color: 'var(--text-primary)' }}>
+              Loyers {format(now, 'MMMM yyyy', { locale: fr })}
+            </h2>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
+              Total à encaisser ce mois
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-2xl font-bold font-mono" style={{ color: 'var(--text-primary)' }}>
+              {formatCurrency(totalAttenduMois)}
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
+              {paiementsMois.length} loyer{paiementsMois.length > 1 ? 's' : ''} attendu{paiementsMois.length > 1 ? 's' : ''}
+            </p>
+          </div>
+        </div>
+
+        {/* Barre de progression */}
+        <div className="mb-3">
+          <div className="flex justify-between text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>
+            <span>Encaissé : <strong style={{ color: '#059669' }}>{formatCurrency(totalEncaisseMois)}</strong></span>
+            <span>Restant : <strong style={{ color: totalRestantMois > 0 ? '#F59E0B' : '#059669' }}>{formatCurrency(totalRestantMois)}</strong></span>
+          </div>
+          <div className="h-2.5 rounded-full overflow-hidden" style={{ background: 'var(--border)' }}>
+            <div className="h-2.5 rounded-full transition-all"
+              style={{ width: `${pctEncaisse}%`, background: pctEncaisse === 100 ? '#059669' : pctEncaisse > 50 ? '#1D4ED8' : '#F59E0B' }} />
+          </div>
+          <p className="text-xs mt-1 text-right font-semibold" style={{ color: pctEncaisse === 100 ? '#059669' : 'var(--text-tertiary)' }}>
+            {pctEncaisse}% encaissé
+          </p>
+        </div>
+
+        {/* Détail par locataire */}
+        {paiementsMois.length > 0 && (
+          <div className="space-y-1.5 border-t pt-3" style={{ borderColor: 'var(--border)' }}>
+            {paiementsMois.map(p => (
+              <div key={p.id} className="flex items-center justify-between py-1.5 px-2 rounded-lg" style={{ background: 'var(--bg-secondary)' }}>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full flex-shrink-0"
+                    style={{ background: p.status === 'paid' ? '#059669' : p.status === 'late' ? '#DC2626' : '#F59E0B' }} />
+                  <span className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                    {p.lease?.tenant_name}
+                  </span>
+                  <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
+                    {p.lease?.property?.name}
+                  </span>
+                </div>
+                <span className="text-sm font-semibold font-mono"
+                  style={{ color: p.status === 'paid' ? '#059669' : p.status === 'late' ? '#DC2626' : '#F59E0B' }}>
+                  {formatCurrency(p.amount)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </GlassCard>
+
+      {/* KPIs historique */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total encaissé', value: formatCurrency(stats.paid), color: 'text-[var(--success)]', glow: 'green' as const },
+          { label: 'Total encaissé (historique)', value: formatCurrency(stats.paid), color: 'text-[var(--success)]', glow: 'green' as const },
           { label: 'En retard', value: formatCurrency(stats.late), color: 'text-red-400', glow: 'red' as const },
           { label: 'En attente', value: formatCurrency(stats.pending), color: 'text-amber-400', glow: 'amber' as const },
-          { label: 'Nb loyers en retard', value: `${payments.filter(p => p.status === 'late').length}`, color: 'text-red-400', glow: 'red' as const },
+          { label: 'Loyers en retard', value: `${payments.filter(p => p.status === 'late').length}`, color: 'text-red-400', glow: 'red' as const },
         ].map(({ label, value, color, glow }) => (
           <GlassCard key={label} glow={glow} className="p-4">
             <p className="text-sm font-medium text-[#0F172A] mb-1.5">{label}</p>
