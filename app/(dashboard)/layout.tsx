@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Topbar } from '@/components/layout/Topbar'
 import { AutoLogout } from '@/components/auth/AutoLogout'
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav'
 import type { Profile } from '@/types'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -39,11 +40,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
           profile={profile as Profile}
           latePaymentsCount={lateCount ?? 0}
         />
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6">
           <AutoLogout />
           {children}
         </main>
       </div>
+      {/* Navigation mobile bas d'écran — cachée sur desktop */}
+      <MobileBottomNav />
     </div>
   )
 }
