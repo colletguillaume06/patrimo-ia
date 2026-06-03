@@ -20,14 +20,14 @@ export async function POST(req: NextRequest) {
   const dueDatePrefix = format(moisPrecedent, 'yyyy-MM')
 
   // Récupérer tous les paiements du mois précédent marqués "paid" avec email locataire
+  // Respecte les 3 niveaux de toggle : profil → bien → bail
   const { data: payments } = await service
     .from('payments')
     .select(`
       id, amount, due_date, status,
       lease:leases(
-        tenant_name, tenant_email, monthly_rent, charges,
-        property:properties(name, address, city, user_id),
-        profiles:properties(user_id)
+        id, tenant_name, tenant_email, monthly_rent, charges, quittances_auto,
+        property:properties(id, name, address, city, user_id, quittances_auto)
       )
     `)
     .eq('status', 'paid')
@@ -41,6 +41,20 @@ export async function POST(req: NextRequest) {
   for (const payment of (payments ?? [])) {
     const lease = payment.lease as any
     if (!lease?.tenant_email) { skipped++; continue }
+
+    // Vérifier le toggle niveau profil (propriétaire)
+    const { data: ownerProfile } = await service
+      .from('profiles')
+      .select('quittances_auto')
+      .eq('id', lease.property?.user_id)
+      .single()
+    if (ownerProfile?.quittances_auto === false) { skipped++; continue }
+
+    // Vérifier le toggle niveau bien
+    if (lease.property?.quittances_auto === false) { skipped++; continue }
+
+    // Vérifier le toggle niveau bail
+    if (lease.quittances_auto === false) { skipped++; continue }
 
     // Récupérer le profil du propriétaire
     const { data: profile } = await service

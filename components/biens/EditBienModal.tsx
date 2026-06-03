@@ -81,6 +81,7 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
             irl_reference_valeur: lease.irl_reference_valeur ?? '',
             irl_reference_trimestre: lease.irl_reference_trimestre ?? '',
             irl_reference_annee: lease.irl_reference_annee ?? '',
+            quittances_auto: lease.quittances_auto ?? true,
           })
         }
         setLoading(false)
@@ -128,6 +129,7 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
         irl_reference_valeur: leaseForm.irl_reference_valeur !== '' ? Number(leaseForm.irl_reference_valeur) : null,
         irl_reference_trimestre: leaseForm.irl_reference_trimestre !== '' ? Number(leaseForm.irl_reference_trimestre) : null,
         irl_reference_annee: leaseForm.irl_reference_annee !== '' ? Number(leaseForm.irl_reference_annee) : null,
+        quittances_auto: leaseForm.quittances_auto ?? true,
       }
 
       if (leaseId) {
@@ -377,6 +379,20 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
                   <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Année</label>
                   <input type="number" value={leaseForm.irl_reference_annee || ''} onChange={e => setL('irl_reference_annee', e.target.value)} className={inputClass} placeholder="2024" />
                 </div>
+              </div>
+
+              {/* Toggle quittances automatiques */}
+              <div className="flex items-center justify-between p-3 rounded-xl border" style={{ borderColor: '#E2E8F0' }}>
+                <div>
+                  <p className="text-sm font-semibold text-[#0F172A]">Quittances automatiques</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Envoyer la quittance automatiquement le 1er du mois</p>
+                </div>
+                <button type="button" onClick={() => setL('quittances_auto', !leaseForm.quittances_auto)}
+                  className="relative flex-shrink-0 h-6 w-11 rounded-full transition-colors"
+                  style={{ background: leaseForm.quittances_auto !== false ? '#1D4ED8' : '#CBD5E1' }}>
+                  <span className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform"
+                    style={{ transform: leaseForm.quittances_auto !== false ? 'translateX(20px)' : 'translateX(2px)' }} />
+                </button>
               </div>
             </>
           )}
