@@ -26,11 +26,8 @@ export function Logo({ size = 'md', linkTo = '/dashboard', className = '' }: Log
 
   const { width, height } = sizes[size]
 
-  const logoSrc = !mounted
-    ? '/logos/logo-dark.png'
-    : resolvedTheme === 'light'
-    ? '/logos/logo-light.png'
-    : '/logos/logo-dark.png'
+  // Logo unique sur toutes les pages quel que soit le thème
+  const logoSrc = '/logos/logo-light.png'
 
   const logo = (
     <Image
@@ -62,7 +59,7 @@ export function LogoStatic({
   const { width, height } = sizes[size]
   return (
     <Image
-      src={`/logos/logo-${variant}.png`}
+      src="/logos/logo-light.png"
       alt="Patrimo IA"
       width={width}
       height={height}
