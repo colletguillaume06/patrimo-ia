@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { toast } from 'sonner'
-import { Settings, Mail } from 'lucide-react'
+import { Settings, Mail, Trash2, ExternalLink, Shield } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 function Toggle({ checked, onChange, label, description }: { checked: boolean, onChange: (v: boolean) => void, label: string, description?: string }) {
   return (
@@ -27,6 +29,8 @@ export default function ParametresPage() {
   const [profile, setProfile] = useState<any>(null)
   const [form, setForm] = useState({ full_name: '', iban: '', bic: '', titulaire_compte: '' })
   const [quittancesAuto, setQuittancesAuto] = useState(true)
+  const [deleting, setDeleting] = useState(false)
+  const router = useRouter()
   const [saving, setSaving] = useState(false)
   const supabase = createClient()
 
@@ -47,6 +51,21 @@ export default function ParametresPage() {
     setQuittancesAuto(val)
     await supabase.from('profiles').update({ quittances_auto: val } as any).eq('id', profile.id)
     toast.success(val ? 'Quittances automatiques activées' : 'Quittances automatiques désactivées')
+  }
+
+  const handleDeleteAccount = async () => {
+    if (!confirm('Supprimer définitivement votre compte et TOUTES vos données ? Cette action est irréversible.')) return
+    if (!confirm('Dernière confirmation : toutes vos données immobilières, baux, loyers et documents seront supprimés.')) return
+    setDeleting(true)
+    const res = await fetch('/api/account/delete', { method: 'DELETE' })
+    if (res.ok) {
+      toast.success('Compte supprimé')
+      router.push('/')
+    } else {
+      const data = await res.json()
+      toast.error(data.error || 'Erreur lors de la suppression')
+      setDeleting(false)
+    }
   }
 
   const handleSave = async (e: React.FormEvent) => {
@@ -109,6 +128,46 @@ export default function ParametresPage() {
             {saving ? 'Enregistrement...' : 'Sauvegarder'}
           </button>
         </form>
+      </GlassCard>
+
+      {/* Liens légaux */}
+      <GlassCard>
+        <h2 className="font-display font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+          <Shield className="h-4 w-4" style={{ color: '#059669' }} /> Mentions légales & confidentialité
+        </h2>
+        <div className="space-y-2">
+          {[
+            { href: '/cgu', label: "Conditions Générales d'Utilisation" },
+            { href: '/confidentialite', label: 'Politique de confidentialité (RGPD)' },
+          ].map(({ href, label }) => (
+            <Link key={href} href={href} target="_blank"
+              className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:opacity-80 transition-opacity"
+              style={{ background: 'var(--bg-secondary)' }}>
+              <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{label}</span>
+              <ExternalLink className="h-3.5 w-3.5" style={{ color: 'var(--text-tertiary)' }} />
+            </Link>
+          ))}
+        </div>
+      </GlassCard>
+
+      {/* Zone danger */}
+      <GlassCard>
+        <h2 className="font-display font-semibold mb-4 flex items-center gap-2 text-red-500">
+          <Trash2 className="h-4 w-4" /> Zone de danger
+        </h2>
+        <div className="p-4 rounded-xl" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
+          <p className="text-sm font-semibold text-red-800 mb-1">Supprimer mon compte</p>
+          <p className="text-xs text-red-600 mb-4 leading-relaxed">
+            Cette action supprime définitivement votre compte et toutes vos données (biens, baux, loyers, documents).
+            Cette action est <strong>irréversible</strong>. Vos données seront effacées sous 30 jours conformément au RGPD.
+          </p>
+          <button onClick={handleDeleteAccount} disabled={deleting}
+            className="flex items-center gap-2 h-9 px-4 rounded-lg text-sm font-semibold text-white disabled:opacity-50"
+            style={{ background: '#DC2626' }}>
+            <Trash2 className="h-4 w-4" />
+            {deleting ? 'Suppression...' : 'Supprimer définitivement mon compte'}
+          </button>
+        </div>
       </GlassCard>
     </div>
   )

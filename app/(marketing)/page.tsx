@@ -187,7 +187,11 @@ export default function LandingPage() {
         <div className="flex items-center justify-center gap-2.5 mb-3">
           <LogoStatic variant="dark" size="sm" />
         </div>
-        <p className="text-xs text-[#94A3B8]">© {new Date().getFullYear()} Patrimo · Tous droits réservés</p>
+        <p className="text-xs text-[#94A3B8] mb-2">© {new Date().getFullYear()} Patrimo IA · Tous droits réservés</p>
+        <div className="flex items-center justify-center gap-4">
+          <Link href="/cgu" className="text-xs text-[#94A3B8] hover:text-[#475569]">CGU</Link>
+          <Link href="/confidentialite" className="text-xs text-[#94A3B8] hover:text-[#475569]">Confidentialité</Link>
+        </div>
       </footer>
     </div>
   )
