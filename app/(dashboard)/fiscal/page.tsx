@@ -283,6 +283,56 @@ export default function FiscalPage() {
             </GlassCard>
           )}
 
+          {/* ── BAUX COMMERCIAUX ── */}
+          {propData.filter(p => p.type === 'commerce').length > 0 && (
+            <GlassCard>
+              <div className="flex items-center gap-2 mb-4">
+                <ProfileBadge type="commerce" />
+                <h3 className="font-display font-semibold text-[var(--text-primary)]">Baux commerciaux — Revenus fonciers</h3>
+              </div>
+              <div className="space-y-3">
+                {propData.filter(p => p.type === 'commerce').map(prop => {
+                  const chargesDeductibles = prop.charges + (prop.property_tax / 12 * 12) + (prop.insurance_annual ?? 0)
+                  const revenuNet = prop.recettes - chargesDeductibles
+                  const impotEstime = Math.max(0, revenuNet * (tmi / 100))
+                  return (
+                    <div key={prop.id} className="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                      <div className="flex items-center gap-3 mb-3">
+                        <p className="text-sm font-medium text-[var(--text-primary)]">{prop.name}</p>
+                        {prop.numero_fiscal && (
+                          <span className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-xs font-mono text-slate-400">
+                            # {prop.numero_fiscal}
+                          </span>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div>
+                          <p className="text-xs text-slate-500">Loyers bruts</p>
+                          <p className="text-sm font-semibold text-[var(--success)]">{formatCurrency(prop.recettes)}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Charges déductibles</p>
+                          <p className="text-sm font-semibold text-red-400">{formatCurrency(chargesDeductibles)}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Revenu net foncier</p>
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">{formatCurrency(revenuNet)}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Impôt estimé ({tmi}%)</p>
+                          <p className="text-sm font-semibold text-amber-400">{formatCurrency(impotEstime)}</p>
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs text-slate-500">
+                        À reporter en revenus fonciers — formulaire 2044 (si régime réel) ou déclaration principale (micro-foncier si &lt; 15 000€/an)
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </GlassCard>
+          )}
+
           {properties.length === 0 && !loading && (
             <div className="text-center py-16">
               <p className="text-slate-400">Ajoutez des biens pour voir le tableau fiscal</p>
