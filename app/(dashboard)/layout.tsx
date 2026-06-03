@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Topbar } from '@/components/layout/Topbar'
+import { AutoLogout } from '@/components/auth/AutoLogout'
 import type { Profile } from '@/types'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -39,6 +40,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           latePaymentsCount={lateCount ?? 0}
         />
         <main className="flex-1 overflow-y-auto p-6">
+          <AutoLogout />
           {children}
         </main>
       </div>
