@@ -49,7 +49,9 @@ Elles sont partagées uniquement avec nos sous-traitants techniques :
 • Supabase (base de données) — hébergement EU
 • Resend (envoi d'emails)
 • Vercel (hébergement de l'application)
-• Anthropic (traitement IA des documents — données traitées sans stockage permanent)
+• Groq (inférence LLaMA 3.3 — copilot IA — données traitées sans stockage permanent)
+• Anthropic (Claude API — analyse de documents et photos — données traitées sans stockage permanent)
+• Google (Gemini API — analyse visuelle de documents — données traitées sans stockage permanent)
 • Stripe (paiements)
 
 Chacun de ces prestataires est soumis à des obligations de confidentialité strictes.`
