@@ -4,6 +4,7 @@ import { ProfileBadge } from '@/components/ui/ProfileBadge'
 import { formatCurrency, formatPct } from '@/lib/utils'
 import { MapPin, ArrowRight, Moon, TrendingUp } from 'lucide-react'
 import type { PropertyWithMetrics } from '@/types'
+import { CompletudeScore } from './CompletudeScore'
 
 interface BienCardProps {
   bien: PropertyWithMetrics & {
@@ -141,6 +142,11 @@ export function BienCard({ bien }: BienCardProps) {
           )}
         </div>
       )}
+
+      {/* Score complétude */}
+      <div className="px-1 pb-1">
+        <CompletudeScore property={bien} />
+      </div>
 
       <Link
         href={`/biens/${bien.id}`}
