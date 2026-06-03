@@ -44,18 +44,10 @@ export default function LandingPage() {
             </Link>
           </div>
           <div className="flex items-center justify-center gap-2 mt-8">
-            <div className="flex">{[1,2,3,4,5].map(i => <Star key={i} className="h-4 w-4 text-amber-400 fill-amber-400" />)}</div>
-            <span className="text-sm text-[#64748B]">4.9/5 · Plus de 1 200 propriétaires</span>
+            <span className="text-sm font-medium text-[#1D4ED8] bg-blue-50 border border-blue-100 px-4 py-2 rounded-full">
+              🚀 Rejoignez les premiers propriétaires en accès anticipé
+            </span>
           </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="py-12 border-y border-black/[0.06]">
-        <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {[['1 200+','Propriétaires actifs'],['8 500','Biens gérés'],['3,2 M€','Loyers suivis/mois'],['< 5 min','Pour démarrer']].map(([v,l]) => (
-            <div key={l}><p className="font-display font-bold text-3xl text-[#0F172A] mb-1">{v}</p><p className="text-sm text-[#64748B]">{l}</p></div>
-          ))}
         </div>
       </section>
 
