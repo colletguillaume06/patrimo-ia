@@ -199,7 +199,7 @@ export interface DashboardMetrics {
 }
 
 export interface Alert {
-  type: 'bail_expire' | 'loyer_retard' | 'revision_possible' | 'fiscalite' | 'airbnb_limit'
+  type: 'bail_expire' | 'loyer_retard' | 'revision_possible' | 'fiscalite' | 'airbnb_limit' | 'diagnostic_expire'
   property_id: string
   property_name: string
   message: string
