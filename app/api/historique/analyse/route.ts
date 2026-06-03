@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit } from '@/lib/ratelimit'
 import { createClient } from '@/lib/supabase/server'
 import * as XLSX from 'xlsx'
 
@@ -6,6 +7,9 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+
+  const rateLimitResponse = await checkRateLimit(user.id)
+  if (rateLimitResponse) return rateLimitResponse
 
   if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json({ error: 'Clé API IA non configurée' }, { status: 503 })

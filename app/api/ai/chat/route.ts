@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit } from '@/lib/ratelimit'
 import { buildSystemPrompt } from '@/lib/openai/prompts'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { z } from 'zod'
