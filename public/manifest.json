@@ -1,0 +1,33 @@
+{
+  "name": "Patrimo IA",
+  "short_name": "Patrimo",
+  "description": "Gérez votre patrimoine immobilier avec l'IA",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0B1628",
+  "theme_color": "#1D4ED8",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logos/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logos/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/logos/logo-dark.png",
+      "sizes": "543x181",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "lang": "fr"
+}
