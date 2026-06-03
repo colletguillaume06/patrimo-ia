@@ -10,7 +10,7 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-50 border-b border-black/[0.06] bg-white/90 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <LogoStatic variant="dark" size="sm" />
+            <LogoStatic variant="light" size="sm" />
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-[#475569]">
             <a href="#features" className="hover:text-[#0F172A] transition-colors">Fonctionnalités</a>
@@ -177,7 +177,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-8 border-t border-black/[0.06] text-center">
         <div className="flex items-center justify-center gap-2.5 mb-3">
-          <LogoStatic variant="dark" size="sm" />
+          <LogoStatic variant="light" size="sm" />
         </div>
         <p className="text-xs text-[#94A3B8] mb-2">© {new Date().getFullYear()} Patrimo IA · Tous droits réservés</p>
         <div className="flex items-center justify-center gap-4">

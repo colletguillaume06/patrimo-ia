@@ -82,7 +82,7 @@ export default function RegisterPage() {
 
         {/* Logo */}
         <div className="flex items-center justify-center mb-8">
-          <LogoStatic variant="dark" size="md" />
+          <LogoStatic variant="light" size="md" />
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
