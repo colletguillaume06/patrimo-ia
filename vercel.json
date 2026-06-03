@@ -12,6 +12,10 @@
     {
       "path": "/api/cron/appel-loyers",
       "schedule": "0 8 1 * *"
+    },
+    {
+      "path": "/api/cron/quittances-auto",
+      "schedule": "0 10 1 * *"
     }
   ]
 }
