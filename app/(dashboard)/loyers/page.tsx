@@ -20,20 +20,30 @@ export default function LoyersPage() {
   const [revisionLease, setRevisionLease] = useState<any | null>(null)
   const supabase = createClient()
 
+  const [activeLeasesData, setActiveLeasesData] = useState<any[]>([])
+
   const loadPayments = async () => {
-    const { data } = await supabase
-      .from('payments')
-      .select(`
-        *,
-        lease:leases(
-          id, tenant_name, tenant_email, monthly_rent,
-          is_active, indexation_index, last_revision_date,
-          property:properties(name, city, indice_revision)
-        )
-      `)
-      .order('due_date', { ascending: false })
-      .limit(100)
-    setPayments(data ?? [])
+    const [paymentsRes, leasesRes] = await Promise.all([
+      supabase
+        .from('payments')
+        .select(`
+          *,
+          lease:leases(
+            id, tenant_name, tenant_email, monthly_rent,
+            is_active, indexation_index, last_revision_date,
+            property:properties(name, city, indice_revision)
+          )
+        `)
+        .order('due_date', { ascending: false })
+        .limit(100),
+      // Baux actifs pour calculer le total théorique du mois
+      supabase
+        .from('leases')
+        .select('id, tenant_name, monthly_rent, charges, is_active, property:properties(name)')
+        .eq('is_active', true),
+    ])
+    setPayments(paymentsRes.data ?? [])
+    setActiveLeasesData(leasesRes.data ?? [])
     setLoading(false)
   }
 
@@ -56,11 +66,13 @@ export default function LoyersPage() {
   const now = new Date()
   const moisEnCours = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 
-  // Paiements du mois en cours
+  // Total attendu = somme des loyers de tous les baux actifs (théorique mensuel)
+  const totalAttenduMois = activeLeasesData.reduce((s, l) => s + (l.monthly_rent ?? 0) + (l.charges ?? 0), 0)
+
+  // Paiements du mois en cours déjà enregistrés
   const paiementsMois = payments.filter(p => p.due_date?.startsWith(moisEnCours))
-  const totalAttenduMois = paiementsMois.reduce((s, p) => s + p.amount, 0)
   const totalEncaisseMois = paiementsMois.filter(p => p.status === 'paid').reduce((s, p) => s + p.amount, 0)
-  const totalRestantMois = totalAttenduMois - totalEncaisseMois
+  const totalRestantMois = Math.max(0, totalAttenduMois - totalEncaisseMois)
   const pctEncaisse = totalAttenduMois > 0 ? Math.round((totalEncaisseMois / totalAttenduMois) * 100) : 0
 
   const stats = {
@@ -120,27 +132,28 @@ export default function LoyersPage() {
           </p>
         </div>
 
-        {/* Détail par locataire */}
-        {paiementsMois.length > 0 && (
+        {/* Détail par bail actif */}
+        {activeLeasesData.length > 0 && (
           <div className="space-y-1.5 border-t pt-3" style={{ borderColor: 'var(--border)' }}>
-            {paiementsMois.map(p => (
-              <div key={p.id} className="flex items-center justify-between py-1.5 px-2 rounded-lg" style={{ background: 'var(--bg-secondary)' }}>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full flex-shrink-0"
-                    style={{ background: p.status === 'paid' ? '#059669' : p.status === 'late' ? '#DC2626' : '#F59E0B' }} />
-                  <span className="text-sm" style={{ color: 'var(--text-primary)' }}>
-                    {p.lease?.tenant_name}
-                  </span>
-                  <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                    {p.lease?.property?.name}
+            {activeLeasesData.map(l => {
+              const payMois = paiementsMois.find(p => p.lease?.id === l.id)
+              const statut = payMois?.status ?? 'pending'
+              const montant = (l.monthly_rent ?? 0) + (l.charges ?? 0)
+              return (
+                <div key={l.id} className="flex items-center justify-between py-1.5 px-2 rounded-lg" style={{ background: 'var(--bg-secondary)' }}>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full flex-shrink-0"
+                      style={{ background: statut === 'paid' ? '#059669' : statut === 'late' ? '#DC2626' : '#F59E0B' }} />
+                    <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{l.tenant_name}</span>
+                    <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{(l.property as any)?.name}</span>
+                  </div>
+                  <span className="text-sm font-semibold font-mono"
+                    style={{ color: statut === 'paid' ? '#059669' : statut === 'late' ? '#DC2626' : '#F59E0B' }}>
+                    {formatCurrency(montant)}
                   </span>
                 </div>
-                <span className="text-sm font-semibold font-mono"
-                  style={{ color: p.status === 'paid' ? '#059669' : p.status === 'late' ? '#DC2626' : '#F59E0B' }}>
-                  {formatCurrency(p.amount)}
-                </span>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </GlassCard>
