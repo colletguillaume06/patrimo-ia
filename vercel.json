@@ -3,5 +3,15 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["cdg1"]
+  "regions": ["cdg1"],
+  "crons": [
+    {
+      "path": "/api/cron/onboarding-emails",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/appel-loyers",
+      "schedule": "0 8 1 * *"
+    }
+  ]
 }
