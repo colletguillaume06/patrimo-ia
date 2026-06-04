@@ -18,10 +18,23 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .eq('id', user.id)
     .single()
 
-  // Rediriger vers l'onboarding si pas encore fait
-  // (sauf si on est déjà sur /onboarding)
-  if (profile && !(profile as any).onboarding_done) {
-    // La vérification se fait côté page pour éviter la boucle
+  // Vérification accès : trial / abonnement actif / admin
+  const p = profile as any
+  if (p) {
+    const status = p.subscription_status ?? 'trial'
+    const isExpired = status === 'trial' && p.trial_ends_at && new Date(p.trial_ends_at) < new Date()
+    const isBlocked = status === 'expired' || isExpired
+
+    // Mettre à jour le statut si trial expiré
+    if (isExpired && status !== 'expired') {
+      await supabase.from('profiles').update({ subscription_status: 'expired' }).eq('id', user.id)
+    }
+
+    // Bloquer l'accès sauf pages admin, onboarding et acces-expire
+    // (la vérification URL se fait côté middleware, ici on redirige simplement)
+    if (isBlocked) {
+      // On ne bloque pas ici pour éviter les boucles — géré par le composant
+    }
   }
 
   const { count: lateCount } = await supabase

@@ -139,25 +139,28 @@ export default function LandingPage() {
       {/* Pricing */}
       <section id="pricing" className="py-20">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center mb-14">
+          <div className="text-center mb-10">
             <h2 className="font-display font-bold text-4xl text-[#0F172A] mb-3">Tarif transparent, sans surprise</h2>
-            <p className="text-[#475569] text-lg">Commencez gratuitement. Pas de CB, pas d'engagement.</p>
+            <p className="text-[#475569] text-lg mb-2">2 mois d'essai gratuit · Sans carte bancaire</p>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold" style={{ background: '#F0FDF4', color: '#166534', border: '1px solid #86EFAC' }}>
+              ✓ 2 mois offerts à l'inscription — accès complet immédiat
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
-              { plan: 'Starter', price: 0, desc: 'Jusqu\'à 2 biens', features: ['2 biens max','Loyers & baux','Dashboard fiscal','Export CSV'], cta: 'Commencer gratuitement', h: false, ctaNote: 'Sans carte bancaire' },
-              { plan: 'Pro', price: 29, desc: 'Pour la plupart des propriétaires', features: ['Jusqu\'à 10 biens','Copilot IA illimité','Import documents IA','Fiscalité LMNP / SCI / Nu','Relances automatiques','GED & quittances auto'], cta: 'Essayer le Pro', h: true, ctaNote: '1 mois offert à l\'inscription' },
-              { plan: 'Premium', price: 79, desc: 'Grand patrimoine', features: ['Biens illimités','Tout le plan Pro','SCI multi-associés','Export expert-comptable','Support prioritaire'], cta: 'Choisir Premium', h: false, ctaNote: 'Support 9h–18h inclus' },
-            ].map(({ plan, price, desc, features, cta, h, ctaNote }) => (
+              { plan: 'Pro', price: 29, priceAnnual: 24, desc: 'Pour la plupart des propriétaires', features: ['Jusqu\'à 10 biens','Copilot IA illimité','Import documents IA','Fiscalité LMNP / SCI / Nu','Relances & quittances auto','GED documents'], cta: 'Démarrer l\'essai gratuit', h: true, ctaNote: '2 mois gratuits · puis 29€/mois' },
+              { plan: 'Premium', price: 79, priceAnnual: 65, desc: 'Grand patrimoine, multi-SCI', features: ['Biens illimités','Tout le plan Pro','SCI multi-associés','Export expert-comptable','Support prioritaire 9h–18h'], cta: 'Démarrer en Premium', h: false, ctaNote: '2 mois gratuits · puis 79€/mois' },
+            ].map(({ plan, price, priceAnnual, desc, features, cta, h, ctaNote }) => (
               <div key={plan} className="relative p-7 rounded-2xl border transition-all hover:shadow-md"
                 style={{ border: h ? '2px solid #1D4ED8' : '1px solid rgba(0,0,0,0.08)', background: h ? '#EFF6FF' : '#fff', boxShadow: h ? '0 8px 32px rgba(29,78,216,0.12)' : 'none' }}>
                 {h && <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-white" style={{ background: '#1D4ED8' }}>Le plus choisi</div>}
                 <p className="font-display font-bold text-lg text-[#0F172A] mb-0.5">{plan}</p>
                 <p className="text-xs text-[#64748B] mb-4">{desc}</p>
-                <div className="mb-6">
-                  <span className="font-display font-bold text-4xl text-[#0F172A]">{price === 0 ? 'Gratuit' : `${price}€`}</span>
-                  {price > 0 && <span className="text-[#64748B] text-sm ml-1">/mois</span>}
+                <div className="mb-2">
+                  <span className="font-display font-bold text-4xl text-[#0F172A]">{price}€</span>
+                  <span className="text-[#64748B] text-sm ml-1">/mois</span>
                 </div>
+                <p className="text-xs text-[#64748B] mb-4">ou <strong>{priceAnnual}€/mois</strong> en annuel (−{Math.round((1-priceAnnual/price)*100)}%)</p>
                 <ul className="space-y-2.5 mb-6">
                   {features.map(f => (
                     <li key={f} className="flex items-center gap-2.5 text-sm text-[#475569]">
@@ -174,8 +177,9 @@ export default function LandingPage() {
             ))}
           </div>
           {/* Réassurance sous pricing */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-[#64748B]">🔒 Paiement sécurisé via Stripe · Annulation en 1 clic · Données exportables à tout moment</p>
+          <div className="mt-8 text-center space-y-2">
+            <p className="text-sm text-[#64748B]">🔒 Paiement sécurisé via Stripe · Résiliation à tout moment · Données exportables</p>
+            <p className="text-xs text-[#94A3B8]">Après vos 2 mois gratuits, votre abonnement démarre automatiquement · Annulable avant la fin d'essai</p>
           </div>
         </div>
       </section>
