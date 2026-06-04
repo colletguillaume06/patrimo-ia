@@ -59,6 +59,7 @@ const navGroups = [
       { href: '/courriers', label: 'Courriers', icon: Mail, badge: false },
       { href: '/historique', label: 'Import historique', icon: Download, badge: false },
       { href: '/import-intelligent', label: 'Import IA', icon: Brain, badge: false },
+      { href: '/parrainage', label: 'Parrainage', icon: Users, badge: false },
     ],
   },
 ]

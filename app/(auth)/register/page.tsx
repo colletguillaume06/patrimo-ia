@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { ArrowRight, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { LogoStatic } from '@/components/layout/Logo'
+import { useSearchParams } from 'next/navigation'
 
 const schema = z.object({
   full_name: z.string().min(2, 'Nom trop court'),
@@ -22,6 +23,8 @@ type FormErrors = Partial<Record<'full_name' | 'email' | 'password' | 'confirm' 
 
 export default function RegisterPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const refCode = searchParams.get('ref')
   const supabase = createClient()
   const [form, setForm] = useState({ full_name: '', email: '', password: '', confirm: '' })
   const [errors, setErrors] = useState<FormErrors>({})
@@ -64,6 +67,18 @@ export default function RegisterPage() {
         setErrors({ global: error.message })
       }
       return
+    }
+
+    // Enregistrer le parrainage si code présent
+    if (refCode && supabase.auth) {
+      const { data: { user: newUser } } = await supabase.auth.getUser()
+      if (newUser) {
+        await fetch('/api/referral', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ referral_code: refCode, new_user_id: newUser.id }),
+        })
+      }
     }
 
     router.push('/onboarding')
