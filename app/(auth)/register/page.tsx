@@ -8,6 +8,7 @@ import { ArrowRight, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { LogoStatic } from '@/components/layout/Logo'
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
 const schema = z.object({
   full_name: z.string().min(2, 'Nom trop court'),
@@ -21,7 +22,7 @@ const schema = z.object({
 
 type FormErrors = Partial<Record<'full_name' | 'email' | 'password' | 'confirm' | 'global', string>>
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const refCode = searchParams.get('ref')
@@ -190,5 +191,13 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
   )
 }
