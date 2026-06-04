@@ -10,9 +10,10 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import {
   Wrench, Plus, X, Paperclip, CheckCircle2, Clock, AlertCircle, BarChart2,
-  Info, Upload, Loader2, Euro, FileText, AlertTriangle, ToggleLeft, ToggleRight
+  Info, Upload, Loader2, Euro, FileText, AlertTriangle, ToggleLeft, ToggleRight, Camera
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { ScanFactureModal } from '@/components/travaux/ScanFactureModal'
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
@@ -139,6 +140,7 @@ export default function TravauxPage() {
   const [properties, setProperties] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
+  const [showScan, setShowScan] = useState(false)
   const [form, setForm] = useState(FORM_INITIAL)
   const [uploading, setUploading] = useState(false)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
@@ -262,6 +264,11 @@ export default function TravauxPage() {
             }}>
             <BarChart2 className="h-4 w-4" /> Comparer devis
           </Link>
+          <button onClick={() => setShowScan(true)}
+            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold border transition-all"
+            style={{ borderColor: '#1D4ED8', color: '#1D4ED8', background: '#EFF6FF' }}>
+            <Camera className="h-4 w-4" /> Scanner facture
+          </button>
           <button onClick={() => setShowAdd(true)}
             className="flex items-center gap-2 h-10 px-4 rounded-xl text-white text-sm font-semibold transition-all shadow-sm"
             style={{ background: '#1D4ED8' }}>
@@ -594,6 +601,12 @@ export default function TravauxPage() {
             </form>
           </div>
         </div>
+      )}
+      {showScan && (
+        <ScanFactureModal
+          onClose={() => setShowScan(false)}
+          onSaved={() => { setShowScan(false); window.location.reload() }}
+        />
       )}
     </div>
   )
