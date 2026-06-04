@@ -87,11 +87,19 @@ export default function RegisterPage() {
 
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <h1 className="font-display font-semibold text-xl text-[#0F172A] text-center mb-1">
-            Créer un compte
+            Créer votre espace gratuit
           </h1>
-          <p className="text-slate-500 text-sm text-center mb-6">
-            Commencez gratuitement, sans carte bancaire
+          <p className="text-slate-500 text-sm text-center mb-2">
+            2 biens inclus · Sans carte bancaire · Annulez quand vous voulez
           </p>
+          {/* Badges réassurance */}
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <span className="text-xs text-slate-500 flex items-center gap-1">🔒 RGPD</span>
+            <span className="text-slate-200">|</span>
+            <span className="text-xs text-slate-500 flex items-center gap-1">🇫🇷 Hébergé en France</span>
+            <span className="text-slate-200">|</span>
+            <span className="text-xs text-slate-500 flex items-center gap-1">⚡ Accès immédiat</span>
+          </div>
 
           {errors.global && (
             <div className="mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600">
@@ -147,17 +155,23 @@ export default function RegisterPage() {
 
             <button type="submit" disabled={loading}
               className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all mt-1">
-              {loading ? 'Création...' : 'Créer mon compte'}
+              {loading ? 'Création de votre espace...' : 'Créer mon espace gratuit'}
               {!loading && <ArrowRight className="h-4 w-4" />}
             </button>
+
+            <p className="text-xs text-center text-slate-400 mt-2">
+              En créant un compte, vous acceptez nos <Link href="/cgu" className="underline hover:text-slate-600">CGU</Link> et notre <Link href="/confidentialite" className="underline hover:text-slate-600">politique de confidentialité</Link>.
+            </p>
           </form>
 
-          <p className="text-center text-sm text-slate-500 mt-6">
-            Déjà un compte ?{' '}
-            <Link href="/login" className="text-[#1D4ED8] hover:text-[#1E40AF] font-medium">
-              Se connecter
-            </Link>
-          </p>
+          <div className="border-t border-slate-100 mt-5 pt-5">
+            <p className="text-center text-sm text-slate-500">
+              Déjà un compte ?{' '}
+              <Link href="/login" className="text-[#1D4ED8] hover:text-[#1E40AF] font-semibold">
+                Se connecter →
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

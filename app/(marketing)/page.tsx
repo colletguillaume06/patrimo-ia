@@ -26,27 +26,42 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #F0F6FF 0%, #FFFFFF 60%)' }}>
         <div className="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
+          {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold mb-8" style={{ background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE' }}>
-            <Sparkles className="h-3.5 w-3.5" /> Propulsé par IA — LLaMA 3.3 via Groq
+            <Sparkles className="h-3.5 w-3.5" /> Accès anticipé — Gratuit pour les 50 premiers
           </div>
-          <h1 className="font-display font-bold text-5xl md:text-[62px] leading-[1.08] tracking-tight text-[#0F172A] mb-6">
-            Gérez votre patrimoine<br /><span style={{ color: '#1D4ED8' }}>comme un professionnel</span>
+
+          {/* Titre principal — plus concret et orienté bénéfice */}
+          <h1 className="font-display font-bold text-5xl md:text-[60px] leading-[1.1] tracking-tight text-[#0F172A] mb-5">
+            Fini les tableurs Excel.<br />
+            <span style={{ color: '#1D4ED8' }}>Gérez vos biens en 10 min/mois.</span>
           </h1>
-          <p className="text-xl text-[#475569] max-w-2xl mx-auto mb-10 leading-relaxed">
-            Patrimo IA centralise vos biens, calcule votre fiscalité LMNP / SCI / foncier et répond à vos questions juridiques en 30 secondes.
+
+          {/* Sous-titre orienté problème résolu */}
+          <p className="text-xl text-[#475569] max-w-2xl mx-auto mb-4 leading-relaxed">
+            Patrimo IA centralise loyers, baux et fiscalité LMNP / SCI / foncier — et répond à vos questions en 30 secondes.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/register" className="flex items-center gap-2 px-8 py-3.5 rounded-2xl text-white text-base font-semibold hover:opacity-90 transition-all shadow-lg" style={{ background: '#1D4ED8', boxShadow: '0 8px 24px rgba(29,78,216,0.3)' }}>
-              Commencer gratuitement <ArrowRight className="h-5 w-5" />
+
+          {/* Micro-preuve sociale */}
+          <p className="text-sm text-[#64748B] mb-8">
+            Propriétaires de 3 à 15 biens · LMNP, SCI, Foncier nu, Airbnb, Commerce
+          </p>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link href="/register" className="flex items-center gap-2 px-8 py-4 rounded-2xl text-white text-base font-semibold hover:opacity-90 transition-all" style={{ background: '#1D4ED8', boxShadow: '0 8px 24px rgba(29,78,216,0.3)' }}>
+              Essayer gratuitement — sans carte <ArrowRight className="h-5 w-5" />
             </Link>
-            <Link href="/login" className="flex items-center gap-2 px-8 py-3.5 rounded-2xl text-[#475569] text-base font-medium border border-black/[0.10] hover:border-black/20 transition-all">
-              J'ai déjà un compte
+            <Link href="/login" className="text-[#475569] text-sm font-medium hover:text-[#0F172A] transition-colors underline underline-offset-4">
+              J'ai déjà un compte →
             </Link>
           </div>
-          <div className="flex items-center justify-center gap-2 mt-8">
-            <span className="text-sm font-medium text-[#1D4ED8] bg-blue-50 border border-blue-100 px-4 py-2 rounded-full">
-              🚀 Rejoignez les premiers propriétaires en accès anticipé
-            </span>
+
+          {/* Réassurance immédiate sous le CTA */}
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
+            {['✓ Sans carte bancaire', '✓ RGPD · données hébergées en France', '✓ Annulez à tout moment'].map(t => (
+              <span key={t} className="text-xs text-[#64748B]">{t}</span>
+            ))}
           </div>
         </div>
       </section>
@@ -125,37 +140,42 @@ export default function LandingPage() {
       <section id="pricing" className="py-20">
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-14">
-            <h2 className="font-display font-bold text-4xl text-[#0F172A] mb-4">Tarifs simples</h2>
-            <p className="text-[#475569] text-lg">Commencez gratuitement, évoluez à votre rythme.</p>
+            <h2 className="font-display font-bold text-4xl text-[#0F172A] mb-3">Tarif transparent, sans surprise</h2>
+            <p className="text-[#475569] text-lg">Commencez gratuitement. Pas de CB, pas d'engagement.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { plan: 'Starter', price: 0, desc: 'Pour découvrir', features: ['2 biens','Dashboard basique','Suivi loyers','Exports CSV'], cta: 'Commencer', h: false },
-              { plan: 'Pro', price: 29, desc: 'Le plus populaire', features: ['10 biens','Copilot IA illimité','OCR baux PDF','Fiscalité avancée','Relances auto','GED documents'], cta: 'Démarrer en Pro', h: true },
-              { plan: 'Premium', price: 79, desc: 'Multi-investisseur', features: ['Biens illimités','Tout Pro inclus','SCI multi-associés','Export comptable','Support prioritaire'], cta: 'Démarrer en Premium', h: false },
-            ].map(({ plan, price, desc, features, cta, h }) => (
-              <div key={plan} className="relative p-7 rounded-2xl border transition-all"
+              { plan: 'Starter', price: 0, desc: 'Jusqu\'à 2 biens', features: ['2 biens max','Loyers & baux','Dashboard fiscal','Export CSV'], cta: 'Commencer gratuitement', h: false, ctaNote: 'Sans carte bancaire' },
+              { plan: 'Pro', price: 29, desc: 'Pour la plupart des propriétaires', features: ['Jusqu\'à 10 biens','Copilot IA illimité','Import documents IA','Fiscalité LMNP / SCI / Nu','Relances automatiques','GED & quittances auto'], cta: 'Essayer le Pro', h: true, ctaNote: '1 mois offert à l\'inscription' },
+              { plan: 'Premium', price: 79, desc: 'Grand patrimoine', features: ['Biens illimités','Tout le plan Pro','SCI multi-associés','Export expert-comptable','Support prioritaire'], cta: 'Choisir Premium', h: false, ctaNote: 'Support 9h–18h inclus' },
+            ].map(({ plan, price, desc, features, cta, h, ctaNote }) => (
+              <div key={plan} className="relative p-7 rounded-2xl border transition-all hover:shadow-md"
                 style={{ border: h ? '2px solid #1D4ED8' : '1px solid rgba(0,0,0,0.08)', background: h ? '#EFF6FF' : '#fff', boxShadow: h ? '0 8px 32px rgba(29,78,216,0.12)' : 'none' }}>
-                {h && <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-white" style={{ background: '#1D4ED8' }}>Recommandé</div>}
+                {h && <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-white" style={{ background: '#1D4ED8' }}>Le plus choisi</div>}
                 <p className="font-display font-bold text-lg text-[#0F172A] mb-0.5">{plan}</p>
-                <p className="text-sm text-[#64748B] mb-4">{desc}</p>
+                <p className="text-xs text-[#64748B] mb-4">{desc}</p>
                 <div className="mb-6">
                   <span className="font-display font-bold text-4xl text-[#0F172A]">{price === 0 ? 'Gratuit' : `${price}€`}</span>
-                  {price > 0 && <span className="text-[#64748B] text-sm">/mois</span>}
+                  {price > 0 && <span className="text-[#64748B] text-sm ml-1">/mois</span>}
                 </div>
-                <ul className="space-y-2.5 mb-7">
+                <ul className="space-y-2.5 mb-6">
                   {features.map(f => (
                     <li key={f} className="flex items-center gap-2.5 text-sm text-[#475569]">
                       <CheckCircle className="h-4 w-4 flex-shrink-0" style={{ color: '#166534' }} />{f}
                     </li>
                   ))}
                 </ul>
-                <Link href="/register" className="block text-center h-10 rounded-xl text-sm font-semibold leading-[40px] transition-all"
+                <Link href="/register" className="block text-center h-11 rounded-xl text-sm font-semibold leading-[44px] transition-all mb-2"
                   style={h ? { background: '#1D4ED8', color: '#fff' } : { background: '#F1F5F9', color: '#0F172A', border: '1px solid rgba(0,0,0,0.08)' }}>
                   {cta}
                 </Link>
+                <p className="text-center text-xs text-[#94A3B8]">{ctaNote}</p>
               </div>
             ))}
+          </div>
+          {/* Réassurance sous pricing */}
+          <div className="mt-8 text-center">
+            <p className="text-sm text-[#64748B]">🔒 Paiement sécurisé via Stripe · Annulation en 1 clic · Données exportables à tout moment</p>
           </div>
         </div>
       </section>
