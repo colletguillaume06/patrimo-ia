@@ -26,11 +26,14 @@ export async function POST(req: NextRequest) {
   const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpeg'
 
   // Compression si > 4MB
-  let imgBuffer = Buffer.from(buf)
-  if (imgBuffer.byteLength > 4 * 1024 * 1024) {
-    imgBuffer = await sharp(imgBuffer).jpeg({ quality: 80 }).toBuffer()
+  const rawBuffer = Buffer.from(buf)
+  let finalBuffer: Buffer
+  if (rawBuffer.byteLength > 4 * 1024 * 1024) {
+    finalBuffer = Buffer.from(await sharp(rawBuffer).jpeg({ quality: 80 }).toBuffer())
+  } else {
+    finalBuffer = rawBuffer
   }
-  const base64 = imgBuffer.toString('base64')
+  const base64 = finalBuffer.toString('base64')
 
   const message = await anthropic.messages.create({
     model: 'claude-haiku-4-5',
