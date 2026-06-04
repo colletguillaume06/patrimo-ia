@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Building2, Banknote, FileText,
   Wrench, Download, ChevronRight, Sparkles, TrendingUp, Landmark,
   BarChart3, Users, FolderOpen, Mail, Settings, BookOpen,
-  FlaskConical, Loader2, LogOut, Brain
+  FlaskConical, Loader2, LogOut, Brain, Calendar
 } from 'lucide-react'
 import { cn, getInitials } from '@/lib/utils'
 import { Logo } from '@/components/layout/Logo'
@@ -48,6 +48,7 @@ const navGroups = [
     items: [
       { href: '/fiscal', label: 'Déclaration', icon: BarChart3, badge: false },
       { href: '/fiscalite/declaration', label: 'Aide déclaration', icon: BookOpen, badge: false },
+      { href: '/agenda-fiscal', label: 'Agenda fiscal', icon: Calendar, badge: false },
     ],
   },
   {
