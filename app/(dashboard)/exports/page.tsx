@@ -96,6 +96,31 @@ export default function ExportsPage() {
     }
   }
 
+  const [loadingPdf, setLoadingPdf] = useState(false)
+
+  const downloadDossierPdf = async () => {
+    setLoadingPdf(true)
+    try {
+      const res = await fetch('/api/export/dossier-comptable', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ year }),
+      })
+      const html = await res.text()
+      // Ouvrir dans un nouvel onglet pour impression/PDF
+      const win = window.open('', '_blank')
+      if (win) {
+        win.document.write(html)
+        win.document.close()
+        setTimeout(() => win.print(), 500)
+      }
+    } catch (e: any) {
+      toast.error('Erreur : ' + e.message)
+    } finally {
+      setLoadingPdf(false)
+    }
+  }
+
   const handleLoadDemo = async () => {
     setLoadingDemo(true)
     try {
@@ -150,6 +175,25 @@ export default function ExportsPage() {
               ? <><Loader2 className="h-4 w-4 animate-spin" /> Génération ZIP...</>
               : <><Package className="h-4 w-4" /> Tout exporter ({year})</>
             }
+          </button>
+        </div>
+      </GlassCard>
+
+      {/* Dossier comptable PDF */}
+      <GlassCard className="p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="font-display font-semibold text-[var(--text-primary)] flex items-center gap-2">
+              📋 Dossier comptable PDF {year}
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Rapport complet : loyers, charges, résultat par bien — prêt à imprimer ou envoyer à votre expert-comptable
+            </p>
+          </div>
+          <button onClick={downloadDossierPdf} disabled={loadingPdf}
+            className="flex items-center gap-2 h-11 px-5 rounded-xl text-white text-sm font-semibold transition-all disabled:opacity-50 flex-shrink-0"
+            style={{ background: '#1D4ED8' }}>
+            {loadingPdf ? <><Loader2 className="h-4 w-4 animate-spin" /> Génération...</> : <>📄 Générer le PDF</>}
           </button>
         </div>
       </GlassCard>
