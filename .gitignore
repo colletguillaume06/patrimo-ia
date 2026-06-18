@@ -41,3 +41,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Sauvegardes locales (données sensibles - ne jamais committer)
+backups/
+scripts/seed-biens-2024.mjs

@@ -260,15 +260,48 @@ export default function ImportIntelligentPage() {
 
   const handleImport = async () => {
     setImporting(true)
-    const res = await fetch('/api/import-intelligent/valider', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ documents: results.filter(r => r.actif) }),
-    })
-    const data = await res.json()
-    setImporting(false)
-    if (res.ok) { setImported(data); toast.success(data.message) }
-    else toast.error(data.error)
+    try {
+      const res = await fetch('/api/import-intelligent/valider', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ documents: results.filter(r => r.actif) }),
+      })
+
+      let data: any = null
+      try { data = await res.json() } catch { /* réponse non-JSON */ }
+
+      if (!res.ok || !data) {
+        toast.error(data?.error || `Échec de l'enregistrement (HTTP ${res.status}). Aucune donnée enregistrée — réessayez.`)
+        return
+      }
+
+      setImported(data)
+
+      // Vérifier ce qui a RÉELLEMENT été enregistré en base
+      const r = data.results || {}
+      const totalEnregistre =
+        (r.biens || 0) + (r.baux || 0) + (r.loyers || 0) + (r.travaux || 0) +
+        (r.diagnostics || 0) + (r.depenses || 0) + (r.transactions || 0) + (r.declarations || 0)
+      const nbErreurs = r.errors?.length || 0
+
+      if (totalEnregistre === 0) {
+        // Rien n'a été écrit en base → ne PAS faire croire à un succès
+        toast.error(
+          nbErreurs > 0
+            ? `Aucune donnée enregistrée — ${nbErreurs} erreur(s). Vérifiez le détail ci-dessous.`
+            : "Aucune donnée n'a été enregistrée en base. Vérifiez les documents et réessayez."
+        )
+      } else if (nbErreurs > 0) {
+        toast.warning(`${data.message} — mais ${nbErreurs} erreur(s) à corriger.`)
+      } else {
+        toast.success(data.message)
+      }
+    } catch (err: any) {
+      // Erreur réseau / inattendue → ne jamais rester silencieux
+      toast.error(`Erreur réseau : enregistrement non confirmé. Vos données ne sont PAS sauvegardées, réessayez. (${err?.message || err})`)
+    } finally {
+      setImporting(false)
+    }
   }
 
   const updateResult = (idx: number, key: string, val: any) => {

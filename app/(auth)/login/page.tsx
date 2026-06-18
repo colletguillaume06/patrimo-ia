@@ -15,10 +15,25 @@ export default function LoginPage() {
   const supabase = createClient()
   const router = useRouter()
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    // Lire les valeurs directement depuis le formulaire : gère le remplissage
+    // automatique (iCloud / gestionnaire de mots de passe) qui ne déclenche
+    // pas toujours onChange et laissait donc le formulaire « vide » côté React.
+    const fd = new FormData(e.currentTarget)
+    const emailValue = (fd.get('email') as string || email).trim()
+    const passwordValue = (fd.get('password') as string || password)
+
+    if (!emailValue || !passwordValue) {
+      toast.error('Veuillez saisir votre email et votre mot de passe.')
+      return
+    }
+
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await supabase.auth.signInWithPassword({
+      email: emailValue,
+      password: passwordValue,
+    })
     setLoading(false)
     if (error) {
       toast.error(error.message)
@@ -49,6 +64,7 @@ export default function LoginPage() {
               <label className="block text-xs font-medium text-slate-600 mb-1.5">Email</label>
               <input
                 type="email"
+                name="email"
                 placeholder="votre@email.fr"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -65,6 +81,7 @@ export default function LoginPage() {
               </div>
               <input
                 type="password"
+                name="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
@@ -74,7 +91,7 @@ export default function LoginPage() {
             </div>
             <button
               type="submit"
-              disabled={loading || !email || !password}
+              disabled={loading}
               className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all mt-1"
             >
               {loading ? 'Connexion en cours...' : 'Accéder à mon espace'}

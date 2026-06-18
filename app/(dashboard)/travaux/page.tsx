@@ -141,6 +141,7 @@ export default function TravauxPage() {
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
   const [showScan, setShowScan] = useState(false)
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
   const [form, setForm] = useState(FORM_INITIAL)
   const [uploading, setUploading] = useState(false)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
@@ -218,26 +219,34 @@ export default function TravauxPage() {
   }
 
   const now = new Date()
-  const yearStart = new Date(now.getFullYear(), 0, 1).toISOString()
 
-  const thisYear = incidents.filter(i => i.created_at >= yearStart)
+  // Année d'un travail : date des travaux si renseignée, sinon date de création
+  const incYear = (i: any) => new Date(i.date_travaux ?? i.created_at).getFullYear()
+
+  // Années disponibles (toujours inclure l'année en cours), triées du plus récent au plus ancien
+  const availableYears = Array.from(
+    new Set<number>([now.getFullYear(), ...incidents.map(incYear)])
+  ).sort((a, b) => b - a)
+
+  // Travaux de l'année sélectionnée
+  const yearIncidents = incidents.filter(i => incYear(i) === selectedYear)
 
   const stats = {
-    deductibles: thisYear
+    deductibles: yearIncidents
       .filter(i => ['entretien_reparation', 'travaux_deductibles'].includes(i.categorie_fiscale) && i.est_paye)
       .reduce((s, i) => s + (i.cout_paye || 0), 0),
-    amortissables: thisYear
+    amortissables: yearIncidents
       .filter(i => ['travaux_amortissables', 'amelioration'].includes(i.categorie_fiscale) && i.est_paye)
       .reduce((s, i) => s + (i.cout_paye || 0), 0),
-    nonPaye: incidents
+    nonPaye: yearIncidents
       .filter(i => !i.est_paye)
       .reduce((s, i) => s + Math.max(0, (i.cout_estime || 0) - (i.cout_paye || 0)), 0),
-    facturesManquantes: incidents.filter(i => i.est_paye && !i.facture_url).length,
+    facturesManquantes: yearIncidents.filter(i => i.est_paye && !i.facture_url).length,
   }
 
-  // Grouper par bien
+  // Grouper par bien (année sélectionnée)
   const byProperty: Record<string, { name: string; items: any[] }> = {}
-  for (const inc of incidents) {
+  for (const inc of yearIncidents) {
     const pid = inc.property_id
     if (!byProperty[pid]) byProperty[pid] = { name: inc.property?.name ?? 'Bien inconnu', items: [] }
     byProperty[pid].items.push(inc)
@@ -251,7 +260,7 @@ export default function TravauxPage() {
         <div>
           <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>Travaux & Incidents</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
-            {incidents.filter(i => i.status !== 'resolved').length} en cours · {incidents.length} au total
+            {selectedYear} · {yearIncidents.filter(i => i.status !== 'resolved').length} en cours · {yearIncidents.length} travaux
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -277,12 +286,33 @@ export default function TravauxPage() {
         </div>
       </div>
 
+      {/* ── Sélecteur d'année ── */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+        {availableYears.map(y => (
+          <button
+            key={y}
+            onClick={() => setSelectedYear(y)}
+            className={cn(
+              'px-4 h-9 rounded-xl text-sm font-semibold transition-all whitespace-nowrap border',
+              y === selectedYear
+                ? 'bg-[#1D4ED8] text-white border-[#1D4ED8] shadow-sm'
+                : 'bg-white text-slate-500 border-slate-200 hover:border-[#1D4ED8]/40 hover:text-[#1D4ED8]'
+            )}
+          >
+            {y}
+            {y === now.getFullYear() && (
+              <span className="ml-1.5 text-[10px] font-normal opacity-70">en cours</span>
+            )}
+          </button>
+        ))}
+      </div>
+
       {/* ── SECTION 3 — Résumé fiscal ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <GlassCard glow="green" className="p-4">
           <p className="text-sm font-medium text-[#0F172A] mb-1.5 flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-green-400 inline-block" />
-            Déductibles {now.getFullYear()}
+            Déductibles {selectedYear}
           </p>
           <p className="text-xl font-bold font-mono text-[var(--success)]">{formatCurrency(stats.deductibles)}</p>
           <p className="text-xs text-slate-600 mt-0.5">entretien + charges BIC payés</p>
@@ -290,7 +320,7 @@ export default function TravauxPage() {
         <GlassCard glow="cyan" className="p-4">
           <p className="text-sm font-medium text-[#0F172A] mb-1.5 flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-cyan-400 inline-block" />
-            Amortissables {now.getFullYear()}
+            Amortissables {selectedYear}
           </p>
           <p className="text-xl font-bold font-mono text-cyan-400">{formatCurrency(stats.amortissables)}</p>
           <p className="text-xs text-slate-600 mt-0.5">à intégrer plan amortissement</p>
@@ -316,12 +346,17 @@ export default function TravauxPage() {
       {/* ── SECTION 2 — Liste par bien ── */}
       {loading ? (
         <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-32 rounded-xl bg-white/[0.03] animate-pulse" />)}</div>
-      ) : incidents.length === 0 ? (
+      ) : yearIncidents.length === 0 ? (
         <GlassCard className="py-16 text-center">
           <Wrench className="h-12 w-12 text-slate-700 mx-auto mb-4" />
-          <p className="text-slate-400">Aucun ticket enregistré</p>
+          <p className="text-slate-400">Aucun travaux pour {selectedYear}</p>
+          {incidents.length > 0 && availableYears.some(y => y !== selectedYear) && (
+            <p className="mt-2 text-xs text-slate-500">
+              Sélectionnez une autre année ci-dessus pour consulter l'historique.
+            </p>
+          )}
           <button onClick={() => setShowAdd(true)} className="mt-4 text-sm text-blue-400 hover:text-blue-300">
-            + Créer le premier ticket
+            + Créer un ticket pour {selectedYear}
           </button>
         </GlassCard>
       ) : (
