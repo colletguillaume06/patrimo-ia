@@ -31,15 +31,15 @@ export default function LandingPage() {
             <Sparkles className="h-3.5 w-3.5" /> Accès anticipé — Gratuit pour les 50 premiers
           </div>
 
-          {/* Nouveau titre */}
+          {/* Titre générique */}
           <h1 className="font-display font-bold text-5xl md:text-[60px] leading-[1.1] tracking-tight text-[#0F172A] mb-5">
-            Vous gérez du LMNP, une SCI<br />
-            <span style={{ color: '#1D4ED8' }}>et de l'Airbnb ? Un seul endroit pour tout comprendre.</span>
+            Votre patrimoine immobilier,<br />
+            <span style={{ color: '#1D4ED8' }}>piloté au quotidien.</span>
           </h1>
 
-          {/* Nouveau sous-titre */}
+          {/* Sous-titre avec le détail multi-régime */}
           <p className="text-xl text-[#475569] max-w-2xl mx-auto mb-4 leading-relaxed">
-            Patrimo IA centralise vos loyers, vos baux et votre fiscalité multi-régime — et répond à vos questions en 30 secondes, sans rendez-vous ni facturation à l'heure.
+            LMNP, SCI, Airbnb, commerce — Patrimo IA centralise vos loyers, vos baux et votre fiscalité multi-régime, et répond à vos questions en 30 secondes, sans rendez-vous ni facturation à l'heure.
           </p>
 
           {/* Micro-preuve sociale — inchangée */}
