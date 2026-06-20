@@ -31,23 +31,23 @@ export default function LandingPage() {
             <Sparkles className="h-3.5 w-3.5" /> Accès anticipé — Gratuit pour les 50 premiers
           </div>
 
-          {/* Titre principal — plus concret et orienté bénéfice */}
+          {/* Nouveau titre */}
           <h1 className="font-display font-bold text-5xl md:text-[60px] leading-[1.1] tracking-tight text-[#0F172A] mb-5">
-            Fini les tableurs Excel.<br />
-            <span style={{ color: '#1D4ED8' }}>Gérez vos biens en 10 min/mois.</span>
+            Vous gérez du LMNP, une SCI<br />
+            <span style={{ color: '#1D4ED8' }}>et de l'Airbnb ? Un seul endroit pour tout comprendre.</span>
           </h1>
 
-          {/* Sous-titre orienté problème résolu */}
+          {/* Nouveau sous-titre */}
           <p className="text-xl text-[#475569] max-w-2xl mx-auto mb-4 leading-relaxed">
-            Patrimo IA centralise loyers, baux et fiscalité LMNP / SCI / foncier — et répond à vos questions en 30 secondes.
+            Patrimo IA centralise vos loyers, vos baux et votre fiscalité multi-régime — et répond à vos questions en 30 secondes, sans rendez-vous ni facturation à l'heure.
           </p>
 
-          {/* Micro-preuve sociale */}
+          {/* Micro-preuve sociale — inchangée */}
           <p className="text-sm text-[#64748B] mb-8">
             Propriétaires de 3 à 15 biens · LMNP, SCI, Foncier nu, Airbnb, Commerce
           </p>
 
-          {/* CTAs */}
+          {/* CTAs — inchangés */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/register" className="flex items-center gap-2 px-8 py-4 rounded-2xl text-white text-base font-semibold hover:opacity-90 transition-all" style={{ background: '#1D4ED8', boxShadow: '0 8px 24px rgba(29,78,216,0.3)' }}>
               Essayer gratuitement — sans carte <ArrowRight className="h-5 w-5" />
@@ -57,7 +57,7 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          {/* Réassurance immédiate sous le CTA */}
+          {/* Réassurance — inchangée */}
           <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
             {['✓ Sans carte bancaire', '✓ RGPD · données hébergées en France', '✓ Annulez à tout moment'].map(t => (
               <span key={t} className="text-xs text-[#64748B]">{t}</span>
@@ -66,15 +66,84 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Section comparative — NOUVELLE */}
+      <section className="py-20 border-t border-black/[0.06]" style={{ background: '#F8FAFC' }}>
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="font-display font-bold text-3xl md:text-4xl text-[#0F172A] mb-4 leading-tight">
+              Ni un simple carnet de loyers.<br />Ni un cabinet comptable à plusieurs centaines d'euros par an.
+            </h2>
+            <p className="text-[#475569] max-w-2xl mx-auto text-lg">
+              Quand votre patrimoine devient multi-régime (LMNP + SCI + Airbnb), les outils simples ne suivent plus — et un cabinet comptable vous fait perdre la main sur vos propres chiffres.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+
+            {/* Carte 1 — outils bas coût */}
+            <div className="flex flex-col p-6 rounded-2xl border bg-white" style={{ border: '1px solid rgba(0,0,0,0.08)' }}>
+              <div className="flex-1">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#94A3B8] mb-3">Logiciels simples / low-cost</p>
+                <h3 className="font-display font-bold text-lg text-[#0F172A] mb-3">Les outils tout-en-un à bas coût</h3>
+                <p className="text-sm text-[#475569] leading-relaxed">
+                  Suffisants pour 1 à 2 biens en location nue classique. Dès que vous mélangez LMNP, SCI et Airbnb, vous vous retrouvez à tout recalculer vous-même à côté.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-black/[0.06]">
+                <p className="text-xs text-[#94A3B8] leading-relaxed">Pas de copilote fiscal, pas de vision consolidée multi-régime.</p>
+              </div>
+            </div>
+
+            {/* Carte 2 — Patrimo IA (mise en avant) */}
+            <div className="flex flex-col p-7 rounded-2xl relative -mt-2 -mb-2 shadow-xl" style={{ border: '2px solid #1D4ED8', background: '#EFF6FF', boxShadow: '0 12px 40px rgba(29,78,216,0.18)' }}>
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-xs font-bold text-white" style={{ background: '#1D4ED8' }}>
+                ✦ Patrimo IA
+              </div>
+              <div className="flex-1 pt-2">
+                <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: '#1D4ED8' }}>La voie du milieu</p>
+                <h3 className="font-display font-bold text-xl text-[#0F172A] mb-3">Patrimo IA</h3>
+                <p className="text-sm text-[#1E3A5F] leading-relaxed">
+                  Toute la complexité multi-régime gérée automatiquement, avec un copilote IA qui répond à vos questions fiscales en 30 secondes. Vous gardez la main sur vos chiffres, sans payer des honoraires d'expert-comptable à l'année.
+                </p>
+              </div>
+              <div className="mt-6 pt-4" style={{ borderTop: '1px solid rgba(29,78,216,0.2)' }}>
+                <p className="text-sm font-semibold" style={{ color: '#1D4ED8' }}>29€/mois, autonomie complète, fiscalité multi-régime native.</p>
+              </div>
+            </div>
+
+            {/* Carte 3 — cabinets comptables */}
+            <div className="flex flex-col p-6 rounded-2xl border bg-white" style={{ border: '1px solid rgba(0,0,0,0.08)' }}>
+              <div className="flex-1">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#94A3B8] mb-3">Expertise comptable</p>
+                <h3 className="font-display font-bold text-lg text-[#0F172A] mb-3">Les cabinets d'expertise comptable</h3>
+                <p className="text-sm text-[#475569] leading-relaxed">
+                  Sérieux et rassurants, mais vous déléguez tout — et vous payez pour chaque régime séparément (LMNP, puis SCI en plus). Vous ne voyez vos chiffres qu'une fois par an, au moment de la déclaration.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-black/[0.06]">
+                <p className="text-xs text-[#94A3B8] leading-relaxed">Environ 600€/an et par bien en moyenne pour un accompagnement comptable LMNP en ligne — source : amarris-immo.fr.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* Features */}
       <section id="features" className="py-20">
         <div className="max-w-5xl mx-auto px-6">
-            <div className="text-center mb-14">
+          <div className="text-center mb-14">
             <h2 className="font-display font-bold text-4xl text-[#0F172A] mb-4">Un accompagnement complet</h2>
             <p className="text-[#475569] max-w-2xl mx-auto text-lg">De la création du bail à la déclaration d'impôts — Patrimo IA vous accompagne à chaque étape de votre gestion immobilière.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
+              {
+                icon: Bot,
+                title: 'Le copilote qui connaît VOTRE patrimoine',
+                desc: 'Posez vos questions en langage naturel — révision IRL, déficit foncier, amortissements LMNP — et obtenez une réponse en 30 secondes, basée sur vos vrais biens et vos vrais chiffres. Pas un forum, pas une FAQ générique.',
+                color: '#0891B2', bg: '#E0F7FF'
+              },
               {
                 icon: FileText,
                 title: 'Création & gestion des baux',
@@ -83,8 +152,8 @@ export default function LandingPage() {
               },
               {
                 icon: Building2,
-                title: 'Visibilité complète sur vos biens',
-                desc: 'Tableau de bord par bien : rendement, cashflow, vacance, travaux, diagnostics, financement — tout au même endroit, en temps réel.',
+                title: 'Visibilité complète sur vos biens, tous régimes confondus',
+                desc: 'Tableau de bord par bien : rendement, cashflow, vacance, travaux, diagnostics, financement — que ce soit un LMNP, une part de SCI ou un Airbnb, tout au même endroit, en temps réel.',
                 color: '#0C4A6E', bg: '#E0F2FE'
               },
               {
@@ -95,20 +164,14 @@ export default function LandingPage() {
               },
               {
                 icon: BarChart3,
-                title: 'Préparation aux déclarations',
-                desc: 'Vos données organisées pour la 2044, 2042-C-PRO et 2072. Importez votre déclaration N-1 — l\'IA analyse et prépare votre dossier fiscal.',
+                title: 'Préparation aux déclarations, sans tout déléguer',
+                desc: 'Vos données organisées pour la 2044, 2042-C-PRO et 2072. Importez votre déclaration N-1 — l\'IA analyse et prépare votre dossier, que vous gardiez la main ou que vous transmettiez ensuite à votre comptable.',
                 color: '#7C3AED', bg: '#F5F3FF'
-              },
-              {
-                icon: Bot,
-                title: 'Conseiller IA disponible 24h/24',
-                desc: 'Posez vos questions en langage naturel : révision IRL, régime fiscal, déficit foncier, amortissements LMNP — réponse en 30 secondes.',
-                color: '#0891B2', bg: '#E0F7FF'
               },
               {
                 icon: Shield,
                 title: 'Vos données restent les vôtres',
-                desc: 'Hébergement en Europe, chiffrement bout-en-bout, conforme RGPD. Exportez tout à tout moment pour votre expert-comptable.',
+                desc: 'Hébergement en Europe, chiffrement bout-en-bout, conforme RGPD. Exportez tout à tout moment — y compris pour votre expert-comptable si vous en avez un.',
                 color: '#991B1B', bg: '#FEF2F2'
               },
             ].map(({ icon: Icon, title, desc, color, bg }) => (
@@ -146,6 +209,12 @@ export default function LandingPage() {
               ✓ 2 mois offerts à l'inscription — accès complet immédiat
             </div>
           </div>
+
+          {/* Phrase d'ancrage comparatif — NOUVELLE */}
+          <p className="text-center text-sm text-[#64748B] max-w-2xl mx-auto mb-8 leading-relaxed">
+            À titre de comparaison : un suivi LMNP + SCI chez un cabinet comptable démarre souvent au-delà de 600€/an par bien, pour une déclaration annuelle — sans visibilité au quotidien sur vos chiffres.
+          </p>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
               { plan: 'Pro', price: 29, priceAnnual: 24, desc: 'Pour la plupart des propriétaires', features: ['Jusqu\'à 10 biens','Copilot IA illimité','Import documents IA','Fiscalité LMNP / SCI / Nu','Relances & quittances auto','GED documents'], cta: 'Démarrer l\'essai gratuit', h: true, ctaNote: '2 mois gratuits · puis 29€/mois' },
