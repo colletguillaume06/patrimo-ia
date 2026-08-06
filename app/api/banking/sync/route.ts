@@ -38,17 +38,22 @@ export async function POST(req: NextRequest) {
 
     const { data: payments } = await (service as any)
       .from('payments')
-      .select('id, amount, due_date, lease:leases(tenant_name)')
+      .select('id, amount, due_date, lease:leases(tenant_name, property_id)')
       .in('status', ['pending', 'late'])
       .gte('due_date', dateFrom)
 
-    const loyers: LouerAttendu[] = (payments ?? []).map((p: any) => ({
-      id: p.id,
-      amount: p.amount,
-      due_date: p.due_date,
-      tenant_name: p.lease?.tenant_name ?? '',
-      lease_id: p.id,
-    }))
+    // Ne garder que les paiements des biens de l'utilisateur courant (le client
+    // service bypass RLS : sans ce filtre, on matcherait/marquerait comme payés
+    // des loyers d'autres comptes).
+    const loyers: LouerAttendu[] = (payments ?? [])
+      .filter((p: any) => propIds.includes(p.lease?.property_id))
+      .map((p: any) => ({
+        id: p.id,
+        amount: p.amount,
+        due_date: p.due_date,
+        tenant_name: p.lease?.tenant_name ?? '',
+        lease_id: p.id,
+      }))
 
     let matched = 0
     let created = 0
