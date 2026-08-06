@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
 
   if (!payment) return NextResponse.json({ error: 'Paiement introuvable' }, { status: 404 })
   if (payment.lease?.property?.user_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (payment.status !== 'paid') return NextResponse.json({ error: 'Ce paiement n\'est pas marqué comme payé' }, { status: 400 })
   if (!payment.lease?.tenant_email) return NextResponse.json({ error: 'Email locataire manquant' }, { status: 400 })
 
   const { data: profile } = await service.from('profiles').select('full_name').eq('id', user.id).single()
