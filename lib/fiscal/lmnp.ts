@@ -8,12 +8,15 @@ export function calculateLmnpSimulation(params: {
 }): LmnpSimulation {
   const { recettes, charges_reelles, amortissements, taux_marginal } = params
 
+  // LMNP (BIC non professionnel) : imposé à l'IR (taux_marginal) + prélèvements sociaux (17,2%)
+  const taux_global = taux_marginal + 0.172
+
   const abattement = 0.50
   const micro_bic_base = recettes * (1 - abattement)
-  const micro_bic_impot = micro_bic_base * taux_marginal
+  const micro_bic_impot = micro_bic_base * taux_global
 
   const resultat_bic = recettes - charges_reelles - amortissements
-  const impot_estime = Math.max(0, resultat_bic) * taux_marginal
+  const impot_estime = Math.max(0, resultat_bic) * taux_global
 
   return {
     recettes,
