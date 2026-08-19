@@ -42,9 +42,9 @@ function abattementIR(annees: number): number {
 
 function abattementPS(annees: number): number {
   if (annees < 6) return 0
-  if (annees <= 11) return (annees - 5) * 1.65
-  if (annees === 12) return (6 * 1.65) + 1.6
-  if (annees <= 30) return (6 * 1.65) + 1.6 + ((annees - 12) * 9)
+  if (annees <= 21) return (annees - 5) * 1.65
+  if (annees === 22) return (16 * 1.65) + 1.6
+  if (annees <= 30) return (16 * 1.65) + 1.6 + ((annees - 22) * 9)
   return 100
 }
 
@@ -55,14 +55,14 @@ export function calculatePlusValue(params: PlusValueParams): PlusValueResult {
     amortissements_pris = 0,
   } = params
 
-  const prix_revient = prix_achat + frais_acquisition + travaux_non_deductibles
-  let pv_brute = prix_vente - prix_revient
-
-  // LMNP : reprise des amortissements (art. 151 septies B du CGI ne s'applique pas pour non-pros)
-  // Pour LMNP non professionnel : pas de reprise amortissements sur la PV
-  // Mais les amortissements réduisent le prix de revient comptable
+  // LMNP : depuis le 15/02/2025 (art. 84 LF 2025, nouvel art. 150 VB III du CGI), le prix
+  // d'acquisition pris en compte pour le calcul de la plus-value est diminué du montant des
+  // amortissements déduits — y compris ceux pratiqués avant 2025 (RM du 24/03/2026). La PV
+  // imposable est donc majorée d'autant. Cela aligne le LMNP non pro sur le régime du LMP.
   const reprise_amortissements = type_bien === 'lmnp' ? amortissements_pris : 0
-  // En LMNP non pro : la PV est calculée sans tenir compte des amortissements (régime des particuliers)
+
+  const prix_revient = prix_achat + frais_acquisition + travaux_non_deductibles - reprise_amortissements
+  let pv_brute = prix_vente - prix_revient
 
   const annees = differenceInYears(date_vente, date_acquisition)
 
@@ -95,7 +95,7 @@ export function calculatePlusValue(params: PlusValueParams): PlusValueResult {
     net_vendeur: Math.round(prix_vente - impot_total),
     reprise_amortissements,
     note_lmnp: type_bien === 'lmnp' && amortissements_pris > 0
-      ? `En LMNP non professionnel, la plus-value est calculée comme pour un particulier (régime des PV immobilières). Les amortissements (${amortissements_pris.toLocaleString('fr-FR')}€) n'augmentent pas la PV imposable.`
+      ? `Depuis le 15/02/2025 (LF 2025), les amortissements déduits en LMNP (${amortissements_pris.toLocaleString('fr-FR')}€) réduisent le prix d'acquisition retenu et augmentent donc la plus-value imposable, y compris ceux pratiqués avant 2025.`
       : undefined,
   }
 }
@@ -105,7 +105,7 @@ export const PALIERS_ABATTEMENT = [
   { annee: 6, ir: 6, ps: 1.65, label: '6 ans' },
   { annee: 10, ir: 30, ps: 8.25, label: '10 ans' },
   { annee: 15, ir: 60, ps: 16.5, label: '15 ans' },
-  { annee: 20, ir: 90, ps: 27, label: '20 ans' },
-  { annee: 22, ir: 100, ps: 41.8, label: '22 ans (exo IR)' },
+  { annee: 20, ir: 90, ps: 24.75, label: '20 ans' },
+  { annee: 22, ir: 100, ps: 28, label: '22 ans (exo IR)' },
   { annee: 30, ir: 100, ps: 100, label: '30 ans (exo totale)' },
 ]
