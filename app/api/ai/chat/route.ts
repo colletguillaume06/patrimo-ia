@@ -34,16 +34,23 @@ export async function POST(req: NextRequest) {
   const service = await createServiceClient()
 
   // Contexte portefeuille
-  const [{ data: properties }, { count: lateCount }] = await Promise.all([
+  const [{ data: properties }, { data: latePayments }] = await Promise.all([
     service
       .from('properties')
       .select('*, leases(monthly_rent, is_active)')
       .eq('user_id', user.id),
     service
       .from('payments')
-      .select('id', { count: 'exact', head: true })
+      .select('id, lease:leases(property_id)')
       .eq('status', 'late'),
   ])
+
+  const propIds = (properties ?? []).map((p: any) => p.id)
+  // Le client `service` bypass RLS : sans ce filtre, "loyers_en_retard" compterait
+  // les loyers en retard de tous les comptes de l'application, pas seulement les
+  // siens — ce chiffre est ensuite injecté tel quel dans le prompt système et
+  // présenté à l'utilisateur comme une donnée de son propre portefeuille.
+  const lateCount = (latePayments ?? []).filter((p: any) => propIds.includes(p.lease?.property_id)).length
 
   const totalPatrimoine = (properties ?? []).reduce((s, p) => s + (p.purchase_price ?? 0), 0)
   const monthlyCashflow = (properties ?? []).reduce((s, p) => {
