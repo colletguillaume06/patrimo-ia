@@ -132,12 +132,15 @@ export async function POST(req: NextRequest) {
         const categorie = String(get(sheetMapping.categorie)) || 'charges'
 
         const { error } = await supabase.from('expenses').insert({
+          // Colonne réelle : `fiscal_deductible` (001_schema.sql). `deductible`
+          // n'existe pas sur la table `expenses` — Postgrest rejetait l'insertion
+          // et chaque ligne "dépenses" du mapping échouait.
           property_id: propId,
           amount: montant,
           date: `${annee}-06-15`,
           category: categorie,
           description,
-          deductible: true,
+          fiscal_deductible: true,
         })
         if (!error) results.depenses++
         else results.errors.push(`Dépense "${description}": ${error.message}`)
