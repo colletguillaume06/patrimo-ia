@@ -209,7 +209,11 @@ export async function POST(req: NextRequest) {
       const deductible = ['charges', 'travaux_deductibles', 'assurance', 'gestion', 'taxe_fonciere', 'comptabilite'].includes(cat)
 
       const { error } = await supabase.from('expenses').insert({
-        property_id: propId, amount: montant, date, category: cat, description, deductible,
+        // La colonne s'appelle `fiscal_deductible` (voir 001_schema.sql) et non
+        // `deductible` : avec le mauvais nom, Postgrest rejette l'insertion et
+        // toutes les lignes de l'onglet "Dépenses" échouaient silencieusement
+        // (visible seulement dans results.errors, jamais dans le compteur).
+        property_id: propId, amount: montant, date, category: cat, description, fiscal_deductible: deductible,
       })
       if (!error) results.depenses++
       else results.errors.push(`Dépense "${description}": ${error.message}`)
