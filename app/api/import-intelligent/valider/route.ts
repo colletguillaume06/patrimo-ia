@@ -135,15 +135,21 @@ export async function POST(req: NextRequest) {
           if (bien.depenses?.length > 0) {
             for (const dep of bien.depenses) {
               if (!parseNum(dep.montant)) continue
-              await supabase.from('expenses').insert({
+              // Colonne réelle : `fiscal_deductible` (001_schema.sql), pas `deductible`.
+              // Avec le mauvais nom, Postgrest rejetait l'insertion et cette ligne
+              // (comme toutes les dépenses importées via ce document) était perdue
+              // silencieusement — le compteur `results.depenses` était incrémenté
+              // sans jamais vérifier `error`, donnant un import "réussi" à tort.
+              const { error: depError } = await supabase.from('expenses').insert({
                 property_id: propId,
                 amount: parseNum(dep.montant),
                 date: `${Number(a.annee) || new Date().getFullYear()}-06-15`,
                 category: dep.categorie || 'charges',
                 description: dep.description || dep.categorie || 'Dépense importée',
-                deductible: true,
+                fiscal_deductible: true,
               })
-              results.depenses++
+              if (!depError) results.depenses++
+              else results.errors.push(`Dépense "${dep.description || dep.categorie}": ${depError.message}`)
             }
           }
         }
@@ -220,9 +226,10 @@ export async function POST(req: NextRequest) {
           await supabase.from('properties').update({ property_tax: montant }).eq('id', propId)
           const annee = Number(a.taxe?.annee) || new Date().getFullYear()
           const { error } = await supabase.from('expenses').insert({
+            // Colonne réelle : `fiscal_deductible` (001_schema.sql), pas `deductible`.
             property_id: propId, amount: montant,
             date: `${annee}-10-15`, category: 'taxe_fonciere',
-            description: `Taxe foncière ${annee}`, deductible: true,
+            description: `Taxe foncière ${annee}`, fiscal_deductible: true,
           })
           if (!error) results.depenses++
         }
@@ -238,11 +245,12 @@ export async function POST(req: NextRequest) {
         if (prime > 0) {
           await supabase.from('properties').update({ insurance_annual: prime }).eq('id', propId)
           const { error } = await supabase.from('expenses').insert({
+            // Colonne réelle : `fiscal_deductible` (001_schema.sql), pas `deductible`.
             property_id: propId, amount: prime,
             date: parseDate(a.assurance?.date_debut) || new Date().toISOString().split('T')[0],
             category: 'assurance',
             description: `Assurance ${a.assurance?.compagnie || ''} ${a.assurance?.type || ''}`.trim(),
-            deductible: true,
+            fiscal_deductible: true,
           })
           if (!error) results.depenses++
         }
@@ -362,15 +370,18 @@ export async function POST(req: NextRequest) {
             for (const dep of bien.depenses) {
               if (!parseNum(dep.montant)) continue
               const annee = Number(a.annee) || new Date().getFullYear()
-              await supabase.from('expenses').insert({
+              // Colonne réelle : `fiscal_deductible` (001_schema.sql), pas `deductible`.
+              // Voir la même correction plus haut dans ce fichier.
+              const { error: depError } = await supabase.from('expenses').insert({
                 property_id: propId,
                 amount: parseNum(dep.montant),
                 date: parseDate(dep.date) || `${annee}-06-15`,
                 category: dep.categorie || 'charges',
                 description: dep.description || dep.categorie || 'Dépense importée',
-                deductible: true,
+                fiscal_deductible: true,
               })
-              results.depenses++
+              if (!depError) results.depenses++
+              else results.errors.push(`Dépense "${dep.description || dep.categorie}": ${depError.message}`)
             }
           }
         }
@@ -452,15 +463,17 @@ export async function POST(req: NextRequest) {
               if (!propId) continue
 
               if (parseNum(bien.charges) > 0) {
-                await supabase.from('expenses').insert({
+                // Colonne réelle : `fiscal_deductible` (001_schema.sql), pas `deductible`.
+                const { error: depError } = await supabase.from('expenses').insert({
                   property_id: propId,
                   amount: parseNum(bien.charges),
                   date: `${annee}-12-31`,
                   category: 'charges',
                   description: `Charges déductibles ${annee} (déclaration 2044)`,
-                  deductible: true,
+                  fiscal_deductible: true,
                 })
-                results.depenses++
+                if (!depError) results.depenses++
+                else results.errors.push(`Charges "${nomBien}" ${annee}: ${depError.message}`)
               }
             }
           }
