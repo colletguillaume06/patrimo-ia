@@ -60,12 +60,16 @@ export async function POST(req: NextRequest) {
   }, 0)
 
   // Détail bien si property_id fourni (inclut les infos spécifiques au type)
+  // Le client `service` bypass RLS : sans le filtre user_id, un property_id
+  // arbitraire (bien d'un autre compte) renverrait ses baux, locataires et
+  // plan d'amortissement, injectés tels quels dans le prompt système du Copilot.
   let propertyDetail = null
   if (property_id) {
     const { data } = await service
       .from('properties')
       .select('*, leases(tenant_name, monthly_rent, is_active, start_date, end_date), depreciation_plans(*)')
       .eq('id', property_id)
+      .eq('user_id', user.id)
       .single()
     propertyDetail = data
   }
