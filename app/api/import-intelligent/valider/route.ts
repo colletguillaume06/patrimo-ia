@@ -279,18 +279,31 @@ export async function POST(req: NextRequest) {
         const montant = parseNum(a.travaux?.montant_ttc || a.travaux?.montant_ht)
         if (!montant) continue
 
-        const validCats = ['deductible', 'amortissable', 'non_deductible']
+        // Mêmes noms de colonnes/valeurs invalides que dans historique/import/route.ts
+        // (ONGLET TRAVAUX) : `incidents` n'a pas de colonne `actual_cost`/`company`/
+        // `fiscal_category`, et son enum `status` n'accepte pas 'termine' — voir la
+        // table de correspondance détaillée là-bas. Une facture de travaux scannée est
+        // par définition déjà réalisée : statut "resolved" et montant considéré payé.
         const catFiscale = a.travaux?.categorie_fiscale || 'deductible'
+        const CAT_MAP: Record<string, string> = {
+          deductible: 'travaux_deductibles',
+          amortissable: 'travaux_amortissables',
+          non_deductible: 'construction_agrandissement',
+        }
+        const categorieFiscale = CAT_MAP[catFiscale] ?? 'travaux_deductibles'
 
         const { error } = await supabase.from('incidents').insert({
           property_id: propId,
           title: a.travaux?.titre || 'Travaux importés',
           description: a.travaux?.description || '',
           date_travaux: parseDate(a.travaux?.date) || new Date().toISOString().split('T')[0],
-          actual_cost: montant,
-          company: a.travaux?.entreprise || null,
-          status: 'termine',
-          fiscal_category: validCats.includes(catFiscale) ? catFiscale : 'deductible',
+          cout_paye: montant,
+          cout_estime: montant,
+          cost: montant,
+          est_paye: true,
+          nom_entreprise: a.travaux?.entreprise || null,
+          status: 'resolved',
+          categorie_fiscale: categorieFiscale,
         })
         if (!error) results.travaux++
         else results.errors.push(`Travaux: ${error.message}`)
