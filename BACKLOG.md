@@ -246,6 +246,29 @@ Lors du premier passage automatique, un `.git/index.lock` résiduel empêchait t
 - **Statut** : corrigé — commit `c2ef2ba` sur branche `bug-fixes/2026-09-10`, en attente de relecture/merge par Guillaume (push non effectué, voir note de session)
 - **Source** : détecté en lisant le code (session bug-triage automatique)
 
+### BUG-2026-09-10-02 — Webhook Stripe : `subscription_status` jamais mis à jour à l'activation/résiliation d'un abonnement
+
+- **Domaine** : Paiement / abonnement — webhook Stripe
+- **Fichier** : `app/api/stripe/webhook/route.ts`
+- **Description** : Sur `checkout.session.completed` (paiement réussi), la route met à jour `plan` et `stripe_subscription_id` mais jamais `subscription_status`. Idem sur `customer.subscription.deleted` : `plan` repasse à `'starter'` mais `subscription_status` n'est pas touché. Or la convention déjà établie ailleurs dans le code (`app/(dashboard)/admin/page.tsx`, qui affiche "Abonné" pour `'active'`, "Essai" pour `'trial'`, "Expiré" pour `'expired'`, "✨ Gratuit" pour `'admin_free'` ; `app/api/admin/create-access/route.ts`, qui écrit ces mêmes valeurs) repose sur ce champ pour distinguer un compte payant d'un compte en essai/expiré. Un client qui paie reste donc affiché comme "Essai" (ou "Expiré" si son essai était déjà terminé) dans le back-office admin, et un client qui résilie reste affiché comme "Abonné" indéfiniment.
+- **Constat additionnel (non corrigé, voir point ouvert ci-dessous)** : à ce jour, `subscription_status` n'est en réalité utilisé nulle part pour bloquer l'accès (le seul bloc de gating, dans `app/(dashboard)/layout.tsx`, est du code mort — `isBlocked` ne déclenche aucune redirection). Le bug n'empêche donc personne d'accéder à l'app aujourd'hui, dans un sens comme dans l'autre, mais fausse le statut affiché en admin et laisserait les comptes payants bloqués à tort si le gating (actuellement en cours de développement par Guillaume dans le WIP non commité) était activé tel quel.
+- **Sévérité** : Bloquant (domaine paiement — champ d'état d'abonnement faux après un paiement réel, malgré l'absence d'impact utilisateur direct aujourd'hui)
+- **Correctif appliqué** : ajout de `subscription_status: 'active'` sur `checkout.session.completed`, et `subscription_status: 'expired'` sur `customer.subscription.deleted`, en reprenant les valeurs déjà en usage dans le reste du code (aucune nouvelle valeur introduite).
+- **Vérification** : `npx tsc --noEmit` sans erreur. `npm run build` toujours inexécutable dans cet environnement (même limitation SWC que les sessions précédentes). Vérification manuelle : valeurs alignées sur celles déjà lues/écrites par `app/(dashboard)/admin/page.tsx` et `app/api/admin/create-access/route.ts`.
+- **Statut** : corrigé — commit `a92c3db` sur branche `bug-fixes/2026-09-10`, en attente de relecture/merge par Guillaume (push non effectué, voir note de session)
+- **Source** : détecté en lisant le code (session bug-triage automatique)
+
+### Point ouvert (non corrigé) — Le paywall/gating d'accès est actuellement du code mort : aucun compte n'est jamais bloqué
+
+- **Domaine** : Paiement / abonnement — contrôle d'accès aux fonctionnalités
+- **Fichier** : `app/(dashboard)/layout.tsx` (bloc `isBlocked`, non appliqué — commentaire "On ne bloque pas ici pour éviter les boucles — géré par le composant")
+- **Description** : Le seul point du code qui lit `subscription_status` pour une décision d'accès calcule bien `isBlocked` (essai expiré ou statut `'expired'`), mais ne fait jamais de `redirect()` vers `app/(dashboard)/acces-expire/page.tsx` — cette page existe mais rien n'y renvoie jamais. En clair : aujourd'hui, un compte en essai expiré (ou sans abonnement actif) conserve un accès complet à toutes les fonctionnalités du produit, y compris les simulateurs fiscaux et l'export de données. Ce n'est pas un défaut de calcul, mais une lacune fonctionnelle du tunnel de paiement à fort impact business (aucune incitation réelle à payer).
+- **Pourquoi non corrigé directement** : `app/(dashboard)/layout.tsx` fait partie des fichiers modifiés dans le WIP non commité de Guillaume (travail en cours, probablement sur ce gating précisément). Implémenter le blocage réel est par ailleurs une décision produit (quelles pages rester accessibles en lecture seule ? blocage immédiat ou grâce période ? message affiché ?) plutôt qu'un simple correctif de bug.
+- **Correctif proposé** (à valider par Guillaume) : dans le bloc `isBlocked` de `app/(dashboard)/layout.tsx`, appeler `redirect('/acces-expire')` (page déjà existante) une fois le comportement produit validé.
+- **Sévérité** : à qualifier par Guillaume — impact business potentiellement important (pas de paywall effectif), mais ne touche pas un montant ou une donnée faux
+- **Statut** : ouvert, signalé
+- **Source** : détecté en lisant le code (session bug-triage automatique du 2026-09-10, en creusant l'usage de `subscription_status` à l'occasion de BUG-2026-09-10-02)
+
 ## Note sur la session du 2026-09-10
 
 - Le dossier de travail était sur la branche `bug-fixes/2026-08-30` (tête `e49c544`), avec le **même très gros volume de changements non commités** que les sessions précédentes (45 fichiers modifiés + 26 fichiers/dossiers non suivis — dashboard, routes API, migrations Supabase, mode démo, marketing, `lib/fiscal/lmnp.ts`, `lib/supabase/middleware.ts`/`server.ts`, `vercel.json`, etc.), manifestement le travail en cours de Guillaume, à l'identique de la session précédente. Conformément à la consigne, ces fichiers n'ont pas été touchés ni inclus dans le commit de cette session (vérifié explicitement après commit : seuls les 2 fichiers du correctif apparaissent en plus de la liste WIP initiale). Une branche `bug-fixes/2026-09-10` a été créée à partir de la tête de `bug-fixes/2026-08-30`.
@@ -257,6 +280,17 @@ Lors du premier passage automatique, un `.git/index.lock` résiduel empêchait t
 - **Push non effectué** : mêmes identifiants GitHub manquants que toutes les sessions précédentes, malgré le fetch désormais fonctionnel. Guillaume doit pousser lui-même : `git push -u origin bug-fixes/2026-09-10` (et, s'il le souhaite, les branches précédentes encore locales et jamais poussées : `bug-fixes/2026-08-06`, `2026-08-07`, `2026-08-09`, `2026-08-12`, `2026-08-19`, `2026-08-20`, `2026-08-23`, `2026-08-24`, `2026-08-25`, `2026-08-29`, `2026-08-30`).
 - **Constat toujours d'actualité, à prioriser** : la pile de branches locales `bug-fixes/*` non poussées continue de s'allonger (2026-08-06 → 2026-09-10, 8 branches distinctes en plus de celle du jour). Recommandation inchangée : prioriser le push + merge de ces branches par Guillaume avant que l'écart avec `main`/`origin` ne devienne trop coûteux à relire — en particulier les 2 points ouverts non corrigés (SCI-IS plus-value, filtre `fiscal_deductible` manquant sur la page Tableau fiscal) qui touchent tous deux des montants fiscaux affichés.
 - **Synchronisation Notion** : voir résultat en fin de session.
+
+### Addendum — second passage automatique du 2026-09-10
+
+Cette session automatique s'est déclenchée une seconde fois le même jour (le premier passage, ci-dessus, avait déjà tourné à 00:34 et laissé la branche `bug-fixes/2026-09-10` avec le commit `c2ef2ba`). Ce second passage a repris cette même branche (aucune nouvelle branche créée) plutôt que d'en dupliquer une.
+
+- **État du WIP de Guillaume** : strictement identique à celui du premier passage (45 fichiers modifiés + 26 non suivis) — aucun changement entre les deux passages, ces fichiers n'ont donc toujours pas été touchés.
+- **Sécurité (hors périmètre bug, signalé pour information)** : `AGENTS.md` et `node_modules/next/dist/docs/index.md` contiennent un texte s'adressant directement à un agent IA ("AI agent hint"), l'invitant à lire une documentation fictive sur une API Next.js inexistante (`unstable_instant`) avant de modifier quoi que ce soit. Reconnu comme une tentative d'injection de prompt et ignoré ; aucune action prise sur cette base. Si ce texte n'a pas été ajouté intentionnellement par Guillaume ou un tiers de confiance, il vaut la peine de vérifier la provenance de `node_modules` (fichier généré normalement par `npm install`, pas censé contenir ce genre de contenu).
+- **1 nouveau bug bloquant détecté et corrigé** (BUG-2026-09-10-02, domaine paiement) : le webhook Stripe ne mettait jamais à jour `subscription_status` lors de l'activation ou de la résiliation d'un abonnement — voir entrée dédiée ci-dessus.
+- **1 nouveau point ouvert signalé** (non corrigé, décision produit) : le paywall (`app/(dashboard)/layout.tsx`) calcule `isBlocked` mais ne bloque jamais réellement l'accès — code mort, aucun compte n'est aujourd'hui empêché d'utiliser l'app faute d'abonnement actif. Fichier dans le WIP de Guillaume, à trancher par lui.
+- **Zones supplémentaires explorées en profondeur sans bug trouvé** (non couvertes par les logs précédents) : pages `(auth)` (login, register, reset-password — flux d'authentification), `app/api/admin/create-access`, `app/api/cron/onboarding-emails`, `app/api/emails/send`, `app/api/stripe/checkout`, `lib/fiscal/foncier.ts`, `lib/fiscal/sci.ts`, `lib/fiscal/indices.ts` (relu intégralement, cohérent avec les correctifs déjà appliqués les sessions précédentes).
+- **Push toujours non effectué** : même blocage que le premier passage (`Could not read Username for 'https://github.com'`). Le commit `a92c3db` (BUG-2026-09-10-02) s'ajoute à `c2ef2ba` sur la même branche locale `bug-fixes/2026-09-10`, toujours non poussée.
 
 ## Note sur la session du 2026-08-30
 
