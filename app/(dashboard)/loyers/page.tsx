@@ -64,7 +64,7 @@ export default function LoyersPage() {
   const leasesDuMois = activeLeases.filter(l =>
     l.is_active ||
     paiementsMois.some(p => p.lease_id === l.id || p.lease?.id === l.id) ||
-    (!!l.end_date && (!l.start_date || l.start_date <= finMois) && l.end_date >= debutMois)
+    (!!l.end_date && (!l.start_date || l.start_date <= finMois) && l.end_date > debutMois)  // fin de bail le 1er du mois = départ ce jour-là, pas de loyer dû ce mois
   )
 
   const totalAttenduMois = leasesDuMois.reduce((s, l) => s + (l.monthly_rent ?? 0) + (l.charges ?? 0), 0)
