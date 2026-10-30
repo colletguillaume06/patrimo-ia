@@ -39,6 +39,8 @@ export interface Property {
   bail_type: string | null
   indice_revision: 'irl' | 'ilc' | 'ilat' | null
   numero_fiscal: string | null
+  sold_at?: string | null
+  sale_price?: number | null
   created_at: string
   updated_at: string
   leases?: Lease[]

@@ -36,6 +36,7 @@ export default function BiensPage() {
           .from('properties')
           .select('*, leases(*, payments(*))')
           .eq('user_id', user.id)
+          .order('sold_at', { ascending: false, nullsFirst: true })
           .order('created_at', { ascending: false }),
         supabase
           .from('airbnb_bookings')
@@ -143,6 +144,11 @@ export default function BiensPage() {
           {biens.map(bien => (
             <div key={bien.id} className="relative group">
               <BienCard bien={bien} />
+              {bien.sold_at && (
+                <span className="absolute top-3 left-3 z-10 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-1">
+                  Vendu le {new Date(bien.sold_at).toLocaleDateString('fr-FR')}
+                </span>
+              )}
               <button
                 onClick={() => handleDelete(bien.id, bien.name)}
                 disabled={deletingId === bien.id}

@@ -9,6 +9,8 @@ import Link from 'next/link'
 import { TabNav } from '@/components/ui/TabNav'
 import { ChevronLeft, Stethoscope, CreditCard, Building, Users, Wrench } from 'lucide-react'
 import { EditBienButton } from '@/components/biens/EditBienButton'
+import { VendreBienButton } from '@/components/biens/VendreBienButton'
+import { formatCurrency } from '@/lib/utils'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -82,8 +84,22 @@ export default async function BienDetailPage({ params }: Props) {
           style={{ color: 'var(--text-tertiary)' }}>
           <ChevronLeft className="h-4 w-4" /> Retour à mes biens
         </Link>
-        <EditBienButton propertyId={id} />
+        <div className="flex items-center gap-2">
+          {!property.sold_at && <VendreBienButton propertyId={id} bienName={property.name} />}
+          <EditBienButton propertyId={id} />
+        </div>
       </div>
+
+      {property.sold_at && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <strong>Bien vendu</strong> le {new Date(property.sold_at).toLocaleDateString('fr-FR')}
+          {property.sale_price ? ` pour ${formatCurrency(property.sale_price)}` : ''}.
+          Les baux ont été clos ; l&apos;historique est conservé.
+          {property.purchase_price && property.sale_price && (
+            <> Écart prix de vente / prix d&apos;achat : {formatCurrency(property.sale_price - property.purchase_price)} (avant frais et fiscalité — voir le simulateur de plus-value).</>
+          )}
+        </div>
+      )}
 
       <TabNav tabs={tabs} />
 
