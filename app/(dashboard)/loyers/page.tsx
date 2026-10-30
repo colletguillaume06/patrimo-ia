@@ -106,8 +106,9 @@ export default function LoyersPage() {
   }
 
   const handleMarkUnpaid = async (paymentId: string) => {
-    await supabase.from('payments').update({ status: 'pending', paid_date: null }).eq('id', paymentId)
-    toast.success('Marqué en attente')
+    const { error } = await supabase.from('payments').update({ status: 'pending', paid_date: null }).eq('id', paymentId)
+    if (error) { toast.error('Erreur : ' + error.message); return }
+    toast.success('Paiement annulé — remis en attente')
     load()
   }
 
@@ -222,14 +223,17 @@ export default function LoyersPage() {
                 <div className="flex items-center gap-1.5">
                   {statut === 'paid' ? (
                     <>
-                      <span className="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-lg"
-                        style={{ background: 'rgba(5,150,105,0.1)', color: '#059669' }}>
-                        <Check className="h-3 w-3" /> Reçu
-                      </span>
-                      <button onClick={() => handleMarkUnpaid(payMois.id)}
-                        className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-slate-100 transition-all"
-                        title="Annuler">
-                        <X className="h-3.5 w-3.5 text-slate-400" />
+                      <button
+                        onClick={() => {
+                          if (confirm(`Annuler le paiement reçu de ${l.tenant_name} ? Il repassera « en attente ».`)) handleMarkUnpaid(payMois.id)
+                        }}
+                        className="group flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-lg transition-all hover:opacity-80"
+                        style={{ background: 'rgba(5,150,105,0.1)', color: '#059669' }}
+                        title="Cliquer pour annuler (paiement non reçu)">
+                        <Check className="h-3 w-3 group-hover:hidden" />
+                        <X className="h-3 w-3 hidden group-hover:block" />
+                        <span className="group-hover:hidden">Reçu</span>
+                        <span className="hidden group-hover:inline">Annuler</span>
                       </button>
                     </>
                   ) : (
