@@ -15,6 +15,7 @@ import {
 import { toast } from 'sonner'
 import { useCopilot } from '@/hooks/useCopilot'
 import { cn } from '@/lib/utils'
+import { BackButton } from '@/components/ui/BackButton'
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
@@ -499,6 +500,7 @@ export default function DeclarationPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      <BackButton />
 
       {/* En-tête */}
       <div className="flex flex-wrap items-center justify-between gap-4">

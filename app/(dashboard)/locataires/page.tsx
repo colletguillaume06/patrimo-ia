@@ -6,6 +6,7 @@ import { GlassCard } from '@/components/ui/GlassCard'
 import { toast } from 'sonner'
 import { Users, Phone, Mail, ChevronRight, Plus, X, Shield, User, Sparkles, Loader2, Trash2, Link2 } from 'lucide-react'
 import Link from 'next/link'
+import { BackButton } from '@/components/ui/BackButton'
 
 const FORM_INIT = {
   full_name: '', email: '', phone: '', address_before: '',
@@ -126,6 +127,7 @@ export default function LocatairesPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>Locataires</h1>

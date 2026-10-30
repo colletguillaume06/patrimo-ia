@@ -7,6 +7,7 @@ import { formatCurrency } from '@/lib/utils'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
 import { Upload, Folder, FileText, X, Search, Download, Loader2, Eye } from 'lucide-react'
+import { BackButton } from '@/components/ui/BackButton'
 
 const CATEGORIES: Record<string, { label: string; icon: string }> = {
   bail_avenants: { label: 'Bail et avenants', icon: '📄' },
@@ -96,6 +97,7 @@ export default function DocumentsPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">GED — Gestion documentaire</h1>

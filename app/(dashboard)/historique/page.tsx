@@ -5,6 +5,7 @@ import { GlassCard } from '@/components/ui/GlassCard'
 import { toast } from 'sonner'
 import { Download, Upload, CheckCircle, FileText, Building2, Banknote, Receipt, Loader2, AlertCircle, ChevronRight, Sparkles, Wrench } from 'lucide-react'
 import Link from 'next/link'
+import { BackButton } from '@/components/ui/BackButton'
 
 export default function HistoriquePage() {
   const [file, setFile] = useState<File | null>(null)
@@ -38,6 +39,7 @@ export default function HistoriquePage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      <BackButton />
       <div>
         <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>
           Importer votre historique

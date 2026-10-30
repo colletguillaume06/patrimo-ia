@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { toast } from 'sonner'
 import { Copy, Gift, Users, Star, CheckCircle } from 'lucide-react'
+import { BackButton } from '@/components/ui/BackButton'
 
 export default function ParrainagePage() {
   const [data, setData] = useState<any>(null)
@@ -22,6 +23,7 @@ export default function ParrainagePage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
+      <BackButton />
       <div>
         <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>
           Programme parrainage

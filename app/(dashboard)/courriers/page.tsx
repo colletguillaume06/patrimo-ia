@@ -6,6 +6,7 @@ import { GlassCard } from '@/components/ui/GlassCard'
 import { COURRIERS_TEMPLATES, type CourierData } from '@/lib/courriers/templates'
 import { Copy, CheckCircle, X, FileText, Send } from 'lucide-react'
 import { toast } from 'sonner'
+import { BackButton } from '@/components/ui/BackButton'
 
 export default function CourriersPage() {
   const [selected, setSelected] = useState<typeof COURRIERS_TEMPLATES[0] | null>(null)
@@ -59,6 +60,7 @@ export default function CourriersPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
+      <BackButton />
       <div>
         <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Bibliothèque de courriers</h1>
         <p className="text-slate-400 text-sm mt-1">Modèles juridiques pré-remplis avec vos données</p>

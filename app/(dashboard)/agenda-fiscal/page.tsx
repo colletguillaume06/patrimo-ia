@@ -8,6 +8,7 @@ import { format, differenceInDays, addDays } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { Calendar, Bell, BellOff, AlertCircle, CheckCircle, Clock, Mail } from 'lucide-react'
 import { toast } from 'sonner'
+import { BackButton } from '@/components/ui/BackButton'
 
 interface Echeance {
   id: string
@@ -107,6 +108,7 @@ export default function AgendaFiscalPage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>

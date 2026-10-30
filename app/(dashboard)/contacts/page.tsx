@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { toast } from 'sonner'
 import { Plus, X, Phone, Mail, User, Building2, Search } from 'lucide-react'
+import { BackButton } from '@/components/ui/BackButton'
 
 const ROLES: Record<string, { label: string; icon: string }> = {
   artisan_plombier: { label: 'Plombier', icon: '🔧' },
@@ -60,6 +61,7 @@ export default function ContactsPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Carnet de contacts</h1>

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { Download, FileSpreadsheet, Sparkles, Loader2, Package, CheckCircle } from 'lucide-react'
 import { toast } from 'sonner'
+import { BackButton } from '@/components/ui/BackButton'
 
 const YEARS = [2026, 2025, 2024, 2023, 2022]
 
@@ -139,6 +140,7 @@ export default function ExportsPage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      <BackButton />
       <div>
         <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Exports comptables</h1>
         <p className="text-slate-400 text-sm mt-1">Données prêtes pour votre expert-comptable, encodage UTF-8</p>

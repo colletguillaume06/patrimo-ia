@@ -6,6 +6,7 @@ import { GlassCard } from '@/components/ui/GlassCard'
 import { formatCurrency } from '@/lib/utils'
 import { toast } from 'sonner'
 import { CheckCircle2, Calendar, Receipt, Loader2, Info, Pencil, Trash2, Plus } from 'lucide-react'
+import { BackButton } from '@/components/ui/BackButton'
 
 const NOW = new Date()
 const CURRENT_YEAR = NOW.getFullYear()
@@ -168,6 +169,7 @@ export default function ChargesAnnuellesPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="font-display font-bold text-xl text-[var(--text-primary)] flex items-center gap-2">

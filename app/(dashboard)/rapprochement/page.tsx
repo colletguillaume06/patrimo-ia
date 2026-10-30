@@ -8,6 +8,7 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { toast } from 'sonner'
 import { Upload, CheckCircle2, XCircle, Plus, X, FileText, Loader2 } from 'lucide-react'
+import { BackButton } from '@/components/ui/BackButton'
 
 export default function RapprochementPage() {
   const [transactions, setTransactions] = useState<any[]>([])
@@ -77,6 +78,7 @@ export default function RapprochementPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>Rapprochement bancaire</h1>

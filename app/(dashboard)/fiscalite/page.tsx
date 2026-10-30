@@ -21,6 +21,7 @@ import {
   Clock, CalendarDays, Paperclip, CheckCircle2, XCircle
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { BackButton } from '@/components/ui/BackButton'
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
@@ -356,6 +357,7 @@ export default function FiscalitePage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
+      <BackButton />
 
       {/* ── En-tête + filtres ── */}
       <div className="flex flex-wrap items-center justify-between gap-4">

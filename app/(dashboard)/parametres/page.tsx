@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { Settings, Mail, Trash2, ExternalLink, Shield } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { BackButton } from '@/components/ui/BackButton'
 
 function Toggle({ checked, onChange, label, description }: { checked: boolean, onChange: (v: boolean) => void, label: string, description?: string }) {
   return (
@@ -76,6 +77,7 @@ export default function ParametresPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
+      <BackButton />
       <div>
         <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Paramètres</h1>
         <p className="text-slate-400 text-sm mt-1">Vos informations personnelles et coordonnées bancaires</p>

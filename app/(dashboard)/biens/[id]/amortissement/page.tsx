@@ -12,6 +12,7 @@ import {
   RotateCcw, Save, Trash2, TrendingDown, AlertTriangle, ChevronDown, ChevronUp
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { BackButton } from '@/components/ui/BackButton'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -205,6 +206,7 @@ export default function AmortissementPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12">
+      <BackButton />
 
       {/* En-tête */}
       <div className="flex items-center justify-between">

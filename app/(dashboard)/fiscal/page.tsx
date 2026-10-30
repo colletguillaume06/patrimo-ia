@@ -11,6 +11,7 @@ import { calculateFoncierSimulation } from '@/lib/fiscal/foncier'
 import { calculateSciSimulation } from '@/lib/fiscal/sci'
 import { Download, AlertTriangle, CheckCircle2, FileText, ChevronDown } from 'lucide-react'
 import { toast } from 'sonner'
+import { BackButton } from '@/components/ui/BackButton'
 
 const YEARS = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i)
 
@@ -130,6 +131,7 @@ export default function FiscalPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Tableau fiscal {year}</h1>

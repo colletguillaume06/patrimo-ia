@@ -7,6 +7,7 @@ import { GlassCard } from '@/components/ui/GlassCard'
 import { formatCurrency, formatPct } from '@/lib/utils'
 import { toast } from 'sonner'
 import { Loader2, Save, CalendarDays, AlertTriangle, Info } from 'lucide-react'
+import { BackButton } from '@/components/ui/BackButton'
 
 const MOIS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
 const CURRENT_YEAR = new Date().getFullYear()
@@ -114,6 +115,7 @@ export default function AirbnbSuiviPage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="font-display font-bold text-xl text-[var(--text-primary)] flex items-center gap-2">

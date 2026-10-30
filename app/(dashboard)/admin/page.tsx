@@ -6,6 +6,7 @@ import { GlassCard } from '@/components/ui/GlassCard'
 import { toast } from 'sonner'
 import { Shield, Plus, Loader2, CheckCircle, Users } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { BackButton } from '@/components/ui/BackButton'
 
 export default function AdminPage() {
   const [isAdmin, setIsAdmin] = useState(false)
@@ -77,6 +78,7 @@ export default function AdminPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: '#FEF2F2' }}>
           <Shield className="h-5 w-5 text-red-500" />

@@ -11,6 +11,7 @@ import { FileText, Plus, X, CheckCircle2, Info, Eye, Download, Trash2 } from 'lu
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { INDICES_IRL, INDICES_ILC, INDICES_ILAT, getIndicesList } from '@/lib/fiscal/indices'
+import { BackButton } from '@/components/ui/BackButton'
 
 export default function BauxPage() {
   const [leases, setLeases] = useState<any[]>([])
@@ -95,6 +96,7 @@ export default function BauxPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Baux</h1>

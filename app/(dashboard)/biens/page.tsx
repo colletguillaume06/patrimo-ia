@@ -7,6 +7,7 @@ import { AddBienModal } from '@/components/biens/AddBienModal'
 import { Plus, Building2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { PropertyWithMetrics } from '@/types'
+import { BackButton } from '@/components/ui/BackButton'
 
 export default function BiensPage() {
   const [biens, setBiens] = useState<PropertyWithMetrics[]>([])
@@ -108,6 +109,7 @@ export default function BiensPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Mes biens</h1>

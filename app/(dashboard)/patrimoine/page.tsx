@@ -7,6 +7,7 @@ import { ProfileBadge } from '@/components/ui/ProfileBadge'
 import { formatCurrency, formatPct } from '@/lib/utils'
 import { TrendingUp, TrendingDown, RefreshCw, MapPin, ArrowUp, ArrowDown, Minus } from 'lucide-react'
 import { toast } from 'sonner'
+import { BackButton } from '@/components/ui/BackButton'
 
 interface Estimation {
   property_id: string
@@ -122,6 +123,7 @@ export default function PatrimoinePage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
+      <BackButton />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Valorisation patrimoine</h1>
