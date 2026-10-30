@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { detenuSurAnnee, loyersBienVendu, chargesFixesAnnuelles } from '@/lib/fiscal/bien-vendu'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { formatCurrency } from '@/lib/utils'
@@ -275,7 +276,7 @@ function ChatFiscal({ context }: { context: string }) {
 // ─── Page principale ──────────────────────────────────────────────────────
 
 export default function DeclarationPage() {
-  const [properties, setProperties] = useState<any[]>([])
+  const [allProperties, setProperties] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [year, setYear] = useState(new Date().getFullYear() - 1)
   const [tmi, setTmi] = useState(30)
@@ -293,6 +294,12 @@ export default function DeclarationPage() {
     load()
   }, [year])
 
+  // Biens vendus : déclarés jusqu'à l'année de vente incluse, exclus ensuite
+  const properties = allProperties.filter(p => detenuSurAnnee(p, year))
+  const loyersAnnuels = (prop: any) => prop.sold_at
+    ? loyersBienVendu(prop, year)
+    : (prop.leases ?? []).filter((l: any) => l.is_active).reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
+
   // Calculs par type
   const lmnpProps = properties.filter(p => p.type === 'lmnp')
   const nuProps = properties.filter(p => p.type === 'nu')
@@ -302,16 +309,16 @@ export default function DeclarationPage() {
     (prop.expenses ?? []).filter((e: any) => new Date(e.date).getFullYear() === year)
 
   const getLmnpData = (prop: any) => {
-    const recettes = (prop.leases ?? []).filter((l: any) => l.is_active).reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
-    const charges = getExpensesYtd(prop).reduce((s: number, e: any) => s + e.amount, 0) + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual
+    const recettes = loyersAnnuels(prop)
+    const charges = getExpensesYtd(prop).reduce((s: number, e: any) => s + e.amount, 0) + chargesFixesAnnuelles(prop, year)
     const amortissements = calculateDepreciation(prop.depreciation_plans ?? [])
     const sim = calculateLmnpSimulation({ recettes, charges_reelles: charges, amortissements, taux_marginal: tmi / 100 })
     return { recettes, charges, amortissements, sim }
   }
 
   const getFoncierData = (prop: any) => {
-    const revenus = (prop.leases ?? []).filter((l: any) => l.is_active).reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
-    const charges = getExpensesYtd(prop).reduce((s: number, e: any) => e.fiscal_deductible ? s + e.amount : s, 0) + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual + prop.loan_monthly * 12
+    const revenus = loyersAnnuels(prop)
+    const charges = getExpensesYtd(prop).reduce((s: number, e: any) => e.fiscal_deductible ? s + e.amount : s, 0) + chargesFixesAnnuelles(prop, year, true)
     const sim = calculateFoncierSimulation({ revenus_bruts: revenus, charges_deductibles: charges, taux_marginal: tmi / 100 })
     return { revenus, charges, sim }
   }
@@ -531,8 +538,8 @@ export default function DeclarationPage() {
               </div>
 
               {sciProps.map(prop => {
-                const revenus = (prop.leases ?? []).filter((l: any) => l.is_active).reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
-                const charges = getExpensesYtd(prop).reduce((s: number, e: any) => s + e.amount, 0) + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual
+                const revenus = loyersAnnuels(prop)
+                const charges = getExpensesYtd(prop).reduce((s: number, e: any) => s + e.amount, 0) + chargesFixesAnnuelles(prop, year)
                 const sim = calculateSciSimulation({ resultat_comptable: revenus - charges, regime: (prop.sci_regime ?? 'ir') as 'ir' | 'is', taux_marginal: tmi / 100 })
                 return (
                   <div key={prop.id} className="mb-5">

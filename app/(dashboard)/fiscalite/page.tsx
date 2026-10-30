@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { detenuSurAnnee, loyersBienVendu, chargesFixesAnnuelles } from '@/lib/fiscal/bien-vendu'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { SimulationCard } from '@/components/fiscalite/SimulationCard'
@@ -165,7 +166,7 @@ function CalendrierFiscal({ hasSci, hasLmnp, hasFoncier, year }: {
 export default function FiscalitePage() {
   const [year, setYear] = useState(new Date().getFullYear())
   const [selectedPropId, setSelectedPropId] = useState('all')
-  const [properties, setProperties] = useState<any[]>([])
+  const [allProperties, setProperties] = useState<any[]>([])
   const [incidents, setIncidents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [tmi, setTmi] = useState(30)
@@ -190,6 +191,9 @@ export default function FiscalitePage() {
     load()
   }, [year])
 
+  // Biens vendus : déclarés jusqu'à l'année de vente incluse, exclus ensuite
+  const properties = allProperties.filter(p => detenuSurAnnee(p, year))
+
   // Calcul par bien
   const buildPropData = (prop: any): PropData => {
     const expenses_ytd = (prop.expenses ?? []).filter((e: any) =>
@@ -200,12 +204,14 @@ export default function FiscalitePage() {
       .filter(i => ['entretien_reparation', 'travaux_deductibles'].includes(i.categorie_fiscale ?? ''))
       .reduce((s: number, i: any) => s + (i.cout_paye || 0), 0)
 
-    const revenus = (prop.leases ?? [])
-      .filter((l: any) => l.is_active)
-      .reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
+    const revenus = prop.sold_at
+      ? loyersBienVendu(prop, year)
+      : (prop.leases ?? [])
+          .filter((l: any) => l.is_active)
+          .reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
 
     const charges_courantes = expenses_ytd.reduce((s: number, e: any) => s + e.amount, 0)
-      + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual
+      + chargesFixesAnnuelles(prop, year)
 
     const amortissements = prop.type === 'lmnp'
       ? calculateDepreciation(prop.depreciation_plans ?? [])

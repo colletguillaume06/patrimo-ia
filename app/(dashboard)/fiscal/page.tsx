@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { detenuSurAnnee, loyersBienVendu, chargesFixesAnnuelles } from '@/lib/fiscal/bien-vendu'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
@@ -12,7 +13,7 @@ import { Download, AlertTriangle, CheckCircle2, FileText } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function FiscalPage() {
-  const [properties, setProperties] = useState<any[]>([])
+  const [allProperties, setProperties] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [tmi, setTmi] = useState(30)
   const year = new Date().getFullYear()
@@ -41,6 +42,7 @@ export default function FiscalPage() {
     toast.success('Export téléchargé')
   }
 
+  const properties = allProperties.filter(p => detenuSurAnnee(p, year))
   const now = new Date()
   let totalRevenusBruts = 0
   let totalCharges = 0
@@ -49,10 +51,10 @@ export default function FiscalPage() {
   const propData = properties.map(prop => {
     const activeLeases = prop.leases?.filter((l: any) => l.is_active) ?? []
     const rent = activeLeases[0]?.monthly_rent ?? 0
-    const recettes = rent * 12
+    const recettes = prop.sold_at ? loyersBienVendu(prop, year) : rent * 12
     const expenses_ytd = (prop.expenses ?? []).filter((e: any) => new Date(e.date).getFullYear() === year)
     const charges = expenses_ytd.reduce((s: number, e: any) => s + e.amount, 0)
-      + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual
+      + chargesFixesAnnuelles(prop, year)
     const amortissements = calculateDepreciation(prop.depreciation_plans ?? [])
 
     totalRevenusBruts += recettes

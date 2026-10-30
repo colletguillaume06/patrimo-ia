@@ -37,7 +37,8 @@ export default async function DashboardPage() {
       .gte('date', format(subMonths(new Date(), 12), 'yyyy-MM-dd')),
   ])
 
-  const props = properties ?? []
+  // Biens vendus : exclus du patrimoine, des charges, des alertes et de la liste (l'historique des paiements reste dans le graphique)
+  const props = (properties ?? []).filter(p => !p.sold_at)
 
   const total_patrimoine = props.reduce((s, p) => s + (p.purchase_price ?? 0), 0)
 
