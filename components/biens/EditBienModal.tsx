@@ -28,6 +28,13 @@ const SECTIONS = [
   { key: 'pret', label: '🏦 Prêt' },
 ]
 
+// Postes de charges récupérables les plus courants (décret n°87-713).
+const CHARGE_PRESETS = [
+  'Eau froide', 'Eau chaude', 'Chauffage collectif', 'Électricité (parties communes)',
+  'Ascenseur', 'Entretien parties communes', 'Espaces verts', 'Ordures ménagères',
+  'Gardiennage / concierge', 'Autre',
+]
+
 export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
   const router = useRouter()
   const supabase = createClient()
@@ -37,6 +44,11 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
   const [form, setForm] = useState<any>({})
   const [leaseId, setLeaseId] = useState<string | null>(null)
   const [leaseForm, setLeaseForm] = useState<any>({})
+  // Ventilation des provisions sur charges par poste (eau, syndic…).
+  // Stockée dans parsed_data.charges_perso, partagée avec la régularisation.
+  const [chargesLines, setChargesLines] = useState<{ libelle: string; montant: string }[]>([])
+  const [leaseParsed, setLeaseParsed] = useState<any>({})
+  const chargesTotal = chargesLines.reduce((s, l) => s + (Number(l.montant) || 0), 0)
 
   useEffect(() => {
     Promise.all([
@@ -52,6 +64,12 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
             postal_code: data.postal_code || '',
             surface_m2: data.surface_m2 ?? '',
                   purchase_price: data.purchase_price ?? '',
+            valeur_actuelle: data.valeur_actuelle ?? '',
+            valeur_actuelle_date: data.valeur_actuelle_date ?? '',
+            valeur_actuelle_source: data.valeur_actuelle_source ?? '',
+            airbnb_max_nights: data.airbnb_max_nights ?? '',
+            airbnb_platform_fees: data.airbnb_platform_fees ?? '',
+            meuble_classe: data.meuble_classe ?? false,
             purchase_year: data.purchase_year ?? '',
             monthly_charges: data.monthly_charges ?? 0,
             property_tax: data.property_tax ?? 0,
@@ -83,6 +101,19 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
             irl_reference_annee: lease.irl_reference_annee ?? '',
             quittances_auto: lease.quittances_auto ?? true,
           })
+          const pd = lease.parsed_data ?? {}
+          setLeaseParsed(pd)
+          const perso = Array.isArray(pd.charges_perso)
+            ? pd.charges_perso.filter((l: any) => l?.libelle || l?.montant)
+            : []
+          if (perso.length) {
+            setChargesLines(perso.map((l: any) => ({ libelle: l.libelle ?? '', montant: String(l.montant ?? '') })))
+          } else if (lease.charges) {
+            // Pas encore ventilé : on amorce avec le montant global existant.
+            setChargesLines([{ libelle: 'Charges', montant: String(lease.charges) }])
+          } else {
+            setChargesLines([{ libelle: '', montant: '' }])
+          }
         }
         setLoading(false)
       })
@@ -113,14 +144,21 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
     setSaving(true)
 
     // Sauvegarder le bail (mise à jour ou création)
-    if (leaseForm.tenant_name) {
+    // Un meublé de tourisme n'a pas de bail : on n'en crée jamais pour ce type.
+    if (leaseForm.tenant_name && form.type !== 'airbnb') {
       const leaseData = {
         property_id: propertyId,
         tenant_name: leaseForm.tenant_name,
         tenant_email: leaseForm.tenant_email || null,
         tenant_phone: leaseForm.tenant_phone || null,
         monthly_rent: Number(leaseForm.monthly_rent) || 0,
-        charges: Number(leaseForm.charges) || 0,
+        charges: chargesTotal,
+        parsed_data: {
+          ...leaseParsed,
+          charges_perso: chargesLines
+            .filter(l => l.libelle || l.montant)
+            .map(l => ({ libelle: l.libelle, montant: l.montant })),
+        },
         deposit: leaseForm.deposit !== '' ? Number(leaseForm.deposit) : null,
         start_date: leaseForm.start_date || new Date().toISOString().split('T')[0],
         end_date: leaseForm.end_date || null,
@@ -155,6 +193,12 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
       property_tax: Number(form.property_tax) || 0,
       insurance_annual: Number(form.insurance_annual) || 0,
       numero_fiscal: form.numero_fiscal || null,
+      valeur_actuelle: form.valeur_actuelle !== '' ? Number(form.valeur_actuelle) : null,
+      valeur_actuelle_date: form.valeur_actuelle_date || null,
+      valeur_actuelle_source: form.valeur_actuelle_source || null,
+      airbnb_max_nights: form.airbnb_max_nights !== '' ? Number(form.airbnb_max_nights) : null,
+      airbnb_platform_fees: form.airbnb_platform_fees !== '' ? Number(form.airbnb_platform_fees) : null,
+      meuble_classe: !!form.meuble_classe,
       loan_monthly: Number(form.loan_monthly) || 0,
       pret_banque: form.pret_banque || null,
       pret_capital: form.pret_capital !== '' ? Number(form.pret_capital) : null,
@@ -201,7 +245,9 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
 
         {/* Navigation sections */}
         <div className="flex border-b border-slate-200 px-6">
-          {SECTIONS.map(s => (
+          {SECTIONS.map(s => s.key === 'bail' && form.type === 'airbnb'
+            ? { ...s, label: '🏖️ Location saisonnière' } : s
+          ).map(s => (
             <button key={s.key} onClick={() => setActiveSection(s.key)}
               className="px-3 py-2.5 text-sm font-medium transition-colors whitespace-nowrap"
               style={{
@@ -281,8 +327,103 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
             </>
           )}
 
+          {/* SECTION 2 bis — Location saisonnière (Airbnb : ni bail, ni locataire fixe) */}
+          {activeSection === 'bail' && form.type === 'airbnb' && (
+            <>
+              <div className="p-3 rounded-xl" style={{ background: '#FFF7ED', border: '1px solid #FED7AA' }}>
+                <p className="text-sm text-[#9A3412]">
+                  Un meublé de tourisme n'a ni bail, ni locataire fixe, ni loyer mensuel.
+                  Les nuits louées et les recettes se saisissent dans l'onglet{' '}
+                  <strong>Suivi Airbnb</strong> de la fiche du bien.
+                </p>
+              </div>
+
+              {/* Le plafond de 120 nuits ne vise QUE la résidence principale.
+                  Convention : plafond à 0 = aucune limite (résidence secondaire). */}
+              <div>
+                <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Type de bien loué</label>
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => set('airbnb_max_nights', 120)}
+                    className="flex-1 h-10 rounded-lg text-sm font-semibold transition-all"
+                    style={{
+                      background: Number(form.airbnb_max_nights) > 0 ? '#1D4ED8' : 'white',
+                      color: Number(form.airbnb_max_nights) > 0 ? 'white' : '#1D4ED8',
+                      border: '1px solid #1D4ED8',
+                    }}>
+                    Résidence principale
+                  </button>
+                  <button type="button" onClick={() => set('airbnb_max_nights', 0)}
+                    className="flex-1 h-10 rounded-lg text-sm font-semibold transition-all"
+                    style={{
+                      background: Number(form.airbnb_max_nights) > 0 ? 'white' : '#1D4ED8',
+                      color: Number(form.airbnb_max_nights) > 0 ? '#1D4ED8' : 'white',
+                      border: '1px solid #1D4ED8',
+                    }}>
+                    Résidence secondaire
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {Number(form.airbnb_max_nights) > 0 ? (
+                  <div>
+                    <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Plafond de nuits / an</label>
+                    <input type="number" value={form.airbnb_max_nights ?? ''}
+                      onChange={e => set('airbnb_max_nights', e.target.value)}
+                      className={inputClass} placeholder="120" />
+                    <p className="text-xs text-slate-500 mt-1">
+                      120 nuits par an (loi ELAN). Certaines communes l'abaissent à 90 — vérifiez auprès de votre mairie.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-xl" style={{ background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                    <p className="text-sm font-semibold text-[#0F172A]">Aucune limite de nuits</p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Le plafond de 120 nuits ne vise que la résidence principale. Restent dus : la
+                      déclaration en mairie, et l'autorisation de changement d'usage dans les communes
+                      de plus de 200 000 habitants et la petite couronne parisienne.
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Commission plateforme (%)</label>
+                  <input type="number" step="0.1" value={form.airbnb_platform_fees ?? ''}
+                    onChange={e => set('airbnb_platform_fees', e.target.value)}
+                    className={inputClass} placeholder="3" />
+                  <p className="text-xs text-slate-500 mt-1">Frais Airbnb / Booking retenus sur vos versements</p>
+                </div>
+              </div>
+
+              {/* Classement : détermine le plafond micro-BIC et l'abattement */}
+              <div className="p-3 rounded-xl" style={{ background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" checked={!!form.meuble_classe}
+                    onChange={e => set('meuble_classe', e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                  <span>
+                    <span className="block text-sm font-semibold text-[#0F172A]">Meublé de tourisme classé</span>
+                    <span className="block text-xs text-slate-500 mt-0.5">
+                      Classement en étoiles délivré par un organisme accrédité (~150-300 €, valable 5 ans).
+                    </span>
+                  </span>
+                </label>
+
+                <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-slate-200">
+                  <div className={form.meuble_classe ? 'opacity-40' : ''}>
+                    <p className="text-xs font-semibold text-[#0F172A]">Non classé</p>
+                    <p className="text-xs text-slate-500">Plafond 15 000 € · abattement 30 %</p>
+                  </div>
+                  <div className={form.meuble_classe ? '' : 'opacity-40'}>
+                    <p className="text-xs font-semibold text-[#0F172A]">Classé</p>
+                    <p className="text-xs text-slate-500">Plafond 83 600 € · abattement 50 %</p>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
           {/* SECTION 2 — Bail & loyer */}
-          {activeSection === 'bail' && (
+          {activeSection === 'bail' && form.type !== 'airbnb' && (
             <>
               {/* Sélecteur locataire existant / nouveau */}
               <div className="p-3 rounded-xl" style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
@@ -325,18 +466,68 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
                   <p className="text-xs text-blue-700 mt-2">✓ {leaseForm.tenant_name}</p>
                 )}
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Loyer mensuel HC (€) *</label>
                   <input type="number" value={leaseForm.monthly_rent || ''} onChange={e => setL('monthly_rent', e.target.value)} className={inputClass} placeholder="850" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Charges (€)</label>
-                  <input type="number" value={leaseForm.charges || ''} onChange={e => setL('charges', e.target.value)} className={inputClass} placeholder="0" />
-                </div>
-                <div>
                   <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Dépôt de garantie (€)</label>
                   <input type="number" value={leaseForm.deposit || ''} onChange={e => setL('deposit', e.target.value)} className={inputClass} />
+                </div>
+              </div>
+
+              {/* Provisions sur charges — ventilation par poste */}
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <label className="block text-sm font-semibold text-[#0F172A]">Provisions sur charges (€/mois)</label>
+                <p className="text-xs text-slate-500 mt-0.5 mb-3">
+                  Ce que le locataire vous verse chaque mois en plus du loyer, par poste. Régularisé une fois par an.
+                </p>
+
+                <div className="space-y-2">
+                  {chargesLines.map((line, i) => (
+                    <div key={i} className="flex gap-2">
+                      <input
+                        list="charge-presets"
+                        placeholder="Poste (eau, syndic, ordures…)"
+                        value={line.libelle}
+                        onChange={e => setChargesLines(ls => ls.map((l, idx) => idx === i ? { ...l, libelle: e.target.value } : l))}
+                        className={inputClass + ' flex-1'}
+                      />
+                      <input
+                        type="number"
+                        placeholder="€"
+                        value={line.montant}
+                        onChange={e => setChargesLines(ls => ls.map((l, idx) => idx === i ? { ...l, montant: e.target.value } : l))}
+                        className="w-24 h-10 px-3 rounded-lg text-sm text-right focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white border border-slate-200 text-[#0F172A] placeholder:text-slate-400"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setChargesLines(ls => ls.length > 1 ? ls.filter((_, idx) => idx !== i) : [{ libelle: '', montant: '' }])}
+                        className="h-10 w-10 flex-shrink-0 rounded-lg flex items-center justify-center border border-slate-200 bg-white hover:bg-slate-100"
+                        title="Retirer ce poste"
+                      >
+                        <X className="h-4 w-4 text-slate-400" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <datalist id="charge-presets">
+                  {CHARGE_PRESETS.map(p => <option key={p} value={p} />)}
+                </datalist>
+
+                <div className="flex items-center justify-between mt-3">
+                  <button
+                    type="button"
+                    onClick={() => setChargesLines(ls => [...ls, { libelle: '', montant: '' }])}
+                    className="text-sm font-medium text-[#1D4ED8] hover:underline"
+                  >
+                    + Ajouter un poste
+                  </button>
+                  <div className="text-sm">
+                    <span className="text-slate-500">Total : </span>
+                    <span className="font-bold text-[#0F172A]">{chargesTotal.toLocaleString('fr-FR')} €/mois</span>
+                  </div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -419,6 +610,24 @@ export function EditBienModal({ propertyId, onClose }: EditBienModalProps) {
                 <div>
                   <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Assurance annuelle (€)</label>
                   <input type="number" value={form.insurance_annual} onChange={e => set('insurance_annual', e.target.value)} className={inputClass} placeholder="350" />
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-slate-100">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Valeur estimée à l'instant T</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Valeur actuelle estimée (€)</label>
+                    <input type="number" step="1000" value={form.valeur_actuelle} onChange={e => set('valeur_actuelle', e.target.value)} className={inputClass} placeholder="220000" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Date d'estimation</label>
+                    <input type="date" value={form.valeur_actuelle_date} onChange={e => set('valeur_actuelle_date', e.target.value)} className={inputClass} />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <label className="block text-sm font-semibold mb-1.5 text-[#0F172A]">Source / méthode</label>
+                  <input type="text" value={form.valeur_actuelle_source} onChange={e => set('valeur_actuelle_source', e.target.value)} className={inputClass} placeholder="Cabinet Dupont — méthode par comparaison" />
                 </div>
               </div>
             </>

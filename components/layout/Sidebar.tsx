@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Building2, Banknote, FileText,
   Wrench, Download, ChevronRight, Sparkles, TrendingUp, Landmark,
   BarChart3, Users, FolderOpen, Mail, Settings, BookOpen,
-  FlaskConical, Loader2, LogOut, Brain, Calendar
+  FlaskConical, Loader2, LogOut, Brain, Calendar, Receipt
 } from 'lucide-react'
 import { cn, getInitials } from '@/lib/utils'
 import { Logo } from '@/components/layout/Logo'
@@ -40,6 +40,7 @@ const navGroups = [
     label: 'Charges & travaux',
     items: [
       { href: '/travaux', label: 'Travaux', icon: Wrench, badge: false },
+      { href: '/charges-annuelles', label: 'Charges annuelles', icon: Receipt, badge: false },
       { href: '/exports', label: 'Exports', icon: Download, badge: false },
     ],
   },

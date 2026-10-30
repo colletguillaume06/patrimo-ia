@@ -28,6 +28,10 @@
     {
       "path": "/api/cron/relances-auto",
       "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/sync-loyers",
+      "schedule": "0 6 * * *"
     }
   ]
 }

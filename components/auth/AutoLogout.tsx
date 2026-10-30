@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
-const INACTIVITY_TIMEOUT = 2 * 60 * 60 * 1000 // 2 heures d'inactivité
+const INACTIVITY_TIMEOUT = 30 * 60 * 1000 // 30 minutes d'inactivité
 
 export function AutoLogout() {
   const supabase = createClient()

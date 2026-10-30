@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     // Récupérer biens + diagnostics + baux
     const { data: props } = await service
       .from('properties')
-      .select('id, name, diagnostics(*), leases(id, tenant_name, monthly_rent, end_date, last_revision_date, start_date, payments(id, amount, status, due_date))')
+      .select('id, name, property_tax, expenses(category, date), diagnostics(*), leases(id, tenant_name, monthly_rent, end_date, last_revision_date, start_date, payments(id, amount, status, due_date))')
       .eq('user_id', profile.id)
 
     for (const prop of (props ?? [])) {
@@ -70,6 +70,23 @@ export async function POST(req: NextRequest) {
             texte: `Révision de loyer possible pour <strong>${lease.tenant_name}</strong> — ${prop.name}`,
             href: `${APP_URL}/loyers`,
             severity: 'low',
+          })
+        }
+      }
+
+      // Taxe foncière : fenêtre 20 septembre → 31 octobre, si pas encore
+      // enregistrée comme dépense pour l'année en cours. S'arrête dès la saisie.
+      const m = now.getMonth(), d = now.getDate()
+      const tfWindow = (m === 8 && d >= 20) || m === 9
+      if (tfWindow && (prop.property_tax ?? 0) > 0) {
+        const done = (prop.expenses ?? []).some((e: any) =>
+          e.category === 'taxe' && new Date(e.date).getFullYear() === now.getFullYear())
+        if (!done) {
+          alertes.push({
+            emoji: '📩',
+            texte: `Taxe foncière à enregistrer — <strong>${prop.name}</strong> (${prop.property_tax}€)`,
+            href: `${APP_URL}/charges-annuelles`,
+            severity: 'medium',
           })
         }
       }

@@ -132,6 +132,167 @@ function CaseLine({ c }: { c: CaseDeclaration }) {
   )
 }
 
+// ─── Compte de résultat détaillé (LMNP réel) ─────────────────────────────
+
+const fmtCR = (n: number) =>
+  n === 0 ? '—' : n.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' €'
+
+function CRRow({ code, label, value, indent = false }: { code?: string; label: string; value: number; indent?: boolean }) {
+  return (
+    <div className="flex items-center gap-3 py-1.5 border-b last:border-0"
+      style={{ borderColor: 'rgba(0,0,0,0.04)', paddingLeft: indent ? 20 : 0 }}>
+      {code
+        ? <span className="text-[11px] font-mono font-semibold w-14 flex-shrink-0" style={{ color: '#94A3B8' }}>{code}</span>
+        : <span className="w-14 flex-shrink-0" />}
+      <span className="text-sm flex-1 min-w-0" style={{ color: '#334155' }}>{label}</span>
+      <span className="text-sm font-mono tabular-nums flex-shrink-0" style={{ color: '#0F172A' }}>{fmtCR(value)}</span>
+    </div>
+  )
+}
+
+function CRSubtotal({ label, value, strong = false, color }: { label: string; value: number; strong?: boolean; color?: string }) {
+  return (
+    <div className="flex items-center gap-3 py-2 mt-1 border-t-2"
+      style={{ borderColor: strong ? '#1D4ED8' : 'rgba(0,0,0,0.12)' }}>
+      <span className="w-14 flex-shrink-0" />
+      <span className={cn('text-sm flex-1 min-w-0', strong ? 'font-bold' : 'font-semibold')}
+        style={{ color: color ?? '#0F172A' }}>{label}</span>
+      <span className={cn('text-sm font-mono tabular-nums flex-shrink-0', strong ? 'font-bold' : 'font-semibold')}
+        style={{ color: color ?? '#0F172A' }}>{fmtCR(value)}</span>
+    </div>
+  )
+}
+
+function CompteResultatLMNP({ props, year, getRevenus }:
+  { props: any[]; year: number; getRevenus: (p: any) => number }) {
+
+  const deprecForYear = (plans: any[]) =>
+    (plans ?? []).reduce((t: number, p: any) => {
+      const s = new Date(p.start_date).getFullYear()
+      return (year >= s && year < s + p.duration_years) ? t + (p.annual_amount ?? 0) : t
+    }, 0)
+
+  const expCat = (prop: any, cats: string[]) =>
+    (prop.expenses ?? [])
+      .filter((e: any) => new Date(e.date).getFullYear() === year && cats.includes(e.category))
+      .reduce((s: number, e: any) => s + (e.amount ?? 0), 0)
+
+  // Construction des lignes ventilées par bien
+  const biens = props.map((p, i) => {
+    const idx = String(i + 1)
+    const loyers = getRevenus(p)
+    const copro = (p.monthly_charges ?? 0) * 12
+    const assurance = (p.insurance_annual ?? 0) + expCat(p, ['assurance'])
+    const taxe = (p.property_tax ?? 0) + expCat(p, ['taxe'])
+    const travaux = expCat(p, ['travaux'])
+    const gestion = expCat(p, ['gestion', 'autre'])
+    const amort = deprecForYear(p.depreciation_plans)
+    const interets = (p.loan_monthly ?? 0) * 12 + expCat(p, ['interet'])
+    return { id: p.id, idx, name: p.name, loyers, copro, assurance, taxe, travaux, gestion, amort, interets }
+  })
+
+  const sum = (f: (b: typeof biens[number]) => number) => biens.reduce((s, b) => s + f(b), 0)
+
+  const totalProduits = sum(b => b.loyers)
+  const totalCoproEtc = sum(b => b.copro) + sum(b => b.travaux) + sum(b => b.assurance) + sum(b => b.taxe) + sum(b => b.gestion)
+  const totalAmort = sum(b => b.amort)
+  const totalChargesExploit = totalCoproEtc + totalAmort
+  const resultatExploit = totalProduits - totalChargesExploit
+  const totalChargesFin = sum(b => b.interets)
+  const resultatFin = -totalChargesFin
+  const resultatCourant = resultatExploit + resultatFin
+  const totalCharges = totalChargesExploit + totalChargesFin
+  const resultatNet = resultatCourant
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs uppercase tracking-wide font-semibold" style={{ color: '#64748B' }}>
+          Exercice {year} · {biens.length} bien{biens.length > 1 ? 's' : ''} LMNP réel
+        </p>
+      </div>
+
+      {/* PRODUITS D'EXPLOITATION */}
+      <p className="text-xs font-bold uppercase tracking-wide mt-2 mb-1" style={{ color: '#166534' }}>
+        Produits d'exploitation
+      </p>
+      <p className="text-[11px] font-medium mb-1" style={{ color: '#94A3B8' }}>Production vendue de services</p>
+      {biens.map(b => (
+        <CRRow key={b.id} code={`7000${b.idx}`} label={`Loyers — ${b.name}`} value={b.loyers} indent />
+      ))}
+      <CRSubtotal label="Montant net du chiffre d'affaires" value={totalProduits} />
+      <CRSubtotal label="TOTAL DES PRODUITS D'EXPLOITATION (I)" value={totalProduits} color="#166534" />
+
+      {/* CHARGES D'EXPLOITATION */}
+      <p className="text-xs font-bold uppercase tracking-wide mt-5 mb-1" style={{ color: '#991B1B' }}>
+        Charges d'exploitation
+      </p>
+      <p className="text-[11px] font-medium mb-1" style={{ color: '#94A3B8' }}>Achats et charges externes</p>
+      {biens.map(b => b.travaux > 0 && (
+        <CRRow key={`t${b.id}`} code="615" label={`Entretien & réparations — ${b.name}`} value={b.travaux} indent />
+      ))}
+      {biens.map(b => b.copro > 0 && (
+        <CRRow key={`c${b.id}`} code="614" label={`Charges de copropriété — ${b.name}`} value={b.copro} indent />
+      ))}
+      {biens.map(b => b.assurance > 0 && (
+        <CRRow key={`a${b.id}`} code="616" label={`Assurances — ${b.name}`} value={b.assurance} indent />
+      ))}
+      {biens.map(b => b.gestion > 0 && (
+        <CRRow key={`g${b.id}`} code="628" label={`Frais de gestion & divers — ${b.name}`} value={b.gestion} indent />
+      ))}
+      {biens.map(b => b.taxe > 0 && (
+        <CRRow key={`x${b.id}`} code="635" label={`Taxe foncière — ${b.name}`} value={b.taxe} indent />
+      ))}
+      <CRSubtotal label="Total achats et charges externes" value={totalCoproEtc} />
+      <p className="text-[11px] font-medium mt-3 mb-1" style={{ color: '#94A3B8' }}>Dotations aux amortissements</p>
+      {biens.map(b => b.amort > 0 && (
+        <CRRow key={`d${b.id}`} code="6811" label={`Dotation amortissements — ${b.name}`} value={b.amort} indent />
+      ))}
+      {totalAmort === 0 && (
+        <p className="text-xs italic py-1" style={{ color: '#94A3B8', paddingLeft: 20 }}>
+          Aucun plan d'amortissement renseigné pour {year}
+        </p>
+      )}
+      <CRSubtotal label="TOTAL DES CHARGES D'EXPLOITATION (II)" value={totalChargesExploit} color="#991B1B" />
+
+      {/* RÉSULTAT D'EXPLOITATION */}
+      <CRSubtotal label="RÉSULTAT D'EXPLOITATION (I − II)" value={resultatExploit}
+        color={resultatExploit >= 0 ? '#166534' : '#991B1B'} />
+
+      {/* CHARGES FINANCIÈRES */}
+      <p className="text-xs font-bold uppercase tracking-wide mt-5 mb-1" style={{ color: '#991B1B' }}>
+        Charges financières
+      </p>
+      {biens.map(b => b.interets > 0 && (
+        <CRRow key={`i${b.id}`} code="661" label={`Intérêts & échéances d'emprunt — ${b.name}`} value={b.interets} indent />
+      ))}
+      {totalChargesFin === 0 && (
+        <p className="text-xs italic py-1" style={{ color: '#94A3B8', paddingLeft: 20 }}>Aucune charge financière</p>
+      )}
+      <CRSubtotal label="RÉSULTAT FINANCIER" value={resultatFin}
+        color={resultatFin >= 0 ? '#166534' : '#991B1B'} />
+
+      {/* RÉSULTAT COURANT */}
+      <CRSubtotal label="RÉSULTAT COURANT AVANT IMPÔTS" value={resultatCourant}
+        color={resultatCourant >= 0 ? '#166534' : '#991B1B'} />
+
+      {/* TOTAUX & RÉSULTAT NET */}
+      <div className="mt-4 pt-3 border-t" style={{ borderColor: 'rgba(0,0,0,0.12)' }}>
+        <CRRow label="Total des produits" value={totalProduits} />
+        <CRRow label="Total des charges" value={totalCharges} />
+        <CRSubtotal
+          label={resultatNet >= 0 ? 'RÉSULTAT NET — Bénéfice' : 'RÉSULTAT NET — Perte (déficit reportable)'}
+          value={resultatNet} strong color={resultatNet >= 0 ? '#166534' : '#991B1B'} />
+      </div>
+
+      <div className="mt-4 p-3 rounded-lg text-xs"
+        style={{ background: '#F8FAFC', border: '1px solid rgba(0,0,0,0.08)', color: '#475569' }}>
+        Ventilation reconstituée depuis vos données (loyers encaissés, charges, taxes, assurances, amortissements et échéances d'emprunt de l'exercice {year}). Les intérêts d'emprunt sont estimés sur l'échéance totale — votre comptable retiendra la part d'intérêts exacte de votre tableau d'amortissement bancaire.
+      </div>
+    </div>
+  )
+}
+
 // ─── Chat IA fiscal ───────────────────────────────────────────────────────
 
 const SUGGESTED_FISCAL = [
@@ -277,7 +438,7 @@ function ChatFiscal({ context }: { context: string }) {
 export default function DeclarationPage() {
   const [properties, setProperties] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [year, setYear] = useState(new Date().getFullYear() - 1)
+  const [year, setYear] = useState(new Date().getFullYear())
   const [tmi, setTmi] = useState(30)
   const supabase = createClient()
 
@@ -285,7 +446,7 @@ export default function DeclarationPage() {
     const load = async () => {
       const { data } = await supabase
         .from('properties')
-        .select('*, leases(*), expenses(*), depreciation_plans(*), sci_associates(*)')
+        .select('*, leases(*, payments(*)), expenses(*), depreciation_plans(*), sci_associates(*)')
         .order('name')
       setProperties(data ?? [])
       setLoading(false)
@@ -301,8 +462,21 @@ export default function DeclarationPage() {
   const getExpensesYtd = (prop: any) =>
     (prop.expenses ?? []).filter((e: any) => new Date(e.date).getFullYear() === year)
 
+  // Revenus de l'année sélectionnée = loyers réellement encaissés cette année-là.
+  // Repli sur le loyer courant annualisé si aucun paiement n'est enregistré pour l'année.
+  const getRevenus = (prop: any) => {
+    const payments = (prop.leases ?? []).flatMap((l: any) => l.payments ?? [])
+    const yearPaid = payments.filter((p: any) =>
+      new Date(p.due_date).getFullYear() === year && p.status === 'paid'
+    )
+    if (yearPaid.length > 0) {
+      return yearPaid.reduce((s: number, p: any) => s + (p.amount ?? 0), 0)
+    }
+    return (prop.leases ?? []).filter((l: any) => l.is_active).reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
+  }
+
   const getLmnpData = (prop: any) => {
-    const recettes = (prop.leases ?? []).filter((l: any) => l.is_active).reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
+    const recettes = getRevenus(prop)
     const charges = getExpensesYtd(prop).reduce((s: number, e: any) => s + e.amount, 0) + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual
     const amortissements = calculateDepreciation(prop.depreciation_plans ?? [])
     const sim = calculateLmnpSimulation({ recettes, charges_reelles: charges, amortissements, taux_marginal: tmi / 100 })
@@ -310,7 +484,7 @@ export default function DeclarationPage() {
   }
 
   const getFoncierData = (prop: any) => {
-    const revenus = (prop.leases ?? []).filter((l: any) => l.is_active).reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
+    const revenus = getRevenus(prop)
     const charges = getExpensesYtd(prop).reduce((s: number, e: any) => e.fiscal_deductible ? s + e.amount : s, 0) + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual + prop.loan_monthly * 12
     const sim = calculateFoncierSimulation({ revenus_bruts: revenus, charges_deductibles: charges, taux_marginal: tmi / 100 })
     return { revenus, charges, sim }
@@ -339,7 +513,9 @@ export default function DeclarationPage() {
             <select value={year} onChange={e => setYear(Number(e.target.value))}
               className="h-9 px-3 rounded-lg border text-sm focus:outline-none focus:border-accent"
               style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}>
-              {[2025, 2024, 2023].map(y => <option key={y} value={y} className="bg-[var(--bg-secondary)]">{y}</option>)}
+              {Array.from({ length: 6 }, (_, i) => new Date().getFullYear() - i).map(y => (
+                <option key={y} value={y} className="bg-[var(--bg-secondary)]">{y}</option>
+              ))}
             </select>
           </div>
           <div className="flex items-center gap-2">
@@ -460,6 +636,21 @@ export default function DeclarationPage() {
             </Section>
           )}
 
+          {/* ── Compte de résultat détaillé LMNP ── */}
+          {lmnpProps.length > 0 && (
+            <Section title="Compte de résultat détaillé"
+              icon={<BookOpen className="h-4 w-4" style={{ color: '#166534' }} />}
+              badge="Comme votre comptable">
+              <div className="mb-4">
+                <p className="text-sm" style={{ color: '#475569' }}>
+                  Présentation comptable de vos locations meublées (régime réel), ventilée par bien
+                  et par poste — produits, charges, amortissements et résultat de l'exercice.
+                </p>
+              </div>
+              <CompteResultatLMNP props={lmnpProps} year={year} getRevenus={getRevenus} />
+            </Section>
+          )}
+
           {/* ── 2044 (Foncier nu) ── */}
           {nuProps.length > 0 && (
             <Section title="Formulaire 2044 — Revenus fonciers"
@@ -531,7 +722,7 @@ export default function DeclarationPage() {
               </div>
 
               {sciProps.map(prop => {
-                const revenus = (prop.leases ?? []).filter((l: any) => l.is_active).reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
+                const revenus = getRevenus(prop)
                 const charges = getExpensesYtd(prop).reduce((s: number, e: any) => s + e.amount, 0) + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual
                 const sim = calculateSciSimulation({ resultat_comptable: revenus - charges, regime: (prop.sci_regime ?? 'ir') as 'ir' | 'is', taux_marginal: tmi / 100 })
                 return (

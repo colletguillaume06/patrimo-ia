@@ -116,13 +116,15 @@ export async function GET(req: NextRequest) {
         .eq('property_id', prop.id)
         .gte('check_in', yearStart)
       const totalNights = (bookings ?? []).reduce((s: number, b: any) => s + (b.nights ?? 0), 0)
-      if (totalNights > 100) {
+      // Plafond à 0 = résidence secondaire : aucune limite, donc aucune alerte.
+      const maxN = (prop as any).airbnb_max_nights ?? 0
+      if (maxN > 0 && totalNights > maxN * 0.83) {
         alerts.push({
           type: 'airbnb_limit',
           property_id: prop.id,
           property_name: prop.name,
-          message: `${totalNights}/120 nuits Airbnb utilisées — limite légale approche`,
-          severity: totalNights > 110 ? 'high' : 'medium',
+          message: `${totalNights}/${maxN} nuits Airbnb utilisées — limite légale approche`,
+          severity: totalNights > maxN * 0.92 ? 'high' : 'medium',
           action_href: `/biens/${prop.id}`,
         })
       }

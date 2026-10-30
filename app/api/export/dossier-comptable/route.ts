@@ -11,53 +11,142 @@ export async function POST(req: NextRequest) {
   const service = await createServiceClient()
 
   // Récupérer toutes les données
-  const [propsRes, profileRes] = await Promise.all([
+  const [propsRes, profileRes, annexesRes] = await Promise.all([
     service.from('properties')
       .select(`
         id, name, type, address, city, purchase_price, property_tax, insurance_annual,
-        monthly_charges, loan_monthly, numero_fiscal,
+        monthly_charges, loan_monthly, numero_fiscal, airbnb_platform_fees,
         leases(
           tenant_name, monthly_rent, charges, start_date, is_active,
           payments(id, amount, status, due_date, paid_date)
         ),
-        expenses(id, amount, date, category, description, deductible)
+        expenses(id, amount, date, category, description, fiscal_deductible),
+        airbnb_bookings(id, total_revenue, check_in)
       `)
       .eq('user_id', user.id),
     service.from('profiles').select('full_name').eq('id', user.id).single(),
+    service.from('incidents')
+      .select('*')
+      .is('property_id', null)
+      .eq('est_paye', true),
   ])
 
   const properties = propsRes.data ?? []
   const ownerName = profileRes.data?.full_name ?? 'Propriétaire'
+  const depensesAnnexes = (annexesRes.data ?? []).filter((d: any) => {
+    const y = new Date(d.date_travaux ?? d.created_at).getFullYear()
+    return y === annee
+  })
+  const totalAnnexes = depensesAnnexes.reduce((s: number, d: any) => s + (d.cout_paye || 0), 0)
 
-  // Calculer les données par bien pour l'année
-  const biens = properties.map(prop => {
+  const LABEL_CATEGORIE: Record<string, string> = {
+    materiel_informatique: 'Matériel informatique',
+    frais_gestion: 'Frais bancaires & gestion',
+    frais_deplacement: 'Frais de déplacement',
+    abonnements: 'Abonnements & logiciels',
+    fournitures: 'Fournitures de bureau',
+    honoraires: 'Honoraires & conseils',
+  }
+
+  // Travaux payés rattachés à un bien (table incidents). On ne compte QUE le réel.
+  const propIds = properties.map((p: any) => p.id)
+  const travauxRes = propIds.length
+    ? await service.from('incidents')
+        .select('id, title, cout_paye, est_paye, date_travaux, created_at, categorie_fiscale, property_id')
+        .in('property_id', propIds)
+        .eq('est_paye', true)
+    : { data: [] as any[] }
+  const travauxByProp: Record<string, any[]> = {}
+  for (const t of (travauxRes.data ?? [])) {
+    const y = new Date(t.date_travaux ?? t.created_at).getFullYear()
+    if (y !== annee) continue
+    ;(travauxByProp[t.property_id] ??= []).push(t)
+  }
+
+  const TRAVAUX_LABEL: Record<string, string> = {
+    entretien_reparation: 'Entretien / Réparation',
+    amelioration: 'Amélioration',
+    travaux_deductibles: 'Travaux déductibles',
+    travaux_amortissables: 'Travaux amortissables',
+    construction_agrandissement: 'Construction / Agrandissement',
+  }
+  // Construction/agrandissement = immobilisation, pas une charge déductible.
+  const isTravauxDeductible = (cat: string) => cat !== 'construction_agrandissement'
+
+  const EXPENSE_LABEL: Record<string, string> = {
+    taxe: 'Taxe foncière', assurance: 'Assurance', travaux: 'Travaux',
+    gestion: 'Frais de gestion', copropriete: 'Copropriété',
+  }
+
+  // Données par bien : charges = dépenses enregistrées + travaux payés (réel).
+  const biens = properties.map((prop: any) => {
     const leases = prop.leases ?? []
     const activeLease = leases.find((l: any) => l.is_active)
     const allPayments = leases.flatMap((l: any) => (l.payments ?? []))
 
-    const loyersAnnee = allPayments
+    const loyersBail = allPayments
       .filter((p: any) => p.status === 'paid' && new Date(p.due_date).getFullYear() === annee)
       .reduce((s: number, p: any) => s + p.amount, 0)
 
-    const chargesAnnee = (prop.expenses ?? [])
-      .filter((e: any) => new Date(e.date).getFullYear() === annee && e.deductible)
+    // Revenus Airbnb : somme des réservations de l'année (par date d'arrivée).
+    const revenusAirbnb = (prop.airbnb_bookings ?? [])
+      .filter((b: any) => new Date(b.check_in).getFullYear() === annee)
+      .reduce((s: number, b: any) => s + (b.total_revenue || 0), 0)
+
+    const loyersAnnee = loyersBail + revenusAirbnb
+
+    // 1. Dépenses réellement saisies (table expenses), année en cours
+    const expensesAnnee = (prop.expenses ?? [])
+      .filter((e: any) => new Date(e.date).getFullYear() === annee)
+    const chargesExpenses = expensesAnnee
+      .filter((e: any) => e.fiscal_deductible)
       .reduce((s: number, e: any) => s + e.amount, 0)
 
-    const chargesFixes = (prop.monthly_charges + prop.loan_monthly) * 12 +
-      prop.property_tax + prop.insurance_annual
+    // 2. Travaux payés rattachés au bien
+    const travaux = travauxByProp[prop.id] ?? []
+    const chargesTravaux = travaux
+      .filter((t: any) => isTravauxDeductible(t.categorie_fiscale))
+      .reduce((s: number, t: any) => s + (t.cout_paye || 0), 0)
+
+    // 3. Commission de plateforme (Airbnb/Booking) : charge déductible retenue
+    //    sur les versements. Les recettes étant comptées brutes, on l'ajoute.
+    const feePct = Number(prop.airbnb_platform_fees) || 0
+    const commissionPlateforme = prop.type === 'airbnb' ? revenusAirbnb * (feePct / 100) : 0
+
+    const chargesDeductibles = chargesExpenses + chargesTravaux + commissionPlateforme
+
+    const depenses = [
+      ...expensesAnnee.map((e: any) => ({
+        date: e.date, description: e.description,
+        category: EXPENSE_LABEL[e.category] ?? e.category,
+        amount: e.amount, deductible: e.fiscal_deductible,
+      })),
+      ...travaux.map((t: any) => ({
+        date: t.date_travaux ?? t.created_at, description: t.title,
+        category: TRAVAUX_LABEL[t.categorie_fiscale] ?? 'Travaux',
+        amount: t.cout_paye || 0, deductible: isTravauxDeductible(t.categorie_fiscale),
+      })),
+      ...(commissionPlateforme > 0 ? [{
+        date: `${annee}-12-31`,
+        description: `Commission plateforme (${feePct}% des recettes)`,
+        category: 'Frais de plateforme',
+        amount: commissionPlateforme,
+        deductible: true,
+      }] : []),
+    ]
 
     return {
       ...prop,
       activeLease,
       loyersAnnee,
-      chargesDeductibles: chargesAnnee + chargesFixes,
-      resultatNet: loyersAnnee - chargesAnnee - chargesFixes,
-      depenses: (prop.expenses ?? []).filter((e: any) => new Date(e.date).getFullYear() === annee),
+      chargesDeductibles,
+      resultatNet: loyersAnnee - chargesDeductibles,
+      depenses,
     }
   })
 
   const totalLoyers = biens.reduce((s, b) => s + b.loyersAnnee, 0)
-  const totalCharges = biens.reduce((s, b) => s + b.chargesDeductibles, 0)
+  const totalCharges = biens.reduce((s, b) => s + b.chargesDeductibles, 0) + totalAnnexes
   const resultatGlobal = totalLoyers - totalCharges
 
   // Générer le HTML du dossier
@@ -158,6 +247,28 @@ ${biens.filter(b => b.depenses.length > 0).map(b => `
     </tr>
   </tbody>
 </table>`).join('')}
+
+${depensesAnnexes.length > 0 ? `
+<h2>Dépenses annexes de gestion ${annee}</h2>
+<p style="font-size:10px;color:#475569;margin-bottom:10px;">Frais non liés à un bien spécifique, déductibles en LMNP régime réel (matériel, honoraires, déplacements...)</p>
+<table>
+  <thead><tr><th>Date</th><th>Description</th><th>Catégorie</th><th>Fournisseur</th><th>N° facture</th><th>Montant</th></tr></thead>
+  <tbody>
+    ${depensesAnnexes.map((d: any) => `
+    <tr>
+      <td>${d.date_travaux ? new Date(d.date_travaux).toLocaleDateString('fr-FR') : new Date(d.created_at).toLocaleDateString('fr-FR')}</td>
+      <td>${d.title || '—'}</td>
+      <td>${LABEL_CATEGORIE[d.categorie_fiscale] ?? d.categorie_fiscale ?? '—'}</td>
+      <td>${d.nom_entreprise || '—'}</td>
+      <td>${d.numero_facture || '—'}</td>
+      <td class="red">${(d.cout_paye || 0).toLocaleString('fr-FR')} €</td>
+    </tr>`).join('')}
+    <tr class="total-row">
+      <td colspan="5"><strong>Total dépenses annexes</strong></td>
+      <td class="red"><strong>${totalAnnexes.toLocaleString('fr-FR')} €</strong></td>
+    </tr>
+  </tbody>
+</table>` : ''}
 
 <div style="margin-top:20px; padding:12px; background:#FFFBEB; border:1px solid #FCD34D; border-radius:8px;">
   <strong>⚠️ Note importante</strong><br>

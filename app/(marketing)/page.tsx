@@ -217,7 +217,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
-              { plan: 'Pro', price: 29, priceAnnual: 24, desc: 'Pour la plupart des propriétaires', features: ['Jusqu\'à 10 biens','Copilot IA illimité','Import documents IA','Fiscalité LMNP / SCI / Nu','Relances & quittances auto','GED documents'], cta: 'Démarrer l\'essai gratuit', h: true, ctaNote: '2 mois gratuits · puis 29€/mois' },
+              { plan: 'Pro', price: 29, priceAnnual: 24, desc: 'Pour la plupart des propriétaires', features: ['Jusqu\'à 10 biens','Copilot IA illimité','Import documents IA','Fiscalité LMNP / SCI / Nu','Relances & quittances auto','GED documents','SCI multi-associés','Export expert-comptable'], cta: 'Démarrer l\'essai gratuit', h: true, ctaNote: '2 mois gratuits · puis 29€/mois' },
               { plan: 'Premium', price: 79, priceAnnual: 65, desc: 'Grand patrimoine, multi-SCI', features: ['Biens illimités','Tout le plan Pro','SCI multi-associés','Export expert-comptable','Support prioritaire 9h–18h'], cta: 'Démarrer en Premium', h: false, ctaNote: '2 mois gratuits · puis 79€/mois' },
             ].map(({ plan, price, priceAnnual, desc, features, cta, h, ctaNote }) => (
               <div key={plan} className="relative p-7 rounded-2xl border transition-all hover:shadow-md"

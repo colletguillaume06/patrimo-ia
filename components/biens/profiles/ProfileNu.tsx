@@ -2,6 +2,7 @@ import { GlassCard } from '@/components/ui/GlassCard'
 import { SimulationCard } from '@/components/fiscalite/SimulationCard'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
 import { NumeroFiscalBadge } from '@/components/biens/NumeroFiscalBadge'
+import { ValeurActuelleCard } from '@/components/biens/ValeurActuelleCard'
 import { formatCurrency, formatPct } from '@/lib/utils'
 import { calculateFoncierSimulation } from '@/lib/fiscal/foncier'
 import { AlertTriangle } from 'lucide-react'
@@ -100,6 +101,15 @@ export function ProfileNu({ property: p }: ProfileNuProps) {
           </div>
         )}
       </GlassCard>
+
+      <ValeurActuelleCard
+        propertyId={p.id}
+        purchasePrice={p.purchase_price ?? null}
+        valeurActuelle={(p as any).valeur_actuelle ?? null}
+        valeurActuelleDate={(p as any).valeur_actuelle_date ?? null}
+        valeurActuelleSource={(p as any).valeur_actuelle_source ?? null}
+        loyer={p.active_lease?.monthly_rent ?? null}
+      />
     </div>
   )
 }

@@ -3,11 +3,11 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Stethoscope, CreditCard, Building, Users, Wrench, Shield, BarChart2, RefreshCw } from 'lucide-react'
+import { Stethoscope, CreditCard, Building, Users, Wrench, Shield, BarChart2, RefreshCw, UserPlus, Calculator, CalendarDays } from 'lucide-react'
 
 // Map des icônes par nom (string) → évite de passer des composants non-sérialisables
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
-  Stethoscope, CreditCard, Building, Users, Wrench, Shield, BarChart2, RefreshCw,
+  Stethoscope, CreditCard, Building, Users, Wrench, Shield, BarChart2, RefreshCw, UserPlus, Calculator, CalendarDays,
 }
 
 interface Tab {

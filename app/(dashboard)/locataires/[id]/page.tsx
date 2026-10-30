@@ -10,17 +10,24 @@ import { fr } from 'date-fns/locale'
 import { toast } from 'sonner'
 import {
   ChevronLeft, Phone, Mail, Building2, FileText, User,
-  Shield, Edit3, Save, X, CheckCircle, AlertCircle, Clock, Plus
+  Shield, Edit3, Save, X, CheckCircle, AlertCircle, Clock, Plus, Trash2, TrendingUp
 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { RevisionModal } from '@/components/loyers/RevisionModal'
+import { IRL_CURRENT, ILC_CURRENT, ILAT_CURRENT, getQuarterLabel, calculateRevisionLoyer } from '@/lib/fiscal/indices'
 
 export default function LocataireDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const router = useRouter()
   const [tenant, setTenant] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState<any>({})
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [revisionLease, setRevisionLease] = useState<any | null>(null)
   const supabase = createClient()
 
   const load = async () => {
@@ -30,13 +37,37 @@ export default function LocataireDetailPage() {
         *,
         leases(
           id, is_active, monthly_rent, charges, deposit, start_date, end_date,
-          property:properties(id, name, address, city, type),
+          irl_reference_valeur, irl_reference_trimestre, irl_reference_annee, irl_reference_indice,
+          tenant_email, tenant_phone, tenant_name,
+          property:properties(id, name, address, city, type, indice_revision),
           payments(id, status, amount, due_date)
         )
       `)
       .eq('id', id)
       .single()
-    setTenant(data)
+
+    // Fallback : chercher les baux par tenant_name si aucun bail lié par tenant_id
+    let enriched = data
+    if (data && (!data.leases || data.leases.length === 0)) {
+      const { data: byName } = await supabase
+        .from('leases')
+        .select(`
+          id, is_active, monthly_rent, charges, deposit, start_date, end_date,
+          irl_reference_valeur, irl_reference_trimestre, irl_reference_annee, irl_reference_indice,
+          tenant_email, tenant_phone, tenant_name,
+          property:properties(id, name, address, city, type, indice_revision),
+          payments(id, status, amount, due_date)
+        `)
+        .ilike('tenant_name', data.full_name)
+      enriched = { ...data, leases: byName ?? [] }
+
+      // Relier automatiquement ces baux au locataire (repair silencieux)
+      if (byName && byName.length > 0) {
+        await supabase.from('leases').update({ tenant_id: id }).in('id', byName.map((l: any) => l.id))
+      }
+    }
+
+    setTenant(enriched)
     setForm({
       full_name: data?.full_name ?? '',
       email: data?.email ?? '',
@@ -52,6 +83,15 @@ export default function LocataireDetailPage() {
 
   useEffect(() => { load() }, [id])
 
+  const handleDelete = async () => {
+    setDeleting(true)
+    const { error } = await supabase.from('tenants').delete().eq('id', id)
+    setDeleting(false)
+    if (error) { toast.error('Erreur suppression : ' + error.message); return }
+    toast.success('Fiche locataire supprimée')
+    router.push('/locataires')
+  }
+
   const handleSave = async () => {
     setSaving(true)
     const { error } = await supabase.from('tenants').update(form).eq('id', id)
@@ -66,6 +106,9 @@ export default function LocataireDetailPage() {
   if (!tenant) return <div className="text-center py-12" style={{ color: 'var(--text-secondary)' }}>Locataire introuvable</div>
 
   const activeLease = tenant.leases?.find((l: any) => l.is_active)
+  const activeLeases = tenant.leases?.filter((l: any) => l.is_active) ?? []
+  const totalLoyerMensuel = activeLeases.reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) + (l.charges ?? 0), 0)
+  const totalDG = activeLeases.reduce((s: number, l: any) => s + (l.deposit ?? 0), 0)
   const allPayments = tenant.leases?.flatMap((l: any) => l.payments ?? []) ?? []
   const paid = allPayments.filter((p: any) => p.status === 'paid')
   const late = allPayments.filter((p: any) => p.status === 'late')
@@ -94,11 +137,18 @@ export default function LocataireDetailPage() {
         </div>
         <div className="flex gap-2">
           {!activeLease && (
-            <Link href="/baux"
-              className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold border"
-              style={{ borderColor: '#1D4ED8', color: '#1D4ED8', background: '#EFF6FF' }}>
-              <Plus className="h-4 w-4" /> Créer un bail
-            </Link>
+            <>
+              <button onClick={() => setConfirmDelete(true)}
+                className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold border"
+                style={{ borderColor: '#EF4444', color: '#EF4444', background: '#FEF2F2' }}>
+                <Trash2 className="h-4 w-4" /> Supprimer
+              </button>
+              <Link href="/baux"
+                className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold border"
+                style={{ borderColor: '#1D4ED8', color: '#1D4ED8', background: '#EFF6FF' }}>
+                <Plus className="h-4 w-4" /> Créer un bail
+              </Link>
+            </>
           )}
           {editing ? (
             <>
@@ -123,13 +173,13 @@ export default function LocataireDetailPage() {
       </div>
 
       {/* KPIs */}
-      {activeLease && (
+      {activeLeases.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'Loyer mensuel', value: formatCurrency(activeLease.monthly_rent), color: 'var(--text-primary)' },
+            { label: activeLeases.length > 1 ? `Loyers mensuels (${activeLeases.length} baux)` : 'Loyer mensuel', value: formatCurrency(totalLoyerMensuel), color: 'var(--text-primary)' },
             { label: 'Total encaissé', value: formatCurrency(totalEncaisse), color: '#059669' },
             { label: 'En retard', value: formatCurrency(totalRetard), color: totalRetard > 0 ? '#DC2626' : 'var(--text-tertiary)' },
-            { label: 'Dépôt de garantie', value: formatCurrency(activeLease.deposit ?? 0), color: '#1D4ED8' },
+            { label: activeLeases.length > 1 ? 'DG total' : 'Dépôt de garantie', value: formatCurrency(totalDG), color: '#1D4ED8' },
           ].map(({ label, value, color }) => (
             <GlassCard key={label} className="p-4">
               <p className="text-xs mb-1" style={{ color: 'var(--text-tertiary)' }}>{label}</p>
@@ -225,26 +275,57 @@ export default function LocataireDetailPage() {
           </h2>
           {tenant.leases?.length > 0 ? (
             <div className="space-y-2">
-              {tenant.leases.map((lease: any) => (
-                <div key={lease.id} className="p-3 rounded-xl" style={{ background: 'var(--bg-secondary)', border: `1px solid ${lease.is_active ? '#86EFAC' : 'var(--border)'}` }}>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-2">
-                      <Building2 className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} />
-                      <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                        {lease.property?.name || '—'}
+              {tenant.leases.map((lease: any) => {
+                const indice = (lease.irl_reference_indice ?? lease.indexation_index ?? 'irl') as 'irl' | 'ilc' | 'ilat'
+                const nouvelIndice = indice === 'ilc' ? ILC_CURRENT : indice === 'ilat' ? ILAT_CURRENT : IRL_CURRENT
+                const calcul = lease.irl_reference_valeur && lease.is_active
+                  ? calculateRevisionLoyer({ loyer_actuel: lease.monthly_rent, indice_reference: lease.irl_reference_valeur, indice_nouveau: nouvelIndice })
+                  : null
+                const variation = calcul ? calcul.nouveau_loyer - lease.monthly_rent : 0
+                const dejaPrisEnCompte = calcul && Math.abs(variation) < 0.5
+                return (
+                  <div key={lease.id} className="p-3 rounded-xl" style={{ background: 'var(--bg-secondary)', border: `1px solid ${lease.is_active ? '#86EFAC' : 'var(--border)'}` }}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <Building2 className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} />
+                        <Link href={`/baux/${lease.id}`} className="text-sm font-semibold hover:underline" style={{ color: 'var(--text-primary)' }}>
+                          {lease.property?.name || '—'}
+                        </Link>
+                      </div>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${lease.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+                        {lease.is_active ? 'Actif' : 'Terminé'}
                       </span>
                     </div>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${lease.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
-                      {lease.is_active ? 'Actif' : 'Terminé'}
-                    </span>
+                    <div className="flex items-center gap-3 text-xs flex-wrap" style={{ color: 'var(--text-secondary)' }}>
+                      <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{formatCurrency(lease.monthly_rent)}/mois</span>
+                      {lease.start_date && <span>Depuis {format(new Date(lease.start_date), 'd MMM yyyy', { locale: fr })}</span>}
+                      {lease.deposit > 0 && <span>Dépôt {formatCurrency(lease.deposit)}</span>}
+                    </div>
+                    {/* Bloc IRL */}
+                    {calcul && (
+                      <div className="mt-2.5 pt-2.5 border-t flex items-center justify-between gap-3" style={{ borderColor: 'var(--border)' }}>
+                        <div className="flex items-center gap-3 text-xs flex-wrap">
+                          <span style={{ color: 'var(--text-tertiary)' }}>{indice.toUpperCase()} {getQuarterLabel()} : <span className="font-mono">{nouvelIndice}</span></span>
+                          {dejaPrisEnCompte ? (
+                            <span className="text-green-600 font-medium">✓ Loyer à jour</span>
+                          ) : (
+                            <span style={{ color: '#F59E0B' }} className="font-medium">
+                              Loyer révisable → {formatCurrency(calcul.nouveau_loyer)} (+{formatCurrency(variation)})
+                            </span>
+                          )}
+                        </div>
+                        {!dejaPrisEnCompte && (
+                          <button onClick={() => setRevisionLease({ ...lease, property: lease.property })}
+                            className="flex items-center gap-1 h-7 px-3 rounded-lg text-xs font-semibold text-white flex-shrink-0"
+                            style={{ background: '#059669' }}>
+                            <TrendingUp className="h-3 w-3" /> Réviser
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-3 text-xs" style={{ color: 'var(--text-secondary)' }}>
-                    <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{formatCurrency(lease.monthly_rent)}/mois</span>
-                    {lease.start_date && <span>Depuis {format(new Date(lease.start_date), 'd MMM yyyy', { locale: fr })}</span>}
-                    {lease.deposit > 0 && <span>Dépôt {formatCurrency(lease.deposit)}</span>}
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
@@ -300,6 +381,46 @@ export default function LocataireDetailPage() {
           </p>
         )}
       </GlassCard>
+
+      {revisionLease && (
+      <RevisionModal
+        lease={revisionLease}
+        onClose={() => setRevisionLease(null)}
+        onSuccess={() => { setRevisionLease(null); load() }}
+      />
+    )}
+
+    {/* Modale confirmation suppression */}
+      {confirmDelete && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setConfirmDelete(false)} />
+        <div className="relative w-full max-w-sm rounded-2xl p-6 shadow-2xl bg-white border border-slate-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+              <Trash2 className="h-5 w-5 text-red-500" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">Supprimer la fiche</h3>
+              <p className="text-sm text-slate-500">{tenant.full_name}</p>
+            </div>
+          </div>
+          <p className="text-sm text-slate-600 mb-5">
+            Cette action est irréversible. La fiche locataire sera définitivement supprimée.
+            Les baux et historiques associés ne seront pas supprimés.
+          </p>
+          <div className="flex gap-3">
+            <button onClick={() => setConfirmDelete(false)}
+              className="flex-1 h-10 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50">
+              Annuler
+            </button>
+            <button onClick={handleDelete} disabled={deleting}
+              className="flex-1 h-10 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold disabled:opacity-50">
+              {deleting ? 'Suppression…' : 'Supprimer'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   )
 }

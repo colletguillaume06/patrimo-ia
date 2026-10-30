@@ -178,12 +178,17 @@ export async function POST() {
 
   const results = { biens: 0, tenants: 0, baux: 0, updates: 0, errors: [] as string[] }
 
+  // Garde : si le compte a déjà ≥ 5 biens, ne pas recréer — juste mettre à jour
+  const { count: existingCount } = await supabase
+    .from('properties').select('id', { count: 'exact', head: true }).eq('user_id', user.id)
+  const skipCreate = (existingCount ?? 0) >= 5
+
   for (const item of SETUP_DATA) {
     try {
-      // ── 1. BIEN ──
+      // ── 1. BIEN ── recherche partielle pour éviter les doublons (nom peut contenir le locataire)
       const { data: existingBien } = await supabase
         .from('properties').select('id').eq('user_id', user.id)
-        .ilike('name', item.bien.name).maybeSingle()
+        .ilike('name', `%${item.bien.name}%`).maybeSingle()
 
       let propertyId: string
       if (existingBien) {
@@ -194,13 +199,16 @@ export async function POST() {
           monthly_charges: item.bien.monthly_charges,
         }).eq('id', propertyId)
         results.updates++
-      } else {
+      } else if (!skipCreate) {
         const { data: newBien, error } = await supabase.from('properties').insert({
           user_id: user.id, ...item.bien,
         }).select('id').single()
         if (error) { results.errors.push(`Bien ${item.bien.name}: ${error.message}`); continue }
         propertyId = newBien.id
         results.biens++
+      } else {
+        results.errors.push(`Bien ${item.bien.name}: introuvable mais création bloquée (compte déjà initialisé)`)
+        continue
       }
 
       // ── 2. LOCATAIRE ──
@@ -253,9 +261,9 @@ export async function POST() {
   for (const bien of BIENS_SEULS) {
     const { data: existing } = await supabase
       .from('properties').select('id').eq('user_id', user.id)
-      .ilike('name', bien.name).maybeSingle()
+      .ilike('name', `%${bien.name}%`).maybeSingle()
 
-    if (!existing) {
+    if (!existing && !skipCreate) {
       const { error } = await supabase.from('properties').insert({
         user_id: user.id,
         name: bien.name, type: bien.type,
@@ -264,7 +272,7 @@ export async function POST() {
       })
       if (!error) results.biens++
       else results.errors.push(`${bien.name}: ${error.message}`)
-    } else {
+    } else if (existing) {
       await supabase.from('properties').update({ type: bien.type }).eq('id', existing.id)
       results.updates++
     }

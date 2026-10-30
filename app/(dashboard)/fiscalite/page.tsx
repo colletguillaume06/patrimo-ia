@@ -10,6 +10,8 @@ import { formatCurrency, formatPct } from '@/lib/utils'
 import { calculateLmnpSimulation, calculateDepreciation } from '@/lib/fiscal/lmnp'
 import { calculateFoncierSimulation } from '@/lib/fiscal/foncier'
 import { calculateSciSimulation } from '@/lib/fiscal/sci'
+import { evaluerSeuilLmp, evaluerSeuilMicroBic, comparerClassement } from '@/lib/fiscal/seuils'
+import { SeuilsCard } from '@/components/fiscalite/SeuilsCard'
 import { IRL_CURRENT, ILC_CURRENT, ILAT_CURRENT, getQuarterLabel } from '@/lib/fiscal/indices'
 import { format, differenceInDays } from 'date-fns'
 import { fr } from 'date-fns/locale'
@@ -167,6 +169,7 @@ export default function FiscalitePage() {
   const [selectedPropId, setSelectedPropId] = useState('all')
   const [properties, setProperties] = useState<any[]>([])
   const [incidents, setIncidents] = useState<any[]>([])
+  const [depensesAnnexes, setDepensesAnnexes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [tmi, setTmi] = useState(30)
   const supabase = createClient()
@@ -174,17 +177,22 @@ export default function FiscalitePage() {
   useEffect(() => {
     const load = async () => {
       setLoading(true)
-      const [propRes, incRes] = await Promise.all([
+      const [propRes, incRes, annexesRes] = await Promise.all([
         supabase.from('properties')
-          .select('*, leases(*), expenses(*), depreciation_plans(*), sci_associates(*)')
+          .select('*, leases(*), expenses(*), depreciation_plans(*), sci_associates(*), airbnb_bookings(*)')
           .order('name'),
         supabase.from('incidents')
           .select('*')
           .gte('created_at', `${year}-01-01`)
           .lte('created_at', `${year}-12-31`),
+        supabase.from('incidents')
+          .select('*')
+          .is('property_id', null)
+          .eq('est_paye', true),
       ])
       setProperties(propRes.data ?? [])
       setIncidents(incRes.data ?? [])
+      setDepensesAnnexes(annexesRes.data ?? [])
       setLoading(false)
     }
     load()
@@ -200,18 +208,30 @@ export default function FiscalitePage() {
       .filter(i => ['entretien_reparation', 'travaux_deductibles'].includes(i.categorie_fiscale ?? ''))
       .reduce((s: number, i: any) => s + (i.cout_paye || 0), 0)
 
-    const revenus = (prop.leases ?? [])
+    // Revenus : loyers de bail (× 12) + recettes Airbnb de l'année
+    const revenusBail = (prop.leases ?? [])
       .filter((l: any) => l.is_active)
       .reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
+    const revenusAirbnb = (prop.airbnb_bookings ?? [])
+      .filter((b: any) => new Date(b.check_in).getFullYear() === year)
+      .reduce((s: number, b: any) => s + (b.total_revenue || 0), 0)
+    const revenus = revenusBail + revenusAirbnb
 
     const charges_courantes = expenses_ytd.reduce((s: number, e: any) => s + e.amount, 0)
       + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual
+
+    // Commission de plateforme (Airbnb/Booking) : retenue sur les versements,
+    // c'est une charge déductible au réel. Les recettes saisies étant brutes,
+    // on l'ajoute explicitement aux charges.
+    const commissionPlateforme = prop.type === 'airbnb'
+      ? revenusAirbnb * ((Number(prop.airbnb_platform_fees) || 0) / 100)
+      : 0
 
     const amortissements = prop.type === 'lmnp'
       ? calculateDepreciation(prop.depreciation_plans ?? [])
       : 0
 
-    const charges = charges_courantes + travaux_deductibles
+    const charges = charges_courantes + travaux_deductibles + commissionPlateforme
 
     let resultat = 0
     let impot = 0
@@ -238,6 +258,15 @@ export default function FiscalitePage() {
       })
       resultat = sim.resultat_comptable
       impot = sim.is_du
+    } else if (prop.type === 'airbnb') {
+      // Meublé de tourisme = BIC. Régime réel vs micro-BIC ; l'abattement
+      // spécifique (classé / non classé) sera affiné à l'étape 3.
+      const sim = calculateLmnpSimulation({
+        recettes: revenus, charges_reelles: charges,
+        amortissements: 0, taux_marginal: tmi / 100,
+      })
+      resultat = sim.resultat_bic
+      impot = sim.impot_estime
     } else {
       resultat = revenus - charges
       impot = Math.max(0, resultat) * (tmi / 100)
@@ -256,14 +285,56 @@ export default function FiscalitePage() {
   const allData = properties.map(buildPropData)
   const filtered = selectedPropId === 'all' ? allData : allData.filter(d => d.id === selectedPropId)
 
+  // Dépenses annexes de l'année (non liées à un bien)
+  const annexesYear = depensesAnnexes.filter((d: any) => {
+    const dy = new Date(d.date_travaux ?? d.created_at).getFullYear()
+    return dy === year
+  })
+  const totalAnnexes = selectedPropId === 'all' ? annexesYear.reduce((s, d) => s + (d.cout_paye || 0), 0) : 0
+
+  const LABEL_ANNEXE: Record<string, string> = {
+    materiel_informatique: 'Matériel informatique',
+    frais_gestion: 'Frais bancaires & gestion',
+    frais_deplacement: 'Frais de déplacement',
+    abonnements: 'Abonnements & logiciels',
+    fournitures: 'Fournitures de bureau',
+    honoraires: 'Honoraires & conseils',
+  }
+
   const totaux = {
     revenus: filtered.reduce((s, d) => s + d.revenus, 0),
-    charges: filtered.reduce((s, d) => s + d.charges, 0),
+    charges: filtered.reduce((s, d) => s + d.charges, 0) + totalAnnexes,
     travaux: filtered.reduce((s, d) => s + d.travaux_deductibles, 0),
     amortissements: filtered.reduce((s, d) => s + d.amortissements, 0),
-    resultat: filtered.reduce((s, d) => s + d.resultat, 0),
+    resultat: filtered.reduce((s, d) => s + d.resultat, 0) - totalAnnexes,
     impot: filtered.reduce((s, d) => s + d.impot, 0),
   }
+
+  // ── Seuils de la location meublée ──
+  // Le seuil LMP se cumule sur TOUS les meublés du foyer (LMNP + Airbnb), quel
+  // que soit le bien sélectionné : on part donc de `allData`, pas de `filtered`.
+  const recettesMeublees = allData
+    .filter(d => d.type === 'lmnp' || d.type === 'airbnb')
+    .reduce((s, d) => s + d.revenus, 0)
+  // Les plafonds micro-BIC, eux, s'apprécient par catégorie d'activité — et le
+  // classement change à la fois le plafond et l'abattement.
+  const airbnbProps = allData.filter(d => d.type === 'airbnb')
+  const recettesTourismeClasse = airbnbProps.filter(d => d.raw?.meuble_classe).reduce((s, d) => s + d.revenus, 0)
+  const recettesTourismeNonClasse = airbnbProps.filter(d => !d.raw?.meuble_classe).reduce((s, d) => s + d.revenus, 0)
+  const recettesLongueDuree = allData.filter(d => d.type === 'lmnp').reduce((s, d) => s + d.revenus, 0)
+
+  const etatsSeuils = [
+    evaluerSeuilLmp(recettesMeublees),
+    evaluerSeuilMicroBic('tourisme_non_classe', recettesTourismeNonClasse),
+    evaluerSeuilMicroBic('tourisme_classe', recettesTourismeClasse),
+    evaluerSeuilMicroBic('longue_duree', recettesLongueDuree),
+  ]
+
+  // Gain potentiel du classement, sur les seuls meublés de tourisme NON classés.
+  const tauxGlobal = tmi / 100 + 0.186
+  const gainClassement = recettesTourismeNonClasse > 0
+    ? comparerClassement(recettesTourismeNonClasse, tauxGlobal)
+    : null
 
   const lmnpProps = filtered.filter(d => d.type === 'lmnp')
   const nuProps = filtered.filter(d => d.type === 'nu')
@@ -294,9 +365,11 @@ export default function FiscalitePage() {
           <div className="flex gap-1.5">
             {YEARS.map(y => (
               <button key={y} onClick={() => setYear(y)}
-                className={`h-9 px-3 rounded-lg text-sm font-medium transition-all ${
-                  year === y ? 'bg-[#1D4ED8] text-white' : 'bg-white/[0.05] border border-white/[0.08] text-slate-400 hover:text-[var(--text-primary)]'
-                }`}>
+                className="h-9 px-3 rounded-lg text-sm font-medium transition-all"
+                style={year === y
+                  ? { background: '#1D4ED8', color: '#fff' }
+                  : { background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }
+                }>
                 {y}
               </button>
             ))}
@@ -326,6 +399,9 @@ export default function FiscalitePage() {
         </GlassCard>
       ) : (
         <>
+          {/* ── BLOC 0 — Seuils de la location meublée ── */}
+          <SeuilsCard seuils={etatsSeuils} gainClassement={gainClassement} />
+
           {/* ── BLOC 1 — Résumé par bien ── */}
           <GlassCard>
             <h2 className="font-display font-semibold text-[var(--text-primary)] mb-4">Résumé par bien — {year}</h2>
@@ -369,6 +445,16 @@ export default function FiscalitePage() {
                   ))}
                 </tbody>
                 <tfoot>
+                  {totalAnnexes > 0 && (
+                    <tr className="border-t border-white/[0.06] bg-purple-400/[0.03]">
+                      <td className="py-2.5 px-3 text-purple-400 text-sm font-medium" colSpan={4}>Dépenses annexes de gestion</td>
+                      <td className="py-2.5 px-3 text-slate-500">—</td>
+                      <td className="py-2.5 px-3 text-red-400 font-mono">{formatCurrency(totalAnnexes)}</td>
+                      <td className="py-2.5 px-3 text-slate-500">—</td>
+                      <td className="py-2.5 px-3 text-slate-500">—</td>
+                      <td className="py-2.5 px-3 text-xs text-purple-400" colSpan={2}>{annexesYear.length} dépense{annexesYear.length > 1 ? 's' : ''} non liée{annexesYear.length > 1 ? 's' : ''} à un bien</td>
+                    </tr>
+                  )}
                   <tr className="border-t-2 border-border bg-white/[0.02]">
                     <td className="py-3 px-3 font-bold text-[var(--text-primary)]" colSpan={4}>TOTAL</td>
                     <td className="py-3 px-3 font-bold text-[var(--success)]">{formatCurrency(totaux.revenus)}</td>
@@ -425,6 +511,37 @@ export default function FiscalitePage() {
                       </div>
                     )
                   })}
+                </Accordion>
+              )}
+
+              {/* Dépenses annexes de gestion */}
+              {totalAnnexes > 0 && (
+                <Accordion title="Dépenses annexes de gestion" badge={
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-purple-400/10 border border-purple-400/20 text-purple-400">Non liées à un bien</span>
+                }>
+                  <p className="text-xs text-slate-500 mb-4">
+                    Ces frais de gestion sont déductibles selon votre régime : en <strong>LMNP réel</strong> ils réduisent votre résultat BIC (cases 5NA/5NY sur la 2042-C-PRO) ; en <strong>SCI à l'IS</strong> ils s'intègrent aux charges de la liasse fiscale ; en <strong>location saisonnière</strong> (Airbnb) ils sont déductibles du bénéfice BIC meublé.
+                  </p>
+                  <div className="space-y-1 mb-4">
+                    {annexesYear.map((d: any) => (
+                      <div key={d.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-white/[0.02] border-b border-white/[0.04]">
+                        <div>
+                          <span className="text-sm text-slate-300">{d.title}</span>
+                          <span className="ml-2 text-xs text-slate-600">{LABEL_ANNEXE[d.categorie_fiscale] ?? d.categorie_fiscale}</span>
+                        </div>
+                        <CopyButton value={d.cout_paye || 0} />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between py-3 px-3 rounded-lg bg-purple-400/5 border border-purple-400/20">
+                    <span className="text-sm font-semibold text-purple-400">Total déductible à intégrer dans votre déclaration</span>
+                    <CopyButton value={totalAnnexes} />
+                  </div>
+                  <p className="text-xs text-slate-600 mt-3">
+                    {hasLmnp && <span>LMNP : à additionner à vos charges cases 5NA/5NY (2042-C-PRO). </span>}
+                    {hasSci && <span>SCI : à intégrer dans la liasse fiscale 2072 ou IS. </span>}
+                    En cas de doute, communiquez ce relevé à votre expert-comptable.
+                  </p>
                 </Accordion>
               )}
 

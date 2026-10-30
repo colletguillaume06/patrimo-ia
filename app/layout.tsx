@@ -79,12 +79,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen antialiased" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem={false}
           disableTransitionOnChange
         >
           {children}
-          <Toaster theme="system" position="top-right" />
+          <Toaster theme="light" position="top-right" />
         </ThemeProvider>
       </body>
     </html>

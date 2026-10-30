@@ -26,7 +26,25 @@ export async function POST(req: NextRequest) {
   const { referral_code, new_user_id } = await req.json()
   if (!referral_code || !new_user_id) return NextResponse.json({ error: 'Données manquantes' }, { status: 400 })
 
+  // Cette route crédite des mois d'abonnement : elle doit être authentifiée et
+  // ne rien accepter d'autre que le compte de l'appelant, sinon n'importe qui
+  // peut créditer un parrain en boucle ou écrire sur le profil d'autrui.
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (user.id !== new_user_id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
   const service = await createServiceClient()
+
+  // Anti-rejeu : un filleul ne peut être parrainé qu'une seule fois.
+  const { data: filleul } = await service
+    .from('profiles')
+    .select('referred_by')
+    .eq('id', user.id)
+    .single()
+  if (filleul?.referred_by) {
+    return NextResponse.json({ error: 'Parrainage déjà enregistré' }, { status: 409 })
+  }
 
   // Trouver le parrain
   const { data: parrain } = await service

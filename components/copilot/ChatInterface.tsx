@@ -47,9 +47,9 @@ export function ChatInterface({ initialMessages = [], propertyId, initialQuestio
   }
 
   return (
-    <div className="flex flex-col h-full bg-[var(--bg)] rounded-2xl border border-white/[0.06] overflow-hidden">
+    <div className="flex flex-col h-full rounded-2xl overflow-hidden" style={{ background: 'var(--bg)', border: '1px solid var(--border)' }}>
       {/* Header */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-white/[0.06]">
+      <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: '1px solid var(--border)' }}>
         <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500/30 to-cyan-400/20 border border-blue-500/30 flex items-center justify-center">
           <Sparkles className="h-4.5 w-4.5 text-blue-400" />
         </div>
@@ -100,8 +100,8 @@ export function ChatInterface({ initialMessages = [], propertyId, initialQuestio
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-white/[0.06]">
-        <div className="flex items-end gap-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] focus-within:border-blue-500/30 transition-all">
+      <div className="p-4" style={{ borderTop: '1px solid var(--border)' }}>
+        <div className="flex items-end gap-3 p-3 rounded-xl transition-all" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}

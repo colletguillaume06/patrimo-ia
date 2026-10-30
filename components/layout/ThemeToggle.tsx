@@ -1,29 +1,23 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTheme } from 'next-themes'
 import { Sun, Moon } from 'lucide-react'
 
 export function ThemeToggle() {
-  const [dark, setDark] = useState(false)
+  // Le thème est piloté par next-themes (défaut : clair, préférence OS ignorée).
+  // On passe par son API plutôt que de manipuler la classe `dark` à la main,
+  // sinon les deux systèmes se contredisent au premier rendu.
+  const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
 
-  useEffect(() => {
-    const saved = localStorage.getItem('theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const isDark = saved === 'dark' || (!saved && prefersDark)
-    setDark(isDark)
-    document.documentElement.classList.toggle('dark', isDark)
-  }, [])
+  useEffect(() => setMounted(true), [])
 
-  const toggle = () => {
-    const next = !dark
-    setDark(next)
-    document.documentElement.classList.toggle('dark', next)
-    localStorage.setItem('theme', next ? 'dark' : 'light')
-  }
+  const dark = mounted && resolvedTheme === 'dark'
 
   return (
     <button
-      onClick={toggle}
+      onClick={() => setTheme(dark ? 'light' : 'dark')}
       className="h-9 w-9 rounded-lg border flex items-center justify-center transition-all"
       style={{
         background: 'var(--surface-2)',
@@ -31,6 +25,7 @@ export function ThemeToggle() {
         color: 'var(--text-secondary)',
       }}
       title={dark ? 'Passer en mode clair' : 'Passer en mode sombre'}
+      suppressHydrationWarning
     >
       {dark
         ? <Sun className="h-4 w-4" />

@@ -31,6 +31,8 @@ export default function BauxPage() {
   const [showAdd, setShowAdd] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [selectedProp, setSelectedProp] = useState('')
+  const [selectedTenantId, setSelectedTenantId] = useState('')
+  const [tenants, setTenants] = useState<any[]>([])
   const [form, setForm] = useState({
     tenant_name: '', tenant_email: '', tenant_phone: '',
     monthly_rent: '', charges: '', deposit: '',
@@ -39,15 +41,22 @@ export default function BauxPage() {
     irl_reference_valeur: '',
     irl_reference_trimestre: '',
     irl_reference_annee: '',
+    taxe_fonciere_refacturee: false,
   })
   const supabase = createClient()
 
   const load = async () => {
-    const [leasesRes, propsRes] = await Promise.all([
+    const [leasesRes, propsRes, tenantsRes] = await Promise.all([
       supabase.from('leases').select('*, property:properties(name, city, type)').order('created_at', { ascending: false }),
       supabase.from('properties').select('id, name, type').order('name'),
+      supabase.from('tenants').select('id, full_name').order('full_name'),
     ])
-    setLeases(leasesRes.data ?? [])
+    setTenants(tenantsRes.data ?? [])
+    const sorted = (leasesRes.data ?? []).sort((a: any, b: any) => {
+      if (a.is_active === b.is_active) return 0
+      return a.is_active ? -1 : 1
+    })
+    setLeases(sorted)
     setProperties(propsRes.data ?? [])
     setLoading(false)
   }
@@ -71,13 +80,15 @@ export default function BauxPage() {
       irl_reference_valeur: form.irl_reference_valeur ? Number(form.irl_reference_valeur) : null,
       irl_reference_trimestre: form.irl_reference_trimestre ? Number(form.irl_reference_trimestre) : null,
       irl_reference_annee: form.irl_reference_annee ? Number(form.irl_reference_annee) : null,
+      parsed_data: { taxe_fonciere_refacturee: form.taxe_fonciere_refacturee },
+      ...(selectedTenantId ? { tenant_id: selectedTenantId } : {}),
     })
     if (error) {
       toast.error(error.message)
     } else {
       toast.success('Bail ajouté')
       setShowAdd(false)
-      setForm({ tenant_name: '', tenant_email: '', tenant_phone: '', monthly_rent: '', charges: '', deposit: '', start_date: '', end_date: '', irl_reference_indice: 'irl', irl_reference_valeur: '', irl_reference_trimestre: '', irl_reference_annee: '' })
+      setForm({ tenant_name: '', tenant_email: '', tenant_phone: '', monthly_rent: '', charges: '', deposit: '', start_date: '', end_date: '', irl_reference_indice: 'irl', irl_reference_valeur: '', irl_reference_trimestre: '', irl_reference_annee: '', taxe_fonciere_refacturee: false })
       load()
     }
   }
@@ -115,7 +126,7 @@ export default function BauxPage() {
             return (
               <GlassCard key={lease.id} className="p-4">
                 <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
+                  <Link href={`/baux/${lease.id}`} className="flex-1 min-w-0 hover:opacity-80 transition-opacity">
                     <div className="flex items-center gap-2 mb-1">
                       <p className="text-sm font-semibold text-[var(--text-primary)]">{lease.tenant_name}</p>
                       {lease.is_active ? (
@@ -143,7 +154,7 @@ export default function BauxPage() {
                         </span>
                       )}
                     </div>
-                  </div>
+                  </Link>
                   <div className="flex items-center gap-2 ml-4">
                     <button
                       onClick={() => handleDelete(lease.id, lease.tenant_name)}
@@ -159,13 +170,13 @@ export default function BauxPage() {
                     {lease.pdf_url ? (
                       <>
                         <button
-                          onClick={() => setPreviewUrl(lease.pdf_url)}
+                          onClick={() => setPreviewUrl(`/api/storage/file?bucket=baux&src=${encodeURIComponent(lease.pdf_url)}`)}
                           className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-400 text-xs font-medium transition-all"
                         >
                           <Eye className="h-3.5 w-3.5" /> Voir
                         </button>
                         <a
-                          href={lease.pdf_url}
+                          href={`/api/storage/file?bucket=baux&src=${encodeURIComponent(lease.pdf_url)}`}
                           download
                           className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-bg-secondary hover:bg-bg-secondary border border-white/[0.08] text-slate-300 text-xs font-medium transition-all"
                         >
@@ -271,6 +282,30 @@ export default function BauxPage() {
                   ))}
                 </select>
               </div>
+              {/* Sélecteur locataire existant */}
+              {tenants.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Locataire existant (optionnel)</label>
+                  <select
+                    value={selectedTenantId}
+                    onChange={e => {
+                      const tid = e.target.value
+                      setSelectedTenantId(tid)
+                      if (tid) {
+                        const t = tenants.find((t: any) => t.id === tid)
+                        if (t) setForm((f: any) => ({ ...f, tenant_name: t.full_name }))
+                      }
+                    }}
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none focus:border-blue-500/50"
+                  >
+                    <option value="" className="bg-[var(--surface)]">— Nouveau locataire (saisie libre)</option>
+                    {tenants.map((t: any) => (
+                      <option key={t.id} value={t.id} className="bg-[var(--surface)]">{t.full_name}</option>
+                    ))}
+                  </select>
+                  {selectedTenantId && <p className="text-xs text-green-600 mt-1">✓ Lié à la fiche locataire</p>}
+                </div>
+              )}
               {[
                 { key: 'tenant_name', label: 'Nom du locataire *', required: true },
                 { key: 'tenant_email', label: 'Email', type: 'email' },
@@ -352,6 +387,22 @@ export default function BauxPage() {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Clause taxe foncière */}
+              <div className="pt-3 border-t border-white/[0.06]">
+                <label className="flex items-center justify-between cursor-pointer gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <div>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">Taxe foncière refacturée au locataire</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Le locataire rembourse la taxe foncière — elle ne sera pas comptée comme charge déductible dans le fiscal</p>
+                  </div>
+                  <div
+                    onClick={() => setForm(f => ({ ...f, taxe_fonciere_refacturee: !f.taxe_fonciere_refacturee }))}
+                    className={`h-6 w-11 rounded-full transition-colors relative flex-shrink-0 ${form.taxe_fonciere_refacturee ? 'bg-amber-500' : 'bg-slate-600'}`}
+                  >
+                    <div className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${form.taxe_fonciere_refacturee ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                  </div>
+                </label>
               </div>
 
               <button

@@ -93,21 +93,35 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
   const [loading, setLoading] = useState(false)
   const [showLettre, setShowLettre] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [modePerso, setModePerso] = useState(false)
+  const [montantPerso, setMontantPerso] = useState('')
 
   const ancienVal = Number(ancienIndice)
   const calcul = ancienVal > 0
     ? calculateRevisionLoyer({ loyer_actuel: lease.monthly_rent, indice_reference: ancienVal, indice_nouveau: nouvelIndice })
     : null
 
+  const montantPersoVal = Number(montantPerso)
+  const nouveauLoyerFinal = modePerso && montantPersoVal > 0 ? montantPersoVal : calcul?.nouveau_loyer ?? 0
+  const variationPerso = nouveauLoyerFinal - lease.monthly_rent
+  const variationPctPerso = lease.monthly_rent > 0 ? (variationPerso / lease.monthly_rent) * 100 : 0
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!ancienVal || !calcul) return
+    if (!ancienVal) return
+    if (!modePerso && !calcul) return
+    if (modePerso && (!montantPersoVal || montantPersoVal <= 0)) { toast.error('Montant invalide'); return }
     setLoading(true)
 
     const res = await fetch('/api/loyers/revision', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lease_id: lease.id, ancien_indice: ancienVal, notify }),
+      body: JSON.stringify({
+        lease_id: lease.id,
+        ancien_indice: ancienVal,
+        notify,
+        ...(modePerso && montantPersoVal > 0 ? { montant_personnalise: montantPersoVal } : {}),
+      }),
     })
 
     setLoading(false)
@@ -229,6 +243,59 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
               </div>
             )}
 
+            {/* Montant personnalisé */}
+            <div className="rounded-xl border border-white/[0.08] overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setModePerso(v => !v)}
+                className={`w-full flex items-center justify-between px-4 py-3 text-sm font-medium transition-colors ${modePerso ? 'bg-amber-500/10 text-amber-400' : 'bg-white/[0.03] text-slate-400 hover:text-slate-300'}`}
+              >
+                <span>Appliquer un montant différent de l'IRL</span>
+                <div className={`h-5 w-9 rounded-full transition-colors relative flex-shrink-0 ${modePerso ? 'bg-amber-500' : 'bg-bg-secondary'}`}>
+                  <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${modePerso ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                </div>
+              </button>
+              {modePerso && (
+                <div className="px-4 pb-4 pt-3 space-y-3 bg-amber-500/5">
+                  <div>
+                    <label className="block text-xs font-medium text-amber-300 mb-1.5">Nouveau loyer souhaité (€/mois)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder={calcul ? String(calcul.nouveau_loyer.toFixed(2)) : 'Ex: 1 700.00'}
+                      value={montantPerso}
+                      onChange={e => setMontantPerso(e.target.value)}
+                      className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-amber-500/30 text-[var(--text-primary)] placeholder:text-text-tertiary text-sm font-mono focus:outline-none focus:border-amber-500/60"
+                    />
+                    {calcul && (
+                      <p className="text-xs text-slate-500 mt-1">
+                        Suggestion IRL : {calcul.nouveau_loyer.toFixed(2)} € · Maximum légal IRL : {calcul.nouveau_loyer.toFixed(2)} €
+                      </p>
+                    )}
+                  </div>
+                  {montantPersoVal > 0 && (
+                    <div className="p-3 rounded-lg bg-white/[0.04] border border-white/[0.06] space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-400">Loyer actuel</span>
+                        <span className="text-[var(--text-primary)]">{formatCurrency(lease.monthly_rent)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-400">Nouveau loyer choisi</span>
+                        <span className="text-amber-400 font-bold">{formatCurrency(montantPersoVal)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm border-t border-white/[0.06] pt-1">
+                        <span className="text-slate-400">Variation</span>
+                        <span className={`font-semibold ${variationPerso >= 0 ? 'text-[var(--success)]' : 'text-red-400'}`}>
+                          {variationPerso >= 0 ? '+' : ''}{formatCurrency(variationPerso)} ({variationPctPerso >= 0 ? '+' : ''}{variationPctPerso.toFixed(2)}%)
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Toggle notification */}
             <label className="flex items-center gap-3 cursor-pointer">
               <div
@@ -254,10 +321,10 @@ export function RevisionModal({ lease, onClose, onSuccess }: RevisionModalProps)
               </button>
               <button
                 type="submit"
-                disabled={loading || !ancienVal || !calcul}
-                className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg bg-green-500 hover:bg-green-400 text-white text-sm font-semibold transition-all disabled:opacity-50"
+                disabled={loading || !ancienVal || (!modePerso && !calcul) || (modePerso && !montantPersoVal)}
+                className={`flex-1 flex items-center justify-center gap-2 h-10 rounded-lg text-white text-sm font-semibold transition-all disabled:opacity-50 ${modePerso ? 'bg-amber-500 hover:bg-amber-400' : 'bg-green-500 hover:bg-green-400'}`}
               >
-                {loading ? 'Application...' : <><TrendingUp className="h-4 w-4" /> Appliquer</>}
+                {loading ? 'Application...' : <><TrendingUp className="h-4 w-4" /> {modePerso ? 'Appliquer mon montant' : 'Appliquer IRL'}</>}
               </button>
             </div>
           </form>

@@ -3,6 +3,7 @@ import { SimulationCard } from '@/components/fiscalite/SimulationCard'
 import { AmortissementTable } from '@/components/fiscalite/AmortissementTable'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
 import { NumeroFiscalBadge } from '@/components/biens/NumeroFiscalBadge'
+import { ValeurActuelleCard } from '@/components/biens/ValeurActuelleCard'
 import { formatCurrency, formatPct } from '@/lib/utils'
 import { calculateLmnpSimulation, calculateDepreciation } from '@/lib/fiscal/lmnp'
 import type { Property, Lease, DepreciationPlan, Expense } from '@/types'
@@ -96,6 +97,15 @@ export function ProfileLMNP({ property: p }: ProfileLMNPProps) {
           </div>
         )}
       </GlassCard>
+
+      <ValeurActuelleCard
+        propertyId={p.id}
+        purchasePrice={p.purchase_price ?? null}
+        valeurActuelle={(p as any).valeur_actuelle ?? null}
+        valeurActuelleDate={(p as any).valeur_actuelle_date ?? null}
+        valeurActuelleSource={(p as any).valeur_actuelle_source ?? null}
+        loyer={p.active_lease?.monthly_rent ?? null}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <SimulationCard simulation={simulation} type="lmnp" />
