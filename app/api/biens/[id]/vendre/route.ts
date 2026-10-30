@@ -47,7 +47,8 @@ export async function POST(req: NextRequest, { params }: Ctx) {
   const leaseIds = (leases ?? []).map(l => l.id)
   for (const l of leases ?? []) {
     const end_date = l.end_date && l.end_date < sold_at ? l.end_date : sold_at
-    await supabase.from('leases').update({ is_active: false, end_date }).eq('id', l.id)
+    const { error: leaseErr } = await supabase.from('leases').update({ is_active: false, end_date }).eq('id', l.id)
+    if (leaseErr) return NextResponse.json({ error: `Bien marqué vendu, mais le bail n'a pas pu être clos : ${leaseErr.message}` }, { status: 500 })
   }
 
   return NextResponse.json({ ok: true, baux_clos: leaseIds.length })

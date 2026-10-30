@@ -43,7 +43,7 @@ export default function LoyersPage() {
         .order('due_date', { ascending: false }),
       supabase
         .from('leases')
-        .select('id, tenant_name, monthly_rent, charges, is_active, start_date, end_date, property:properties(name)')
+        .select('id, tenant_name, monthly_rent, charges, is_active, start_date, end_date, property:properties(name, sold_at)')
         .or(`is_active.eq.true,end_date.gte.${yearStart}`),
     ])
     setPayments(paymentsRes.data ?? [])
@@ -61,11 +61,17 @@ export default function LoyersPage() {
   // ou ayant un paiement ce mois-là, pour que l'historique des mois passés reste complet.
   const debutMois = `${moisStr}-01`
   const finMois = `${moisStr}-31`
-  const leasesDuMois = activeLeases.filter(l =>
+  const leasesDuMois = activeLeases.filter(l => {
+    // Bien vendu : aucun loyer n'est dû à partir du mois de la vente (le 1er ou après)
+    const venteLe = (l.property as any)?.sold_at as string | null | undefined
+    const aPaiement = paiementsMois.some(p => p.lease_id === l.id || p.lease?.id === l.id)
+    if (venteLe && venteLe <= debutMois && !aPaiement) return false
+    return (
     l.is_active ||
     paiementsMois.some(p => p.lease_id === l.id || p.lease?.id === l.id) ||
     (!!l.end_date && (!l.start_date || l.start_date <= finMois) && l.end_date > debutMois)  // fin de bail le 1er du mois = départ ce jour-là, pas de loyer dû ce mois
-  )
+    )
+  })
 
   const totalAttenduMois = leasesDuMois.reduce((s, l) => s + (l.monthly_rent ?? 0) + (l.charges ?? 0), 0)
   const totalEncaisseMois = paiementsMois.filter(p => p.status === 'paid').reduce((s, p) => s + p.amount, 0)
