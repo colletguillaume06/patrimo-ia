@@ -43,8 +43,8 @@ export default function LoyersPage() {
         .order('due_date', { ascending: false }),
       supabase
         .from('leases')
-        .select('id, tenant_name, monthly_rent, charges, is_active, property:properties(name)')
-        .eq('is_active', true),
+        .select('id, tenant_name, monthly_rent, charges, is_active, start_date, end_date, property:properties(name)')
+        .or(`is_active.eq.true,end_date.gte.${yearStart}`),
     ])
     setPayments(paymentsRes.data ?? [])
     setActiveLeases(leasesRes.data ?? [])
@@ -57,7 +57,17 @@ export default function LoyersPage() {
   const moisStr = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}`
   const paiementsMois = payments.filter(p => p.due_date?.startsWith(moisStr))
 
-  const totalAttenduMois = activeLeases.reduce((s, l) => s + (l.monthly_rent ?? 0) + (l.charges ?? 0), 0)
+  // Baux affichés pour le mois : baux actifs + baux clos (bien vendu, bail terminé) couvrant ce mois
+  // ou ayant un paiement ce mois-là, pour que l'historique des mois passés reste complet.
+  const debutMois = `${moisStr}-01`
+  const finMois = `${moisStr}-31`
+  const leasesDuMois = activeLeases.filter(l =>
+    l.is_active ||
+    paiementsMois.some(p => p.lease_id === l.id || p.lease?.id === l.id) ||
+    (!!l.end_date && (!l.start_date || l.start_date <= finMois) && l.end_date >= debutMois)
+  )
+
+  const totalAttenduMois = leasesDuMois.reduce((s, l) => s + (l.monthly_rent ?? 0) + (l.charges ?? 0), 0)
   const totalEncaisseMois = paiementsMois.filter(p => p.status === 'paid').reduce((s, p) => s + p.amount, 0)
   const totalRestantMois = Math.max(0, totalAttenduMois - totalEncaisseMois)
   const pctEncaisse = totalAttenduMois > 0 ? Math.round((totalEncaisseMois / totalAttenduMois) * 100) : 0
@@ -163,7 +173,7 @@ export default function LoyersPage() {
           </div>
           <div className="text-right">
             <p className="text-2xl font-bold font-mono" style={{ color: 'var(--text-primary)' }}>{formatCurrency(totalAttenduMois)}</p>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{activeLeases.length} bail{activeLeases.length > 1 ? 's' : ''} actif{activeLeases.length > 1 ? 's' : ''}</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>{leasesDuMois.length} bail{leasesDuMois.length > 1 ? 'x' : ''} ce mois</p>
           </div>
         </div>
 
@@ -184,7 +194,7 @@ export default function LoyersPage() {
 
         {/* Liste des baux actifs avec boutons d'action par locataire */}
         <div className="space-y-2 border-t pt-4" style={{ borderColor: 'var(--border)' }}>
-          {activeLeases.map(l => {
+          {leasesDuMois.map(l => {
             const payMois = paiementsMois.find(p => p.lease_id === l.id || p.lease?.id === l.id)
             const statut = payMois?.status ?? 'pending'
             const montant = (l.monthly_rent ?? 0) + (l.charges ?? 0)
