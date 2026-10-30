@@ -43,6 +43,8 @@ export default function BauxPage() {
     irl_reference_trimestre: '',
     irl_reference_annee: '',
     taxe_fonciere_refacturee: false,
+    teom_refacturee: false,
+    teom_montant: '',
   })
   const supabase = createClient()
 
@@ -64,6 +66,8 @@ export default function BauxPage() {
 
   useEffect(() => { load() }, [])
 
+  const bienCommercial = properties.find(p => p.id === selectedProp)?.type === 'commerce'
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const { error } = await supabase.from('leases').insert({
@@ -81,7 +85,11 @@ export default function BauxPage() {
       irl_reference_valeur: form.irl_reference_valeur ? Number(form.irl_reference_valeur) : null,
       irl_reference_trimestre: form.irl_reference_trimestre ? Number(form.irl_reference_trimestre) : null,
       irl_reference_annee: form.irl_reference_annee ? Number(form.irl_reference_annee) : null,
-      parsed_data: { taxe_fonciere_refacturee: form.taxe_fonciere_refacturee },
+      parsed_data: {
+        ...(bienCommercial ? { taxe_fonciere_refacturee: form.taxe_fonciere_refacturee } : {}),
+        teom_refacturee: form.teom_refacturee,
+        teom_montant: form.teom_refacturee ? Number(form.teom_montant) || 0 : 0,
+      },
       ...(selectedTenantId ? { tenant_id: selectedTenantId } : {}),
     })
     if (error) {
@@ -89,7 +97,7 @@ export default function BauxPage() {
     } else {
       toast.success('Bail ajouté')
       setShowAdd(false)
-      setForm({ tenant_name: '', tenant_email: '', tenant_phone: '', monthly_rent: '', charges: '', deposit: '', start_date: '', end_date: '', irl_reference_indice: 'irl', irl_reference_valeur: '', irl_reference_trimestre: '', irl_reference_annee: '', taxe_fonciere_refacturee: false })
+      setForm({ tenant_name: '', tenant_email: '', tenant_phone: '', monthly_rent: '', charges: '', deposit: '', start_date: '', end_date: '', irl_reference_indice: 'irl', irl_reference_valeur: '', irl_reference_trimestre: '', irl_reference_annee: '', taxe_fonciere_refacturee: false, teom_refacturee: false, teom_montant: '' })
       load()
     }
   }
@@ -391,7 +399,8 @@ export default function BauxPage() {
                 </div>
               </div>
 
-              {/* Clause taxe foncière */}
+              {/* Clause fiscale : taxe foncière (commerce) ou TEOM (habitation) */}
+              {bienCommercial && (
               <div className="pt-3 border-t border-white/[0.06]">
                 <label className="flex items-center justify-between cursor-pointer gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                   <div>
@@ -405,6 +414,30 @@ export default function BauxPage() {
                     <div className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${form.taxe_fonciere_refacturee ? 'translate-x-5' : 'translate-x-0.5'}`} />
                   </div>
                 </label>
+              </div>
+              )}
+
+              <div className="pt-3 border-t border-white/[0.06] space-y-2">
+                <label className="flex items-center justify-between cursor-pointer gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <div>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">Taxe d&apos;ordures ménagères (TEOM) récupérée sur le locataire</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{bienCommercial ? 'Bail commercial : uniquement si le bail le stipule expressément. ' : 'Bail d\'habitation : seule la TEOM est récupérable (pas la taxe foncière). '}Ce montant ne sera pas compté comme charge déductible</p>
+                  </div>
+                  <div
+                    onClick={() => setForm(f => ({ ...f, teom_refacturee: !f.teom_refacturee }))}
+                    className={`h-6 w-11 rounded-full transition-colors relative flex-shrink-0 ${form.teom_refacturee ? 'bg-amber-500' : 'bg-slate-600'}`}
+                  >
+                    <div className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${form.teom_refacturee ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                  </div>
+                </label>
+                {form.teom_refacturee && (
+                  <input
+                    type="number" min="0" step="1" placeholder="Montant annuel de la TEOM récupérable, hors frais de gestion (€)"
+                    value={form.teom_montant}
+                    onChange={e => setForm(f => ({ ...f, teom_montant: e.target.value }))}
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm"
+                  />
+                )}
               </div>
 
               <button

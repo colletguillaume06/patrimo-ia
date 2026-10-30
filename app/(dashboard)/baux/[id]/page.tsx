@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { ClausesFiscalesCard } from '@/components/baux/ClausesFiscalesCard'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { formatCurrency } from '@/lib/utils'
@@ -788,31 +789,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
             <ReceiptText className="h-4 w-4 text-amber-400" /> Clauses fiscales
           </h2>
         </div>
-        <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-          <div>
-            <p className="text-sm font-medium text-[var(--text-primary)]">Taxe foncière refacturée au locataire</p>
-            <p className="text-xs text-slate-500 mt-0.5">Si activé, la taxe foncière est exclue de vos charges déductibles</p>
-          </div>
-          <button
-            onClick={async () => {
-              const current = lease.parsed_data?.taxe_fonciere_refacturee ?? false
-              const { error } = await supabase
-                .from('leases')
-                .update({ parsed_data: { ...(lease.parsed_data || {}), taxe_fonciere_refacturee: !current } })
-                .eq('id', lease.id)
-              if (error) { toast.error('Erreur lors de la mise à jour'); return }
-              setLease((l: any) => ({ ...l, parsed_data: { ...(l.parsed_data || {}), taxe_fonciere_refacturee: !current } }))
-              toast.success(!current ? 'Taxe foncière marquée comme refacturée' : 'Taxe foncière repassée en charge déductible')
-            }}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-              lease.parsed_data?.taxe_fonciere_refacturee ? 'bg-amber-500' : 'bg-slate-600'
-            }`}
-          >
-            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-              lease.parsed_data?.taxe_fonciere_refacturee ? 'translate-x-6' : 'translate-x-1'
-            }`} />
-          </button>
-        </div>
+        <ClausesFiscalesCard lease={lease} onChange={(parsed) => setLease((l: any) => ({ ...l, parsed_data: parsed }))} />
       </GlassCard>
 
       {/* Départ du locataire & relocation */}

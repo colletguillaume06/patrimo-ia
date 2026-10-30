@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { detenuSurAnnee } from '@/lib/fiscal/bien-vendu'
+import { taxeFonciereRefacturee } from '@/lib/baux/clauses-fiscales'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
@@ -92,8 +93,10 @@ export default function FiscalPage() {
     const moisVente = prop.sold_at && new Date(prop.sold_at).getFullYear() === year ? new Date(prop.sold_at).getMonth() + 1 : 12
     const moisEcoules = Math.min(isCurrentYear ? today.getMonth() + 1 : 12, moisVente)
     // Taxe foncière refacturée si au moins un bail actif a cette clause
-    const taxeFonciereRefacturee = (prop.leases ?? []).some((l: any) => l.is_active && l.parsed_data?.taxe_fonciere_refacturee)
-    const taxeFonciereMontant = taxeFonciereRefacturee ? 0 : (prop.property_tax * moisEcoules / 12)
+    // Commerce : taxe foncière entière si clause ; habitation : seule la TEOM récupérée est exclue
+    const refactureAnnuel = taxeFonciereRefacturee(prop.type, prop.property_tax ?? 0, prop.leases ?? [])
+    const taxeFonciereIntegralementRefacturee = refactureAnnuel > 0 && refactureAnnuel >= (prop.property_tax ?? 0)
+    const taxeFonciereMontant = Math.max(0, (prop.property_tax ?? 0) - refactureAnnuel) * moisEcoules / 12
     const chargesFixes = (prop.monthly_charges * moisEcoules)
       + taxeFonciereMontant
       + (prop.insurance_annual * moisEcoules / 12)
@@ -109,7 +112,8 @@ export default function FiscalPage() {
       copro: prop.monthly_charges * moisEcoules,
       taxe_fonciere: taxeFonciereMontant,
       taxe_fonciere_brute: prop.property_tax * moisEcoules / 12,
-      taxe_fonciere_refacturee: taxeFonciereRefacturee,
+      taxe_fonciere_refacturee: taxeFonciereIntegralementRefacturee,
+      teom_refacturee: refactureAnnuel > 0 && !taxeFonciereIntegralementRefacturee ? refactureAnnuel * moisEcoules / 12 : 0,
       assurance: prop.insurance_annual * moisEcoules / 12,
       travaux: chargesIncidents,
       depenses: chargesExpenses,
@@ -367,7 +371,9 @@ export default function FiscalPage() {
                                 </span>
                                 {prop.chargesDetail.taxe_fonciere_refacturee
                                   ? <span className="text-xs text-amber-400 font-medium">⚠ Refacturée au locataire — non déductible (clause du bail)</span>
-                                  : <span className="text-xs text-slate-600">Clause non activée sur ce bail</span>
+                                  : prop.chargesDetail.teom_refacturee > 0
+                                    ? <span className="text-xs text-amber-400 font-medium">dont {formatCurrency(prop.chargesDetail.teom_refacturee)} de TEOM récupérée sur le locataire — non déductible</span>
+                                    : <span className="text-xs text-slate-600">Aucune refacturation sur ce bail</span>
                                 }
                               </div>
                               <span className={`font-mono font-medium ${prop.chargesDetail.taxe_fonciere_refacturee ? 'line-through text-slate-600' : 'text-red-400'}`}>
@@ -521,7 +527,9 @@ export default function FiscalPage() {
                                 </span>
                                 {prop.chargesDetail.taxe_fonciere_refacturee
                                   ? <span className="text-xs text-amber-400 font-medium">⚠ Refacturée au locataire — non déductible (clause du bail)</span>
-                                  : <span className="text-xs text-slate-600">Clause non activée sur ce bail</span>
+                                  : prop.chargesDetail.teom_refacturee > 0
+                                    ? <span className="text-xs text-amber-400 font-medium">dont {formatCurrency(prop.chargesDetail.teom_refacturee)} de TEOM récupérée sur le locataire — non déductible</span>
+                                    : <span className="text-xs text-slate-600">Aucune refacturation sur ce bail</span>
                                 }
                               </div>
                               <span className={`font-mono font-medium ${prop.chargesDetail.taxe_fonciere_refacturee ? 'line-through text-slate-600' : 'text-red-400'}`}>
