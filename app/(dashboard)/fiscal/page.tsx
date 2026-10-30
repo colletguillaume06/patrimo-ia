@@ -94,7 +94,7 @@ export default function FiscalPage() {
     const moisEcoules = Math.min(isCurrentYear ? today.getMonth() + 1 : 12, moisVente)
     // Taxe foncière refacturée si au moins un bail actif a cette clause
     // Commerce : taxe foncière entière si clause ; habitation : seule la TEOM récupérée est exclue
-    const refactureAnnuel = taxeFonciereRefacturee(prop.type, prop.property_tax ?? 0, prop.leases ?? [])
+    const refactureAnnuel = taxeFonciereRefacturee(prop.type, prop.property_tax ?? 0, prop.leases ?? [], year)
     const taxeFonciereIntegralementRefacturee = refactureAnnuel > 0 && refactureAnnuel >= (prop.property_tax ?? 0)
     const taxeFonciereMontant = Math.max(0, (prop.property_tax ?? 0) - refactureAnnuel) * moisEcoules / 12
     const chargesFixes = (prop.monthly_charges * moisEcoules)

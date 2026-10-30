@@ -30,11 +30,12 @@ export function taxeFonciereRefacturee(
   typeBien: string | null | undefined,
   taxeFonciereAnnuelle: number,
   baux: BailClauses[],
+  annee?: number,
 ): number {
   const actifs = (baux ?? []).filter(b => b.is_active)
-  const teom = actifs
-    .filter(b => b.parsed_data?.teom_refacturee)
-    .reduce((s, b) => s + (Number(b.parsed_data?.teom_montant) || 0), 0)
+  const teom = (baux ?? [])
+    .filter(b => b.parsed_data?.teom_refacturee && (b.is_active || teomReelleRegularisee(b.parsed_data, annee) !== null))
+    .reduce((s, b) => s + (teomReelleRegularisee(b.parsed_data, annee) ?? (Number(b.parsed_data?.teom_montant) || 0)), 0)
   if (estBailCommercial(typeBien)) {
     if (actifs.some(b => b.parsed_data?.taxe_fonciere_refacturee)) return taxeFonciereAnnuelle
     return Math.min(taxeFonciereAnnuelle, teom)
@@ -45,4 +46,30 @@ export function taxeFonciereRefacturee(
 /** Une ancienne clause « taxe foncière refacturée » sur un bail d'habitation est sans effet légal. */
 export function clauseTaxeFonciereInapplicable(typeBien: string | null | undefined, parsed: any): boolean {
   return !estBailCommercial(typeBien) && !!parsed?.taxe_fonciere_refacturee
+}
+
+/**
+ * TEOM réellement refacturée pour une année, d'après la régularisation enregistrée
+ * (lignes marquées `teom`). null si aucune régularisation avec ligne TEOM pour cette année.
+ */
+export function teomReelleRegularisee(parsed: any, annee?: number): number | null {
+  if (!annee) return null
+  const lignes = parsed?.regularisation_history?.[String(annee)]?.lignes
+  if (!Array.isArray(lignes)) return null
+  const l = lignes.filter((x: any) => x?.teom)
+  if (l.length === 0) return null
+  return l.reduce((s: number, x: any) => s + (Number(x.montant) || 0), 0)
+}
+
+/** Nombre de mois d'occupation d'un bail sur une année civile (mois entamés comptés si présent au 1er du mois). */
+export function moisOccupes(start?: string | null, end?: string | null, annee?: number): number {
+  const y = annee ?? new Date().getFullYear()
+  let n = 0
+  for (let m = 0; m < 12; m++) {
+    const debut = new Date(y, m, 1), fin = new Date(y, m + 1, 0)
+    if (start && new Date(start) > fin) continue
+    if (end && new Date(end) <= debut) continue
+    n++
+  }
+  return n
 }

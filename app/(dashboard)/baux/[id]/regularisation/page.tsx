@@ -12,9 +12,10 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import { moisOccupes, estBailCommercial } from '@/lib/baux/clauses-fiscales'
 import { fr } from 'date-fns/locale'
 
-interface LigneCharge { libelle: string; montant: string }
+interface LigneCharge { libelle: string; montant: string; teom?: boolean; tf?: boolean }
 interface RegEntry { lignes: LigneCharge[]; doc_url?: string; total: number; provisions: number; solde: number; saved_at: string }
 
 const CURRENT_YEAR = new Date().getFullYear()
@@ -45,7 +46,7 @@ export default function RegularisationPage() {
 
   const load = async () => {
     const { data } = await supabase.from('leases')
-      .select('*, property:properties(name, address, city)')
+      .select('*, property:properties(name, address, city, type, property_tax)')
       .eq('id', id).single()
     if (!data) return
     setLease(data)
@@ -76,7 +77,23 @@ export default function RegularisationPage() {
   }, [annee])
 
   const charges_mensuelles = lease?.charges ?? 0
-  const provisions = charges_mensuelles * 12
+  const nbMois = moisOccupes(lease?.start_date, lease?.end_date, Number(annee))
+  const provisions = charges_mensuelles * nbMois
+  const pd0 = lease?.parsed_data ?? {}
+  const commercial = estBailCommercial(lease?.property?.type)
+  const teomClause = !!pd0.teom_refacturee && Number(pd0.teom_montant) > 0
+  const tfClause = commercial && !!pd0.taxe_fonciere_refacturee && Number(lease?.property?.property_tax) > 0
+  const prorata = nbMois / 12
+  const prefillClauses = () => {
+    const add: LigneCharge[] = []
+    if (teomClause && !lignes.some(l => l.teom))
+      add.push({ libelle: `Taxe d'enlèvement des ordures ménagères ${annee}`, montant: (Number(pd0.teom_montant) * prorata).toFixed(2), teom: true })
+    if (tfClause && !lignes.some(l => l.tf))
+      add.push({ libelle: `Taxe foncière ${annee} (refacturée, bail commercial)`, montant: (Number(lease.property.property_tax) * prorata).toFixed(2), tf: true })
+    if (!add.length) { toast.info('Aucune clause fiscale à ajouter'); return }
+    setLignes(ls => [...ls.filter(l => l.libelle || l.montant), ...add])
+    toast.success('Lignes ajoutées depuis les clauses fiscales du bail')
+  }
   const charges_reelles = lignes.reduce((s, l) => s + (Number(l.montant) || 0), 0)
   const solde = provisions - charges_reelles
   const totalChargesPerso = chargesPerso.reduce((s, l) => s + (Number(l.montant) || 0), 0)
@@ -157,7 +174,7 @@ Conformément à l'article 23 de la loi du 6 juillet 1989, je vous adresse le d�
 DÉCOMPTE DE RÉGULARISATION ${annee}
 ────────────────────────────────────────
 ${detail ? `DÉTAIL DES CHARGES RÉELLES :\n${detail}\n\n` : ''}Charges réelles totales :             ${formatCurrency(charges_reelles)}
-Provisions versées (${charges_mensuelles}€ × 12 mois) :  ${formatCurrency(provisions)}
+Provisions versées (${charges_mensuelles}€ × ${nbMois} mois) :  ${formatCurrency(provisions)}
 ────────────────────────────────────────
 ${solde >= 0
   ? `SOLDE EN VOTRE FAVEUR : ${formatCurrency(solde)}\nCe montant sera déduit de votre prochaine échéance.`
@@ -227,7 +244,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées
               </div>
               <div className="p-3 rounded-xl" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
                 <p className="text-xs mb-1" style={{ color: 'var(--text-tertiary)' }}>Provisions annuelles</p>
-                <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{formatCurrency(charges_mensuelles * 12)}/an</p>
+                <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{formatCurrency(charges_mensuelles * 12)}/an{nbMois < 12 ? ` (${nbMois} mois d'occupation en ${annee} : ${formatCurrency(provisions)})` : ''}</p>
               </div>
             </div>
             {chargesPerso.length > 0 && (
@@ -412,7 +429,14 @@ Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées
           <div className="mb-5">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Détail des charges réelles {annee}</p>
-              <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Recopiez les lignes du document syndic</p>
+              <div className="flex items-center gap-3">
+                {(teomClause || tfClause) && (
+                  <button onClick={prefillClauses} className="text-xs font-medium underline" style={{ color: 'var(--accent, #2563EB)' }}>
+                    + Ajouter TEOM{tfClause ? ' / taxe foncière' : ''} depuis le bail
+                  </button>
+                )}
+                <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Recopiez les lignes du document syndic</p>
+              </div>
             </div>
             <div className="space-y-2">
               {lignes.map((l, i) => (
@@ -447,7 +471,7 @@ Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées
                 borderColor: solde >= 0 ? 'rgba(5,150,105,0.2)' : 'rgba(220,38,38,0.2)',
               }}>
               <div className="flex justify-between text-sm mb-1.5">
-                <span style={{ color: 'var(--text-secondary)' }}>Provisions versées ({charges_mensuelles}€ × 12)</span>
+                <span style={{ color: 'var(--text-secondary)' }}>Provisions versées ({charges_mensuelles}€ × {nbMois} mois)</span>
                 <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{formatCurrency(provisions)}</span>
               </div>
               <div className="flex justify-between text-sm mb-1.5">
