@@ -1,3 +1,4 @@
+import { detenuSurAnnee, chargesFixesAnnuelles } from '@/lib/fiscal/bien-vendu'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 
@@ -15,7 +16,7 @@ export async function POST(req: NextRequest) {
     service.from('properties')
       .select(`
         id, name, type, address, city, purchase_price, property_tax, insurance_annual,
-        monthly_charges, loan_monthly, numero_fiscal,
+        monthly_charges, loan_monthly, numero_fiscal, sold_at,
         leases(
           tenant_name, monthly_rent, charges, start_date, is_active,
           payments(id, amount, status, due_date, paid_date)
@@ -26,7 +27,8 @@ export async function POST(req: NextRequest) {
     service.from('profiles').select('full_name').eq('id', user.id).single(),
   ])
 
-  const properties = propsRes.data ?? []
+  // Bien vendu : reste dans le dossier jusqu'à l'année de vente incluse, exclu ensuite
+  const properties = (propsRes.data ?? []).filter((p: any) => detenuSurAnnee(p, annee))
   const ownerName = profileRes.data?.full_name ?? 'Propriétaire'
 
   // Calculer les données par bien pour l'année
@@ -43,8 +45,7 @@ export async function POST(req: NextRequest) {
       .filter((e: any) => new Date(e.date).getFullYear() === annee && e.deductible)
       .reduce((s: number, e: any) => s + e.amount, 0)
 
-    const chargesFixes = (prop.monthly_charges + prop.loan_monthly) * 12 +
-      prop.property_tax + prop.insurance_annual
+    const chargesFixes = chargesFixesAnnuelles(prop, annee, true)
 
     return {
       ...prop,
