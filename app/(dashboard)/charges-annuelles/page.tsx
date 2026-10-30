@@ -7,6 +7,8 @@ import { formatCurrency } from '@/lib/utils'
 import { toast } from 'sonner'
 import { CheckCircle2, Calendar, Receipt, Loader2, Info, Pencil, Trash2, Plus } from 'lucide-react'
 import { BackButton } from '@/components/ui/BackButton'
+import { categorieDepense } from '@/lib/fiscal/bilan'
+import { moisOccupes } from '@/lib/baux/clauses-fiscales'
 
 const NOW = new Date()
 const CURRENT_YEAR = NOW.getFullYear()
@@ -36,7 +38,7 @@ export default function ChargesAnnuellesPage() {
   const load = async () => {
     const { data: props } = await supabase
       .from('properties')
-      .select('id, name, type, property_tax, insurance_annual, cfe_annuelle')
+      .select('id, name, type, property_tax, insurance_annual, cfe_annuelle, leases(is_active, start_date, end_date, tenant_name, parsed_data)')
       .order('name')
     const ids = (props ?? []).map(p => p.id)
     const { data: exp } = ids.length
@@ -50,7 +52,7 @@ export default function ChargesAnnuellesPage() {
   useEffect(() => { load() }, [])
 
   const recordedFor = (propId: string, category: string) =>
-    expenses.find(e => e.property_id === propId && e.category === category && new Date(e.date).getFullYear() === year)
+    expenses.find(e => e.property_id === propId && categorieDepense(e) === category && new Date(e.date).getFullYear() === year)
 
   const chargesOf = (prop: any) =>
     CHARGE_DEFS
@@ -59,8 +61,30 @@ export default function ChargesAnnuellesPage() {
       .filter(d => d.montant > 0 || !d.onlyLmnp || prop.type === 'lmnp')
 
   // Charges personnalisées d'un bien pour l'année (hors taxe/assurance/CFE).
+  // Répartition propriétaire / locataire de la taxe foncière (clauses du bail) — reprise telle quelle dans la fiscalité
+  const hintTaxe = (prop: any, rec: any) => {
+    const brut = Number(rec?.amount ?? prop.property_tax) || 0
+    const baux = (prop.leases ?? []).filter((l: any) => (!l.start_date || new Date(l.start_date) <= new Date(year, 11, 31)) && (!l.end_date || new Date(l.end_date) >= new Date(year, 0, 1)))
+    let teom = 0, tfClause = false
+    for (const l of baux) {
+      const pd = l.parsed_data ?? {}
+      if (pd.teom_refacturee) teom += Number(pd.teom_montant || 0) * moisOccupes(l.start_date, l.end_date, year) / 12
+      if (prop.type === 'commerce' && pd.taxe_fonciere_refacturee) tfClause = true
+    }
+    const refact = tfClause ? brut : Math.min(brut, teom)
+    return (
+      <p className="text-xs mt-0.5" style={{ color: refact > 0 ? '#B45309' : '#64748B' }}>
+        {tfClause ? `Bail commercial : taxe refacturée au locataire (${formatCurrency(brut)}) — non déductible pour vous.`
+          : refact > 0 ? `Dont TEOM refacturée au locataire : ${formatCurrency(refact)} (non déductible) → déductible pour vous : ${formatCurrency(Math.max(0, brut - refact))}.`
+          : baux.length === 0 ? 'Aucun bail sur l\'année : taxe entièrement à votre charge (déductible).'
+          : prop.type === 'commerce' ? 'Aucune clause de refacturation dans le bail : taxe entièrement déductible.'
+          : 'Taxe foncière non refacturable en habitation, sauf TEOM (à activer dans les clauses fiscales du bail) : entièrement déductible.'}
+      </p>
+    )
+  }
+
   const customChargesOf = (propId: string) =>
-    expenses.filter(e => e.property_id === propId && e.category === CUSTOM_CATEGORY && new Date(e.date).getFullYear() === year)
+    expenses.filter(e => e.property_id === propId && e.category === CUSTOM_CATEGORY && !['taxe', 'assurance', 'cfe'].includes(categorieDepense(e)) && new Date(e.date).getFullYear() === year)
 
   // Ouvre le formulaire pour une charge prédéfinie non encore saisie.
   const openEdit = (propId: string, def: typeof CHARGE_DEFS[number], montant: number) => {
@@ -176,7 +200,7 @@ export default function ChargesAnnuellesPage() {
             <Receipt className="h-5 w-5 text-blue-400" /> Charges annuelles
           </h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            Taxe foncière, assurance PNO, CFE — à enregistrer quand l'avis arrive pour qu'elles comptent dans vos exports.
+            Taxe foncière, assurance PNO, CFE — à enregistrer quand l'avis arrive. Elles alimentent directement votre fiscalité : la TEOM refacturée au locataire est déduite automatiquement, et les appels de fonds du syndic (« syndic », « copro ») sont reconnus comme provisions de copropriété, dont la part récupérable se régularise l'année suivante.
           </p>
         </div>
         <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/[0.06]">
@@ -217,6 +241,9 @@ export default function ChargesAnnuellesPage() {
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <p className="text-sm font-medium text-[var(--text-primary)]">{def.label}</p>
+                        {def.key === 'taxe' && hintTaxe(prop, rec)}
+                        {def.key === 'assurance' && <p className="text-xs mt-0.5" style={{ color: '#64748B' }}>Assurance propriétaire (PNO) : à votre charge, entièrement déductible (non refacturable au locataire).</p>}
+                        {def.key === 'cfe' && <p className="text-xs mt-0.5" style={{ color: '#64748B' }}>CFE : déductible en location meublée (exonération possible la 1re année).</p>}
                         <p className="text-xs text-slate-500">{def.montant > 0 ? `Montant connu : ${formatCurrency(def.montant)}` : 'Montant non renseigné sur la fiche du bien — saisissez celui de votre avis'}</p>
                       </div>
                       {form ? null : rec ? (

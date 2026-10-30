@@ -79,6 +79,19 @@ export function interetsEmprunt(mensualite: number, tauxPct: number | null | und
   return r2(interets)
 }
 
+/** Catégorie fiscale d'une dépense : les « charges personnalisées » sont reconnues d'après leur libellé. */
+export function categorieDepense(e: { category?: string; description?: string | null }): string {
+  const c = e.category ?? ''
+  if (c !== 'charge_annuelle') return c
+  const d = (e.description ?? '').toLowerCase()
+  if (/taxes?\s*fonci/.test(d)) return 'taxe'
+  if (/assurance|pno|\bgli\b/.test(d)) return 'assurance'
+  if (/\bcfe\b|cotisation fonci[eè]re des entreprises/.test(d)) return 'cfe'
+  if (/syndic|copro|appel de fonds/.test(d)) return 'copro'
+  if (/int[ée]r[eê]ts?.*(pr[eê]t|emprunt)|emprunt/.test(d)) return 'interet'
+  return c
+}
+
 const CAT_GESTION = ['gestion', 'honoraires', 'frais_gestion', 'comptable', 'frais_bancaires']
 const CAT_TRAVAUX_DED = ['entretien_reparation', 'travaux_deductibles']
 
@@ -115,11 +128,11 @@ export function bilanBien(prop: any, year: number, today = new Date()): BilanBie
   const recettes = { loyers: r2(loyers), provisions: r2(provisions), airbnb: r2(airbnb), brut: r2(loyers + provisions + airbnb), nbPaiements, impayes: r2(impayes), nbImpayes }
 
   // ── Dépenses enregistrées ──
-  const exp = (prop.expenses ?? []).filter((e: any) => new Date(e.date).getFullYear() === year && new Date(e.date) <= cutoff)
+  const exp = (prop.expenses ?? []).filter((e: any) => new Date(e.date).getFullYear() === year && new Date(e.date) <= cutoff).map((e: any) => ({ ...e, category: categorieDepense(e) }))
   const somme = (cats: string[]) => exp.filter((e: any) => cats.includes(e.category) && e.fiscal_deductible !== false).reduce((s: number, e: any) => s + num(e.amount), 0)
   const a = (cats: string[]) => exp.some((e: any) => cats.includes(e.category))
   const nonDeductibles = exp.filter((e: any) => e.fiscal_deductible === false).reduce((s: number, e: any) => s + num(e.amount), 0)
-  const estCopro = (e: any) => ['copro', 'syndic'].includes(e.category) || (e.category === 'charge_annuelle' && /syndic|copro|appel de fonds|charges? de copropri/i.test(e.description ?? ''))
+  const estCopro = (e: any) => ['copro', 'syndic'].includes(e.category)
   const connues = ['taxe', 'assurance', 'cfe', 'interet', 'travaux', 'copro', 'syndic', ...CAT_GESTION]
   const autres = exp.filter((e: any) => !connues.includes(e.category) && !estCopro(e) && e.fiscal_deductible !== false).reduce((s: number, e: any) => s + num(e.amount), 0)
 
