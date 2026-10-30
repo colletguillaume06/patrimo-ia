@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { detenuSurAnnee } from '@/lib/fiscal/bien-vendu'
-import { taxeFonciereRefacturee } from '@/lib/baux/clauses-fiscales'
+import { bilanBien } from '@/lib/fiscal/bilan'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
@@ -31,7 +31,7 @@ export default function FiscalPage() {
       const [propsRes, annexesRes] = await Promise.all([
         supabase
           .from('properties')
-          .select('*, leases(*, payments(*)), expenses(*), incidents(*), depreciation_plans(*)')
+          .select('*, leases(*, payments(*)), expenses(*), incidents(*), depreciation_plans(*), airbnb_bookings(*)')
           .order('created_at'),
         supabase
           .from('incidents')
@@ -70,53 +70,32 @@ export default function FiscalPage() {
   // Bien vendu : conservé l'année de vente, exclu ensuite
   const properties = allProperties.filter(p => detenuSurAnnee(p, year))
   const propData = properties.map(prop => {
-    // Recettes = uniquement les paiements réellement encaissés du 1er jan à aujourd'hui (pas de projection)
-    const allPayments = (prop.leases ?? []).flatMap((l: any) => l.payments ?? [])
-    const paidYear = allPayments.filter((p: any) => {
-      const d = new Date(p.due_date)
-      return d.getFullYear() === year && d <= cutoff && p.status === 'paid'
-    })
-    const recettes = paidYear.reduce((s: number, p: any) => s + (p.amount ?? 0), 0)
-
-    // Charges = dépenses et travaux payés du 1er jan à aujourd'hui
+    // Source unique : lib/fiscal/bilan.ts (mêmes chiffres que l'aide à la déclaration et la page Fiscalité)
+    const bil = bilanBien(prop, year, today)
     const expenses_ytd = (prop.expenses ?? []).filter((e: any) => {
       const d = new Date(e.date)
       return d.getFullYear() === year && d <= cutoff
     })
-    const incidents_ytd = (prop.incidents ?? []).filter((i: any) => {
-      const d = new Date(i.date_travaux ?? i.created_at)
-      return d.getFullYear() === year && d <= cutoff && i.est_paye
-    })
-    const chargesExpenses = expenses_ytd.reduce((s: number, e: any) => s + (e.amount ?? 0), 0)
-    const chargesIncidents = incidents_ytd.reduce((s: number, i: any) => s + (i.cout_paye || i.cout_estime || 0), 0)
-    // Charges fixes (copro, taxe foncière, assurance) : proratisées si année en cours
-    const moisVente = prop.sold_at && new Date(prop.sold_at).getFullYear() === year ? new Date(prop.sold_at).getMonth() + 1 : 12
-    const moisEcoules = Math.min(isCurrentYear ? today.getMonth() + 1 : 12, moisVente)
-    // Taxe foncière refacturée si au moins un bail actif a cette clause
-    // Commerce : taxe foncière entière si clause ; habitation : seule la TEOM récupérée est exclue
-    const refactureAnnuel = taxeFonciereRefacturee(prop.type, prop.property_tax ?? 0, prop.leases ?? [], year)
-    const taxeFonciereIntegralementRefacturee = refactureAnnuel > 0 && refactureAnnuel >= (prop.property_tax ?? 0)
-    const taxeFonciereMontant = Math.max(0, (prop.property_tax ?? 0) - refactureAnnuel) * moisEcoules / 12
-    const chargesFixes = (prop.monthly_charges * moisEcoules)
-      + taxeFonciereMontant
-      + (prop.insurance_annual * moisEcoules / 12)
-    const charges = chargesExpenses + chargesIncidents + chargesFixes
-    const amortissements = calculateDepreciation(prop.depreciation_plans ?? [])
+    const moisEcoules = bil.mois
+    const recettes = bil.regime === 'foncier' ? bil.l2044.l215 : bil.recettes.brut
+    const charges = bil.chargesDeductibles
+    const amortissements = bil.amortissementsDeductibles
+    const teomMontant = bil.charges.teomRefacturee
+    const tfIntegrale = teomMontant > 0 && teomMontant >= bil.charges.taxeFonciereBrute
 
     totalRevenusBruts += recettes
     totalCharges += charges
     totalAmortissements += amortissements
 
-    // Détail des charges pour affichage transparent
     const chargesDetail = {
-      copro: prop.monthly_charges * moisEcoules,
-      taxe_fonciere: taxeFonciereMontant,
-      taxe_fonciere_brute: prop.property_tax * moisEcoules / 12,
-      taxe_fonciere_refacturee: taxeFonciereIntegralementRefacturee,
-      teom_refacturee: refactureAnnuel > 0 && !taxeFonciereIntegralementRefacturee ? refactureAnnuel * moisEcoules / 12 : 0,
-      assurance: prop.insurance_annual * moisEcoules / 12,
-      travaux: chargesIncidents,
-      depenses: chargesExpenses,
+      copro: bil.charges.copro - bil.charges.regularisationNMoins1,
+      taxe_fonciere: bil.charges.taxeFonciere,
+      taxe_fonciere_brute: bil.charges.taxeFonciereBrute,
+      taxe_fonciere_refacturee: tfIntegrale,
+      teom_refacturee: tfIntegrale ? 0 : teomMontant,
+      assurance: bil.charges.assurance,
+      travaux: bil.charges.travauxDeductibles,
+      depenses: bil.charges.gestion + bil.charges.autres + bil.charges.cfe + bil.charges.interets + bil.charges.commissionPlateforme + (bil.l2044.l222 && bil.regime === 'foncier' ? bil.l2044.l222 : 0),
       moisEcoules,
     }
 

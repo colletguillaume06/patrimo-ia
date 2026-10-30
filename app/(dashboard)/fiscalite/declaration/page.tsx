@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { detenuSurAnnee } from '@/lib/fiscal/bien-vendu'
+import { bilanBien, type BilanBien, type Alerte } from '@/lib/fiscal/bilan'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { formatCurrency } from '@/lib/utils'
@@ -165,36 +166,14 @@ function CRSubtotal({ label, value, strong = false, color }: { label: string; va
   )
 }
 
-function CompteResultatLMNP({ props, year, getRevenus }:
-  { props: any[]; year: number; getRevenus: (p: any) => number }) {
-
-  const deprecForYear = (plans: any[]) =>
-    (plans ?? []).reduce((t: number, p: any) => {
-      const s = new Date(p.start_date).getFullYear()
-      return (year >= s && year < s + p.duration_years) ? t + (p.annual_amount ?? 0) : t
-    }, 0)
-
-  const expCat = (prop: any, cats: string[]) =>
-    (prop.expenses ?? [])
-      .filter((e: any) => new Date(e.date).getFullYear() === year && cats.includes(e.category))
-      .reduce((s: number, e: any) => s + (e.amount ?? 0), 0)
-
-  // Construction des lignes ventilées par bien
-  const biens = props.map((p, i) => {
-    const idx = String(i + 1)
-    const loyers = getRevenus(p)
-    const copro = (p.monthly_charges ?? 0) * 12
-    const assurance = (p.insurance_annual ?? 0) + expCat(p, ['assurance'])
-    const taxe = (p.property_tax ?? 0) + expCat(p, ['taxe'])
-    const travaux = expCat(p, ['travaux'])
-    const gestion = expCat(p, ['gestion', 'autre'])
-    const amort = deprecForYear(p.depreciation_plans)
-    const interets = (p.loan_monthly ?? 0) * 12 + expCat(p, ['interet'])
-    return { id: p.id, idx, name: p.name, loyers, copro, assurance, taxe, travaux, gestion, amort, interets }
-  })
-
+function CompteResultatLMNP({ items, year }: { items: { prop: any; b: BilanBien }[]; year: number }) {
+  const biens = items.map(({ prop, b }, i) => ({
+    id: prop.id, idx: String(i + 1), name: prop.name, loyers: b.recettes.brut,
+    copro: b.charges.copro, assurance: b.charges.assurance, taxe: b.charges.taxeFonciere + b.charges.cfe,
+    travaux: b.charges.travauxDeductibles, gestion: b.charges.gestion + b.charges.autres + b.charges.commissionPlateforme,
+    amort: b.amortissementsDeductibles, interets: b.charges.interets,
+  }))
   const sum = (f: (b: typeof biens[number]) => number) => biens.reduce((s, b) => s + f(b), 0)
-
   const totalProduits = sum(b => b.loyers)
   const totalCoproEtc = sum(b => b.copro) + sum(b => b.travaux) + sum(b => b.assurance) + sum(b => b.taxe) + sum(b => b.gestion)
   const totalAmort = sum(b => b.amort)
@@ -205,91 +184,42 @@ function CompteResultatLMNP({ props, year, getRevenus }:
   const resultatCourant = resultatExploit + resultatFin
   const totalCharges = totalChargesExploit + totalChargesFin
   const resultatNet = resultatCourant
-
+  const reportes = items.reduce((s, x) => s + x.b.amortissementsReportes, 0)
   return (
     <div>
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs uppercase tracking-wide font-semibold" style={{ color: '#64748B' }}>
-          Exercice {year} · {biens.length} bien{biens.length > 1 ? 's' : ''} LMNP réel
-        </p>
-      </div>
-
-      {/* PRODUITS D'EXPLOITATION */}
-      <p className="text-xs font-bold uppercase tracking-wide mt-2 mb-1" style={{ color: '#166534' }}>
-        Produits d'exploitation
+      <p className="text-xs uppercase tracking-wide font-semibold mb-3" style={{ color: '#64748B' }}>
+        Exercice {year} · {biens.length} bien{biens.length > 1 ? 's' : ''} meublé{biens.length > 1 ? 's' : ''}
       </p>
-      <p className="text-[11px] font-medium mb-1" style={{ color: '#94A3B8' }}>Production vendue de services</p>
-      {biens.map(b => (
-        <CRRow key={b.id} code={`7000${b.idx}`} label={`Loyers — ${b.name}`} value={b.loyers} indent />
-      ))}
-      <CRSubtotal label="Montant net du chiffre d'affaires" value={totalProduits} />
+      <p className="text-xs font-bold uppercase tracking-wide mt-2 mb-1" style={{ color: '#166534' }}>Produits d'exploitation</p>
+      <p className="text-[11px] font-medium mb-1" style={{ color: '#94A3B8' }}>Production vendue de services (loyers et provisions de charges encaissés)</p>
+      {biens.map(b => <CRRow key={b.id} code={`7000${b.idx}`} label={`Loyers — ${b.name}`} value={b.loyers} indent />)}
       <CRSubtotal label="TOTAL DES PRODUITS D'EXPLOITATION (I)" value={totalProduits} color="#166534" />
-
-      {/* CHARGES D'EXPLOITATION */}
-      <p className="text-xs font-bold uppercase tracking-wide mt-5 mb-1" style={{ color: '#991B1B' }}>
-        Charges d'exploitation
-      </p>
+      <p className="text-xs font-bold uppercase tracking-wide mt-5 mb-1" style={{ color: '#991B1B' }}>Charges d'exploitation</p>
       <p className="text-[11px] font-medium mb-1" style={{ color: '#94A3B8' }}>Achats et charges externes</p>
-      {biens.map(b => b.travaux > 0 && (
-        <CRRow key={`t${b.id}`} code="615" label={`Entretien & réparations — ${b.name}`} value={b.travaux} indent />
-      ))}
-      {biens.map(b => b.copro > 0 && (
-        <CRRow key={`c${b.id}`} code="614" label={`Charges de copropriété — ${b.name}`} value={b.copro} indent />
-      ))}
-      {biens.map(b => b.assurance > 0 && (
-        <CRRow key={`a${b.id}`} code="616" label={`Assurances — ${b.name}`} value={b.assurance} indent />
-      ))}
-      {biens.map(b => b.gestion > 0 && (
-        <CRRow key={`g${b.id}`} code="628" label={`Frais de gestion & divers — ${b.name}`} value={b.gestion} indent />
-      ))}
-      {biens.map(b => b.taxe > 0 && (
-        <CRRow key={`x${b.id}`} code="635" label={`Taxe foncière — ${b.name}`} value={b.taxe} indent />
-      ))}
+      {biens.map(b => b.travaux > 0 && <CRRow key={`t${b.id}`} code="615" label={`Entretien & réparations — ${b.name}`} value={b.travaux} indent />)}
+      {biens.map(b => b.copro > 0 && <CRRow key={`c${b.id}`} code="614" label={`Charges de copropriété — ${b.name}`} value={b.copro} indent />)}
+      {biens.map(b => b.assurance > 0 && <CRRow key={`a${b.id}`} code="616" label={`Assurances — ${b.name}`} value={b.assurance} indent />)}
+      {biens.map(b => b.gestion > 0 && <CRRow key={`g${b.id}`} code="628" label={`Frais de gestion & divers — ${b.name}`} value={b.gestion} indent />)}
+      {biens.map(b => b.taxe > 0 && <CRRow key={`x${b.id}`} code="635" label={`Taxe foncière (hors TEOM refacturée) & CFE — ${b.name}`} value={b.taxe} indent />)}
       <CRSubtotal label="Total achats et charges externes" value={totalCoproEtc} />
       <p className="text-[11px] font-medium mt-3 mb-1" style={{ color: '#94A3B8' }}>Dotations aux amortissements</p>
-      {biens.map(b => b.amort > 0 && (
-        <CRRow key={`d${b.id}`} code="6811" label={`Dotation amortissements — ${b.name}`} value={b.amort} indent />
-      ))}
-      {totalAmort === 0 && (
-        <p className="text-xs italic py-1" style={{ color: '#94A3B8', paddingLeft: 20 }}>
-          Aucun plan d'amortissement renseigné pour {year}
-        </p>
-      )}
+      {biens.map(b => b.amort > 0 && <CRRow key={`d${b.id}`} code="6811" label={`Dotation amortissements — ${b.name}`} value={b.amort} indent />)}
+      {totalAmort === 0 && <p className="text-xs italic py-1" style={{ color: '#94A3B8', paddingLeft: 20 }}>Aucun amortissement déductible pour {year}</p>}
       <CRSubtotal label="TOTAL DES CHARGES D'EXPLOITATION (II)" value={totalChargesExploit} color="#991B1B" />
-
-      {/* RÉSULTAT D'EXPLOITATION */}
-      <CRSubtotal label="RÉSULTAT D'EXPLOITATION (I − II)" value={resultatExploit}
-        color={resultatExploit >= 0 ? '#166534' : '#991B1B'} />
-
-      {/* CHARGES FINANCIÈRES */}
-      <p className="text-xs font-bold uppercase tracking-wide mt-5 mb-1" style={{ color: '#991B1B' }}>
-        Charges financières
-      </p>
-      {biens.map(b => b.interets > 0 && (
-        <CRRow key={`i${b.id}`} code="661" label={`Intérêts & échéances d'emprunt — ${b.name}`} value={b.interets} indent />
-      ))}
-      {totalChargesFin === 0 && (
-        <p className="text-xs italic py-1" style={{ color: '#94A3B8', paddingLeft: 20 }}>Aucune charge financière</p>
-      )}
-      <CRSubtotal label="RÉSULTAT FINANCIER" value={resultatFin}
-        color={resultatFin >= 0 ? '#166534' : '#991B1B'} />
-
-      {/* RÉSULTAT COURANT */}
-      <CRSubtotal label="RÉSULTAT COURANT AVANT IMPÔTS" value={resultatCourant}
-        color={resultatCourant >= 0 ? '#166534' : '#991B1B'} />
-
-      {/* TOTAUX & RÉSULTAT NET */}
+      <CRSubtotal label="RÉSULTAT D'EXPLOITATION (I − II)" value={resultatExploit} color={resultatExploit >= 0 ? '#166534' : '#991B1B'} />
+      <p className="text-xs font-bold uppercase tracking-wide mt-5 mb-1" style={{ color: '#991B1B' }}>Charges financières</p>
+      {biens.map(b => b.interets > 0 && <CRRow key={`i${b.id}`} code="661" label={`Intérêts d'emprunt — ${b.name}`} value={b.interets} indent />)}
+      {totalChargesFin === 0 && <p className="text-xs italic py-1" style={{ color: '#94A3B8', paddingLeft: 20 }}>Aucune charge financière</p>}
+      <CRSubtotal label="RÉSULTAT FINANCIER" value={resultatFin} color={resultatFin >= 0 ? '#166534' : '#991B1B'} />
+      <CRSubtotal label="RÉSULTAT COURANT AVANT IMPÔTS" value={resultatCourant} color={resultatCourant >= 0 ? '#166534' : '#991B1B'} />
       <div className="mt-4 pt-3 border-t" style={{ borderColor: 'rgba(0,0,0,0.12)' }}>
         <CRRow label="Total des produits" value={totalProduits} />
         <CRRow label="Total des charges" value={totalCharges} />
-        <CRSubtotal
-          label={resultatNet >= 0 ? 'RÉSULTAT NET — Bénéfice' : 'RÉSULTAT NET — Perte (déficit reportable)'}
-          value={resultatNet} strong color={resultatNet >= 0 ? '#166534' : '#991B1B'} />
+        <CRSubtotal label={resultatNet >= 0 ? 'RÉSULTAT NET — Bénéfice' : 'RÉSULTAT NET — Perte (déficit reportable)'} value={resultatNet} strong color={resultatNet >= 0 ? '#166534' : '#991B1B'} />
       </div>
-
-      <div className="mt-4 p-3 rounded-lg text-xs"
-        style={{ background: '#F8FAFC', border: '1px solid rgba(0,0,0,0.08)', color: '#475569' }}>
-        Ventilation reconstituée depuis vos données (loyers encaissés, charges, taxes, assurances, amortissements et échéances d'emprunt de l'exercice {year}). Les intérêts d'emprunt sont estimés sur l'échéance totale — votre comptable retiendra la part d'intérêts exacte de votre tableau d'amortissement bancaire.
+      {reportes > 0 && <p className="text-xs mt-3" style={{ color: '#92400E' }}>Amortissements non déduits cette année (reportés sans limite de durée) : {fmtCR(reportes)}</p>}
+      <div className="mt-4 p-3 rounded-lg text-xs" style={{ background: '#F8FAFC', border: '1px solid rgba(0,0,0,0.08)', color: '#475569' }}>
+        Ventilation reconstituée depuis vos données de l'exercice {year} : loyers encaissés, charges de copropriété (appels de fonds saisis, sinon provisions mensuelles), taxe foncière et assurance payées, travaux payés, amortissements limités au résultat avant amortissement. Les intérêts d'emprunt sont estimés s'ils ne sont pas saisis — votre comptable retiendra le tableau d'amortissement bancaire.
       </div>
     </div>
   )
@@ -448,7 +378,7 @@ export default function DeclarationPage() {
     const load = async () => {
       const { data } = await supabase
         .from('properties')
-        .select('*, leases(*, payments(*)), expenses(*), depreciation_plans(*), sci_associates(*)')
+        .select('*, leases(*, payments(*)), expenses(*), incidents(*), depreciation_plans(*), sci_associates(*), airbnb_bookings(*)')
         .order('name')
       setProperties(data ?? [])
       setLoading(false)
@@ -459,40 +389,17 @@ export default function DeclarationPage() {
   // Calculs par type
   // Bien vendu : déclaré jusqu'à l'année de vente incluse, exclu ensuite
   const properties = allProperties.filter(p => detenuSurAnnee(p, year))
-  const lmnpProps = properties.filter(p => p.type === 'lmnp')
-  const nuProps = properties.filter(p => p.type === 'nu')
+  const lmnpProps = properties.filter(p => p.type === 'lmnp' || p.type === 'airbnb')
+  const nuProps = properties.filter(p => p.type === 'nu' || p.type === 'commerce')
   const sciProps = properties.filter(p => p.type === 'sci')
 
-  const getExpensesYtd = (prop: any) =>
-    (prop.expenses ?? []).filter((e: any) => new Date(e.date).getFullYear() === year)
-
-  // Revenus de l'année sélectionnée = loyers réellement encaissés cette année-là.
-  // Repli sur le loyer courant annualisé si aucun paiement n'est enregistré pour l'année.
-  const getRevenus = (prop: any) => {
-    const payments = (prop.leases ?? []).flatMap((l: any) => l.payments ?? [])
-    const yearPaid = payments.filter((p: any) =>
-      new Date(p.due_date).getFullYear() === year && p.status === 'paid'
-    )
-    if (yearPaid.length > 0) {
-      return yearPaid.reduce((s: number, p: any) => s + (p.amount ?? 0), 0)
-    }
-    return (prop.leases ?? []).filter((l: any) => l.is_active).reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
-  }
-
-  const getLmnpData = (prop: any) => {
-    const recettes = getRevenus(prop)
-    const charges = getExpensesYtd(prop).reduce((s: number, e: any) => s + e.amount, 0) + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual
-    const amortissements = calculateDepreciation(prop.depreciation_plans ?? [])
-    const sim = calculateLmnpSimulation({ recettes, charges_reelles: charges, amortissements, taux_marginal: tmi / 100 })
-    return { recettes, charges, amortissements, sim }
-  }
-
-  const getFoncierData = (prop: any) => {
-    const revenus = getRevenus(prop)
-    const charges = getExpensesYtd(prop).reduce((s: number, e: any) => e.fiscal_deductible ? s + e.amount : s, 0) + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual + prop.loan_monthly * 12
-    const sim = calculateFoncierSimulation({ revenus_bruts: revenus, charges_deductibles: charges, taux_marginal: tmi / 100 })
-    return { revenus, charges, sim }
-  }
+  // Tous les chiffres viennent de la source unique lib/fiscal/bilan.ts (mêmes valeurs que Tableau fiscal / Fiscalité / exports)
+  const bilans: Record<string, BilanBien> = {}
+  for (const p of properties) bilans[p.id] = bilanBien(p, year)
+  const bil = (p: any) => bilans[p.id]
+  const alertesTous: { bien: string; a: Alerte }[] = properties.flatMap(p => bil(p).alertes.map(a => ({ bien: p.name, a })))
+  const ordre = { erreur: 0, attention: 1, info: 2 } as const
+  alertesTous.sort((x, y) => ordre[x.a.gravite] - ordre[y.a.gravite])
 
   // Agrégats pour le chat
   const totalPatrimoine = properties.reduce((s, p) => s + (p.purchase_price ?? 0), 0)
@@ -542,6 +449,26 @@ export default function DeclarationPage() {
           Ces montants sont calculés automatiquement depuis vos données. Ils sont <strong>indicatifs</strong> — vérifiez avec votre expert-comptable avant de déposer. Liens officiels vers impots.gouv.fr fournis pour chaque formulaire.
         </p>
       </div>
+
+      {/* Contrôles de cohérence */}
+      {alertesTous.length > 0 && (
+        <div className="rounded-xl p-5" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)' }}>
+          <p className="font-display font-semibold text-base mb-3" style={{ color: '#0F172A' }}>
+            Points à vérifier avant de déclarer ({alertesTous.length})
+          </p>
+          <div className="space-y-2">
+            {alertesTous.map((x, i) => {
+              const c = x.a.gravite === 'attention' ? { bg: '#FFFBEB', bd: '#FCD34D', tx: '#92400E', ic: '⚠️' } : x.a.gravite === 'erreur' ? { bg: '#FEF2F2', bd: '#FCA5A5', tx: '#991B1B', ic: '🚨' } : { bg: '#F8FAFC', bd: 'rgba(0,0,0,0.08)', tx: '#475569', ic: 'ℹ️' }
+              return (
+                <div key={i} className="p-3 rounded-lg text-xs" style={{ background: c.bg, border: `1px solid ${c.bd}`, color: c.tx }}>
+                  <p className="font-semibold">{c.ic} {x.bien} — {x.a.titre}</p>
+                  <p className="mt-0.5 leading-relaxed">{x.a.detail}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
@@ -594,35 +521,39 @@ export default function DeclarationPage() {
               </div>
 
               {lmnpProps.map(prop => {
-                const { recettes, charges, amortissements, sim } = getLmnpData(prop)
+                const b = bil(prop)
                 const isReel = prop.lmnp_regime === 'reel'
+                const abatt = prop.type === 'airbnb' && !prop.meuble_classe ? 0.30 : 0.50
+                const plafondMicro = prop.type === 'airbnb' && !prop.meuble_classe ? 15000 : 83600
+                const taux = tmi / 100 + 0.186
+                const impotMicro = b.recettes.brut * (1 - abatt) * taux
+                const impotReel = Math.max(0, b.resultat) * taux
                 return (
                   <div key={prop.id} className="mb-5">
                     <p className="text-sm font-semibold mb-3 pb-2 border-b"
                       style={{ color: 'var(--text-primary)', borderColor: 'var(--border)' }}>
                       {prop.name} — Régime {isReel ? 'réel' : 'micro-BIC'}
                     </p>
-
                     {isReel ? (
                       <>
-                        <CaseLine c={{ code: '5NA', label: 'Bénéfice BIC non professionnel (régime réel)', value: Math.max(0, sim.resultat_bic), obligatoire: true, note: 'À remplir si résultat positif — sinon laisser vide et remplir 5NY' }} />
-                        <CaseLine c={{ code: '5NY', label: 'Déficit BIC non professionnel reportable', value: Math.abs(Math.min(0, sim.resultat_bic)), obligatoire: false, note: 'À remplir si résultat négatif — imputable sur revenus BIC des 10 ans suivants' }} />
-                        <CaseLine c={{ code: '5QA', label: 'Recettes brutes perçues (pour info)', value: recettes, obligatoire: false, note: 'Sert au calcul du plafond des cotisations sociales' }} />
-
-                        <div className="mt-3 p-3 rounded-lg text-xs"
-                          style={{ background: '#FFFBEB', border: '1px solid #FCD34D', color: '#92400E' }}>
-                          <strong>⚠️ Régime réel :</strong> Vous devez également joindre la <strong>liasse 2033</strong> (bilan simplifié) ou avoir mandaté un expert-comptable (OGA). Sans adhésion à un OGA, une majoration de 25% s'applique sur vos bénéfices.
+                        <CaseLine c={{ code: '5NA', label: 'Bénéfice BIC non professionnel (régime réel)', value: Math.max(0, b.resultat), obligatoire: true, note: `Recettes ${formatCurrency(b.recettes.brut)} − charges ${formatCurrency(b.chargesDeductibles)} − amortissements déduits ${formatCurrency(b.amortissementsDeductibles)}. Si le résultat est négatif, laissez vide et remplissez 5NY.` }} />
+                        <CaseLine c={{ code: '5NY', label: 'Déficit BIC non professionnel', value: b.deficit?.total ?? 0, obligatoire: false, note: 'Imputable uniquement sur les bénéfices BIC meublés des 10 années suivantes. Les amortissements ne peuvent pas créer ce déficit.' }} />
+                        <CaseLine c={{ code: 'Info', label: 'Recettes brutes encaissées', value: b.recettes.brut, obligatoire: false, note: 'À reporter aussi sur la liasse 2031/2033 ; sert au contrôle des seuils.' }} />
+                        {b.amortissementsReportes > 0 && <CaseLine c={{ code: 'Info', label: 'Amortissements reportés (non déduits)', value: b.amortissementsReportes, obligatoire: false, note: 'Reportables sans limite de durée — à conserver dans le tableau des amortissements.' }} />}
+                        <div className="mt-3 p-3 rounded-lg text-xs" style={{ background: '#FFFBEB', border: '1px solid #FCD34D', color: '#92400E' }}>
+                          <strong>⚠️ Régime réel :</strong> la liasse fiscale (2031 + 2033) est obligatoire — via votre expert-comptable ou en ligne sur impots.gouv.fr. Si vous êtes adhérent d'un OGA, l'abattement de 20 % n'existe plus : seule la liasse compte.
                         </div>
                       </>
                     ) : (
                       <>
-                        <CaseLine c={{ code: '5ND', label: 'Recettes BIC non professionnelles (micro-BIC)', value: recettes, obligatoire: true, note: `L'administration appliquera automatiquement l'abattement de 50% → base imposable : ${formatCurrency(sim.micro_bic_base)}` }} />
-                        <div className="mt-3 p-3 rounded-lg text-xs"
-                          style={{ background: 'var(--info-bg)', border: '1px solid var(--info-border)', color: 'var(--info-text)' }}>
-                          💡 En micro-BIC : saisissez vos <strong>recettes brutes</strong> (pas les charges). L'abattement 50% est calculé automatiquement. Si vos charges réelles dépassent 50%, passez au régime réel.
-                        </div>
+                        <CaseLine c={{ code: '5ND', label: 'Recettes BIC non professionnelles (micro-BIC)', value: b.recettes.brut, obligatoire: true, note: `Recettes brutes (loyers + charges encaissés). L'abattement de ${abatt * 100} % est appliqué automatiquement par l'administration. Plafond : ${formatCurrency(plafondMicro)}.` }} />
+                        {b.recettes.brut > plafondMicro && <div className="mt-2 p-3 rounded-lg text-xs" style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B' }}>🚨 Recettes au-dessus du plafond micro-BIC ({formatCurrency(plafondMicro)}) : le régime réel s'applique.</div>}
                       </>
                     )}
+                    <div className="mt-3 p-3 rounded-lg text-xs" style={{ background: '#F8FAFC', border: '1px solid rgba(0,0,0,0.08)', color: '#475569' }}>
+                      Comparatif (TMI {tmi} % + prélèvements sociaux 18,6 %) : micro-BIC ≈ <strong>{formatCurrency(impotMicro)}</strong> · réel ≈ <strong>{formatCurrency(impotReel)}</strong>
+                      {impotReel < impotMicro - 1 ? ` → le réel économise ${formatCurrency(impotMicro - impotReel)}.` : impotMicro < impotReel - 1 ? ` → le micro-BIC économise ${formatCurrency(impotReel - impotMicro)}.` : '.'}
+                    </div>
                   </div>
                 )
               })}
@@ -652,7 +583,7 @@ export default function DeclarationPage() {
                   et par poste — produits, charges, amortissements et résultat de l'exercice.
                 </p>
               </div>
-              <CompteResultatLMNP props={lmnpProps} year={year} getRevenus={getRevenus} />
+              <CompteResultatLMNP items={lmnpProps.map(p => ({ prop: p, b: bil(p) }))} year={year} />
             </Section>
           )}
 
@@ -673,25 +604,39 @@ export default function DeclarationPage() {
               </div>
 
               {nuProps.map(prop => {
-                const { revenus, charges, sim } = getFoncierData(prop)
-                const interets = (prop.loan_monthly ?? 0) * 12
-                const taxeFonciere = prop.property_tax ?? 0
-                const chargesHorsInterets = charges - interets
+                const b = bil(prop)
+                const L = b.l2044
+                const microBase = L.l215 * 0.7
                 return (
                   <div key={prop.id} className="mb-5">
                     <p className="text-sm font-semibold mb-3 pb-2 border-b"
                       style={{ color: 'var(--text-primary)', borderColor: 'var(--border)' }}>
-                      {prop.name}
+                      {prop.name}{b.mois < 12 ? ` — ${b.mois} mois pris en compte` : ''}
                     </p>
-                    <CaseLine c={{ code: '110', label: 'Revenus bruts encaissés (loyers)', value: revenus, obligatoire: true, note: 'Total des loyers perçus + provisions sur charges récupérables' }} />
-                    <CaseLine c={{ code: '221', label: 'Frais de gestion et d\'administration', value: prop.monthly_charges * 12 * 0.3, obligatoire: false, note: 'Forfait 20€ par logement OU frais réels (gérance, assurance PNO...)' }} />
-                    <CaseLine c={{ code: '224', label: 'Primes d\'assurance (PNO + GLI)', value: (prop.insurance_annual ?? 0), obligatoire: false, note: 'Assurance Propriétaire Non Occupant + garantie loyers impayés' }} />
-                    <CaseLine c={{ code: '225', label: 'Dépenses de réparation et entretien', value: chargesHorsInterets * 0.6, obligatoire: false, note: 'Travaux déductibles (réparation, entretien) — PAS les travaux de construction' }} />
-                    <CaseLine c={{ code: '229', label: 'Taxe foncière', value: taxeFonciere, obligatoire: false, note: 'Montant de la taxe foncière de l\'année (non la TOM)' }} />
-                    <CaseLine c={{ code: '250', label: 'Intérêts d\'emprunt', value: interets, obligatoire: false, note: 'Intérêts + assurance emprunteur — à demander à votre banque (IFU)' }} />
+                    <CaseLine c={{ code: '211', label: 'Loyers bruts encaissés', value: L.l211, obligatoire: true, note: `${b.recettes.nbPaiements} loyer(s) reçu(s) en ${year}, hors provisions de charges (${formatCurrency(b.recettes.provisions)} de provisions encaissées, non imposables).` }} />
+                    <CaseLine c={{ code: '221', label: 'Frais d\'administration et de gestion (réels)', value: L.l221, obligatoire: false, note: 'Honoraires de gestion, frais de syndic hors provisions, frais de procédure, autres charges saisies.' }} />
+                    <CaseLine c={{ code: '222', label: 'Forfait « autres frais de gestion » (20 € par local)', value: L.l222, obligatoire: false, note: 'Forfait de 20 € par logement loué, sans justificatif.' }} />
+                    <CaseLine c={{ code: '223', label: 'Primes d\'assurance (PNO, GLI)', value: L.l223, obligatoire: false, note: 'Assurance propriétaire non occupant et garantie loyers impayés payées dans l\'année.' }} />
+                    <CaseLine c={{ code: '224', label: 'Réparations, entretien, amélioration', value: L.l224, obligatoire: false, note: 'Travaux PAYÉS dans l\'année. Construction, reconstruction et agrandissement exclus.' }} />
+                    <CaseLine c={{ code: '227', label: 'Taxes foncières', value: L.l227, obligatoire: false, note: b.charges.teomRefacturee > 0 ? `Taxe brute ${formatCurrency(b.charges.taxeFonciereBrute)} − TEOM refacturée au locataire ${formatCurrency(b.charges.teomRefacturee)} (non déductible).` : 'Montant payé dans l\'année (hors TEOM si elle est récupérée sur le locataire).' }} />
+                    <CaseLine c={{ code: '229', label: 'Provisions de copropriété payées', value: L.l229, obligatoire: false, note: 'Provisions payées au syndic dans l\'année (appels de fonds).' }} />
+                    <CaseLine c={{ code: '230', label: `Régularisation des provisions déduites en ${year - 1}`, value: L.l230, obligatoire: false, note: `À SOUSTRAIRE : part récupérable sur le locataire des charges réelles ${year - 1}, issue de votre régularisation de charges.` }} />
+                    <CaseLine c={{ code: '240', label: 'Total des frais et charges (221 à 229 − 230)', value: L.l240, obligatoire: true }} />
+                    <CaseLine c={{ code: '250', label: 'Intérêts d\'emprunt', value: L.l250, obligatoire: false, note: b.charges.interetsEstimes ? 'ESTIMATION d\'après taux et durée du prêt — reprenez le montant de l\'attestation de la banque.' : 'Intérêts + assurance emprunteur + frais de dossier du prêt.' }} />
                     <div className="pt-2 mt-2 border-t" style={{ borderColor: 'var(--border)' }}>
-                      <CaseLine c={{ code: '420', label: sim.revenu_net >= 0 ? 'Revenu net foncier' : 'Déficit foncier', value: Math.abs(sim.revenu_net), obligatoire: true, note: sim.revenu_net < 0 ? `Déficit imputable sur revenu global : max 10 700€/an (art. 156 CGI). Excédent : ${formatCurrency(Math.max(0, Math.abs(sim.revenu_net) - 10700))} reportable 10 ans` : 'Ce montant s\'ajoute à vos autres revenus imposables' }} />
+                      <CaseLine c={{ code: '261', label: b.l2044.l261 >= 0 ? 'Revenu foncier net (215 − 240 − 250)' : 'Déficit foncier', value: Math.abs(L.l261), obligatoire: true, note: b.l2044.l261 >= 0 ? 'Reporté ligne 420, puis case 4BA de la 2042 (additionner avec vos autres biens).' : 'Voir la répartition ci-dessous.' }} />
+                      {b.deficit && (
+                        <>
+                          <CaseLine c={{ code: '4BC', label: 'Déficit imputable sur le revenu global', value: b.deficit.imputableGlobal, obligatoire: false, note: `Hors part due aux intérêts, plafonné à 10 700 €/an. Vérifiez la case exacte (4BB/4BC) selon la notice 2044.` }} />
+                          <CaseLine c={{ code: 'Report', label: 'Déficit reportable sur revenus fonciers (10 ans)', value: b.deficit.reportable, obligatoire: false, note: 'Part due aux intérêts + excédent au-delà du plafond : à inscrire dans le cadre « déficits antérieurs » (lignes 450-451) de la 2044 des années suivantes.' }} />
+                        </>
+                      )}
                     </div>
+                    {L.l215 <= 15000 && L.l215 > 0 && (
+                      <div className="mt-3 p-3 rounded-lg text-xs" style={{ background: '#EFF6FF', border: '1px solid #93C5FD', color: '#1E40AF' }}>
+                        Micro-foncier possible (recettes ≤ 15 000 € et pas de bien en dispositif spécial) : base imposable {formatCurrency(microBase)} (abattement 30 %, case 4BE) contre {formatCurrency(Math.max(0, L.l261))} au réel. {L.l261 > microBase ? 'Le micro-foncier est plus avantageux cette année — mais l\'option engage 3 ans.' : 'Le réel est plus avantageux.'}
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -727,35 +672,31 @@ export default function DeclarationPage() {
               </div>
 
               {sciProps.map(prop => {
-                const revenus = getRevenus(prop)
-                const charges = getExpensesYtd(prop).reduce((s: number, e: any) => s + e.amount, 0) + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual
-                const sim = calculateSciSimulation({ resultat_comptable: revenus - charges, regime: (prop.sci_regime ?? 'ir') as 'ir' | 'is', taux_marginal: tmi / 100 })
+                const b = bil(prop)
+                const isIS = prop.sci_regime === 'is'
+                const revenus = isIS ? b.recettes.brut : b.recettes.loyers
+                const resultat = b.resultat
+                const sim = calculateSciSimulation({ resultat_comptable: resultat, regime: (prop.sci_regime ?? 'ir') as 'ir' | 'is', taux_marginal: tmi / 100 })
                 return (
                   <div key={prop.id} className="mb-5">
                     <p className="text-sm font-semibold mb-3 pb-2 border-b"
                       style={{ color: 'var(--text-primary)', borderColor: 'var(--border)' }}>
                       {prop.sci_name ?? prop.name} — {prop.sci_regime?.toUpperCase() ?? 'IR'}
                     </p>
-                    <CaseLine c={{ code: 'Cadre A', label: 'Revenus bruts de la société', value: revenus, obligatoire: true }} />
-                    <CaseLine c={{ code: 'Cadre B', label: 'Charges déductibles totales', value: charges, obligatoire: true }} />
-                    <CaseLine c={{ code: 'Résultat', label: sim.resultat_comptable >= 0 ? 'Bénéfice net' : 'Déficit net', value: Math.abs(sim.resultat_comptable), obligatoire: true }} />
-
-                    {prop.sci_regime === 'is' && (
-                      <CaseLine c={{ code: 'IS dû', label: 'Impôt sur les sociétés (15% < 42 500€, 25% au-delà)', value: sim.is_du, obligatoire: true, note: 'Acomptes : 15/03, 15/06, 15/09, 15/12' }} />
-                    )}
-
-                    {prop.sci_regime !== 'is' && (prop.sci_associates ?? []).length > 0 && (
+                    <CaseLine c={{ code: 'Cadre A', label: 'Revenus bruts de la société', value: revenus, obligatoire: true, note: isIS ? 'Loyers et provisions encaissés.' : 'Loyers encaissés hors provisions de charges.' }} />
+                    <CaseLine c={{ code: 'Cadre B', label: 'Charges déductibles (hors intérêts)', value: b.chargesDeductiblesHorsInterets, obligatoire: true }} />
+                    <CaseLine c={{ code: 'Intérêts', label: 'Intérêts d\'emprunt', value: b.charges.interets, obligatoire: false, note: b.charges.interetsEstimes ? 'Estimation — reprenez l\'attestation bancaire.' : undefined }} />
+                    {isIS && <CaseLine c={{ code: 'Amort.', label: 'Amortissements déduits', value: b.amortissementsDeductibles, obligatoire: false, note: b.amortissementsReportes > 0 ? `${formatCurrency(b.amortissementsReportes)} reportés.` : undefined }} />}
+                    <CaseLine c={{ code: 'Résultat', label: resultat >= 0 ? 'Bénéfice net' : 'Déficit net', value: Math.abs(resultat), obligatoire: true }} />
+                    {isIS && <CaseLine c={{ code: 'IS dû', label: 'Impôt sur les sociétés (15 % < 42 500 €, 25 % au-delà)', value: sim.is_du, obligatoire: true, note: 'Acomptes : 15/03, 15/06, 15/09, 15/12' }} />}
+                    {!isIS && (prop.sci_associates ?? []).length > 0 && (
                       <div className="mt-3">
-                        <p className="text-xs font-medium mb-2" style={{ color: '#64748B' }}>
-                          QUOTE-PART PAR ASSOCIÉ — à reporter sur leur 2044 personnelle
-                        </p>
+                        <p className="text-xs font-medium mb-2" style={{ color: '#64748B' }}>QUOTE-PART PAR ASSOCIÉ — à reporter sur leur 2044 personnelle</p>
                         {(prop.sci_associates ?? []).map((a: any) => (
                           <CaseLine key={a.id} c={{
-                            code: `${a.share_pct}%`,
-                            label: `Quote-part de ${a.name}`,
-                            value: Math.round(sim.resultat_comptable * a.share_pct / 100 * 100) / 100,
-                            obligatoire: true,
-                            note: `${a.name} doit reporter ce montant ligne 420 de sa 2044`,
+                            code: `${a.share_pct}%`, label: `Quote-part de ${a.name}`,
+                            value: Math.round(resultat * a.share_pct / 100 * 100) / 100, obligatoire: true,
+                            note: `${a.name} reporte ce montant sur sa 2044 (revenus fonciers de la SCI).`,
                           }} />
                         ))}
                       </div>

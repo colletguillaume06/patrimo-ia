@@ -8,7 +8,8 @@ import { SimulationCard } from '@/components/fiscalite/SimulationCard'
 import { AmortissementTable } from '@/components/fiscalite/AmortissementTable'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
 import { formatCurrency, formatPct } from '@/lib/utils'
-import { calculateLmnpSimulation, calculateDepreciation } from '@/lib/fiscal/lmnp'
+import { calculateLmnpSimulation } from '@/lib/fiscal/lmnp'
+import { bilanBien } from '@/lib/fiscal/bilan'
 import { calculateFoncierSimulation } from '@/lib/fiscal/foncier'
 import { calculateSciSimulation } from '@/lib/fiscal/sci'
 import { evaluerSeuilLmp, evaluerSeuilMicroBic, comparerClassement } from '@/lib/fiscal/seuils'
@@ -181,7 +182,7 @@ export default function FiscalitePage() {
       setLoading(true)
       const [propRes, incRes, annexesRes] = await Promise.all([
         supabase.from('properties')
-          .select('*, leases(*), expenses(*), depreciation_plans(*), sci_associates(*), airbnb_bookings(*)')
+          .select('*, leases(*, payments(*)), expenses(*), incidents(*), depreciation_plans(*), sci_associates(*), airbnb_bookings(*)')
           .order('name'),
         supabase.from('incidents')
           .select('*')
@@ -202,77 +203,20 @@ export default function FiscalitePage() {
 
   // Calcul par bien
   const buildPropData = (prop: any): PropData => {
-    const expenses_ytd = (prop.expenses ?? []).filter((e: any) =>
-      new Date(e.date).getFullYear() === year
-    )
-    const propIncidents = incidents.filter(i => i.property_id === prop.id && i.est_paye)
-    const travaux_deductibles = propIncidents
-      .filter(i => ['entretien_reparation', 'travaux_deductibles'].includes(i.categorie_fiscale ?? ''))
-      .reduce((s: number, i: any) => s + (i.cout_paye || 0), 0)
-
-    // Revenus : loyers de bail (× 12) + recettes Airbnb de l'année
-    const revenusBail = (prop.leases ?? [])
-      .filter((l: any) => l.is_active)
-      .reduce((s: number, l: any) => s + (l.monthly_rent ?? 0) * 12, 0)
-    const revenusAirbnb = (prop.airbnb_bookings ?? [])
-      .filter((b: any) => new Date(b.check_in).getFullYear() === year)
-      .reduce((s: number, b: any) => s + (b.total_revenue || 0), 0)
-    const revenus = revenusBail + revenusAirbnb
-
-    const charges_courantes = expenses_ytd.reduce((s: number, e: any) => s + e.amount, 0)
-      + prop.monthly_charges * 12 + prop.property_tax + prop.insurance_annual
-
-    // Commission de plateforme (Airbnb/Booking) : retenue sur les versements,
-    // c'est une charge déductible au réel. Les recettes saisies étant brutes,
-    // on l'ajoute explicitement aux charges.
-    const commissionPlateforme = prop.type === 'airbnb'
-      ? revenusAirbnb * ((Number(prop.airbnb_platform_fees) || 0) / 100)
-      : 0
-
-    const amortissements = prop.type === 'lmnp'
-      ? calculateDepreciation(prop.depreciation_plans ?? [])
-      : 0
-
-    const charges = charges_courantes + travaux_deductibles + commissionPlateforme
-
-    let resultat = 0
+    // Source unique : lib/fiscal/bilan.ts (mêmes chiffres que l'aide à la déclaration et le tableau fiscal)
+    const b = bilanBien(prop, year)
+    const revenus = b.regime === 'foncier' ? b.l2044.l215 : b.recettes.brut
+    const charges = b.chargesDeductibles
+    const travaux_deductibles = b.charges.travauxDeductibles
+    const amortissements = b.amortissementsDeductibles
+    const resultat = b.resultat
+    const tauxBic = tmi / 100 + 0.186
+    const tauxFoncier = tmi / 100 + 0.172
     let impot = 0
-
-    if (prop.type === 'lmnp') {
-      const sim = calculateLmnpSimulation({
-        recettes: revenus, charges_reelles: charges,
-        amortissements, taux_marginal: tmi / 100,
-      })
-      resultat = sim.resultat_bic
-      impot = sim.impot_estime
-    } else if (prop.type === 'nu') {
-      const sim = calculateFoncierSimulation({
-        revenus_bruts: revenus, charges_deductibles: charges,
-        taux_marginal: tmi / 100,
-      })
-      resultat = sim.revenu_net
-      impot = sim.reel_impot
-    } else if (prop.type === 'sci') {
-      const sim = calculateSciSimulation({
-        resultat_comptable: revenus - charges,
-        regime: prop.sci_regime ?? 'ir',
-        taux_marginal: tmi / 100,
-      })
-      resultat = sim.resultat_comptable
-      impot = sim.is_du
-    } else if (prop.type === 'airbnb') {
-      // Meublé de tourisme = BIC. Régime réel vs micro-BIC ; l'abattement
-      // spécifique (classé / non classé) sera affiné à l'étape 3.
-      const sim = calculateLmnpSimulation({
-        recettes: revenus, charges_reelles: charges,
-        amortissements: 0, taux_marginal: tmi / 100,
-      })
-      resultat = sim.resultat_bic
-      impot = sim.impot_estime
-    } else {
-      resultat = revenus - charges
-      impot = Math.max(0, resultat) * (tmi / 100)
-    }
+    if (b.regime === 'bic') impot = Math.max(0, resultat) * tauxBic
+    else if (b.regime === 'foncier') impot = Math.max(0, resultat) * tauxFoncier
+    else if (b.regime === 'sci_is') impot = calculateSciSimulation({ resultat_comptable: resultat, regime: 'is', taux_marginal: tmi / 100 }).is_du
+    else impot = Math.max(0, resultat) * (tmi / 100)
 
     return {
       id: prop.id, name: prop.name, type: prop.type,
@@ -594,7 +538,7 @@ export default function FiscalitePage() {
                   </p>
                   {sciProps.map(d => {
                     const sim = calculateSciSimulation({
-                      resultat_comptable: d.revenus - d.charges,
+                      resultat_comptable: d.revenus - d.charges - d.amortissements,
                       regime: (d.sci_regime ?? 'ir') as 'ir' | 'is', taux_marginal: tmi / 100,
                     })
                     return (

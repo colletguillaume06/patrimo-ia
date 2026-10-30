@@ -56,7 +56,7 @@ export default function ChargesAnnuellesPage() {
     CHARGE_DEFS
       .filter(d => (!d.onlyLmnp || prop.type === 'lmnp'))
       .map(d => ({ ...d, montant: Number(prop[d.field]) || 0 }))
-      .filter(d => d.montant > 0)
+      .filter(d => d.montant > 0 || !d.onlyLmnp || prop.type === 'lmnp')
 
   // Charges personnalisées d'un bien pour l'année (hors taxe/assurance/CFE).
   const customChargesOf = (propId: string) =>
@@ -217,7 +217,7 @@ export default function ChargesAnnuellesPage() {
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <p className="text-sm font-medium text-[var(--text-primary)]">{def.label}</p>
-                        <p className="text-xs text-slate-500">Montant connu : {formatCurrency(def.montant)}</p>
+                        <p className="text-xs text-slate-500">{def.montant > 0 ? `Montant connu : ${formatCurrency(def.montant)}` : 'Montant non renseigné sur la fiche du bien — saisissez celui de votre avis'}</p>
                       </div>
                       {form ? null : rec ? (
                         <button onClick={() => openEditRecorded(prop.id, def.key, rec)}
@@ -245,7 +245,7 @@ export default function ChargesAnnuellesPage() {
                 return (
                   <div key={rec.id} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-[var(--text-primary)]">Charge personnalisée</p>
+                      <p className="text-sm font-medium text-[var(--text-primary)]">{rec.description || 'Charge personnalisée'}</p>
                       {!form && (
                         <button onClick={() => openEditRecorded(prop.id, `custom:${rec.id}`, rec)}
                           className="flex items-center gap-2 text-sm text-[var(--success)] hover:opacity-80 transition-opacity" title="Modifier">

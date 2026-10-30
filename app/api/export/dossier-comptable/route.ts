@@ -1,4 +1,5 @@
 import { detenuSurAnnee } from '@/lib/fiscal/bien-vendu'
+import { bilanBien } from '@/lib/fiscal/bilan'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 
@@ -16,11 +17,14 @@ export async function POST(req: NextRequest) {
     service.from('properties')
       .select(`
         id, name, type, address, city, purchase_price, property_tax, insurance_annual,
-        monthly_charges, loan_monthly, numero_fiscal, airbnb_platform_fees, sold_at,
+        monthly_charges, loan_monthly, loan_rate, loan_end_date, cfe_annuelle, lmnp_regime, sci_regime, meuble_classe,
+        numero_fiscal, airbnb_platform_fees, sold_at,
         leases(
-          tenant_name, monthly_rent, charges, start_date, is_active,
+          tenant_name, monthly_rent, charges, start_date, end_date, is_active, parsed_data,
           payments(id, amount, status, due_date, paid_date)
         ),
+        incidents(id, cout_paye, cout_estime, est_paye, date_travaux, created_at, categorie_fiscale),
+        depreciation_plans(start_date, duration_years, annual_amount),
         expenses(id, amount, date, category, description, fiscal_deductible),
         airbnb_bookings(id, total_revenue, check_in)
       `)
@@ -137,13 +141,16 @@ export async function POST(req: NextRequest) {
       }] : []),
     ]
 
+    // Chiffres de référence : source unique lib/fiscal/bilan.ts (identiques à l'aide à la déclaration)
+    const bil = bilanBien(prop, annee)
     return {
       ...prop,
       activeLease,
-      loyersAnnee,
-      chargesDeductibles,
-      resultatNet: loyersAnnee - chargesDeductibles,
+      loyersAnnee: bil.regime === 'foncier' ? bil.l2044.l215 : bil.recettes.brut,
+      chargesDeductibles: bil.chargesDeductibles + bil.amortissementsDeductibles,
+      resultatNet: bil.resultat,
       depenses,
+      bilan: bil,
     }
   })
 
