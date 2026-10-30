@@ -9,8 +9,8 @@ const schema = z.object({
 
 type Ctx = { params: Promise<{ id: string }> }
 
-// Marquer un bien comme vendu : enregistre la cession, clôture les baux en cours
-// et supprime les loyers à venir (pas encore échus à la date de vente).
+// Marquer un bien comme vendu : enregistre la cession et clôture les baux en cours.
+// Aucune donnée n'est supprimée (paiements et historique conservés).
 export async function POST(req: NextRequest, { params }: Ctx) {
   const { id } = await params
   const supabase = await createClient()
@@ -50,18 +50,5 @@ export async function POST(req: NextRequest, { params }: Ctx) {
     await supabase.from('leases').update({ is_active: false, end_date }).eq('id', l.id)
   }
 
-  // Loyers à venir (non échus à la date de vente) : supprimés, sinon appels et relances continueraient
-  let loyers_supprimes = 0
-  if (leaseIds.length > 0) {
-    const { data: deleted } = await supabase
-      .from('payments')
-      .delete()
-      .in('lease_id', leaseIds)
-      .eq('status', 'pending')
-      .gt('due_date', sold_at)
-      .select('id')
-    loyers_supprimes = deleted?.length ?? 0
-  }
-
-  return NextResponse.json({ ok: true, baux_clos: leaseIds.length, loyers_supprimes })
+  return NextResponse.json({ ok: true, baux_clos: leaseIds.length })
 }

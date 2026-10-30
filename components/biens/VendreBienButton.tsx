@@ -27,7 +27,7 @@ export function VendreBienButton({ propertyId, bienName }: { propertyId: string;
     const data = await res.json().catch(() => ({}))
     setLoading(false)
     if (!res.ok) { toast.error(data.error ?? 'Erreur lors de l\'enregistrement'); return }
-    toast.success(`Bien vendu — ${data.baux_clos} bail(s) clos, ${data.loyers_supprimes} loyer(s) à venir supprimé(s)`)
+    toast.success(`Bien vendu — ${data.baux_clos} bail(s) clos, historique conservé`)
     setOpen(false)
     router.refresh()
   }
@@ -46,7 +46,7 @@ export function VendreBienButton({ propertyId, bienName }: { propertyId: string;
           <div className="w-full max-w-md rounded-2xl bg-white p-6 space-y-4" onClick={e => e.stopPropagation()}>
             <h2 className="font-semibold text-lg text-[#0F172A]">Vente de « {bienName} »</h2>
             <p className="text-sm text-slate-500">
-              Les baux en cours seront clos à la date de vente et les loyers à venir supprimés. L&apos;historique est conservé.
+              Les baux en cours seront clos à la date de vente. Aucun paiement n&apos;est supprimé : l&apos;historique est conservé.
             </p>
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1.5">Date de vente</label>
