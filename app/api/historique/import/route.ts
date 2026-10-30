@@ -209,7 +209,11 @@ export async function POST(req: NextRequest) {
       const deductible = ['charges', 'travaux_deductibles', 'assurance', 'gestion', 'taxe_fonciere', 'comptabilite'].includes(cat)
 
       const { error } = await supabase.from('expenses').insert({
-        property_id: propId, amount: montant, date, category: cat, description, deductible,
+        // La colonne s'appelle `fiscal_deductible` (voir 001_schema.sql) et non
+        // `deductible` : avec le mauvais nom, Postgrest rejette l'insertion et
+        // toutes les lignes de l'onglet "Dépenses" échouaient silencieusement
+        // (visible seulement dans results.errors, jamais dans le compteur).
+        property_id: propId, amount: montant, date, category: cat, description, fiscal_deductible: deductible,
       })
       if (!error) results.depenses++
       else results.errors.push(`Dépense "${description}": ${error.message}`)
@@ -229,20 +233,51 @@ export async function POST(req: NextRequest) {
 
       const statut = String(r['Statut'] || 'termine').toLowerCase()
       const catFiscale = String(r['Catégorie fiscale'] || 'deductible').toLowerCase()
-      const validStatuts = ['planifie', 'en_cours', 'termine']
-      const validCats = ['deductible', 'amortissable', 'non_deductible']
+      // Les libellés du modèle Excel (voir historique/template : "planifie"/"en_cours"/
+      // "termine" et "deductible"/"amortissable"/"non_deductible") sont des raccourcis
+      // côté utilisateur — ils ne correspondent ni à l'enum réel `incidents.status`
+      // ('open'/'in_progress'/'resolved'), ni aux valeurs réelles de la contrainte
+      // `incidents.categorie_fiscale` ('travaux_deductibles'/'travaux_amortissables'/
+      // 'entretien_reparation'/'amelioration'/'construction_agrandissement'). Sans cette
+      // table de correspondance (et avec les noms de colonnes `estimated_cost`/
+      // `actual_cost`/`company`/`fiscal_category`/`date_fin`, qui n'existent pas sur la
+      // table `incidents` — voir 001_schema.sql), chaque ligne de l'onglet "Travaux" était
+      // rejetée par Postgres : l'import de travaux était fonctionnellement impossible.
+      const STATUT_MAP: Record<string, 'open' | 'in_progress' | 'resolved'> = {
+        planifie: 'open', en_cours: 'in_progress', termine: 'resolved',
+      }
+      // 'construction_agrandissement' est la seule catégorie que le reste de l'app traite
+      // comme ni déductible immédiatement ni amortissable (cf. isTravauxDeductible dans
+      // app/api/export/dossier-comptable/route.ts, et le commentaire de
+      // lib/fiscal/plus-value.ts sur `travaux_non_deductibles`) : c'est l'équivalent réel
+      // de "non_deductible" dans le modèle d'import.
+      const CAT_MAP: Record<string, string> = {
+        deductible: 'travaux_deductibles',
+        amortissable: 'travaux_amortissables',
+        non_deductible: 'construction_agrandissement',
+      }
+      const status = STATUT_MAP[statut] ?? 'resolved'
+      const categorieFiscale = CAT_MAP[catFiscale] ?? 'travaux_deductibles'
+      const montantEstime = parseNum(r['Montant estimé (€)']) || 0
+      const montantPaye = parseNum(r['Montant payé (€)']) || 0
+      const dateFin = parseDate(r['Date fin (optionnel)'])
 
       const { error } = await supabase.from('incidents').insert({
         property_id: propId,
         title: titre,
         description: String(r['Description'] || ''),
         date_travaux: parseDate(r['Date travaux']) ?? new Date().toISOString().split('T')[0],
-        date_fin: parseDate(r['Date fin (optionnel)']) || null,
-        estimated_cost: parseNum(r['Montant estimé (€)']) || null,
-        actual_cost: parseNum(r['Montant payé (€)']) || null,
-        company: String(r['Entreprise'] || '') || null,
-        status: validStatuts.includes(statut) ? statut : 'termine',
-        fiscal_category: validCats.includes(catFiscale) ? catFiscale : 'deductible',
+        cout_estime: montantEstime,
+        cout_paye: montantPaye,
+        cost: montantPaye || montantEstime,
+        est_paye: montantPaye > 0,
+        nom_entreprise: String(r['Entreprise'] || '') || null,
+        status,
+        categorie_fiscale: categorieFiscale,
+        // La table `incidents` n'a pas de colonne "date de fin prévue" dédiée : quand le
+        // travail est terminé, on réutilise `resolved_at` (déjà utilisé dans ce sens par
+        // app/(dashboard)/travaux/page.tsx) pour ne pas perdre la date renseignée.
+        ...(status === 'resolved' && dateFin ? { resolved_at: new Date(dateFin).toISOString() } : {}),
       })
       if (!error) results.travaux++
       else results.errors.push(`Travaux "${titre}": ${error.message}`)

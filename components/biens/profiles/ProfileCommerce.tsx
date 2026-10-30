@@ -31,7 +31,13 @@ export function ProfileCommerce({ property: p }: ProfileCommerceProps) {
   const startYear = startDate?.getFullYear()
   const now = new Date()
   const yearsSinceStart = startDate ? (now.getFullYear() - startDate.getFullYear()) : 0
-  const nextRevision = startDate ? new Date(startDate.setFullYear(startDate.getFullYear() + Math.ceil(yearsSinceStart / 3) * 3)) : null
+  // Prochaine échéance triennale (3-6-9) : au moins 3 ans après la prise d'effet,
+  // sans muter startDate (Date.setFullYear mute l'objet en place).
+  const nextRevisionYears = Math.max(3, Math.ceil(yearsSinceStart / 3) * 3)
+  const nextRevision = startDate
+    ? new Date(startDate.getFullYear() + nextRevisionYears, startDate.getMonth(), startDate.getDate())
+    : null
+  const monthsToNextRevision = nextRevision ? monthsUntil(nextRevision.toISOString()) : null
 
   const checklistItems = [
     { label: 'Dépôt de garantie versé', done: (lease?.deposit ?? 0) > 0 },
@@ -57,7 +63,7 @@ export function ProfileCommerce({ property: p }: ProfileCommerceProps) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: 'Loyer HT mensuel', value: formatCurrency(loyer_ht), color: 'text-[var(--text-primary)]' },
-            { label: 'Révision dans', value: monthsToEnd !== null ? `${monthsToEnd} mois` : '—', color: isPreavisAlert ? 'text-red-400' : 'text-amber-400' },
+            { label: 'Révision dans', value: monthsToNextRevision !== null ? `${monthsToNextRevision} mois` : '—', color: monthsToNextRevision !== null && monthsToNextRevision <= 3 ? 'text-red-400' : 'text-amber-400' },
             { label: 'Nouveau loyer estimé', value: newRent ? formatCurrency(newRent) : '—', color: 'text-[var(--success)]' },
             { label: 'Indice révision', value: (p.indice_revision ?? 'ILC').toUpperCase(), color: 'text-cyan-400' },
           ].map(({ label, value, color }) => (

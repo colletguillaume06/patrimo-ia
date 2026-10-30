@@ -20,8 +20,11 @@ export function calculateSciSimulation(params: {
     return { resultat_comptable, is_du, dividendes_disponibles, regime }
   }
 
-  // IR : transparence fiscale, imposition sur quote-part
-  const is_du = resultat_comptable * taux_marginal
+  // IR : transparence fiscale, imposition sur quote-part (IR + prélèvements sociaux 17,2%)
+  const base_imposable = Math.max(0, resultat_comptable)
+  const ir_du = base_imposable * taux_marginal
+  const ps_du = base_imposable * 0.172
+  const is_du = ir_du + ps_du
   return {
     resultat_comptable,
     is_du,

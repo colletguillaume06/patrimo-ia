@@ -119,7 +119,7 @@ export function ScanFactureModal({ propertyId, onClose, onSaved }: ScanFactureMo
                 <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>Photographiez ou importez la facture</p>
                 <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>JPG, PNG — L'IA extrait automatiquement le montant et les détails</p>
               </div>
-              <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" className="hidden"
+              <input ref={fileRef} type="file" accept="image/*,.pdf,.heic,.heif" className="hidden"
                 onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = '' }} />
             </div>
           )}

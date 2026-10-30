@@ -30,18 +30,24 @@ export default function CompteLocatairePage() {
     load()
   }, [id])
 
-  const total_attendu = payments.reduce((s, p) => s + (lease?.monthly_rent + (lease?.charges ?? 0) || p.amount), 0)
-  const total_recu = payments.filter(p => p.status === 'paid' || p.status === 'partial').reduce((s, p) => s + p.amount, 0)
-  const solde_global = total_attendu - total_recu
+  // "Attendu" = montant du paiement enregistré à l'époque (qui reflète le loyer en vigueur ce mois-là)
+  // Pour les paiements en attente/retard, on utilise le loyer actuel
+  const loyerActuel = lease ? (lease.monthly_rent + (lease.charges ?? 0)) : 0
 
   let cumul = 0
   const rows = payments.map(p => {
-    const attendu = lease ? (lease.monthly_rent + (lease.charges ?? 0)) : p.amount
-    const recu = p.status === 'paid' ? p.amount : p.status === 'partial' ? p.amount : 0
+    const attendu = (p.status === 'paid' || p.status === 'partial')
+      ? p.amount   // montant enregistré = ce qui était dû à l'époque
+      : loyerActuel  // pour les impayés : loyer en cours
+    const recu = (p.status === 'paid' || p.status === 'partial') ? p.amount : 0
     const ecart = attendu - recu
     cumul += ecart
     return { ...p, attendu, recu, ecart, cumul }
   })
+
+  const total_attendu = rows.reduce((s, r) => s + r.attendu, 0)
+  const total_recu = rows.reduce((s, r) => s + r.recu, 0)
+  const solde_global = total_attendu - total_recu
 
   const exportTxt = () => {
     const today = format(new Date(), 'dd/MM/yyyy')

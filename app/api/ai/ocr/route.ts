@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const { data: { publicUrl } } = service.storage.from('baux').getPublicUrl(fileName)
+  // Bucket privé : on conserve le chemin interne (lecture via /api/storage/file).
+  const storedPath = fileName
 
   // 2. Extraction texte — LlamaParse si clé dispo, sinon fallback nom de fichier
   let extractedText = `Nom du fichier : ${file.name}\n[Texte non extrait — LlamaParse non configuré]`
@@ -144,14 +145,14 @@ ${extractedText.slice(0, 8000)}`
 
     if (activeLease) {
       await service.from('leases').update({
-        pdf_url: publicUrl,
+        pdf_url: storedPath,
         parsed_data: { ...parsed_data, raw_text: extractedText.slice(0, 2000) },
       }).eq('id', activeLease.id)
     }
   }
 
   return NextResponse.json({
-    pdf_url: publicUrl,
+    pdf_url: storedPath,
     parsed_data: { ...parsed_data, raw_text: extractedText.slice(0, 2000) },
   })
 }

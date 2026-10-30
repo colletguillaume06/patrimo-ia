@@ -7,7 +7,7 @@ import { ProfileAirbnb } from '@/components/biens/profiles/ProfileAirbnb'
 import { ProfileCommerce } from '@/components/biens/profiles/ProfileCommerce'
 import Link from 'next/link'
 import { TabNav } from '@/components/ui/TabNav'
-import { ChevronLeft, Stethoscope, CreditCard, Building, Users, Wrench } from 'lucide-react'
+import { ChevronLeft, Stethoscope, CreditCard, Building, Users, Wrench, Calculator } from 'lucide-react'
 import { EditBienButton } from '@/components/biens/EditBienButton'
 import { VendreBienButton } from '@/components/biens/VendreBienButton'
 import { formatCurrency } from '@/lib/utils'
@@ -70,7 +70,9 @@ export default async function BienDetailPage({ params }: Props) {
     { href: `/biens/${id}`, label: "Vue d'ensemble" },
     { href: `/biens/${id}/diagnostics`, label: 'Diagnostics', icon: 'Stethoscope' },
     ...(property.loan_monthly ? [{ href: `/biens/${id}/financement`, label: 'Financement', icon: 'CreditCard' }] : []),
+    ...(property.type === 'lmnp' ? [{ href: `/biens/${id}/amortissement`, label: 'Amortissement', icon: 'Calculator' }] : []),
     ...(property.type === 'sci' ? [{ href: `/biens/${id}/sci-cca`, label: 'Comptes courants', icon: 'Users' }] : []),
+    ...(property.type === 'airbnb' ? [{ href: `/biens/${id}/airbnb`, label: 'Suivi Airbnb', icon: 'CalendarDays' }] : []),
     { href: `/biens/${id}/copropriete`, label: 'Copropriété', icon: 'Building' },
     { href: `/travaux`, label: 'Travaux', icon: 'Wrench' },
   ]

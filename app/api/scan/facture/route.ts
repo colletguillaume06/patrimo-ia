@@ -25,11 +25,32 @@ export async function POST(req: NextRequest) {
   const buf = await file.arrayBuffer()
   const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpeg'
 
-  // Compression si > 4MB
+  // Le formulaire accepte image/*, .pdf, .heic, .heif (voir ScanFactureModal), mais l'API
+  // Claude ne comprend nativement que jpeg/png/webp/gif. On mappe le media_type sur
+  // l'extension réelle, et on convertit via sharp (comme pour la compression >4MB) tout ce
+  // qui n'est pas directement supporté (heic/heif/pdf) — sinon les octets bruts d'un PNG/WEBP
+  // étaient envoyés à Claude mislabellés "image/jpeg", ce qui casse la lecture de la facture.
+  type SupportedMediaType = 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif'
+  const EXT_MEDIA_TYPE: Record<string, SupportedMediaType> = {
+    jpg: 'image/jpeg', jpeg: 'image/jpeg',
+    png: 'image/png',
+    webp: 'image/webp',
+    gif: 'image/gif',
+  }
+
   const rawBuffer = Buffer.from(buf)
   let finalBuffer: Buffer
-  if (rawBuffer.byteLength > 4 * 1024 * 1024) {
-    finalBuffer = Buffer.from(await sharp(rawBuffer).jpeg({ quality: 80 }).toBuffer())
+  let mediaType: SupportedMediaType | undefined = EXT_MEDIA_TYPE[ext]
+  if (!mediaType || rawBuffer.byteLength > 4 * 1024 * 1024) {
+    try {
+      finalBuffer = Buffer.from(await sharp(rawBuffer).jpeg({ quality: 80 }).toBuffer())
+      mediaType = 'image/jpeg'
+    } catch {
+      return NextResponse.json(
+        { error: 'Format de fichier non pris en charge pour la lecture automatique. Merci de saisir la dépense manuellement.' },
+        { status: 422 },
+      )
+    }
   } else {
     finalBuffer = rawBuffer
   }
@@ -43,7 +64,7 @@ export async function POST(req: NextRequest) {
       content: [
         {
           type: 'image',
-          source: { type: 'base64', media_type: 'image/jpeg', data: base64 }
+          source: { type: 'base64', media_type: mediaType, data: base64 }
         },
         {
           type: 'text',

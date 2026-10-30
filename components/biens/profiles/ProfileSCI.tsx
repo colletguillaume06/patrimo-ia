@@ -1,6 +1,7 @@
 import { GlassCard } from '@/components/ui/GlassCard'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
 import { NumeroFiscalBadge } from '@/components/biens/NumeroFiscalBadge'
+import { ValeurActuelleCard } from '@/components/biens/ValeurActuelleCard'
 import { formatCurrency, formatPct } from '@/lib/utils'
 import { calculateSciSimulation } from '@/lib/fiscal/sci'
 import { AlertTriangle, Users } from 'lucide-react'
@@ -152,6 +153,15 @@ export function ProfileSCI({ property: p }: ProfileSCIProps) {
           ))}
         </div>
       </GlassCard>
+
+      <ValeurActuelleCard
+        propertyId={p.id}
+        purchasePrice={p.purchase_price ?? null}
+        valeurActuelle={(p as any).valeur_actuelle ?? null}
+        valeurActuelleDate={(p as any).valeur_actuelle_date ?? null}
+        valeurActuelleSource={(p as any).valeur_actuelle_source ?? null}
+        loyer={p.active_lease?.monthly_rent ?? null}
+      />
     </div>
   )
 }

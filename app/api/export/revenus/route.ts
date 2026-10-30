@@ -20,14 +20,21 @@ export async function GET(req: NextRequest) {
     .select('id, name, address, city, numero_fiscal, leases(id, tenant_name, monthly_rent, charges)')
     .eq('user_id', user.id)
 
-  const { data: payments } = await service
+  const propMap = Object.fromEntries((properties ?? []).map(p => [p.id, p]))
+  const propIds = new Set(Object.keys(propMap))
+
+  // Le client `service` bypass la RLS : sans filtrage explicite, cette requête sur `payments`
+  // (uniquement bornée par date) renvoie les paiements de TOUS les utilisateurs, pas seulement
+  // les biens du propriétaire connecté (même défaut que BUG-2026-08-06-02, ici sur l'export CSV
+  // des revenus — fuite de noms de locataires/loyers d'autres comptes dans le fichier exporté).
+  const { data: allPayments } = await service
     .from('payments')
     .select('*, lease:leases(tenant_name, monthly_rent, charges, property_id)')
     .gte('due_date', `${year}-01-01`)
     .lte('due_date', `${year}-12-31`)
     .order('due_date')
 
-  const propMap = Object.fromEntries((properties ?? []).map(p => [p.id, p]))
+  const payments = (allPayments ?? []).filter(p => propIds.has(p.lease?.property_id ?? ''))
 
   const rows: string[][] = [
     ['Mois', 'Bien', 'Adresse', 'N° fiscal', 'Locataire', 'Loyer HC', 'Charges', 'Total CC', 'Statut', 'Date encaissement'],

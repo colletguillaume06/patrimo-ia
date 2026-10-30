@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
     if (user_id && plan) {
       await service.from('profiles').update({
         plan,
+        subscription_status: 'active',
         stripe_subscription_id: session.subscription as string,
       }).eq('id', user_id)
     }
@@ -34,7 +35,11 @@ export async function POST(req: NextRequest) {
 
   if (event.type === 'customer.subscription.deleted') {
     const sub = event.data.object as Stripe.Subscription
-    await service.from('profiles').update({ plan: 'starter', stripe_subscription_id: null })
+    await service.from('profiles').update({
+      plan: 'starter',
+      subscription_status: 'expired',
+      stripe_subscription_id: null,
+    })
       .eq('stripe_customer_id', sub.customer as string)
   }
 

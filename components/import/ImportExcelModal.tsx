@@ -61,7 +61,7 @@ export function ImportExcelModal({ onClose }: { onClose: () => void }) {
       const res = await fetch('/api/import/excel/extract', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image_base64: base64 }),
+        body: JSON.stringify({ image_base64: base64, mime_type: file.type }),
       })
       const data = await res.json()
       clearInterval(interval)

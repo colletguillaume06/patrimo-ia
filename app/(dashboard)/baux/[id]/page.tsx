@@ -10,7 +10,7 @@ import { fr } from 'date-fns/locale'
 import { toast } from 'sonner'
 import {
   Shield, AlertTriangle, CheckCircle2, X, Copy, ChevronLeft,
-  Upload, FileText, Phone, Mail, User, Calendar, Euro,
+  Upload, FileText, Phone, Mail, User, Calendar, Euro, Edit2,
   ReceiptText, RefreshCw, BarChart2, UserPlus, LogOut, TrendingUp
 } from 'lucide-react'
 import {
@@ -20,6 +20,12 @@ import Link from 'next/link'
 import { TabNav } from '@/components/ui/TabNav'
 import { RevisionModal } from '@/components/loyers/RevisionModal'
 import { IRL_CURRENT, ILC_CURRENT, ILAT_CURRENT, getQuarterLabel, calculateRevisionLoyer } from '@/lib/fiscal/indices'
+
+const CHARGE_PRESETS = [
+  'Eau froide', 'Eau chaude', 'Chauffage collectif', 'Électricité (parties communes)',
+  'Ascenseur', 'Entretien parties communes', 'Espaces verts', 'Ordures ménagères',
+  'Gardiennage / concierge', 'Autre',
+]
 
 const ASSURANCE_CONFIG = {
   valide: { label: 'Valide', color: 'text-[var(--success)]', bg: 'bg-[var(--success-bg)]', border: 'border-[var(--success)/20]' },
@@ -60,6 +66,25 @@ export default function BailDetailPage() {
     assurance_locataire_expiration: '',
   })
 
+  const [showBailForm, setShowBailForm] = useState(false)
+  const [bailForm, setBailForm] = useState({
+    monthly_rent: '',
+    charges: '',
+    deposit: '',
+    start_date: '',
+    end_date: '',
+    indexation_index: '',
+    irl_reference_valeur: '',
+    irl_reference_trimestre: '',
+    irl_reference_annee: '',
+    appel_loyer_actif: false,
+  })
+  // Provisions sur charges ventilées par poste — partagées avec la fiche bien
+  // (parsed_data.charges_perso) et la régularisation.
+  const [chargesLines, setChargesLines] = useState<{ libelle: string; montant: string }[]>([])
+  const [leaseParsed, setLeaseParsed] = useState<any>({})
+  const chargesTotal = chargesLines.reduce((s, l) => s + (Number(l.montant) || 0), 0)
+
   const [showRelocation, setShowRelocation] = useState(false)
   const [reloc, setReloc] = useState({
     end_date: new Date().toISOString().slice(0, 10),
@@ -89,6 +114,24 @@ export default function BailDetailPage() {
         assurance_locataire_compagnie: data.assurance_locataire_compagnie ?? '',
         assurance_locataire_expiration: data.assurance_locataire_expiration ?? '',
       })
+      setBailForm({
+        monthly_rent: String(data.monthly_rent ?? ''),
+        charges: String(data.charges ?? ''),
+        deposit: String(data.deposit ?? ''),
+        start_date: data.start_date ?? '',
+        end_date: data.end_date ?? '',
+        indexation_index: data.indexation_index ?? data.irl_reference_indice ?? '',
+        irl_reference_valeur: String(data.irl_reference_valeur ?? ''),
+        irl_reference_trimestre: String(data.irl_reference_trimestre ?? ''),
+        irl_reference_annee: String(data.irl_reference_annee ?? ''),
+        appel_loyer_actif: data.appel_loyer_actif ?? false,
+      })
+      const pd = data.parsed_data ?? {}
+      setLeaseParsed(pd)
+      const perso = Array.isArray(pd.charges_perso) ? pd.charges_perso.filter((l: any) => l?.libelle || l?.montant) : []
+      if (perso.length) setChargesLines(perso.map((l: any) => ({ libelle: l.libelle ?? '', montant: String(l.montant ?? '') })))
+      else if (data.charges) setChargesLines([{ libelle: 'Charges', montant: String(data.charges) }])
+      else setChargesLines([{ libelle: '', montant: '' }])
     }
     setLoading(false)
   }
@@ -127,6 +170,31 @@ export default function BailDetailPage() {
     setSaving(false)
     toast.success('Assurance mise à jour')
     setShowAssuranceForm(false)
+    load()
+  }
+
+  const saveBail = async () => {
+    setSaving(true)
+    await supabase.from('leases').update({
+      monthly_rent: Number(bailForm.monthly_rent) || 0,
+      charges: chargesTotal,
+      parsed_data: {
+        ...leaseParsed,
+        charges_perso: chargesLines.filter(l => l.libelle || l.montant).map(l => ({ libelle: l.libelle, montant: l.montant })),
+      },
+      deposit: Number(bailForm.deposit) || 0,
+      start_date: bailForm.start_date || null,
+      end_date: bailForm.end_date || null,
+      indexation_index: bailForm.indexation_index || null,
+      irl_reference_indice: bailForm.indexation_index || null,
+      irl_reference_valeur: bailForm.irl_reference_valeur ? Number(bailForm.irl_reference_valeur) : null,
+      irl_reference_trimestre: bailForm.irl_reference_trimestre ? Number(bailForm.irl_reference_trimestre) : null,
+      irl_reference_annee: bailForm.irl_reference_annee ? Number(bailForm.irl_reference_annee) : null,
+      appel_loyer_actif: bailForm.appel_loyer_actif,
+    }).eq('id', id)
+    setSaving(false)
+    toast.success('Bail mis à jour')
+    setShowBailForm(false)
     load()
   }
 
@@ -255,6 +323,179 @@ Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées
           <div className="mt-3 flex items-center gap-2 p-3 rounded-lg bg-red-400/5 border border-red-400/20">
             <AlertTriangle className="h-4 w-4 text-red-400" />
             <p className="text-sm text-red-300">{reconduction.message}</p>
+          </div>
+        )}
+      </GlassCard>
+
+      {/* Conditions du bail */}
+      <GlassCard>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-display font-semibold text-[var(--text-primary)] flex items-center gap-2">
+            <FileText className="h-4 w-4 text-blue-400" /> Conditions du bail
+          </h2>
+          <button onClick={() => setShowBailForm(v => !v)} className="text-xs text-blue-400 hover:text-blue-300">
+            {showBailForm ? 'Fermer' : 'Modifier'}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { label: 'Loyer HC', value: formatCurrency(lease.monthly_rent ?? 0) },
+            { label: 'Charges', value: formatCurrency(lease.charges ?? 0) },
+            { label: 'Dépôt de garantie', value: formatCurrency(lease.deposit ?? 0) },
+            { label: 'Total CC', value: formatCurrency((lease.monthly_rent ?? 0) + (lease.charges ?? 0)) },
+            { label: 'Début', value: lease.start_date ? format(new Date(lease.start_date), 'dd/MM/yyyy') : '—' },
+            { label: 'Fin', value: lease.end_date ? format(new Date(lease.end_date), 'dd/MM/yyyy') : 'Indéterminée' },
+            { label: 'Indice révision', value: (lease.indexation_index ?? lease.irl_reference_indice ?? '—').toUpperCase() },
+            { label: 'Quittances auto', value: lease.appel_loyer_actif ? 'Activées' : 'Désactivées' },
+          ].map(({ label, value }) => (
+            <div key={label} className="bg-white/[0.03] rounded-xl p-3">
+              <p className="text-xs text-slate-500 mb-1">{label}</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{value}</p>
+            </div>
+          ))}
+        </div>
+
+        {(lease.irl_reference_valeur || lease.irl_reference_trimestre) && (
+          <div className="mt-3 grid grid-cols-3 gap-3">
+            <div className="bg-white/[0.03] rounded-xl p-3">
+              <p className="text-xs text-slate-500 mb-1">Indice de référence</p>
+              <p className="text-sm font-mono font-semibold text-[var(--text-primary)]">{lease.irl_reference_valeur ?? '—'}</p>
+            </div>
+            <div className="bg-white/[0.03] rounded-xl p-3">
+              <p className="text-xs text-slate-500 mb-1">Trimestre</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">T{lease.irl_reference_trimestre ?? '—'}</p>
+            </div>
+            <div className="bg-white/[0.03] rounded-xl p-3">
+              <p className="text-xs text-slate-500 mb-1">Année</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{lease.irl_reference_annee ?? '—'}</p>
+            </div>
+          </div>
+        )}
+
+        {showBailForm && (
+          <div className="mt-4 pt-4 border-t border-white/[0.06] space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Loyer mensuel HC (€)</label>
+                <input type="number" value={bailForm.monthly_rent}
+                  onChange={e => setBailForm(f => ({ ...f, monthly_rent: e.target.value }))}
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Dépôt de garantie (€)</label>
+                <input type="number" value={bailForm.deposit}
+                  onChange={e => setBailForm(f => ({ ...f, deposit: e.target.value }))}
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Date de début</label>
+                <input type="date" value={bailForm.start_date}
+                  onChange={e => setBailForm(f => ({ ...f, start_date: e.target.value }))}
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Date de fin</label>
+                <input type="date" value={bailForm.end_date}
+                  onChange={e => setBailForm(f => ({ ...f, end_date: e.target.value }))}
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Indice de révision</label>
+                <select value={bailForm.indexation_index}
+                  onChange={e => setBailForm(f => ({ ...f, indexation_index: e.target.value }))}
+                  className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
+                  <option value="" className="bg-[var(--surface)]">— Aucun —</option>
+                  <option value="irl" className="bg-[var(--surface)]">IRL</option>
+                  <option value="ilc" className="bg-[var(--surface)]">ILC</option>
+                  <option value="ilat" className="bg-[var(--surface)]">ILAT</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Provisions sur charges — ventilation par poste (liée à la fiche bien) */}
+            <div className="p-3 rounded-xl bg-bg-secondary border border-border">
+              <label className="block text-sm font-semibold text-[#0F172A]">Provisions sur charges (€/mois)</label>
+              <p className="text-xs text-slate-500 mt-0.5 mb-3">
+                Ce que le locataire verse chaque mois en plus du loyer, par poste. Régularisé une fois par an.
+              </p>
+              <div className="space-y-2">
+                {chargesLines.map((line, i) => (
+                  <div key={i} className="flex gap-2">
+                    <input list="bail-charge-presets" placeholder="Poste (eau, syndic, ordures…)" value={line.libelle}
+                      onChange={e => setChargesLines(ls => ls.map((l, idx) => idx === i ? { ...l, libelle: e.target.value } : l))}
+                      className="flex-1 h-10 px-3 rounded-lg bg-white border border-slate-200 text-[#0F172A] text-sm focus:outline-none" />
+                    <input type="number" placeholder="€" value={line.montant}
+                      onChange={e => setChargesLines(ls => ls.map((l, idx) => idx === i ? { ...l, montant: e.target.value } : l))}
+                      className="w-24 h-10 px-3 rounded-lg bg-white border border-slate-200 text-[#0F172A] text-sm text-right focus:outline-none" />
+                    <button type="button" onClick={() => setChargesLines(ls => ls.length > 1 ? ls.filter((_, idx) => idx !== i) : [{ libelle: '', montant: '' }])}
+                      className="h-10 w-10 flex-shrink-0 rounded-lg flex items-center justify-center border border-slate-200 bg-white hover:bg-slate-100" title="Retirer">
+                      <X className="h-4 w-4 text-slate-400" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <datalist id="bail-charge-presets">
+                {CHARGE_PRESETS.map(p => <option key={p} value={p} />)}
+              </datalist>
+              <div className="flex items-center justify-between mt-3">
+                <button type="button" onClick={() => setChargesLines(ls => [...ls, { libelle: '', montant: '' }])}
+                  className="text-sm font-medium text-[#1D4ED8] hover:underline">+ Ajouter un poste</button>
+                <div className="text-sm">
+                  <span className="text-slate-500">Total : </span>
+                  <span className="font-bold text-[#0F172A]">{chargesTotal.toLocaleString('fr-FR')} €/mois</span>
+                </div>
+              </div>
+            </div>
+
+            {bailForm.indexation_index && (
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Valeur indice de référence</label>
+                  <input type="number" step="0.01" placeholder="Ex: 143.51" value={bailForm.irl_reference_valeur}
+                    onChange={e => setBailForm(f => ({ ...f, irl_reference_valeur: e.target.value }))}
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Trimestre</label>
+                  <select value={bailForm.irl_reference_trimestre}
+                    onChange={e => setBailForm(f => ({ ...f, irl_reference_trimestre: e.target.value }))}
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
+                    <option value="" className="bg-[var(--surface)]">—</option>
+                    <option value="1" className="bg-[var(--surface)]">T1</option>
+                    <option value="2" className="bg-[var(--surface)]">T2</option>
+                    <option value="3" className="bg-[var(--surface)]">T3</option>
+                    <option value="4" className="bg-[var(--surface)]">T4</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Année</label>
+                  <input type="number" placeholder="2024" value={bailForm.irl_reference_annee}
+                    onChange={e => setBailForm(f => ({ ...f, irl_reference_annee: e.target.value }))}
+                    className="w-full h-10 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] placeholder:text-text-tertiary text-sm focus:outline-none" />
+                </div>
+              </div>
+            )}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+              <div>
+                <p className="text-sm font-medium text-[var(--text-primary)]">Quittances automatiques</p>
+                <p className="text-xs text-slate-500 mt-0.5">Génère les appels de loyer chaque mois</p>
+              </div>
+              <button
+                onClick={() => setBailForm(f => ({ ...f, appel_loyer_actif: !f.appel_loyer_actif }))}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                  bailForm.appel_loyer_actif ? 'bg-blue-500' : 'bg-slate-600'
+                }`}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  bailForm.appel_loyer_actif ? 'translate-x-6' : 'translate-x-1'
+                }`} />
+              </button>
+            </div>
+            <button onClick={saveBail} disabled={saving}
+              className="w-full h-9 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-sm font-semibold transition-all disabled:opacity-50">
+              {saving ? 'Enregistrement…' : 'Enregistrer les modifications'}
+            </button>
           </div>
         )}
       </GlassCard>

@@ -38,12 +38,21 @@ export async function GET(req: NextRequest) {
   const year = Number(new URL(req.url).searchParams.get('year') ?? new Date().getFullYear())
   const service = await createServiceClient()
 
-  const { data: incidents } = await service
+  const { data: userProps } = await service.from('properties').select('id').eq('user_id', user.id)
+  const propIds = (userProps ?? []).map(p => p.id)
+
+  // Le client `service` bypass la RLS : sans filtrage explicite par `property_id`, cette requête
+  // (uniquement bornée par date) renvoie les travaux/incidents de TOUS les utilisateurs, pas
+  // seulement les biens du propriétaire connecté (même défaut que BUG-2026-08-06-02, ici sur
+  // l'export CSV travaux — fuite de biens, entreprises et factures d'autres comptes).
+  const { data: allIncidents } = await service
     .from('incidents')
     .select('*, property:properties(name, numero_fiscal)')
     .gte('created_at', `${year}-01-01`)
     .lte('created_at', `${year}-12-31`)
     .order('date_travaux', { ascending: true })
+
+  const incidents = (allIncidents ?? []).filter(inc => propIds.includes(inc.property_id))
 
   const rows: string[][] = [
     ['Date', 'Bien', 'N° fiscal', 'Entreprise', 'N° facture', 'Description', 'Coût estimé', 'Coût payé', 'Payé (O/N)', 'Catégorie fiscale', 'Déductible immédiat (O/N)', 'Amortissable (O/N)'],

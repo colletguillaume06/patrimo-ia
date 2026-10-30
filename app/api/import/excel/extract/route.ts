@@ -87,8 +87,18 @@ export async function POST(request: NextRequest) {
     if (authError || !user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
 
     const body = await request.json()
-    const { image_base64 } = body
+    const { image_base64, mime_type } = body
     if (!image_base64) return NextResponse.json({ error: 'image_base64 requis' }, { status: 400 })
+
+    // Le formulaire accepte .jpg/.jpeg/.png/.webp (ImportExcelModal) mais le media_type
+    // envoyé à Claude était toujours codé en dur "image/jpeg" : un PNG ou WEBP envoyait des
+    // octets mal étiquetés à l'API, cassant l'extraction. On retient le type MIME réel du
+    // fichier (transmis par le client), validé contre les types image supportés par Claude.
+    const SUPPORTED_MEDIA_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] as const
+    type SupportedMediaType = typeof SUPPORTED_MEDIA_TYPES[number]
+    const mediaType: SupportedMediaType = SUPPORTED_MEDIA_TYPES.includes(mime_type)
+      ? mime_type
+      : 'image/jpeg'
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-5',
@@ -101,7 +111,7 @@ export async function POST(request: NextRequest) {
             type: 'image',
             source: {
               type: 'base64',
-              media_type: 'image/jpeg',
+              media_type: mediaType,
               data: image_base64.replace(/^data:image\/\w+;base64,/, ''),
             },
           },

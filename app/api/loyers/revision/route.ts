@@ -8,6 +8,7 @@ const schema = z.object({
   lease_id: z.string().uuid(),
   ancien_indice: z.number().positive(),
   notify: z.boolean().default(false),
+  montant_personnalise: z.number().positive().optional(),
 })
 
 export async function POST(req: NextRequest) {
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
   const parsed = schema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
 
-  const { lease_id, ancien_indice, notify } = parsed.data
+  const { lease_id, ancien_indice, notify, montant_personnalise } = parsed.data
   const service = await createServiceClient()
 
   const { data: lease } = await service
@@ -34,7 +35,9 @@ export async function POST(req: NextRequest) {
   const indice = lease.property?.indice_revision ?? 'irl'
   let nouveau_loyer: number
 
-  if (indice === 'ilc') {
+  if (montant_personnalise) {
+    nouveau_loyer = Math.round(montant_personnalise * 100) / 100
+  } else if (indice === 'ilc') {
     nouveau_loyer = calculateRevisionILC(lease.monthly_rent, ancien_indice)
   } else if (indice === 'ilat') {
     nouveau_loyer = calculateRevisionILAT(lease.monthly_rent, ancien_indice)

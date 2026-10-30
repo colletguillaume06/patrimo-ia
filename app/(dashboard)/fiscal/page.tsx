@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { detenuSurAnnee, loyersBienVendu, chargesFixesAnnuelles } from '@/lib/fiscal/bien-vendu'
+import { detenuSurAnnee } from '@/lib/fiscal/bien-vendu'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { ProfileBadge } from '@/components/ui/ProfileBadge'
@@ -9,23 +9,36 @@ import { formatCurrency } from '@/lib/utils'
 import { calculateLmnpSimulation, calculateDepreciation } from '@/lib/fiscal/lmnp'
 import { calculateFoncierSimulation } from '@/lib/fiscal/foncier'
 import { calculateSciSimulation } from '@/lib/fiscal/sci'
-import { Download, AlertTriangle, CheckCircle2, FileText } from 'lucide-react'
+import { Download, AlertTriangle, CheckCircle2, FileText, ChevronDown } from 'lucide-react'
 import { toast } from 'sonner'
+
+const YEARS = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i)
 
 export default function FiscalPage() {
   const [allProperties, setProperties] = useState<any[]>([])
+  const [depensesAnnexes, setDepensesAnnexes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [tmi, setTmi] = useState(30)
-  const year = new Date().getFullYear()
+  const [year, setYear] = useState(new Date().getFullYear())
+  const [expandedCharges, setExpandedCharges] = useState<string | null>(null)
+  const [showAnnexes, setShowAnnexes] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase
-        .from('properties')
-        .select('*, leases(*), expenses(*), depreciation_plans(*)')
-        .order('created_at')
-      setProperties(data ?? [])
+      const [propsRes, annexesRes] = await Promise.all([
+        supabase
+          .from('properties')
+          .select('*, leases(*, payments(*)), expenses(*), incidents(*), depreciation_plans(*)')
+          .order('created_at'),
+        supabase
+          .from('incidents')
+          .select('*')
+          .is('property_id', null)
+          .eq('est_paye', true),
+      ])
+      setProperties(propsRes.data ?? [])
+      setDepensesAnnexes(annexesRes.data ?? [])
       setLoading(false)
     }
     load()
@@ -42,27 +55,76 @@ export default function FiscalPage() {
     toast.success('Export téléchargé')
   }
 
-  const properties = allProperties.filter(p => detenuSurAnnee(p, year))
   const now = new Date()
   let totalRevenusBruts = 0
   let totalCharges = 0
   let totalAmortissements = 0
 
+  // Date limite : aujourd'hui si année en cours, sinon 31 déc de l'année
+  const today = new Date()
+  const isCurrentYear = year === today.getFullYear()
+  const cutoff = isCurrentYear ? today : new Date(year, 11, 31)
+
+  // Bien vendu : conservé l'année de vente, exclu ensuite
+  const properties = allProperties.filter(p => detenuSurAnnee(p, year))
   const propData = properties.map(prop => {
-    const activeLeases = prop.leases?.filter((l: any) => l.is_active) ?? []
-    const rent = activeLeases[0]?.monthly_rent ?? 0
-    const recettes = prop.sold_at ? loyersBienVendu(prop, year) : rent * 12
-    const expenses_ytd = (prop.expenses ?? []).filter((e: any) => new Date(e.date).getFullYear() === year)
-    const charges = expenses_ytd.reduce((s: number, e: any) => s + e.amount, 0)
-      + chargesFixesAnnuelles(prop, year)
+    // Recettes = uniquement les paiements réellement encaissés du 1er jan à aujourd'hui (pas de projection)
+    const allPayments = (prop.leases ?? []).flatMap((l: any) => l.payments ?? [])
+    const paidYear = allPayments.filter((p: any) => {
+      const d = new Date(p.due_date)
+      return d.getFullYear() === year && d <= cutoff && p.status === 'paid'
+    })
+    const recettes = paidYear.reduce((s: number, p: any) => s + (p.amount ?? 0), 0)
+
+    // Charges = dépenses et travaux payés du 1er jan à aujourd'hui
+    const expenses_ytd = (prop.expenses ?? []).filter((e: any) => {
+      const d = new Date(e.date)
+      return d.getFullYear() === year && d <= cutoff
+    })
+    const incidents_ytd = (prop.incidents ?? []).filter((i: any) => {
+      const d = new Date(i.date_travaux ?? i.created_at)
+      return d.getFullYear() === year && d <= cutoff && i.est_paye
+    })
+    const chargesExpenses = expenses_ytd.reduce((s: number, e: any) => s + (e.amount ?? 0), 0)
+    const chargesIncidents = incidents_ytd.reduce((s: number, i: any) => s + (i.cout_paye || i.cout_estime || 0), 0)
+    // Charges fixes (copro, taxe foncière, assurance) : proratisées si année en cours
+    const moisVente = prop.sold_at && new Date(prop.sold_at).getFullYear() === year ? new Date(prop.sold_at).getMonth() + 1 : 12
+    const moisEcoules = Math.min(isCurrentYear ? today.getMonth() + 1 : 12, moisVente)
+    // Taxe foncière refacturée si au moins un bail actif a cette clause
+    const taxeFonciereRefacturee = (prop.leases ?? []).some((l: any) => l.is_active && l.parsed_data?.taxe_fonciere_refacturee)
+    const taxeFonciereMontant = taxeFonciereRefacturee ? 0 : (prop.property_tax * moisEcoules / 12)
+    const chargesFixes = (prop.monthly_charges * moisEcoules)
+      + taxeFonciereMontant
+      + (prop.insurance_annual * moisEcoules / 12)
+    const charges = chargesExpenses + chargesIncidents + chargesFixes
     const amortissements = calculateDepreciation(prop.depreciation_plans ?? [])
 
     totalRevenusBruts += recettes
     totalCharges += charges
     totalAmortissements += amortissements
 
-    return { ...prop, recettes, charges, amortissements, expenses_ytd }
+    // Détail des charges pour affichage transparent
+    const chargesDetail = {
+      copro: prop.monthly_charges * moisEcoules,
+      taxe_fonciere: taxeFonciereMontant,
+      taxe_fonciere_brute: prop.property_tax * moisEcoules / 12,
+      taxe_fonciere_refacturee: taxeFonciereRefacturee,
+      assurance: prop.insurance_annual * moisEcoules / 12,
+      travaux: chargesIncidents,
+      depenses: chargesExpenses,
+      moisEcoules,
+    }
+
+    return { ...prop, recettes, charges, amortissements, expenses_ytd, chargesDetail }
   })
+
+  // Dépenses annexes de l'année (non liées à un bien)
+  const annexesYear = depensesAnnexes.filter((d: any) => {
+    const d2 = new Date(d.date_travaux ?? d.created_at)
+    return d2.getFullYear() === year && d2 <= cutoff
+  })
+  const totalAnnexes = annexesYear.reduce((s: number, d: any) => s + (d.cout_paye || 0), 0)
+  totalCharges += totalAnnexes
 
   const totalResultat = totalRevenusBruts - totalCharges - totalAmortissements
 
@@ -73,16 +135,32 @@ export default function FiscalPage() {
           <h1 className="font-display font-bold text-2xl text-[var(--text-primary)]">Tableau fiscal {year}</h1>
           <p className="text-slate-400 text-sm mt-1">Récapitulatif déclaratif par régime</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Sélecteur année */}
+          <div className="flex gap-1">
+            {YEARS.map(y => (
+              <button key={y} onClick={() => setYear(y)}
+                className="h-9 px-3 rounded-lg text-sm font-medium transition-all"
+                style={year === y
+                  ? { background: '#1D4ED8', color: '#fff' }
+                  : { background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }
+                }>
+                {y}
+              </button>
+            ))}
+          </div>
+          {/* TMI */}
           <div className="flex items-center gap-2">
-            <label className="text-xs text-slate-400">TMI :</label>
+            <label className="text-xs" style={{ color: 'var(--text-tertiary)' }}>TMI :</label>
             <select value={tmi} onChange={e => setTmi(Number(e.target.value))}
-              className="h-9 px-3 rounded-lg bg-bg-secondary border border-border text-[var(--text-primary)] text-sm focus:outline-none">
-              {[11, 30, 41, 45].map(r => <option key={r} value={r} className="bg-[var(--surface)]">{r}%</option>)}
+              className="h-9 px-3 rounded-lg text-sm focus:outline-none"
+              style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}>
+              {[11, 30, 41, 45].map(r => <option key={r} value={r}>{r}%</option>)}
             </select>
           </div>
           <button onClick={handleExport}
-            className="flex items-center gap-2 h-9 px-4 rounded-lg bg-bg-secondary border border-white/[0.08] text-slate-300 hover:text-[var(--text-primary)] text-sm transition-all">
+            className="flex items-center gap-2 h-9 px-4 rounded-lg text-sm transition-all"
+            style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
             <Download className="h-4 w-4" /> Export CSV
           </button>
         </div>
@@ -105,6 +183,42 @@ export default function FiscalPage() {
           ))}
         </div>
       </GlassCard>
+
+      {/* Dépenses annexes */}
+      {annexesYear.length > 0 && (
+        <GlassCard>
+          <button onClick={() => setShowAnnexes(v => !v)} className="w-full flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <h2 className="font-display font-semibold text-[var(--text-primary)]">Dépenses annexes de gestion</h2>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-purple-400/10 text-purple-400 border border-purple-400/20">{annexesYear.length} dépense{annexesYear.length > 1 ? 's' : ''}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-semibold font-mono text-red-400">{formatCurrency(totalAnnexes)}</span>
+              <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${showAnnexes ? 'rotate-180' : ''}`} />
+            </div>
+          </button>
+          {showAnnexes && (
+            <div className="mt-4 pt-4 border-t border-white/[0.06]">
+              <p className="text-xs text-slate-500 mb-3">Frais de gestion déductibles non liés à un bien spécifique (LMNP, SCI à l'IS, location saisonnière)</p>
+              <div className="space-y-1.5">
+                {annexesYear.map((d: any) => (
+                  <div key={d.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-white/[0.02]">
+                    <div>
+                      <p className="text-sm text-[var(--text-primary)]">{d.title}</p>
+                      <p className="text-xs text-slate-500">{d.nom_entreprise ? `${d.nom_entreprise} · ` : ''}{d.date_travaux ? new Date(d.date_travaux).toLocaleDateString('fr-FR') : ''}</p>
+                    </div>
+                    <span className="text-sm font-mono font-medium text-red-400">{formatCurrency(d.cout_paye || 0)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-between mt-3 pt-3 border-t border-white/[0.06]">
+                <span className="text-xs font-semibold text-slate-400">Total déductible</span>
+                <span className="text-sm font-bold font-mono text-red-400">{formatCurrency(totalAnnexes)}</span>
+              </div>
+            </div>
+          )}
+        </GlassCard>
+      )}
 
       {/* Par régime */}
       {!loading && (
@@ -205,8 +319,17 @@ export default function FiscalPage() {
                           <p className="text-sm font-semibold text-[var(--success)]">{formatCurrency(sim.revenus_bruts)}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Charges déductibles</p>
-                          <p className="text-sm font-semibold text-red-400">{formatCurrency(sim.charges_deductibles)}</p>
+                          <button
+                            type="button"
+                            onClick={() => setExpandedCharges(expandedCharges === prop.id ? null : prop.id)}
+                            className="text-left w-full group"
+                          >
+                            <p className="text-xs text-slate-500 flex items-center gap-1">
+                              Charges déductibles
+                              <ChevronDown className={`h-3 w-3 transition-transform ${expandedCharges === prop.id ? 'rotate-180' : ''}`} />
+                            </p>
+                            <p className="text-sm font-semibold text-red-400">{formatCurrency(sim.charges_deductibles)}</p>
+                          </button>
                         </div>
                         <div>
                           <p className="text-xs text-slate-500">Revenu net / déficit</p>
@@ -219,6 +342,46 @@ export default function FiscalPage() {
                           <p className="text-sm font-semibold text-[var(--text-primary)] uppercase">{sim.regime_optimal}</p>
                         </div>
                       </div>
+                      {expandedCharges === prop.id && (
+                        <div className="mt-3 p-3 rounded-xl bg-red-500/5 border border-red-500/15 space-y-1.5">
+                          <p className="text-xs font-semibold text-red-400 mb-2">Détail des charges ({prop.chargesDetail.moisEcoules} mois)</p>
+                          {[
+                            { label: 'Charges copropriété', val: prop.chargesDetail.copro, detail: `${formatCurrency(prop.monthly_charges)}/mois × ${prop.chargesDetail.moisEcoules}` },
+                            { label: 'Assurance', val: prop.chargesDetail.assurance, detail: `${formatCurrency(prop.insurance_annual)}/an × ${prop.chargesDetail.moisEcoules}/12` },
+                            { label: 'Travaux & incidents', val: prop.chargesDetail.travaux, detail: 'payés sur la période' },
+                            { label: 'Autres dépenses', val: prop.chargesDetail.depenses, detail: 'saisies manuellement' },
+                          ].filter(r => r.val > 0).map(row => (
+                            <div key={row.label} className="flex items-center justify-between text-xs">
+                              <span className="text-slate-400">{row.label} <span className="text-slate-600">({row.detail})</span></span>
+                              <span className="text-red-400 font-mono font-medium">{formatCurrency(row.val)}</span>
+                            </div>
+                          ))}
+                          {/* Taxe foncière avec toggle refacturation */}
+                          {prop.property_tax > 0 && (
+                            <div className="flex items-center justify-between text-xs py-1 border-t border-red-500/10">
+                              <div className="flex flex-col gap-0.5">
+                                <span className={prop.chargesDetail.taxe_fonciere_refacturee ? 'line-through text-slate-600' : 'text-slate-400'}>
+                                  Taxe foncière <span className="text-slate-600">({formatCurrency(prop.property_tax)}/an × {prop.chargesDetail.moisEcoules}/12)</span>
+                                </span>
+                                {prop.chargesDetail.taxe_fonciere_refacturee
+                                  ? <span className="text-xs text-amber-400 font-medium">⚠ Refacturée au locataire — non déductible (clause du bail)</span>
+                                  : <span className="text-xs text-slate-600">Clause non activée sur ce bail</span>
+                                }
+                              </div>
+                              <span className={`font-mono font-medium ${prop.chargesDetail.taxe_fonciere_refacturee ? 'line-through text-slate-600' : 'text-red-400'}`}>
+                                {formatCurrency(prop.chargesDetail.taxe_fonciere_brute)}
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between text-xs border-t border-red-500/20 pt-1.5 mt-1">
+                            <span className="text-slate-300 font-semibold">Total</span>
+                            <span className="text-red-400 font-mono font-bold">{formatCurrency(sim.charges_deductibles)}</span>
+                          </div>
+                          {prop.monthly_charges === 0 && prop.property_tax === 0 && prop.insurance_annual === 0 && prop.chargesDetail.travaux === 0 && prop.chargesDetail.depenses === 0 && (
+                            <p className="text-xs text-slate-500 mt-1">⚠️ Aucune charge renseignée sur la fiche bien. Complétez la fiche pour avoir un calcul précis.</p>
+                          )}
+                        </div>
+                      )}
                       {sim.deficit_foncier && (
                         <div className="mt-3 flex items-start gap-2 text-xs text-blue-400">
                           <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
@@ -294,7 +457,7 @@ export default function FiscalPage() {
               </div>
               <div className="space-y-3">
                 {propData.filter(p => p.type === 'commerce').map(prop => {
-                  const chargesDeductibles = prop.charges + (prop.property_tax / 12 * 12) + (prop.insurance_annual ?? 0)
+                  const chargesDeductibles = prop.charges
                   const revenuNet = prop.recettes - chargesDeductibles
                   const impotEstime = Math.max(0, revenuNet * (tmi / 100))
                   return (
@@ -313,8 +476,17 @@ export default function FiscalPage() {
                           <p className="text-sm font-semibold text-[var(--success)]">{formatCurrency(prop.recettes)}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Charges déductibles</p>
-                          <p className="text-sm font-semibold text-red-400">{formatCurrency(chargesDeductibles)}</p>
+                          <button
+                            type="button"
+                            onClick={() => setExpandedCharges(expandedCharges === prop.id ? null : prop.id)}
+                            className="text-left w-full"
+                          >
+                            <p className="text-xs text-slate-500 flex items-center gap-1">
+                              Charges déductibles
+                              <ChevronDown className={`h-3 w-3 transition-transform ${expandedCharges === prop.id ? 'rotate-180' : ''}`} />
+                            </p>
+                            <p className="text-sm font-semibold text-red-400">{formatCurrency(chargesDeductibles)}</p>
+                          </button>
                         </div>
                         <div>
                           <p className="text-xs text-slate-500">Revenu net foncier</p>
@@ -325,6 +497,45 @@ export default function FiscalPage() {
                           <p className="text-sm font-semibold text-amber-400">{formatCurrency(impotEstime)}</p>
                         </div>
                       </div>
+                      {expandedCharges === prop.id && (
+                        <div className="mt-3 p-3 rounded-xl bg-red-500/5 border border-red-500/15 space-y-1.5">
+                          <p className="text-xs font-semibold text-red-400 mb-2">Détail des charges ({prop.chargesDetail.moisEcoules} mois)</p>
+                          {[
+                            { label: 'Charges copropriété', val: prop.chargesDetail.copro, detail: `${formatCurrency(prop.monthly_charges)}/mois × ${prop.chargesDetail.moisEcoules}` },
+                            { label: 'Assurance', val: prop.chargesDetail.assurance, detail: `${formatCurrency(prop.insurance_annual)}/an × ${prop.chargesDetail.moisEcoules}/12` },
+                            { label: 'Travaux & incidents', val: prop.chargesDetail.travaux, detail: 'payés sur la période' },
+                            { label: 'Autres dépenses', val: prop.chargesDetail.depenses, detail: 'saisies manuellement' },
+                          ].filter(r => r.val > 0).map(row => (
+                            <div key={row.label} className="flex items-center justify-between text-xs">
+                              <span className="text-slate-400">{row.label} <span className="text-slate-600">({row.detail})</span></span>
+                              <span className="text-red-400 font-mono font-medium">{formatCurrency(row.val)}</span>
+                            </div>
+                          ))}
+                          {prop.property_tax > 0 && (
+                            <div className="flex items-center justify-between text-xs py-1 border-t border-red-500/10">
+                              <div className="flex flex-col gap-0.5">
+                                <span className={prop.chargesDetail.taxe_fonciere_refacturee ? 'line-through text-slate-600' : 'text-slate-400'}>
+                                  Taxe foncière <span className="text-slate-600">({formatCurrency(prop.property_tax)}/an × {prop.chargesDetail.moisEcoules}/12)</span>
+                                </span>
+                                {prop.chargesDetail.taxe_fonciere_refacturee
+                                  ? <span className="text-xs text-amber-400 font-medium">⚠ Refacturée au locataire — non déductible (clause du bail)</span>
+                                  : <span className="text-xs text-slate-600">Clause non activée sur ce bail</span>
+                                }
+                              </div>
+                              <span className={`font-mono font-medium ${prop.chargesDetail.taxe_fonciere_refacturee ? 'line-through text-slate-600' : 'text-red-400'}`}>
+                                {formatCurrency(prop.chargesDetail.taxe_fonciere_brute)}
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between text-xs border-t border-red-500/20 pt-1.5 mt-1">
+                            <span className="text-slate-300 font-semibold">Total</span>
+                            <span className="text-red-400 font-mono font-bold">{formatCurrency(chargesDeductibles)}</span>
+                          </div>
+                          {chargesDeductibles === 0 && (
+                            <p className="text-xs text-slate-500 mt-1">⚠️ Aucune charge renseignée sur la fiche bien. Complétez la fiche pour avoir un calcul précis.</p>
+                          )}
+                        </div>
+                      )}
                       <div className="mt-2 text-xs text-slate-500">
                         À reporter en revenus fonciers — formulaire 2044 (si régime réel) ou déclaration principale (micro-foncier si &lt; 15 000€/an)
                       </div>

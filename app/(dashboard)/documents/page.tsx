@@ -58,14 +58,15 @@ export default function DocumentsPage() {
     const { error: uploadError } = await supabase.storage.from('documents').upload(fileName, buffer, { contentType: file.type, upsert: true })
     if (uploadError) { toast.error(uploadError.message); setUploading(false); return }
 
-    const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(fileName)
+    // Bucket privé : on stocke le chemin interne, la lecture passe par
+    // /api/storage/file qui génère une URL signée après contrôle du propriétaire.
     await supabase.from('documents').insert({
       user_id: user.id,
       property_id: form.property_id || null,
       nom: form.nom || file.name,
       description: form.description || null,
       categorie: form.categorie,
-      file_url: publicUrl,
+      file_url: fileName,
       file_name: file.name,
       file_size_bytes: file.size,
       file_type: file.type,
@@ -152,7 +153,7 @@ export default function DocumentsPage() {
                     </p>
                     {doc.description && <p className="text-xs text-slate-600 mt-0.5 truncate">{doc.description}</p>}
                   </div>
-                  <a href={doc.file_url} target="_blank" rel="noopener noreferrer"
+                  <a href={`/api/storage/file?bucket=documents&src=${encodeURIComponent(doc.file_url)}`} target="_blank" rel="noopener noreferrer"
                     className="h-8 w-8 rounded-lg bg-blue-400/10 hover:bg-blue-400/20 border border-blue-400/20 flex items-center justify-center flex-shrink-0 transition-colors">
                     <Eye className="h-3.5 w-3.5 text-blue-400" />
                   </a>

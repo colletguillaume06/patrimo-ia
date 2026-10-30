@@ -1,6 +1,9 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const INACTIVITY_TIMEOUT = 30 * 60 * 1000 // 30 minutes
+const ACTIVITY_COOKIE = 'patrimo_la' // last activity (timestamp ms)
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
@@ -73,6 +76,35 @@ export async function updateSession(request: NextRequest) {
       url.pathname = '/onboarding'
       return NextResponse.redirect(url)
     }
+  }
+
+  // Contrôle d'inactivité serveur : déconnexion forcée après 30 min sans activité.
+  // Le cookie patrimo_la est un cookie de session (supprimé à la fermeture du navigateur).
+  if (user && isDashboard) {
+    const la = request.cookies.get(ACTIVITY_COOKIE)?.value
+    const now = Date.now()
+    const isStale = la && (now - Number(la) > INACTIVITY_TIMEOUT)
+
+    if (isStale) {
+      await supabase.auth.signOut()
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      const redirect = NextResponse.redirect(url)
+      // Reporter les suppressions de cookies d'auth sur la réponse de redirection
+      supabaseResponse.cookies.getAll().forEach(c =>
+        redirect.cookies.set(c.name, c.value, c)
+      )
+      redirect.cookies.delete(ACTIVITY_COOKIE)
+      return redirect
+    }
+
+    // Activité fraîche → rafraîchir l'horodatage (cookie de session)
+    supabaseResponse.cookies.set(ACTIVITY_COOKIE, String(now), {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    })
   }
 
   return supabaseResponse

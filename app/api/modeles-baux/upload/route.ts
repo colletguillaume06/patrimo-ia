@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
   const { data: uploadData } = await service.storage
     .from('modeles-baux')
     .upload(fileName, await file.arrayBuffer(), { contentType: file.type, upsert: true })
-  const { data: { publicUrl } } = service.storage.from('modeles-baux').getPublicUrl(fileName)
+  // Bucket privé : chemin interne stocké, lecture via /api/storage/file.
 
   // Détecter les variables déjà présentes dans le texte (format {variable})
   const detectedVars = contenu.match(/\{[a-z_]+\}/g) ?? []
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
     type_bail,
     contenu,
     variables: uniqueVars,
-    file_url: publicUrl,
+    file_url: fileName,
   }).select().single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

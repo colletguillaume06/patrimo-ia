@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { toast } from 'sonner'
-import { Users, Phone, Mail, ChevronRight, Plus, X, Shield, User, Sparkles, Loader2 } from 'lucide-react'
+import { Users, Phone, Mail, ChevronRight, Plus, X, Shield, User, Sparkles, Loader2, Trash2, Link2 } from 'lucide-react'
 import Link from 'next/link'
 
 const FORM_INIT = {
@@ -18,6 +18,13 @@ export default function LocatairesPage() {
   const [showAdd, setShowAdd] = useState(false)
   const [saving, setSaving] = useState(false)
   const [seeding, setSeeding] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  // Modal association bail
+  const [showAssoc, setShowAssoc] = useState(false)
+  const [assocTenant, setAssocTenant] = useState<any>(null)
+  const [availableLeases, setAvailableLeases] = useState<any[]>([])
+  const [assocLeaseId, setAssocLeaseId] = useState('')
+  const [assocSaving, setAssocSaving] = useState(false)
 
   const handleSeed = async () => {
     setSeeding(true)
@@ -41,19 +48,31 @@ export default function LocatairesPage() {
       .select(`*, leases(id, is_active, monthly_rent, charges, property:properties(id, name, type, city))`)
       .order('created_at', { ascending: false })
 
-    // Pour chaque locataire sans bail lié par tenant_id, chercher par nom
+    // Pour chaque locataire sans bail lié par tenant_id, chercher par nom (insensible à la casse)
     const enriched = await Promise.all((tenantsData ?? []).map(async (t: any) => {
       if (!t.leases || t.leases.length === 0) {
         const { data: byName } = await supabase
           .from('leases')
           .select('id, is_active, monthly_rent, charges, property:properties(id, name, type, city)')
-          .ilike('tenant_name', t.full_name)
+          .ilike('tenant_name', `%${t.full_name.trim()}%`)
+        // Lier automatiquement si trouvé
+        if (byName && byName.length > 0) {
+          await supabase.from('leases').update({ tenant_id: t.id }).in('id', byName.map((l: any) => l.id))
+        }
         return { ...t, leases: byName ?? [] }
       }
       return t
     }))
 
-    setTenants(enriched)
+    // Tous les locataires triés : actifs en premier, sans bail ensuite
+    const sorted = enriched.sort((a: any, b: any) => {
+      const aActive = a.leases?.some((l: any) => l.is_active)
+      const bActive = b.leases?.some((l: any) => l.is_active)
+      if (aActive === bActive) return 0
+      return aActive ? -1 : 1
+    })
+
+    setTenants(sorted)
     setLoading(false)
   }
 
@@ -70,6 +89,38 @@ export default function LocatairesPage() {
     toast.success('Fiche locataire créée')
     setShowAdd(false)
     setForm(FORM_INIT)
+    load()
+  }
+
+  const handleDelete = async (tenantId: string) => {
+    if (!confirm('Supprimer cette fiche locataire ? Cette action est irréversible.')) return
+    setDeletingId(tenantId)
+    await supabase.from('tenants').delete().eq('id', tenantId)
+    setDeletingId(null)
+    toast.success('Fiche supprimée')
+    load()
+  }
+
+  const openAssoc = async (tenant: any) => {
+    setAssocTenant(tenant)
+    setAssocLeaseId('')
+    // Charger les baux sans locataire lié ou avec tenant_name correspondant
+    const { data } = await supabase
+      .from('leases')
+      .select('id, tenant_name, monthly_rent, is_active, property:properties(name)')
+      .or('tenant_id.is.null,tenant_id.eq.' + tenant.id)
+      .order('is_active', { ascending: false })
+    setAvailableLeases(data ?? [])
+    setShowAssoc(true)
+  }
+
+  const handleAssoc = async () => {
+    if (!assocLeaseId || !assocTenant) return
+    setAssocSaving(true)
+    await supabase.from('leases').update({ tenant_id: assocTenant.id }).eq('id', assocLeaseId)
+    setAssocSaving(false)
+    toast.success(`Bail associé à ${assocTenant.full_name}`)
+    setShowAssoc(false)
     load()
   }
 
@@ -117,28 +168,27 @@ export default function LocatairesPage() {
       ) : (
         <div className="space-y-3">
           {tenants.map(tenant => {
-            const activeLease = tenant.leases?.find((l: any) => l.is_active)
+            const activeLeases = tenant.leases?.filter((l: any) => l.is_active) ?? []
             return (
-              <Link key={tenant.id} href={`/locataires/${tenant.id}`}>
-                <div className="flex items-center gap-4 p-4 rounded-2xl border transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
-                  style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
-                  {/* Avatar */}
+              <div key={tenant.id} className="flex items-center gap-4 p-4 rounded-2xl border transition-all hover:shadow-md"
+                style={{ background: 'var(--bg-card)', borderColor: 'var(--border)' }}>
+                {/* Avatar cliquable */}
+                <Link href={`/locataires/${tenant.id}`} className="flex items-center gap-4 flex-1 min-w-0">
                   <div className="h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0 text-lg font-bold text-white"
                     style={{ background: 'linear-gradient(135deg, #1D4ED8, #0891B2)' }}>
                     {tenant.full_name?.charAt(0).toUpperCase() ?? '?'}
                   </div>
-
                   {/* Infos */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
+                    <div className="flex items-center flex-wrap gap-2 mb-0.5">
                       <p className="font-display font-semibold" style={{ color: 'var(--text-primary)' }}>
                         {tenant.full_name}
                       </p>
-                      {activeLease ? (
-                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-700">
-                          Bail actif — {activeLease.property?.name}
+                      {activeLeases.length > 0 ? activeLeases.map((l: any) => (
+                        <span key={l.id} className="text-xs px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-700">
+                          {l.property?.name ?? 'Bail actif'}
                         </span>
-                      ) : (
+                      )) : (
                         <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-700">
                           Sans bail
                         </span>
@@ -148,12 +198,33 @@ export default function LocatairesPage() {
                       {tenant.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{tenant.email}</span>}
                       {tenant.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{tenant.phone}</span>}
                       {tenant.guarantor_name && <span className="flex items-center gap-1"><Shield className="h-3 w-3" />Garant : {tenant.guarantor_name}</span>}
+                      {activeLeases.length > 1 && <span className="font-medium text-green-700">{activeLeases.length} baux actifs</span>}
                     </div>
                   </div>
+                </Link>
 
-                  <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} />
+                {/* Actions */}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <button
+                    onClick={e => { e.preventDefault(); openAssoc(tenant) }}
+                    title="Associer à un bail"
+                    className="h-8 w-8 rounded-lg flex items-center justify-center transition-colors hover:bg-blue-50"
+                    style={{ color: '#1D4ED8' }}
+                  >
+                    <Link2 className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={e => { e.preventDefault(); handleDelete(tenant.id) }}
+                    disabled={deletingId === tenant.id}
+                    title="Supprimer la fiche"
+                    className="h-8 w-8 rounded-lg flex items-center justify-center transition-colors hover:bg-red-50 disabled:opacity-40"
+                    style={{ color: '#EF4444' }}
+                  >
+                    {deletingId === tenant.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                  </button>
+                  <ChevronRight className="h-4 w-4" style={{ color: 'var(--text-tertiary)' }} />
                 </div>
-              </Link>
+              </div>
             )
           })}
         </div>
@@ -231,6 +302,57 @@ export default function LocatairesPage() {
                 {saving ? 'Enregistrement...' : 'Créer la fiche locataire'}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal association bail */}
+      {showAssoc && assocTenant && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAssoc(false)} />
+          <div className="relative w-full max-w-md rounded-2xl p-6 shadow-2xl bg-white border border-slate-200">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="font-display font-semibold text-lg text-[#0F172A]">Associer à un bail</h2>
+                <p className="text-sm text-slate-500 mt-0.5">{assocTenant.full_name}</p>
+              </div>
+              <button onClick={() => setShowAssoc(false)} className="h-8 w-8 rounded-lg flex items-center justify-center bg-slate-100 hover:bg-slate-200">
+                <X className="h-4 w-4 text-slate-500" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-[#0F172A] mb-1.5">Sélectionner un bail</label>
+              {availableLeases.length === 0 ? (
+                <p className="text-sm text-slate-500 py-4 text-center">Aucun bail disponible</p>
+              ) : (
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {availableLeases.map((l: any) => (
+                    <label key={l.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${assocLeaseId === l.id ? 'border-blue-400 bg-blue-50' : 'border-slate-200 hover:border-slate-300'}`}>
+                      <input type="radio" name="lease" value={l.id} checked={assocLeaseId === l.id}
+                        onChange={() => setAssocLeaseId(l.id)} className="accent-blue-600" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-[#0F172A]">{l.tenant_name}</p>
+                        <p className="text-xs text-slate-500">{l.property?.name} · {l.monthly_rent}€/mois</p>
+                      </div>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${l.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+                        {l.is_active ? 'Actif' : 'Inactif'}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              <button
+                onClick={handleAssoc}
+                disabled={!assocLeaseId || assocSaving}
+                className="w-full h-11 rounded-xl text-white text-sm font-semibold disabled:opacity-50 mt-2 flex items-center justify-center gap-2"
+                style={{ background: '#1D4ED8' }}
+              >
+                {assocSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
+                {assocSaving ? 'Association...' : 'Associer ce bail'}
+              </button>
+            </div>
           </div>
         </div>
       )}
