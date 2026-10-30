@@ -8,9 +8,10 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import {
   Wrench, Plus, X, Paperclip, CheckCircle2, Clock, AlertCircle, BarChart2,
-  Info, Upload, Loader2, Euro, FileText, AlertTriangle, ToggleLeft, ToggleRight, Camera
+  Info, Upload, Loader2, Euro, FileText, AlertTriangle, ToggleLeft, ToggleRight, Camera, ArrowLeft
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ScanFactureModal } from '@/components/travaux/ScanFactureModal'
@@ -136,6 +137,7 @@ function CategorieBadge({ cat }: { cat: CategorieFiscale }) {
 // ─── Page principale ─────────────────────────────────────────────────────
 
 export default function TravauxPage() {
+  const router = useRouter()
   const [incidents, setIncidents] = useState<any[]>([])
   const [properties, setProperties] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -256,6 +258,15 @@ export default function TravauxPage() {
     <div className="max-w-7xl mx-auto space-y-6">
 
       {/* En-tête */}
+      <button
+        onClick={() => (window.history.length > 1 ? router.back() : router.push('/dashboard'))}
+        className="inline-flex items-center gap-1.5 text-sm transition-colors hover:opacity-80"
+        style={{ color: 'var(--text-tertiary)' }}
+        aria-label="Retour"
+      >
+        <ArrowLeft className="h-4 w-4" /> Retour
+      </button>
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display font-bold text-2xl" style={{ color: 'var(--text-primary)' }}>Travaux & Incidents</h1>
